@@ -1,0 +1,31 @@
+COMPILER Instrumenter
+CHARACTERS
+	letter = 'a' .. 'z' + 'A'..'Z'.
+	digit  = '0'..'9'.
+TOKENS
+	ident = letter {letter | digit | '_'}.
+	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
+IGNORE "\t\n\r"
+
+PRODUCTIONS
+
+Instrumenter  = { {ANY} Class }.
+Class         = "class" ident {ANY} "{" { {Class | ANY} Block } "}".
+Statement =
+		"if" BracketExpr Statement ["else" Statement]
+		| "switch" BracketExpr "{"
+			{"case" {ANY} ":" {Statement}}
+			["default" ":" {Statement}]
+			"}"
+		| "while" BracketExpr Statement
+		| "do" Statement "while" BracketExpr ";"
+		| "for" BracketExpr Statement
+		| "try" Block {"catch" {ANY} Block} ["finally" Block]
+		| ("break" | "return" | "continue") {ANY} ";"
+		| ident ({ANY | "->" Statement} ";" | ":")
+		| Block
+		| ";" .
+BracketExpr    = "(" {BracketExpr | ANY} ")".
+Block          = "{" {Statement} "}".
+
+END Instrumenter.
