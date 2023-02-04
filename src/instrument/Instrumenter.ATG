@@ -1,4 +1,54 @@
 COMPILER Instrumenter
+
+	List<Block> allBlocks = new ArrayList<>();
+	Stack<Block> blockStack = new Stack<>();
+	String curClass = null;
+	String curMeth = null;
+	Block curBlock = null;
+
+	class Block {
+	  String clazz;
+	  String method;
+	  int beg, end;
+	  boolean isMethodBlock;
+
+    public String toString() {
+      return String.format("%s%s: {%d-%s}%s", clazz, method != null ? ("." + method) : "", beg, end != 0 ? end : "?", isMethodBlock ? " m" : "");
+	  }
+	}
+
+	void enterClass() {
+		curClass = t.val;
+		System.out.printf("entering class <%s>\n", curClass);
+	}
+
+	void leaveClass() {
+		System.out.printf("leaving class <%s>\n", curClass);
+		curClass = null;
+	}
+
+	void enterBlock() {
+		if (curBlock != null) {
+			blockStack.push(curBlock);
+		}
+		curBlock = new Block();
+		curBlock.clazz = curClass;
+		curBlock.method = curMeth;
+		curBlock.beg = t.line;
+		System.out.printf("entering block %s\n", curBlock);
+	}
+
+	void leaveBlock() {
+		curBlock.end = t.line;
+		System.out.printf("leaving block %s\n", curBlock);
+		allBlocks.add(curBlock);
+		if (blockStack.empty()) {
+			curBlock = null;
+		} else {
+			curBlock = blockStack.pop();
+		}
+	}
+
 CHARACTERS
 	letter = 'a' .. 'z' + 'A'..'Z'.
 	digit  = '0'..'9'.
@@ -9,8 +59,12 @@ IGNORE "\t\n\r"
 
 PRODUCTIONS
 
-Instrumenter  = { {ANY} Class }.
-Class         = "class" ident {ANY} "{" { {Class | ANY} Block } "}".
+Instrumenter = { {ANY} Class }.
+Class =
+			"class" ident           (. enterClass(); .)
+			{ANY} "{" { {Class | ANY} Block }
+			"}"                     (. leaveClass(); .)
+		.
 Statement =
 		"if" BracketExpr Statement ["else" Statement]
 		| "switch" BracketExpr "{"
@@ -26,6 +80,9 @@ Statement =
 		| Block
 		| ";" .
 BracketExpr    = "(" {BracketExpr | ANY} ")".
-Block          = "{" {Statement} "}".
+Block = "{"                   (. enterBlock(); .)
+				{Statement}
+				"}"                   (. leaveBlock(); .)
+			.
 
 END Instrumenter.
