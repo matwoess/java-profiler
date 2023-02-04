@@ -27,6 +27,14 @@ COMPILER Instrumenter
 		curClass = null;
 	}
 
+	void checkForMethodDeclaration() {
+		if (curMeth != null) return;
+		if (t.kind == _ident && la.kind == _lpar) {
+			curMeth = t.val;
+			System.out.println("found method declaration of: " + curMeth);
+		}
+	}
+
 	void enterBlock() {
 		if (curBlock != null) {
 			blockStack.push(curBlock);
@@ -43,6 +51,8 @@ COMPILER Instrumenter
 		System.out.printf("leaving block %s\n", curBlock);
 		allBlocks.add(curBlock);
 		if (blockStack.empty()) {
+			curBlock.isMethodBlock = true;
+			curMeth = null;
 			curBlock = null;
 		} else {
 			curBlock = blockStack.pop();
@@ -55,6 +65,7 @@ CHARACTERS
 TOKENS
 	ident = letter {letter | digit | '_'}.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
+	lpar  = '('.
 IGNORE "\t\n\r"
 
 PRODUCTIONS
@@ -62,7 +73,12 @@ PRODUCTIONS
 Instrumenter = { {ANY} Class }.
 Class =
 			"class" ident           (. enterClass(); .)
-			{ANY} "{" { {Class | ANY} Block }
+			{ANY} "{"
+			{
+				{ Class
+					| ANY               (. checkForMethodDeclaration(); .)
+				} Block
+			}
 			"}"                     (. leaveClass(); .)
 		.
 Statement =
@@ -79,7 +95,7 @@ Statement =
 		| ident ({ANY | "->" Statement} ";" | ":")
 		| Block
 		| ";" .
-BracketExpr    = "(" {BracketExpr | ANY} ")".
+BracketExpr = "(" {BracketExpr | ANY} ")".
 Block = "{"                   (. enterBlock(); .)
 				{Statement}
 				"}"                   (. leaveBlock(); .)
