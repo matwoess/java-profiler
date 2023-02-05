@@ -6,7 +6,7 @@ COMPILER Instrumenter
 	String curMeth = null;
 	Block curBlock = null;
 
-	class Block {
+	static class Block {
 	  String clazz;
 	  String method;
 	  int beg, end;
@@ -15,6 +15,27 @@ COMPILER Instrumenter
     public String toString() {
       return String.format("%s%s: {%d-%s}%s", clazz, method != null ? ("." + method) : "", beg, end != 0 ? end : "?", isMethodBlock ? " m" : "");
 	  }
+	  @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Block block = (Block) o;
+      if (beg != block.beg) return false;
+      if (end != block.end) return false;
+      if (isMethodBlock != block.isMethodBlock) return false;
+      if (!Objects.equals(clazz, block.clazz)) return false;
+      return Objects.equals(method, block.method);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = clazz != null ? clazz.hashCode() : 0;
+      result = 31 * result + (method != null ? method.hashCode() : 0);
+      result = 31 * result + beg;
+      result = 31 * result + end;
+      result = 31 * result + (isMethodBlock ? 1 : 0);
+      return result;
+    }
 	}
 
 	void enterClass() {

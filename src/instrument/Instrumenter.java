@@ -17,7 +17,7 @@ public class Instrumenter {
     }
   }
 
-  private static List<Parser.Block> analyzeFile(String inputFile) {
+  static List<Parser.Block> analyzeFile(String inputFile) {
     System.out.println("Reading File: \"" + inputFile + "\"");
     Parser parser = new Parser(new Scanner(inputFile));
     parser.Parse();
