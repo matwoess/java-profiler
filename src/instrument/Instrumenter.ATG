@@ -23,7 +23,7 @@ COMPILER Instrumenter
 	}
 
 	void leaveClass() {
-		System.out.printf("leaving class <%s>\n", curClass);
+		System.out.printf("left class <%s>\n", curClass);
 		curClass = null;
 	}
 
@@ -33,6 +33,15 @@ COMPILER Instrumenter
 			curMeth = t.val;
 			System.out.println("found method declaration of: " + curMeth);
 		}
+		else if (t.kind == _static && la.kind == _lbrace) {
+			curMeth = t.val;
+			System.out.println("found static block");
+		}
+	}
+
+	void leaveMethod() {
+		System.out.println("left method: " + curMeth);
+		curMeth = null;
 	}
 
 	void enterBlock() {
@@ -43,16 +52,18 @@ COMPILER Instrumenter
 		curBlock.clazz = curClass;
 		curBlock.method = curMeth;
 		curBlock.beg = t.line;
+		allBlocks.add(curBlock);
 		System.out.printf("entering block %s\n", curBlock);
 	}
 
 	void leaveBlock() {
 		curBlock.end = t.line;
-		System.out.printf("leaving block %s\n", curBlock);
-		allBlocks.add(curBlock);
+		System.out.printf("left block %s\n", curBlock);
 		if (blockStack.empty()) {
-			curBlock.isMethodBlock = true;
-			curMeth = null;
+			if (!"static".equals(curMeth)) {
+				curBlock.isMethodBlock = true;
+			}
+			leaveMethod();
 			curBlock = null;
 		} else {
 			curBlock = blockStack.pop();
@@ -63,9 +74,11 @@ CHARACTERS
 	letter = 'a' .. 'z' + 'A'..'Z'.
 	digit  = '0'..'9'.
 TOKENS
-	ident = letter {letter | digit | '_'}.
+	ident  = letter {letter | digit | '_'}.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
-	lpar  = '('.
+	lpar   = '('.
+	lbrace = '{'.
+	static = "static".
 IGNORE "\t\n\r"
 
 PRODUCTIONS
