@@ -125,11 +125,12 @@ Statement =
 		| "while" BracketExpr Statement
 		| "do" Statement "while" BracketExpr ";"
 		| "for" BracketExpr Statement
-		| "try" Block {"catch" {ANY} Block} ["finally" Block]
+		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
-		| ident ({ANY | "->" Statement} ";" | ":")
+		| ident ({ANY | QuotedText | "->" Statement} ";" | ":")
 		| Block
 		| ";" .
+QuotedText = '"' {ANY} '"'.
 BracketExpr = "(" {BracketExpr | ANY} ")".
 Block = "{"                   (. enterBlock(); .)
 				{Statement}
