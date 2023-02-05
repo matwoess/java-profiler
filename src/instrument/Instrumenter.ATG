@@ -60,8 +60,24 @@ COMPILER Instrumenter
 		}
 	}
 
+	void enterMethod() {
+		curMeth = t.val;
+		System.out.println("found method declaration of: " + curMeth);
+	}
+
 	void leaveMethod() {
+		curBlock.isMethodBlock = true;
 		System.out.println("left method: " + curMeth);
+		curMeth = null;
+	}
+
+	void enterStaticBlock() {
+		curMeth = t.val;
+		System.out.println("found static block");
+  }
+
+	void leaveStaticBlock() {
+		System.out.println("left static block");
 		curMeth = null;
 	}
 
@@ -81,14 +97,23 @@ COMPILER Instrumenter
 		curBlock.end = t.line;
 		System.out.printf("left block %s\n", curBlock);
 		if (blockStack.empty()) {
-			if (!"static".equals(curMeth)) {
-				curBlock.isMethodBlock = true;
+			if ("static".equals(curMeth)) {
+				leaveStaticBlock();
+			} else {
+				leaveMethod();
 			}
-			leaveMethod();
 			curBlock = null;
 		} else {
 			curBlock = blockStack.pop();
 		}
+	}
+
+	boolean identAndLPar() {
+		return t.kind == _ident && la.kind == _lpar;
+	}
+
+	boolean staticAndLBrace() {
+		return t.kind == _static && la.kind == _lbrace;
 	}
 
 CHARACTERS
@@ -106,16 +131,20 @@ PRODUCTIONS
 
 Instrumenter = { {ANY} Class }.
 Class =
-			"class" ident           (. enterClass(); .)
+			"class" ident						(. enterClass(); .)
 			{ANY} "{"
-			{
-				{ Class
-					| "abstract" ident {ANY} ";"
-					| ANY               (. checkForMethodDeclaration(); .)
-				} Block
+			{ Class
+				| "abstract" ident {ANY} ";"
+				| IF(identAndLPar()) MethodDecl
+				| IF(staticAndLBrace()) StaticBlock
+				| ANY
 			}
-			"}"                     (. leaveClass(); .)
+			"}"											(. leaveClass(); .)
 		.
+StaticBlock =									(. enterStaticBlock(); .)
+						Block.
+MethodDecl  =									(. enterMethod(); .)
+						BracketExpr Block.
 Statement =
 		"if" BracketExpr Statement ["else" Statement]
 		| "switch" BracketExpr "{"
@@ -132,9 +161,9 @@ Statement =
 		| ";" .
 QuotedText = '"' {ANY} '"'.
 BracketExpr = "(" {BracketExpr | ANY} ")".
-Block = "{"                   (. enterBlock(); .)
+Block = "{"										(. enterBlock(); .)
 				{Statement}
-				"}"                   (. leaveBlock(); .)
+				"}"										(. leaveBlock(); .)
 			.
 
 END Instrumenter.

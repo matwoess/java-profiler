@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Classes {
+  static int i;
+
+  static {
+    i = 0;
+  }
 
   public static void main(String[] args) {
     PetFarm farm = new PetFarm();
@@ -14,21 +19,20 @@ public class Classes {
       int age = pet.age;
       String output;
       if (age > 3) {
-        output = String.format("%s of age %d says %s", name, age, pet.speak());
+        output = String.format("%s of age %d says: %s", name, age, pet.speak());
       } else {
-        output = String.format("Young %s says %s", name, pet.speak());
+        output = String.format("Young %s says: %s", name, pet.speak());
       }
       System.out.println(output);
     }
   }
-}
 
+  static class PetFarm {
+    static List<Pet> pets = new ArrayList<>();
 
-static class PetFarm {
-  List<Pet> pets = new ArrayList<>();
-
-  static {
-    pets.add(new Cat("Bob", 5));
+    static {
+      pets.add(new Cat("Bob", 5));
+    }
   }
 }
 
