@@ -81,12 +81,13 @@ public class TestBasic {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(4, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getExpectedBlock("Main", "main", 2, 17, true));
+    expectedBlocks.add(getExpectedBlock("Main", "main", 2, 16, true));
     expectedBlocks.add(getExpectedBlock("Main", "main", 5, 13, false));
     expectedBlocks.add(getExpectedBlock("Main", "main", 7, 9, false));
     expectedBlocks.add(getExpectedBlock("Main", "main", 10, 12, false));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
   @Test
   public void TestWhileAndDoWhileLoop() {
     String fileContent = String.format(baseTemplate, """
@@ -105,6 +106,30 @@ public class TestBasic {
     expectedBlocks.add(getExpectedBlock("Main", "main", 2, 12, true));
     expectedBlocks.add(getExpectedBlock("Main", "main", 4, 9, false));
     expectedBlocks.add(getExpectedBlock("Main", "main", 6, 8, false));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+
+  @Test
+  public void TestTryCatchFinally() {
+    String fileContent = String.format(baseTemplate, """
+        int x = 50;
+        try {
+          x = x / 0;
+        } catch (ArithmeticException ex) {
+          System.out.println("ERROR: " + ex.getMessage());
+        } finally {
+          x /= 2;
+        }
+        System.out.println("x=" + x);
+        """, "");
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(4, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    expectedBlocks.add(getExpectedBlock("Main", "main", 2, 13, true));
+    expectedBlocks.add(getExpectedBlock("Main", "main", 4, 6, false));
+    expectedBlocks.add(getExpectedBlock("Main", "main", 6, 8, false));
+    expectedBlocks.add(getExpectedBlock("Main", "main", 8, 10, false));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }
