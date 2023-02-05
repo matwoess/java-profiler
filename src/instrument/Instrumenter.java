@@ -8,7 +8,7 @@ public class Instrumenter {
 
   public static void main(String[] args) {
     String[] inputFiles = new String[]{
-        "TestProgram.java",
+        "sample/Classes.java",
     };
     for (String inputFile : inputFiles) {
       List<Parser.Block> blocks = analyzeFile(inputFile);

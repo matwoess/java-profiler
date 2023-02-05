@@ -76,6 +76,7 @@ Class =
 			{ANY} "{"
 			{
 				{ Class
+					| "abstract" ident {ANY} ";"
 					| ANY               (. checkForMethodDeclaration(); .)
 				} Block
 			}
