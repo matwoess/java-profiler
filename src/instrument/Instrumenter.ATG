@@ -2,7 +2,7 @@ COMPILER Instrumenter
 
 	List<Block> allBlocks = new ArrayList<>();
 	Stack<Block> blockStack = new Stack<>();
-	String curClass = null;
+	Stack<String> classStack = new Stack<>();
 	String curMeth = null;
 	Block curBlock = null;
 
@@ -39,13 +39,15 @@ COMPILER Instrumenter
 	}
 
 	void enterClass() {
-		curClass = t.val;
+		String curClass = t.val;
 		System.out.printf("entering class <%s>\n", curClass);
+		classStack.push(curClass);
+
 	}
 
 	void leaveClass() {
+		String curClass = classStack.pop();
 		System.out.printf("left class <%s>\n", curClass);
-		curClass = null;
 	}
 
 	void checkForMethodDeclaration() {
@@ -86,7 +88,7 @@ COMPILER Instrumenter
 			blockStack.push(curBlock);
 		}
 		curBlock = new Block();
-		curBlock.clazz = curClass;
+		curBlock.clazz = String.join(".", classStack);
 		curBlock.method = curMeth;
 		curBlock.beg = t.line;
 		allBlocks.add(curBlock);
