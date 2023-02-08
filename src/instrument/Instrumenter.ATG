@@ -7,13 +7,23 @@ COMPILER Instrumenter
 	Block curBlock = null;
 
 	static class Block {
-	  String clazz;
-	  String method;
-	  int beg, end;
-	  boolean isMethodBlock;
+		String clazz;
+		String method;
+		int beg, end;
+		int begPos, endPos;
+		boolean isMethodBlock;
+		boolean insertBraces;
 
-    public String toString() {
-      return String.format("%s%s: {%d-%s}%s", clazz, method != null ? ("." + method) : "", beg, end != 0 ? end : "?", isMethodBlock ? " m" : "");
+		public String toString() {
+			return String.format("%s%s: {%d[%s]-%s[%s]}%s",
+				clazz,
+				method != null ? ("." + method) : "",
+				beg,
+				begPos,
+				end != 0 ? end : "?",
+				endPos != 0 ? endPos : "?",
+				isMethodBlock ? " m" : insertBraces ? " ins" : ""
+			);
 	  }
 	  @Override
     public boolean equals(Object o) {
@@ -22,7 +32,10 @@ COMPILER Instrumenter
       Block block = (Block) o;
       if (beg != block.beg) return false;
       if (end != block.end) return false;
+      if (begPos != block.begPos) return false;
+      if (endPos != block.endPos) return false;
       if (isMethodBlock != block.isMethodBlock) return false;
+      if (insertBraces != block.insertBraces) return false;
       if (!Objects.equals(clazz, block.clazz)) return false;
       return Objects.equals(method, block.method);
     }
@@ -33,7 +46,10 @@ COMPILER Instrumenter
       result = 31 * result + (method != null ? method.hashCode() : 0);
       result = 31 * result + beg;
       result = 31 * result + end;
+      result = 31 * result + begPos;
+      result = 31 * result + endPos;
       result = 31 * result + (isMethodBlock ? 1 : 0);
+      result = 31 * result + (insertBraces ? 1 : 0);
       return result;
     }
 	}
@@ -48,18 +64,6 @@ COMPILER Instrumenter
 	void leaveClass() {
 		String curClass = classStack.pop();
 		System.out.printf("left class <%s>\n", curClass);
-	}
-
-	void checkForMethodDeclaration() {
-		if (curMeth != null) return;
-		if (t.kind == _ident && la.kind == _lpar) {
-			curMeth = t.val;
-			System.out.println("found method declaration of: " + curMeth);
-		}
-		else if (t.kind == _static && la.kind == _lbrace) {
-			curMeth = t.val;
-			System.out.println("found static block");
-		}
 	}
 
 	void enterMethod() {
@@ -83,7 +87,7 @@ COMPILER Instrumenter
 		curMeth = null;
 	}
 
-	void enterBlock() {
+	void enterBlock(boolean missingBraces) {
 		if (curBlock != null) {
 			blockStack.push(curBlock);
 		}
@@ -91,12 +95,19 @@ COMPILER Instrumenter
 		curBlock.clazz = String.join(".", classStack);
 		curBlock.method = curMeth;
 		curBlock.beg = t.line;
+		curBlock.begPos = t.charPos;
+		curBlock.insertBraces = missingBraces;
 		allBlocks.add(curBlock);
 		System.out.printf("entering block %s\n", curBlock);
 	}
 
+	void enterBlock() {
+		enterBlock(false); // no missing braces
+	}
+
 	void leaveBlock() {
 		curBlock.end = t.line;
+		curBlock.endPos = t.charPos;
 		System.out.printf("left block %s\n", curBlock);
 		if (blockStack.empty()) {
 			if ("static".equals(curMeth)) {
@@ -107,6 +118,24 @@ COMPILER Instrumenter
 			curBlock = null;
 		} else {
 			curBlock = blockStack.pop();
+		}
+	}
+
+	void checkInsertLBrace() {
+		if (t.kind == _else && la.kind == _if) {
+			System.out.println("else if found. no block.");
+			return;
+		}
+		if (la.kind != _lbrace) {
+			System.out.println("found single statement block.");
+			enterBlock(true);
+		}
+	}
+
+	void checkInsertRBrace() {
+		if (curBlock.insertBraces) {
+			System.out.println("left single statement block.");
+			leaveBlock();
 		}
 	}
 
@@ -127,6 +156,8 @@ TOKENS
 	lpar   = '('.
 	lbrace = '{'.
 	static = "static".
+	if     = "if".
+	else   = "else".
 IGNORE "\t\n\r"
 
 PRODUCTIONS
@@ -148,7 +179,11 @@ StaticBlock =									(. enterStaticBlock(); .)
 MethodDecl  =									(. enterMethod(); .)
 						BracketExpr Block.
 Statement =
-		"if" BracketExpr Statement ["else" Statement]
+		if BracketExpr						(. checkInsertLBrace(); .)
+			Statement								(. checkInsertRBrace(); .)
+			[else										(. checkInsertLBrace(); .)
+				Statement							(. checkInsertRBrace(); .)
+			]
 		| "switch" BracketExpr "{"
 			{"case" {ANY} ":" {Statement}}
 			["default" ":" {Statement}]

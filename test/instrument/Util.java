@@ -23,13 +23,26 @@ public class Util {
     return Instrumenter.analyzeFile(file.toString());
   }
 
-  public static Parser.Block getExpectedBlock(String clazz, String meth, int beg, int end, boolean isMethBlock) {
+  public static Parser.Block getBlock(String clazz, String meth, int beg, int end, int begPos, int endPos) {
     Parser.Block expected = new Parser.Block();
     expected.clazz = clazz;
     expected.method = meth;
     expected.beg = beg;
+    expected.begPos = begPos;
     expected.end = end;
-    expected.isMethodBlock = isMethBlock;
+    expected.endPos = endPos;
+    return expected;
+  }
+
+  public static Parser.Block getMethodBlock(String clazz, String meth, int beg, int end, int begPos, int endPos) {
+    Parser.Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
+    expected.isMethodBlock = true;
+    return expected;
+  }
+
+  public static Parser.Block getSingleStatementBlock(String clazz, String meth, int beg, int end, int begPos, int endPos) {
+    Parser.Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
+    expected.insertBraces = true;
     return expected;
   }
 }
