@@ -5,19 +5,7 @@ import java.util.List;
 import static java.lang.System.exit;
 
 public class Instrumenter {
-
-  public static void main(String[] args) {
-    String[] inputFiles = new String[]{
-        "sample/Classes.java",
-    };
-    for (String inputFile : inputFiles) {
-      List<Parser.Block> blocks = analyzeFile(inputFile);
-      System.out.println("\n\nFound blocks:");
-      blocks.forEach(System.out::println);
-    }
-  }
-
-  static List<Parser.Block> analyzeFile(String inputFile) {
+  public List<Parser.Block> analyzeFile(String inputFile) {
     System.out.println("Reading File: \"" + inputFile + "\"");
     Parser parser = new Parser(new Scanner(inputFile));
     parser.Parse();

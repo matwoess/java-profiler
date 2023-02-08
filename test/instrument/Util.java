@@ -20,7 +20,8 @@ public class Util {
 
   public static List<Parser.Block> getFoundBlocks(String content) {
     Path file = createTempFileWithContent(content);
-    return Instrumenter.analyzeFile(file.toString());
+    Instrumenter instrumenter = new Instrumenter();
+    return instrumenter.analyzeFile(file.toString());
   }
 
   public static Parser.Block getBlock(String clazz, String meth, int beg, int end, int begPos, int endPos) {

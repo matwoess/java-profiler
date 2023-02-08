@@ -6,7 +6,7 @@ COMPILER Instrumenter
 	String curMeth = null;
 	Block curBlock = null;
 
-	static class Block {
+	public static class Block {
 		String clazz;
 		String method;
 		int beg, end;
