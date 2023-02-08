@@ -117,19 +117,22 @@ public class TestBasic {
         try {
           x = x / 0;
         } catch (ArithmeticException ex) {
-          System.out.println("ERROR: " + ex.getMessage());
+          System.out.println("Error: " + ex.getMessage());
+        } catch (RuntimeException ex) {
+          System.out.println("Unexpected error: " + ex.getMessage());
         } finally {
           x /= 2;
         }
         System.out.println("x=" + x);
         """, "");
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(4, blocks.size());
+    assertEquals(5, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getExpectedBlock("Main", "main", 2, 13, true));
+    expectedBlocks.add(getExpectedBlock("Main", "main", 2, 15, true));
     expectedBlocks.add(getExpectedBlock("Main", "main", 4, 6, false));
     expectedBlocks.add(getExpectedBlock("Main", "main", 6, 8, false));
     expectedBlocks.add(getExpectedBlock("Main", "main", 8, 10, false));
+    expectedBlocks.add(getExpectedBlock("Main", "main", 10, 12, false));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }
