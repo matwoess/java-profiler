@@ -40,7 +40,7 @@ public class TestBasic {
         """;
     List<Parser.Block> blocks = getFoundBlocks(helloWorld);
     assertEquals(1, blocks.size());
-    Parser.Block expectedBlock = getMethodBlock("HelloWorld", "main", 2, 4, 67, 111);
+    Parser.Block expectedBlock = getMethodBlock("HelloWorld", "main", 2, 4, 68, 112);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -57,7 +57,7 @@ public class TestBasic {
         """;
     List<Parser.Block> blocks = getFoundBlocks(staticBlock);
     assertEquals(1, blocks.size());
-    Parser.Block expectedBlock = getBlock("Static", "static", 4, 6, 48, 63);
+    Parser.Block expectedBlock = getBlock("Static", "static", 4, 6, 49, 64);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -80,10 +80,10 @@ public class TestBasic {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(4, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock("Main", "main", 2, 16, 61, 243));
-    expectedBlocks.add(getBlock("Main", "main", 5, 13, 135, 210));
-    expectedBlocks.add(getBlock("Main", "main", 7, 9, 164, 177));
-    expectedBlocks.add(getBlock("Main", "main", 10, 12, 193, 208));
+    expectedBlocks.add(getMethodBlock("Main", "main", 2, 16, 62, 244));
+    expectedBlocks.add(getBlock("Main", "main", 5, 13, 136, 211));
+    expectedBlocks.add(getBlock("Main", "main", 7, 9, 165, 178));
+    expectedBlocks.add(getBlock("Main", "main", 10, 12, 194, 209));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -102,9 +102,9 @@ public class TestBasic {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock("Main", "main", 2, 12, 61, 187));
-    expectedBlocks.add(getBlock("Main", "main", 4, 9, 94, 152));
-    expectedBlocks.add(getBlock("Main", "main", 6, 8, 112, 128));
+    expectedBlocks.add(getMethodBlock("Main", "main", 2, 12, 62, 188));
+    expectedBlocks.add(getBlock("Main", "main", 4, 9, 95, 153));
+    expectedBlocks.add(getBlock("Main", "main", 6, 8, 113, 129));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -127,11 +127,11 @@ public class TestBasic {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(5, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock("Main", "main", 2, 15, 61, 335));
-    expectedBlocks.add(getBlock("Main", "main", 4, 6, 83, 98));
-    expectedBlocks.add(getBlock("Main", "main", 6, 8, 131, 184));
-    expectedBlocks.add(getBlock("Main", "main", 8, 10, 214, 278));
-    expectedBlocks.add(getBlock("Main", "main", 10, 12, 288, 300));
+    expectedBlocks.add(getMethodBlock("Main", "main", 2, 15, 62, 336));
+    expectedBlocks.add(getBlock("Main", "main", 4, 6, 84, 99));
+    expectedBlocks.add(getBlock("Main", "main", 6, 8, 132, 185));
+    expectedBlocks.add(getBlock("Main", "main", 8, 10, 215, 279));
+    expectedBlocks.add(getBlock("Main", "main", 10, 12, 289, 301));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }

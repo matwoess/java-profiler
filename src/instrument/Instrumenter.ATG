@@ -95,7 +95,7 @@ COMPILER Instrumenter
 		curBlock.clazz = String.join(".", classStack);
 		curBlock.method = curMeth;
 		curBlock.beg = t.line;
-		curBlock.begPos = t.charPos;
+		curBlock.begPos = t.charPos + t.val.length();
 		curBlock.insertBraces = missingBraces;
 		allBlocks.add(curBlock);
 		System.out.printf("entering block %s\n", curBlock);
@@ -107,7 +107,7 @@ COMPILER Instrumenter
 
 	void leaveBlock() {
 		curBlock.end = t.line;
-		curBlock.endPos = t.charPos;
+		curBlock.endPos = t.charPos + t.val.length();
 		System.out.printf("left block %s\n", curBlock);
 		if (blockStack.empty()) {
 			if ("static".equals(curMeth)) {

@@ -27,7 +27,7 @@ public class TestClasses {
         }""";
     List<Parser.Block> blocks = getFoundBlocks(abstractClass);
     assertEquals(1, blocks.size());
-    Parser.Block expectedBlock = getMethodBlock("Pet", "toString", 6, 11, 138, 233);
+    Parser.Block expectedBlock = getMethodBlock("Pet", "toString", 6, 11, 139, 234);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -67,12 +67,12 @@ public class TestClasses {
     List<Parser.Block> blocks = getFoundBlocks(innerClassAndStaticBlocks);
     assertEquals(6, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getBlock("Classes", "static", 4, 6, 49, 64));
-    expectedBlocks.add(getMethodBlock("Classes", "main", 8, 21, 108, 470));
-    expectedBlocks.add(getBlock("Classes", "main", 12, 20, 233, 466));
-    expectedBlocks.add(getBlock("Classes", "main", 14, 16, 284, 351));
-    expectedBlocks.add(getBlock("Classes", "main", 16, 18, 358, 426));
-    expectedBlocks.add(getBlock("Classes.PetFarm", "static", 26, 28, 560, 589));
+    expectedBlocks.add(getBlock("Classes", "static", 4, 6, 50, 65));
+    expectedBlocks.add(getMethodBlock("Classes", "main", 8, 21, 109, 471));
+    expectedBlocks.add(getBlock("Classes", "main", 12, 20, 234, 467));
+    expectedBlocks.add(getBlock("Classes", "main", 14, 16, 285, 352));
+    expectedBlocks.add(getBlock("Classes", "main", 16, 18, 359, 427));
+    expectedBlocks.add(getBlock("Classes.PetFarm", "static", 26, 28, 561, 590));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -108,10 +108,10 @@ public class TestClasses {
     List<Parser.Block> blocks = getFoundBlocks(deepInnerClasses);
     assertEquals(4, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock("InnerClasses", "main", 2, 9, 69, 274));
-    expectedBlocks.add(getMethodBlock("InnerClasses.Inner", "level1", 11, 13, 317, 361));
-    expectedBlocks.add(getMethodBlock("InnerClasses.Inner.Sub", "level2", 15, 17, 406, 454));
-    expectedBlocks.add(getMethodBlock("InnerClasses.Inner.Sub.SubSub", "level3", 19, 21, 506, 558));
+    expectedBlocks.add(getMethodBlock("InnerClasses", "main", 2, 9, 70, 275));
+    expectedBlocks.add(getMethodBlock("InnerClasses.Inner", "level1", 11, 13, 318, 362));
+    expectedBlocks.add(getMethodBlock("InnerClasses.Inner.Sub", "level2", 15, 17, 407, 455));
+    expectedBlocks.add(getMethodBlock("InnerClasses.Inner.Sub.SubSub", "level3", 19, 21, 507, 559));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -149,11 +149,11 @@ public class TestClasses {
     List<Parser.Block> blocks = getFoundBlocks(classWithInheritance);
     assertEquals(5, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock("Pet", "toString", 6, 11, 138, 233));
-    expectedBlocks.add(getMethodBlock("Dog", "Dog", 15, 18, 297, 343));
-    expectedBlocks.add(getMethodBlock("Dog", "speak", 19, 19, 372, 390));
-    expectedBlocks.add(getMethodBlock("Cat", "Cat", 23, 26, 454, 500));
-    expectedBlocks.add(getMethodBlock("Cat", "speak", 27, 27, 529, 547));
+    expectedBlocks.add(getMethodBlock("Pet", "toString", 6, 11, 139, 234));
+    expectedBlocks.add(getMethodBlock("Dog", "Dog", 15, 18, 298, 344));
+    expectedBlocks.add(getMethodBlock("Dog", "speak", 19, 19, 373, 391));
+    expectedBlocks.add(getMethodBlock("Cat", "Cat", 23, 26, 455, 501));
+    expectedBlocks.add(getMethodBlock("Cat", "speak", 27, 27, 530, 548));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }
