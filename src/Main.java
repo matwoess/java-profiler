@@ -7,11 +7,13 @@ public class Main {
 
   public static void main(String[] args) {
     String[] inputFiles = new String[]{
-        "sample/Classes.java",
+         "sample/Simple.java",
     };
     for (String inputFile : inputFiles) {
       Instrumenter instrumenter = new Instrumenter();
-      List<Parser.Block> blocks = instrumenter.analyzeFile(inputFile);
+      instrumenter.analyzeFile(inputFile);
+      List<Parser.Block> blocks = instrumenter.getFoundBlocks();
+      instrumenter.instrument();
       System.out.println("\n\nFound blocks:");
       blocks.forEach(System.out::println);
     }
