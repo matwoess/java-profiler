@@ -1,6 +1,7 @@
 import instrument.Instrumenter;
 import instrument.Parser;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
@@ -10,13 +11,14 @@ public class Main {
          "sample/Classes.java",
     };
     for (String inputFile : inputFiles) {
-      Instrumenter instrumenter = new Instrumenter();
-      instrumenter.analyzeFile(inputFile);
+      Path inputFilePath = Path.of(inputFile);
+      Instrumenter instrumenter = new Instrumenter(inputFilePath);
+      instrumenter.analyzeFile();
       List<Parser.Block> blocks = instrumenter.getFoundBlocks();
-      instrumenter.instrument();
-      instrumenter.exportBlockData();
       System.out.println("\n\nFound blocks:");
       blocks.forEach(System.out::println);
+      instrumenter.instrument();
+      instrumenter.exportBlockData();
     }
   }
 }

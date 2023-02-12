@@ -1,14 +1,57 @@
 COMPILER Instrumenter
 
+	List<Class> classes = new ArrayList<>();
+	Stack<String> classNameStack = new Stack<>();
 	List<Block> allBlocks = new ArrayList<>();
 	Stack<Block> blockStack = new Stack<>();
-	Stack<String> classStack = new Stack<>();
-	String curMeth = null;
+	Class curClass = null;
+	Method curMeth = null;
 	Block curBlock = null;
+	Token[] prevTokens = new Token[4];
+
+
+	public static class Class {
+		String name;
+		List<Method> methods = new ArrayList<>();
+		public Class(String name) {this.name = name;}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			Class aClass = (Class) o;
+			return name.equals(aClass.name);
+		}
+
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+		}
+	}
+
+	public static class Method {
+		String name;
+		List<Block> blocks = new ArrayList<>();
+		boolean isMain;
+		public Method(String name) {this.name = name;}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			Method aClass = (Method) o;
+			return name.equals(aClass.name);
+		}
+
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+		}
+	}
 
 	public static class Block {
-		String clazz;
-		String method;
+		Class clazz;
+		Method method;
 		int beg, end;
 		int begPos, endPos;
 		boolean isMethodBlock;
@@ -16,8 +59,8 @@ COMPILER Instrumenter
 
 		public String toString() {
 			return String.format("%s%s: {%d[%s]-%s[%s]}%s",
-				clazz,
-				method != null ? ("." + method) : "",
+				clazz.name,
+				method != null ? ("." + method.name) : "",
 				beg,
 				begPos,
 				end != 0 ? end : "?",
@@ -25,60 +68,69 @@ COMPILER Instrumenter
 				isMethodBlock ? " m" : insertBraces ? " ins" : ""
 			);
 	  }
-	  @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Block block = (Block) o;
-      if (beg != block.beg) return false;
-      if (end != block.end) return false;
-      if (begPos != block.begPos) return false;
-      if (endPos != block.endPos) return false;
-      if (isMethodBlock != block.isMethodBlock) return false;
-      if (insertBraces != block.insertBraces) return false;
-      if (!Objects.equals(clazz, block.clazz)) return false;
-      return Objects.equals(method, block.method);
-    }
 
-    @Override
-    public int hashCode() {
-      int result = clazz != null ? clazz.hashCode() : 0;
-      result = 31 * result + (method != null ? method.hashCode() : 0);
-      result = 31 * result + beg;
-      result = 31 * result + end;
-      result = 31 * result + begPos;
-      result = 31 * result + endPos;
-      result = 31 * result + (isMethodBlock ? 1 : 0);
-      result = 31 * result + (insertBraces ? 1 : 0);
-      return result;
-    }
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			Block block = (Block) o;
+			if (beg != block.beg) return false;
+			if (end != block.end) return false;
+			if (begPos != block.begPos) return false;
+			if (endPos != block.endPos) return false;
+			if (isMethodBlock != block.isMethodBlock) return false;
+			if (insertBraces != block.insertBraces) return false;
+			if (!clazz.equals(block.clazz)) return false;
+			return method.equals(block.method);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = clazz.hashCode();
+			result = 31 * result + method.hashCode();
+			result = 31 * result + beg;
+			result = 31 * result + end;
+			result = 31 * result + begPos;
+			result = 31 * result + endPos;
+			result = 31 * result + (isMethodBlock ? 1 : 0);
+			result = 31 * result + (insertBraces ? 1 : 0);
+			return result;
+		}
 	}
 
 	void enterClass() {
-		String curClass = t.val;
-		System.out.printf("entering class <%s>\n", curClass);
-		classStack.push(curClass);
+		classNameStack.push(t.val);
+		curClass = new Class(String.join(".", classNameStack));
+		classes.add(curClass);
+		System.out.printf("entering class <%s>\n", curClass.name);
 
 	}
 
 	void leaveClass() {
-		String curClass = classStack.pop();
-		System.out.printf("left class <%s>\n", curClass);
+		classNameStack.pop();
+		System.out.printf("left class <%s>\n", curClass.name);
 	}
 
 	void enterMethod() {
-		curMeth = t.val;
-		System.out.println("found method declaration of: " + curMeth);
+		assert curClass != null;
+		curMeth = new Method(t.val);
+		curClass.methods.add(curMeth);
+		System.out.println("found method declaration of: " + curMeth.name);
+		if ("main".equals(prevTokens[0].val) && "void".equals(prevTokens[1].val) && "static".equals(prevTokens[2].val) && "public".equals(prevTokens[3].val)) {
+			curMeth.isMain = true;
+			System.out.println("method is main entry point.");
+		}
 	}
 
 	void leaveMethod() {
 		curBlock.isMethodBlock = true;
-		System.out.println("left method: " + curMeth);
+		System.out.println("left method: " + curMeth.name);
 		curMeth = null;
 	}
 
 	void enterStaticBlock() {
-		curMeth = t.val;
+		curMeth = new Method(t.val);
+		curClass.methods.add(curMeth);
 		System.out.println("found static block");
   }
 
@@ -88,16 +140,18 @@ COMPILER Instrumenter
 	}
 
 	void enterBlock(boolean missingBraces) {
+		assert curMeth != null;
 		if (curBlock != null) {
 			blockStack.push(curBlock);
 		}
 		curBlock = new Block();
-		curBlock.clazz = String.join(".", classStack);
+		curBlock.clazz = curClass;
 		curBlock.method = curMeth;
 		curBlock.beg = t.line;
 		curBlock.begPos = t.charPos + t.val.length();
 		curBlock.insertBraces = missingBraces;
 		allBlocks.add(curBlock);
+		curMeth.blocks.add(curBlock);
 		System.out.printf("entering block %s\n", curBlock);
 	}
 
@@ -110,7 +164,7 @@ COMPILER Instrumenter
 		curBlock.endPos = t.charPos + t.val.length();
 		System.out.printf("left block %s\n", curBlock);
 		if (blockStack.empty()) {
-			if ("static".equals(curMeth)) {
+			if ("static".equals(curMeth.name)) {
 				leaveStaticBlock();
 			} else {
 				leaveMethod();
@@ -147,6 +201,16 @@ COMPILER Instrumenter
 		return t.kind == _static && la.kind == _lbrace;
 	}
 
+	void logToken() {
+		if (t == prevTokens[0]) { // sometimes same token appears twice
+			return;
+		}
+		prevTokens[3] = prevTokens[2];
+		prevTokens[2] = prevTokens[1];
+		prevTokens[1] = prevTokens[0];
+		prevTokens[0] = t;
+	}
+
 CHARACTERS
 	letter = 'a' .. 'z' + 'A'..'Z'.
 	digit  = '0'..'9'.
@@ -170,7 +234,7 @@ Class =
 				| "abstract" ident {ANY} ";"
 				| IF(identAndLPar()) MethodDecl
 				| IF(staticAndLBrace()) StaticBlock
-				| ANY
+				| ANY									(. logToken(); .)
 			}
 			"}"											(. leaveClass(); .)
 		.

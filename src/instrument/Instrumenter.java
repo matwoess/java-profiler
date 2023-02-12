@@ -3,21 +3,29 @@ package instrument;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 import static java.lang.System.exit;
 
 public class Instrumenter {
+  List<Parser.Class> foundClasses;
   List<Parser.Block> foundBlocks;
   Path sourceFile;
-  Path targetFile = Path.of("out/profiler/Classes.java");;
+  Path instrumentedFile;
+  Path metadataFile;
 
-  public void analyzeFile(String inputFile) {
-    System.out.println("Reading File: \"" + inputFile + "\"");
-    Parser parser = new Parser(new Scanner(inputFile));
-    sourceFile = Path.of(inputFile);
+  public Instrumenter(Path sourceFile) {
+    this.sourceFile = sourceFile;
+    Path profilerRoot = Path.of("out/profiler");
+    profilerRoot.toFile().mkdirs();
+    instrumentedFile = profilerRoot.resolve(sourceFile.getFileName());
+    metadataFile = profilerRoot.resolve(sourceFile.getFileName().toString() + ".meta");
+  }
+
+  public void analyzeFile() {
+    System.out.println("Reading File: \"" + sourceFile + "\"");
+    Parser parser = new Parser(new Scanner(sourceFile.toString()));
     parser.Parse();
     System.out.println();
     int errors = parser.errors.count;
@@ -27,6 +35,11 @@ public class Instrumenter {
       exit(1);
     }
     foundBlocks = parser.allBlocks;
+    foundClasses = parser.classes;
+  }
+
+  public List<Parser.Class> getFoundClasses() {
+    return foundClasses;
   }
 
   public List<Parser.Block> getFoundBlocks() {
@@ -40,9 +53,7 @@ public class Instrumenter {
 //      System.out.println(ex);
 //    }
     try {
-      Path.of("out/profiler").toFile().mkdirs();
       String fileContent = Files.readString(sourceFile);
-      System.out.println(fileContent);
       StringBuilder builder = new StringBuilder();
       int prevIdx = 0;
       Stack<Parser.Block> blockStack = new Stack<>();
@@ -50,7 +61,7 @@ public class Instrumenter {
         Parser.Block block = foundBlocks.get(i);
         if (!blockStack.empty() && blockStack.peek().endPos < block.begPos) {
           Parser.Block prevBlock = blockStack.pop();
-          builder.append(fileContent.substring(prevIdx, prevBlock.endPos));
+          builder.append(fileContent, prevIdx, prevBlock.endPos);
           prevIdx = prevBlock.endPos;
           if (prevBlock.insertBraces) {
             assert !prevBlock.isMethodBlock;
@@ -58,15 +69,17 @@ public class Instrumenter {
           }
         }
         blockStack.push(block);
-        builder.append(fileContent.substring(prevIdx, block.begPos));
+        builder.append(fileContent, prevIdx, block.begPos);
         prevIdx = block.begPos;
-        if (block.insertBraces) builder.append('{');
+        if (block.insertBraces) {
+          builder.append('{');
+        }
         builder.append(String.format("__Counter.inc(%d);", i));
       }
       while (!blockStack.empty()) {
         Parser.Block prevBlock = blockStack.pop();
         if (prevBlock.endPos > prevIdx) {
-          builder.append(fileContent.substring(prevIdx, prevBlock.endPos));
+          builder.append(fileContent, prevIdx, prevBlock.endPos);
           prevIdx = prevBlock.endPos;
         }
         if (prevBlock.insertBraces) {
@@ -75,45 +88,21 @@ public class Instrumenter {
         }
       }
       builder.append(fileContent.substring(prevIdx));
-      Files.writeString(targetFile, builder.toString());
+      Files.writeString(instrumentedFile, builder.toString());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    return targetFile;
+    return metadataFile;
   }
 
   public void exportBlockData() {
-    List<Class> classes = new ArrayList<>();
-    for (Parser.Block block : foundBlocks) {
-      Class clazz;
-      if (classes.isEmpty() || !classes.get(classes.size() - 1).name.equals(block.clazz)) {
-        clazz = new Class();
-        clazz.name = block.clazz;
-        classes.add(clazz);
-      } else {
-        clazz = classes.get(classes.size()-1);
-      }
-      Method meth;
-      if (clazz.methods.isEmpty() || !clazz.methods.get(clazz.methods.size() - 1).name.equals(block.method)) {
-        meth = new Method();
-        meth.name = block.method;
-        clazz.methods.add(meth);
-      } else {
-        meth = clazz.methods.get(classes.size()-1);
-      }
-      Block newBlock = new Block();
-      newBlock.beg = block.begPos;
-      newBlock.end = block.endPos;
-      newBlock.isMethodBlock = block.isMethodBlock;
-      meth.blocks.add(newBlock);
-    }
     StringBuilder builder = new StringBuilder();
     builder.append(foundBlocks.size()).append(" ");
-    for (Class clazz : classes) {
+    for (Parser.Class clazz : foundClasses) {
       builder.append(clazz.name).append(" ");
-      for (Method meth: clazz.methods) {
+      for (Parser.Method meth : clazz.methods) {
         builder.append(meth.name).append(" ");
-        for (Block block : meth.blocks) {
+        for (Parser.Block block : meth.blocks) {
           builder.append(block.beg).append(" ");
           builder.append(block.end).append(" ");
           builder.append(block.isMethodBlock ? 1 : 0).append(" ");
@@ -121,25 +110,12 @@ public class Instrumenter {
       }
       builder.append("#").append(" ");
     }
-    Path metaDataFile = Path.of(targetFile.toString() + ".meta");
-    try (FileOutputStream fos = new FileOutputStream(metaDataFile.toFile())) {
+    try (FileOutputStream fos = new FileOutputStream(metadataFile.toFile())) {
       byte[] data = builder.toString().getBytes();
       fos.write(data, 0, data.length);
       fos.flush();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-  class Class {
-    String name;
-    List<Method> methods = new ArrayList<>();
-  }
-  class Method {
-    String name;
-    List<Block> blocks = new ArrayList<>();
-  }
-  class Block {
-    int beg, end;
-    boolean isMethodBlock;
   }
 }
