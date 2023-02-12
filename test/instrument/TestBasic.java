@@ -40,7 +40,9 @@ public class TestBasic {
         """;
     List<Parser.Block> blocks = getFoundBlocks(helloWorld);
     assertEquals(1, blocks.size());
-    Parser.Block expectedBlock = getMethodBlock("HelloWorld", "main", 2, 4, 68, 112);
+    Parser.Class clazz = new Parser.Class("HelloWorld");
+    Parser.Method meth = new Parser.Method("main");
+    Parser.Block expectedBlock = getMethodBlock(clazz, meth, 2, 4, 68, 112);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -57,7 +59,9 @@ public class TestBasic {
         """;
     List<Parser.Block> blocks = getFoundBlocks(staticBlock);
     assertEquals(1, blocks.size());
-    Parser.Block expectedBlock = getBlock("Static", "static", 4, 6, 49, 64);
+    Parser.Class clazz = new Parser.Class("Static");
+    Parser.Method meth = new Parser.Method("static");
+    Parser.Block expectedBlock = getBlock(clazz, meth, 4, 6, 49, 64);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -80,10 +84,12 @@ public class TestBasic {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(4, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock("Main", "main", 2, 16, 62, 244));
-    expectedBlocks.add(getBlock("Main", "main", 5, 13, 136, 211));
-    expectedBlocks.add(getBlock("Main", "main", 7, 9, 165, 178));
-    expectedBlocks.add(getBlock("Main", "main", 10, 12, 194, 209));
+    Parser.Class clazz = new Parser.Class("Main");
+    Parser.Method meth = new Parser.Method("main");
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 16, 62, 244));
+    expectedBlocks.add(getBlock(clazz, meth, 5, 13, 136, 211));
+    expectedBlocks.add(getBlock(clazz, meth, 7, 9, 165, 178));
+    expectedBlocks.add(getBlock(clazz, meth, 10, 12, 194, 209));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -102,9 +108,11 @@ public class TestBasic {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock("Main", "main", 2, 12, 62, 188));
-    expectedBlocks.add(getBlock("Main", "main", 4, 9, 95, 153));
-    expectedBlocks.add(getBlock("Main", "main", 6, 8, 113, 129));
+    Parser.Class clazz = new Parser.Class("Main");
+    Parser.Method meth = new Parser.Method("main");
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 12, 62, 188));
+    expectedBlocks.add(getBlock(clazz, meth, 4, 9, 95, 153));
+    expectedBlocks.add(getBlock(clazz, meth, 6, 8, 113, 129));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -127,11 +135,13 @@ public class TestBasic {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(5, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock("Main", "main", 2, 15, 62, 336));
-    expectedBlocks.add(getBlock("Main", "main", 4, 6, 84, 99));
-    expectedBlocks.add(getBlock("Main", "main", 6, 8, 132, 185));
-    expectedBlocks.add(getBlock("Main", "main", 8, 10, 215, 279));
-    expectedBlocks.add(getBlock("Main", "main", 10, 12, 289, 301));
+    Parser.Class clazz = new Parser.Class("Main");
+    Parser.Method meth = new Parser.Method("main");
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 15, 62, 336));
+    expectedBlocks.add(getBlock(clazz, meth, 4, 6, 84, 99));
+    expectedBlocks.add(getBlock(clazz, meth, 6, 8, 132, 185));
+    expectedBlocks.add(getBlock(clazz, meth, 8, 10, 215, 279));
+    expectedBlocks.add(getBlock(clazz, meth, 10, 12, 289, 301));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }

@@ -20,12 +20,12 @@ public class Util {
 
   public static List<Parser.Block> getFoundBlocks(String content) {
     Path file = createTempFileWithContent(content);
-    Instrumenter instrumenter = new Instrumenter();
-    instrumenter.analyzeFile(file.toString());
+    Instrumenter instrumenter = new Instrumenter(file);
+    instrumenter.analyzeFile();
     return instrumenter.getFoundBlocks();
   }
 
-  public static Parser.Block getBlock(String clazz, String meth, int beg, int end, int begPos, int endPos) {
+  public static Parser.Block getBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {
     Parser.Block expected = new Parser.Block();
     expected.clazz = clazz;
     expected.method = meth;
@@ -36,13 +36,13 @@ public class Util {
     return expected;
   }
 
-  public static Parser.Block getMethodBlock(String clazz, String meth, int beg, int end, int begPos, int endPos) {
+  public static Parser.Block getMethodBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {
     Parser.Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
     expected.isMethodBlock = true;
     return expected;
   }
 
-  public static Parser.Block getSingleStatementBlock(String clazz, String meth, int beg, int end, int begPos, int endPos) {
+  public static Parser.Block getSingleStatementBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {
     Parser.Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
     expected.insertBraces = true;
     return expected;
