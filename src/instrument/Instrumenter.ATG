@@ -268,7 +268,8 @@ Statement =
 			{"case" {ANY} ":" {Statement}}
 			["default" ":" {Statement}]
 			"}"
-		| "while" BracketExpr Statement
+		| "while" BracketExpr			(. checkInsertLBrace(); .)
+			Statement								(. checkInsertRBrace(); .)
 		| "do" Statement "while" BracketExpr ";"
 		| "for" BracketExpr Statement
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]

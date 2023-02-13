@@ -10,6 +10,7 @@ public class Main {
     String[] inputFiles = new String[]{
         "sample/Simple.java",
         "sample/Classes.java",
+        "sample/MissingBraces.java",
     };
     for (String inputFile : inputFiles) {
       Path inputFilePath = Path.of(inputFile);
