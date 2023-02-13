@@ -26,8 +26,8 @@ public class TestMissingBraces {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main");
-    Parser.Method meth = new Parser.Method("main");
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 5, 62, 97));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 85, 92));
     assertIterableEquals(expectedBlocks, blocks);
@@ -42,8 +42,8 @@ public class TestMissingBraces {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main");
-    Parser.Method meth = new Parser.Method("main");
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 6, 62, 112));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 85, 92));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 97, 107));
@@ -60,8 +60,8 @@ public class TestMissingBraces {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(4, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main");
-    Parser.Method meth = new Parser.Method("main");
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 143));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 85, 92));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 115, 123));
@@ -88,8 +88,8 @@ public class TestMissingBraces {
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
     assertEquals(7, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main");
-    Parser.Method meth = new Parser.Method("main");
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 16, 62, 269));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 5, 94, 104));
     expectedBlocks.add(getBlock(clazz, meth, 6, 8, 127, 139));

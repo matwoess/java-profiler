@@ -69,10 +69,10 @@ public class TestClasses {
     List<Parser.Block> blocks = getFoundBlocks(innerClassAndStaticBlocks);
     assertEquals(6, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Classes");
+    Parser.Class clazz = new Parser.Class("Classes", true);
     Parser.Method meth = new Parser.Method("static");
     expectedBlocks.add(getBlock(clazz, meth, 4, 6, 50, 65));
-    meth = new Parser.Method("main");
+    meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 8, 21, 109, 471));
     expectedBlocks.add(getBlock(clazz, meth, 12, 20, 234, 467));
     expectedBlocks.add(getBlock(clazz, meth, 14, 16, 285, 352));
@@ -115,8 +115,8 @@ public class TestClasses {
     List<Parser.Block> blocks = getFoundBlocks(deepInnerClasses);
     assertEquals(4, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("InnerClasses");
-    Parser.Method meth = new Parser.Method("main");
+    Parser.Class clazz = new Parser.Class("InnerClasses", true);
+    Parser.Method meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 70, 275));
     clazz = new Parser.Class("InnerClasses.Inner");
     meth = new Parser.Method("level1");
