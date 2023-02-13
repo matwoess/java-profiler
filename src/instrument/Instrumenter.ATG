@@ -12,40 +12,55 @@ COMPILER Instrumenter
 
 	public static class Class {
 		String name;
+		boolean isMain;
 		List<Method> methods = new ArrayList<>();
 		public Class(String name) {this.name = name;}
+		public Class(String name, boolean isMain) {
+			this.name = name;
+			this.isMain = isMain;
+		}
 
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
-			Class aClass = (Class) o;
-			return name.equals(aClass.name);
+			Class method = (Class) o;
+			if (isMain != method.isMain) return false;
+			return name.equals(method.name);
 		}
 
 		@Override
 		public int hashCode() {
-			return name.hashCode();
+			int result = name.hashCode();
+			result = 31 * result + (isMain ? 1 : 0);
+			return result;
 		}
 	}
 
 	public static class Method {
 		String name;
-		List<Block> blocks = new ArrayList<>();
 		boolean isMain;
+		List<Block> blocks = new ArrayList<>();
 		public Method(String name) {this.name = name;}
+		public Method(String name, boolean isMain) {
+			this.name = name;
+			this.isMain = isMain;
+		}
 
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
-			Method aClass = (Method) o;
-			return name.equals(aClass.name);
+			Method method = (Method) o;
+			if (isMain != method.isMain) return false;
+			return name.equals(method.name);
 		}
 
 		@Override
 		public int hashCode() {
-			return name.hashCode();
+			int result = name.hashCode();
+			result = 31 * result + (isMain ? 1 : 0);
+			return result;
 		}
 	}
 
@@ -118,6 +133,7 @@ COMPILER Instrumenter
 		System.out.println("found method declaration of: " + curMeth.name);
 		if ("main".equals(prevTokens[0].val) && "void".equals(prevTokens[1].val) && "static".equals(prevTokens[2].val) && "public".equals(prevTokens[3].val)) {
 			curMeth.isMain = true;
+			curClass.isMain = true;
 			System.out.println("method is main entry point.");
 		}
 	}

@@ -3,8 +3,7 @@ package instrument;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 import static java.lang.System.exit;
 
@@ -14,6 +13,7 @@ public class Instrumenter {
   Path sourceFile;
   Path instrumentedFile;
   Path metadataFile;
+  Path countsFile;
 
   public Instrumenter(Path sourceFile) {
     this.sourceFile = sourceFile;
@@ -21,6 +21,7 @@ public class Instrumenter {
     profilerRoot.toFile().mkdirs();
     instrumentedFile = profilerRoot.resolve(sourceFile.getFileName());
     metadataFile = profilerRoot.resolve(sourceFile.getFileName().toString() + ".meta");
+    countsFile = profilerRoot.resolve(sourceFile.getFileName().toString() + ".counts");
   }
 
   public void analyzeFile() {
@@ -47,45 +48,15 @@ public class Instrumenter {
   }
 
   public Path instrument() {
-//    try {
-//      Files.copy(sourceFile, targetPath, REPLACE_EXISTING);
-//    } catch (IOException ex) {
-//      System.out.println(ex);
-//    }
     try {
+      List<CodeInsert> codeInserts = getCodeInserts();
       String fileContent = Files.readString(sourceFile);
       StringBuilder builder = new StringBuilder();
       int prevIdx = 0;
-      Stack<Parser.Block> blockStack = new Stack<>();
-      for (int i = 0; i < foundBlocks.size(); i++) {
-        Parser.Block block = foundBlocks.get(i);
-        if (!blockStack.empty() && blockStack.peek().endPos < block.begPos) {
-          Parser.Block prevBlock = blockStack.pop();
-          builder.append(fileContent, prevIdx, prevBlock.endPos);
-          prevIdx = prevBlock.endPos;
-          if (prevBlock.insertBraces) {
-            assert !prevBlock.isMethodBlock;
-            builder.append('}');
-          }
-        }
-        blockStack.push(block);
-        builder.append(fileContent, prevIdx, block.begPos);
-        prevIdx = block.begPos;
-        if (block.insertBraces) {
-          builder.append('{');
-        }
-        builder.append(String.format("__Counter.inc(%d);", i));
-      }
-      while (!blockStack.empty()) {
-        Parser.Block prevBlock = blockStack.pop();
-        if (prevBlock.endPos > prevIdx) {
-          builder.append(fileContent, prevIdx, prevBlock.endPos);
-          prevIdx = prevBlock.endPos;
-        }
-        if (prevBlock.insertBraces) {
-          assert !prevBlock.isMethodBlock;
-          builder.append('}');
-        }
+      for (CodeInsert codeInsert : codeInserts) {
+        builder.append(fileContent, prevIdx, codeInsert.chPos);
+        prevIdx = codeInsert.chPos;
+        builder.append(codeInsert.code);
       }
       builder.append(fileContent.substring(prevIdx));
       Files.writeString(instrumentedFile, builder.toString());
@@ -93,6 +64,52 @@ public class Instrumenter {
       throw new RuntimeException(e);
     }
     return metadataFile;
+  }
+
+  static class CodeInsert {
+    int chPos;
+    String code;
+
+    public CodeInsert(int chPos, String code) {
+      this.chPos = chPos;
+      this.code = code;
+    }
+  }
+
+  List<CodeInsert> getCodeInserts() {
+    List<CodeInsert> inserts = new ArrayList<>();
+    boolean initInserted = false, saveInserted = false;
+    for (int i = 0; i < foundBlocks.size(); i++) {
+      Parser.Block block = foundBlocks.get(i);
+      // insert order is important, because of same CodeInsert char positions
+      if (!initInserted && isCounterInitBlock(block)) {
+        inserts.add(new CodeInsert(block.begPos, String.format("__Counter.init(\"%s\");", metadataFile.toString())));
+        initInserted = true;
+      }
+      if (block.insertBraces) {
+        assert !block.isMethodBlock;
+        inserts.add(new CodeInsert(block.begPos, "{"));
+      }
+      inserts.add(new CodeInsert(block.begPos, String.format("__Counter.inc(%d);", i)));
+      if (!saveInserted && block.isMethodBlock && block.method.isMain) {
+        inserts.add(new CodeInsert(block.endPos - 1, String.format("__Counter.save(\"%s\");", countsFile.toString())));
+        saveInserted = true;
+      }
+      if (block.insertBraces) {
+        inserts.add(new CodeInsert(block.endPos, "}"));
+      }
+    }
+    inserts.sort(Comparator.comparing(i -> i.chPos));
+    return inserts;
+  }
+
+  boolean isCounterInitBlock(Parser.Block block) {
+    if (!block.clazz.isMain) return false;
+    boolean classHasStaticBlock = block.clazz.methods.stream().anyMatch(m -> m.name.equals("static"));
+    if (classHasStaticBlock) {
+      return block.method.name.equals("static");
+    }
+    return block.isMethodBlock && block.method.isMain;
   }
 
   public void exportBlockData() {

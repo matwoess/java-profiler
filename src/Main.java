@@ -8,7 +8,8 @@ public class Main {
 
   public static void main(String[] args) {
     String[] inputFiles = new String[]{
-         "sample/Classes.java",
+        "sample/Simple.java",
+        "sample/Classes.java",
     };
     for (String inputFile : inputFiles) {
       Path inputFilePath = Path.of(inputFile);
