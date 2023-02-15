@@ -20,5 +20,20 @@ public class MissingBraces {
     for (int i = 0; i < 5; i++)
       array[i] = i;
     for (int val : array) System.out.println(val);
+
+    x = 2;
+    switch (x) {
+      case 1: {
+        i += 3;
+        break;
+      }
+      case 2: case 3:
+      case 4:
+        i *= 2;
+        i = i - 1;
+      case 5:
+        break;
+      default: break;
+    }
   }
 }

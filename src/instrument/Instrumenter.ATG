@@ -265,8 +265,12 @@ Statement =
 				Statement							(. checkInsertRBrace(); .)
 			]
 		| "switch" BracketExpr "{"
-			{"case" {ANY} ":" {Statement}}
-			["default" ":" {Statement}]
+			{"case" {ANY} ":"				(. checkInsertLBrace(); .)
+				{Statement}						(. checkInsertRBrace(); .)
+				}
+			["default" ":"					(. checkInsertLBrace(); .)
+				{Statement}						(. checkInsertRBrace(); .)
+				]
 			"}"
 		| "while" BracketExpr			(. checkInsertLBrace(); .)
 			Statement								(. checkInsertRBrace(); .)

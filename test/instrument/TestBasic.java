@@ -144,4 +144,38 @@ public class TestBasic {
     expectedBlocks.add(getBlock(clazz, meth, 10, 12, 289, 301));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestSwitch() {
+    String fileContent = String.format(baseTemplate, """
+       int x = 1;
+       switch (x) {
+         case 1: {
+           i += 3;
+           break;
+         }
+         case 2: {}
+         case 3: {
+          i *= 2;
+          i = i - 1;
+         }
+         case 4: {
+           break;
+         }
+         default: { break; }
+       }
+        """, "");
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(6, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 20, 62, 239));
+    expectedBlocks.add(getBlock(clazz, meth, 5, 8, 102, 129));
+    expectedBlocks.add(getBlock(clazz, meth, 9, 9, 141, 142));
+    expectedBlocks.add(getBlock(clazz, meth, 10, 13, 154, 183));
+    expectedBlocks.add(getBlock(clazz, meth, 14, 16, 195, 210));
+    expectedBlocks.add(getBlock(clazz, meth, 17, 17, 223, 232));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }
