@@ -270,8 +270,11 @@ Statement =
 			"}"
 		| "while" BracketExpr			(. checkInsertLBrace(); .)
 			Statement								(. checkInsertRBrace(); .)
-		| "do" Statement "while" BracketExpr ";"
-		| "for" BracketExpr Statement
+ 		| "do"										(. checkInsertLBrace(); .)
+			Statement 							(. checkInsertRBrace(); .)
+			"while" BracketExpr ";"
+		| "for" BracketExpr				(. checkInsertLBrace(); .)
+			Statement								(. checkInsertRBrace(); .)
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
 		| ident ({ANY | QuotedText | "->" Statement} ";" | ":")

@@ -122,4 +122,43 @@ public class TestMissingBraces {
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 7, 8, 133, 142));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestDoWhile() {
+    String fileContent = String.format(baseTemplate, """
+        int x = 0;
+        do x+=1; while (x<5);
+        do
+          x+=1;
+        while (x<10);
+        """);
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(3, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 129));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 80, 86));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 6, 102, 110));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
+  public void TestForAndForEach() {
+    String fileContent = String.format(baseTemplate, """
+        int[] array = new int[5];
+        for (int i = 0; i < 5; i++)
+          array[i] = i;
+        for (int val : array) System.out.println(val);
+        """);
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(3, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 8, 62, 188));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 5, 120, 136));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 6, 6, 158, 183));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }
