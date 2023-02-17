@@ -17,11 +17,11 @@ public class Instrumenter {
 
   public Instrumenter(Path sourceFile) {
     this.sourceFile = sourceFile;
-    Path profilerRoot = Path.of("out/profiler");
-    profilerRoot.toFile().mkdirs();
-    instrumentedFile = profilerRoot.resolve(sourceFile.getFileName());
-    metadataFile = profilerRoot.resolve(sourceFile.getFileName().toString() + ".meta");
-    countsFile = profilerRoot.resolve(sourceFile.getFileName().toString() + ".counts");
+    Path instrumentedRoot = Path.of("out/instrumented");
+    instrumentedRoot.toFile().mkdirs();
+    instrumentedFile = instrumentedRoot.resolve(sourceFile.getFileName());
+    metadataFile = instrumentedRoot.resolve(sourceFile.getFileName().toString() + ".meta");
+    countsFile = instrumentedRoot.resolve(sourceFile.getFileName().toString() + ".counts");
   }
 
   public void analyzeFile() {
