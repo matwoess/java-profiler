@@ -4,14 +4,14 @@ public class MissingBraces {
     if (x == 0)return;
     if (true) if (x == 0) return;else return;
 
-    while (false) if (false) return;
+    while (true) if (true) break;
 
     x = 1;
-    while (false) while(true)
-      if(1==2)
+    outer: while (true) while(true)
+      if(x==1)
         return;
       else
-        x+=1;
+        break outer;
 
     x = 0;
     do x+=1; while (x<5);
@@ -24,13 +24,13 @@ public class MissingBraces {
     x = 2;
     switch (x) {
       case 1: {
-        i += 3;
+        x += 3;
         break;
       }
       case 2: case 3:
       case 4:
-        i *= 2;
-        i = i - 1;
+        x *= 2;
+        x = x - 1;
       case 5:
         break;
       default: break;
