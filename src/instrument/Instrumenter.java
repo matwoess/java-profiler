@@ -78,13 +78,20 @@ public class Instrumenter {
 
   List<CodeInsert> getCodeInserts() {
     List<CodeInsert> inserts = new ArrayList<>();
-    boolean initInserted = false, saveInserted = false;
+    inserts.add(new CodeInsert(0, "import profiler.__Counter;"));
+    boolean initAndSafeInserted = false;
     for (int i = 0; i < foundBlocks.size(); i++) {
       Parser.Block block = foundBlocks.get(i);
       // insert order is important, because of same CodeInsert char positions
-      if (!initInserted && isCounterInitBlock(block)) {
-        inserts.add(new CodeInsert(block.begPos, String.format("__Counter.init(\"%s\");", metadataFile.toString())));
-        initInserted = true;
+      if (!initAndSafeInserted && isCounterInitBlock(block)) {
+        String initCode = String.format("__Counter.init(\"%s\");", metadataFile.getFileName());
+        String saveCode = String.format(
+            "Runtime.getRuntime().addShutdownHook(new Thread(() -> {__Counter.save((\"%s\"));}));;",
+            countsFile.getFileName()
+        );
+        inserts.add(new CodeInsert(block.begPos, initCode));
+        inserts.add(new CodeInsert(block.begPos, saveCode));
+        initAndSafeInserted = true;
       }
       if (block.insertBraces) {
         assert !block.isMethodBlock;
