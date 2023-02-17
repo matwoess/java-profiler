@@ -98,10 +98,6 @@ public class Instrumenter {
         inserts.add(new CodeInsert(block.begPos, "{"));
       }
       inserts.add(new CodeInsert(block.begPos, String.format("__Counter.inc(%d);", i)));
-      if (!saveInserted && block.isMethodBlock && block.method.isMain) {
-        inserts.add(new CodeInsert(block.endPos - 1, String.format("__Counter.save(\"%s\");", countsFile.toString())));
-        saveInserted = true;
-      }
       if (block.insertBraces) {
         inserts.add(new CodeInsert(block.endPos, "}"));
       }
