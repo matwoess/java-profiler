@@ -1,4 +1,4 @@
-package profiler;
+package profile;
 
 import java.io.IOException;
 import java.nio.file.Files;
