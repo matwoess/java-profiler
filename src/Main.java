@@ -19,5 +19,9 @@ public class Main {
     instrumenter.analyzeFiles();
     instrumenter.instrument();
     instrumenter.exportBlockData();
+    Profiler profiler = new Profiler(javaFiles);
+    profiler.compileInstrumented();
+    profiler.profile();
+    profiler.generateReport();
   }
 }
