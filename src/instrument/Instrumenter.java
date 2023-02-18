@@ -1,69 +1,56 @@
 package instrument;
 
+import common.JavaFile;
+
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 import static java.lang.System.exit;
 
 public class Instrumenter {
-  List<Parser.Class> foundClasses;
-  List<Parser.Block> foundBlocks;
-  Path sourceFile;
-  Path instrumentedFile;
-  Path metadataFile;
-  Path countsFile;
+  JavaFile[] javaFiles;
 
-  public Instrumenter(Path sourceFile) {
-    this.sourceFile = sourceFile;
-    Path instrumentedRoot = Path.of("out/instrumented");
-    instrumentedRoot.toFile().mkdirs();
-    instrumentedFile = instrumentedRoot.resolve(sourceFile.getFileName());
-    metadataFile = instrumentedRoot.resolve(sourceFile.getFileName().toString() + ".meta");
-    countsFile = instrumentedRoot.resolve(sourceFile.getFileName().toString() + ".counts");
+  public Instrumenter(JavaFile... javaFiles) {
+    this.javaFiles = javaFiles;
   }
 
-  public void analyzeFile() {
-    System.out.println("Reading File: \"" + sourceFile + "\"");
-    Parser parser = new Parser(new Scanner(sourceFile.toString()));
-    parser.Parse();
-    System.out.println();
-    int errors = parser.errors.count;
-    System.out.println("Errors found: " + errors);
-    if (errors > 0) {
-      System.out.println("aborting...");
-      exit(1);
-    }
-    foundBlocks = parser.allBlocks;
-    foundClasses = parser.classes;
-  }
-
-  public List<Parser.Class> getFoundClasses() {
-    return foundClasses;
-  }
-
-  public List<Parser.Block> getFoundBlocks() {
-    return foundBlocks;
-  }
-
-  public Path instrument() {
-    try {
-      List<CodeInsert> codeInserts = getCodeInserts();
-      String fileContent = Files.readString(sourceFile);
-      StringBuilder builder = new StringBuilder();
-      int prevIdx = 0;
-      for (CodeInsert codeInsert : codeInserts) {
-        builder.append(fileContent, prevIdx, codeInsert.chPos);
-        prevIdx = codeInsert.chPos;
-        builder.append(codeInsert.code);
+  public void analyzeFiles() {
+    for (JavaFile jFile : javaFiles) {
+      System.out.println("Reading File: \"" + jFile.sourceFile + "\"");
+      Parser parser = new Parser(new Scanner(jFile.sourceFile.toString()));
+      parser.Parse();
+      System.out.println();
+      int errors = parser.errors.count;
+      System.out.println("Errors found: " + errors);
+      if (errors > 0) {
+        System.out.println("aborting...");
+        exit(1);
       }
-      builder.append(fileContent.substring(prevIdx));
-      Files.writeString(instrumentedFile, builder.toString());
+      jFile.foundBlocks = parser.allBlocks;
+      jFile.foundClasses = parser.classes;
+    }
+  }
+
+  public void instrument() {
+    try {
+      Boolean initAndSafeInserted = false;
+      for (JavaFile jFile : javaFiles) {
+        List<CodeInsert> codeInserts = getCodeInserts(jFile, initAndSafeInserted);
+        String fileContent = Files.readString(jFile.sourceFile);
+        StringBuilder builder = new StringBuilder();
+        int prevIdx = 0;
+        for (CodeInsert codeInsert : codeInserts) {
+          builder.append(fileContent, prevIdx, codeInsert.chPos);
+          prevIdx = codeInsert.chPos;
+          builder.append(codeInsert.code);
+        }
+        builder.append(fileContent.substring(prevIdx));
+        Files.writeString(jFile.instrumentedFile, builder.toString());
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    return metadataFile;
   }
 
   static class CodeInsert {
@@ -76,18 +63,17 @@ public class Instrumenter {
     }
   }
 
-  List<CodeInsert> getCodeInserts() {
+  List<CodeInsert> getCodeInserts(JavaFile javaFile, Boolean initAndSafeInserted) {
     List<CodeInsert> inserts = new ArrayList<>();
-    inserts.add(new CodeInsert(0, "import profiler.__Counter;"));
-    boolean initAndSafeInserted = false;
-    for (int i = 0; i < foundBlocks.size(); i++) {
-      Parser.Block block = foundBlocks.get(i);
+    inserts.add(new CodeInsert(0, "import profile.__Counter;"));
+    for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
+      Parser.Block block = javaFile.foundBlocks.get(i);
       // insert order is important, because of same CodeInsert char positions
       if (!initAndSafeInserted && isCounterInitBlock(block)) {
-        String initCode = String.format("__Counter.init(\"%s\");", metadataFile.getFileName());
+        String initCode = String.format("__Counter.init(\"%s\");", javaFile.metadataFile.getFileName());
         String saveCode = String.format(
             "Runtime.getRuntime().addShutdownHook(new Thread(() -> {__Counter.save((\"%s\"));}));;",
-            countsFile.getFileName()
+            javaFile.resultsFile.getFileName()
         );
         inserts.add(new CodeInsert(block.begPos, initCode));
         inserts.add(new CodeInsert(block.begPos, saveCode));
@@ -116,26 +102,28 @@ public class Instrumenter {
   }
 
   public void exportBlockData() {
-    StringBuilder builder = new StringBuilder();
-    builder.append(foundBlocks.size()).append(" ");
-    for (Parser.Class clazz : foundClasses) {
-      builder.append(clazz.name).append(" ");
-      for (Parser.Method meth : clazz.methods) {
-        builder.append(meth.name).append(" ");
-        for (Parser.Block block : meth.blocks) {
-          builder.append(block.beg).append(" ");
-          builder.append(block.end).append(" ");
-          builder.append(block.isMethodBlock ? 1 : 0).append(" ");
+    for (JavaFile jFile : javaFiles) {
+      StringBuilder builder = new StringBuilder();
+      builder.append(jFile.foundBlocks.size()).append(" ");
+      for (Parser.Class clazz : jFile.foundClasses) {
+        builder.append(clazz.name).append(" ");
+        for (Parser.Method meth : clazz.methods) {
+          builder.append(meth.name).append(" ");
+          for (Parser.Block block : meth.blocks) {
+            builder.append(block.beg).append(" ");
+            builder.append(block.end).append(" ");
+            builder.append(block.isMethodBlock ? 1 : 0).append(" ");
+          }
         }
+        builder.append("#").append(" ");
       }
-      builder.append("#").append(" ");
-    }
-    try (FileOutputStream fos = new FileOutputStream(metadataFile.toFile())) {
-      byte[] data = builder.toString().getBytes();
-      fos.write(data, 0, data.length);
-      fos.flush();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      try (FileOutputStream fos = new FileOutputStream(jFile.metadataFile.toFile())) {
+        byte[] data = builder.toString().getBytes();
+        fos.write(data, 0, data.length);
+        fos.flush();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 }

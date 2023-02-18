@@ -1,26 +1,23 @@
+import common.JavaFile;
 import instrument.Instrumenter;
-import instrument.Parser;
+import profile.Profiler;
 
-import java.nio.file.Path;
-import java.util.List;
+import java.util.Arrays;
 
 public class Main {
 
   public static void main(String[] args) {
-    String[] inputFiles = new String[]{
-        "sample/Simple.java",
-        "sample/Classes.java",
-        "sample/MissingBraces.java",
-    };
-    for (String inputFile : inputFiles) {
-      Path inputFilePath = Path.of(inputFile);
-      Instrumenter instrumenter = new Instrumenter(inputFilePath);
-      instrumenter.analyzeFile();
-      List<Parser.Block> blocks = instrumenter.getFoundBlocks();
-      System.out.println("\n\nFound blocks:");
-      blocks.forEach(System.out::println);
-      instrumenter.instrument();
-      instrumenter.exportBlockData();
+    if (args.length == 0) {
+      args = new String[]{
+          "sample/Simple.java",
+          "sample/Classes.java",
+          "sample/MissingBraces.java",
+      };
     }
+    JavaFile[] javaFiles = Arrays.stream(args).map(JavaFile::new).toArray(JavaFile[]::new);
+    Instrumenter instrumenter = new Instrumenter(javaFiles);
+    instrumenter.analyzeFiles();
+    instrumenter.instrument();
+    instrumenter.exportBlockData();
   }
 }

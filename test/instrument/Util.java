@@ -1,5 +1,7 @@
 package instrument;
 
+import common.JavaFile;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,9 +22,10 @@ public class Util {
 
   public static List<Parser.Block> getFoundBlocks(String content) {
     Path file = createTempFileWithContent(content);
-    Instrumenter instrumenter = new Instrumenter(file);
-    instrumenter.analyzeFile();
-    return instrumenter.getFoundBlocks();
+    JavaFile javaFile = new JavaFile(file.toString());
+    Instrumenter instrumenter = new Instrumenter(javaFile);
+    instrumenter.analyzeFiles();
+    return instrumenter.javaFiles[0].foundBlocks;
   }
 
   public static Parser.Block getBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {
