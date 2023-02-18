@@ -168,29 +168,30 @@ public class TestMissingBraces {
        int x = 1;
        switch (x) {
          case 1: {
-           i += 3;
+           x += 3;
            break;
          }
          case 2: case 3:
          case 4:
-          i *= 2;
-          i = i - 1;
+          x *= 2;
+          x = x - 1;
          case 5:
            break;
          default: break;
        }
         """, "");
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(6, blocks.size());
+    assertEquals(7, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
     Parser.Class clazz = new Parser.Class("Main", true);
     Parser.Method meth = new Parser.Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 18, 62, 220));
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 18, 62, 228));
     expectedBlocks.add(getBlock(clazz, meth, 5, 8, 102, 129));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 9, 9, 139, 139));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 10, 12, 149, 174));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 13, 14, 184, 195));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 15, 15, 206, 213));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 9, 9, 147, 147));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 10, 12, 157, 182));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 13, 14, 192, 203));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 15, 15, 214, 221));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }
