@@ -20,12 +20,22 @@ public class Util {
     }
   }
 
-  public static List<Parser.Block> getFoundBlocks(String content) {
+  public static Instrumenter analyzeStringContent(String content) {
     Path file = createTempFileWithContent(content);
     JavaFile javaFile = new JavaFile(file);
     Instrumenter instrumenter = new Instrumenter(javaFile);
     instrumenter.analyzeFiles();
+    return instrumenter;
+  }
+
+  public static List<Parser.Block> getFoundBlocks(String content) {
+    Instrumenter instrumenter = analyzeStringContent(content);
     return instrumenter.mainJavaFile.foundBlocks;
+  }
+
+  public static int getBeginOfImports(String content) {
+    Instrumenter instrumenter = analyzeStringContent(content);
+    return instrumenter.mainJavaFile.beginOfImports;
   }
 
   public static Parser.Block getBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {

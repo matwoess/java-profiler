@@ -30,6 +30,26 @@ public class TestBasic {
   }
 
   @Test
+  public void TestBeginOfImports() {
+    String withoutPackage = """
+        import static java.lang.System.exit;
+        import java.util.ArrayList;
+        class Empty {
+        }""";
+    int beginOfImports = getBeginOfImports(withoutPackage);
+    assertEquals(0, beginOfImports);
+    String withPackage = """
+        package name.of._the_.package ;
+        import static java.lang.System.exit;
+        import java.util.ArrayList;
+        class Empty {
+        }""";
+    beginOfImports = getBeginOfImports(withPackage);
+    int lengthOfPackageDeclaration = "package name.of._the_.package ;".length();
+    assertEquals(lengthOfPackageDeclaration, beginOfImports);
+  }
+
+  @Test
   public void TestHelloWorld() {
     String helloWorld = """
         public class HelloWorld {
