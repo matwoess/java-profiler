@@ -6,11 +6,14 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 
+import static common.Constants.metadataFile;
+import static common.Constants.resultsFile;
 import static java.lang.System.exit;
 
 public class Instrumenter {
   JavaFile[] javaFiles;
   boolean initAndSafeInserted;
+  int blockCounter;
 
   public Instrumenter(JavaFile... javaFiles) {
     this.javaFiles = javaFiles;
@@ -36,6 +39,7 @@ public class Instrumenter {
   public void instrument() {
     try {
       initAndSafeInserted = false;
+      blockCounter = 0;
       for (JavaFile jFile : javaFiles) {
         List<CodeInsert> codeInserts = getCodeInserts(jFile);
         String fileContent = Files.readString(jFile.sourceFile);
@@ -67,14 +71,13 @@ public class Instrumenter {
   List<CodeInsert> getCodeInserts(JavaFile javaFile) {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(0, "import profile.__Counter;"));
-    for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
-      Parser.Block block = javaFile.foundBlocks.get(i);
+    for (Parser.Block block : javaFile.foundBlocks) {
       // insert order is important, because of same CodeInsert char positions
       if (!initAndSafeInserted && isCounterInitBlock(block)) {
-        String initCode = String.format("__Counter.init(\"%s\");", javaFile.metadataFile.getFileName());
+        String initCode = String.format("__Counter.init(\"%s\");", metadataFile.getFileName());
         String saveCode = String.format(
             "Runtime.getRuntime().addShutdownHook(new Thread(() -> {__Counter.save((\"%s\"));}));;",
-            javaFile.resultsFile.getFileName()
+            resultsFile.getFileName()
         );
         inserts.add(new CodeInsert(block.begPos, initCode));
         inserts.add(new CodeInsert(block.begPos, saveCode));
@@ -84,7 +87,7 @@ public class Instrumenter {
         assert !block.isMethodBlock;
         inserts.add(new CodeInsert(block.begPos, "{"));
       }
-      inserts.add(new CodeInsert(block.begPos, String.format("__Counter.inc(%d);", i)));
+      inserts.add(new CodeInsert(block.begPos, String.format("__Counter.inc(%d);", blockCounter++)));
       if (block.insertBraces) {
         inserts.add(new CodeInsert(block.endPos, "}"));
       }
@@ -103,9 +106,10 @@ public class Instrumenter {
   }
 
   public void exportBlockData() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(blockCounter).append(" ");
     for (JavaFile jFile : javaFiles) {
-      StringBuilder builder = new StringBuilder();
-      builder.append(jFile.foundBlocks.size()).append(" ");
+      builder.append(jFile.sourceFile.toUri()).append(" ");
       for (Parser.Class clazz : jFile.foundClasses) {
         builder.append(clazz.name).append(" ");
         for (Parser.Method meth : clazz.methods) {
@@ -118,13 +122,13 @@ public class Instrumenter {
         }
         builder.append("#").append(" ");
       }
-      try (FileOutputStream fos = new FileOutputStream(jFile.metadataFile.toFile())) {
-        byte[] data = builder.toString().getBytes();
-        fos.write(data, 0, data.length);
-        fos.flush();
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+    }
+    try (FileOutputStream fos = new FileOutputStream(metadataFile.toFile())) {
+      byte[] data = builder.toString().getBytes();
+      fos.write(data, 0, data.length);
+      fos.flush();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 }
