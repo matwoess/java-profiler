@@ -10,6 +10,7 @@ import static java.lang.System.exit;
 
 public class Instrumenter {
   JavaFile[] javaFiles;
+  boolean initAndSafeInserted;
 
   public Instrumenter(JavaFile... javaFiles) {
     this.javaFiles = javaFiles;
@@ -34,9 +35,9 @@ public class Instrumenter {
 
   public void instrument() {
     try {
-      Boolean initAndSafeInserted = false;
+      initAndSafeInserted = false;
       for (JavaFile jFile : javaFiles) {
-        List<CodeInsert> codeInserts = getCodeInserts(jFile, initAndSafeInserted);
+        List<CodeInsert> codeInserts = getCodeInserts(jFile);
         String fileContent = Files.readString(jFile.sourceFile);
         StringBuilder builder = new StringBuilder();
         int prevIdx = 0;
@@ -63,7 +64,7 @@ public class Instrumenter {
     }
   }
 
-  List<CodeInsert> getCodeInserts(JavaFile javaFile, Boolean initAndSafeInserted) {
+  List<CodeInsert> getCodeInserts(JavaFile javaFile) {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(0, "import profile.__Counter;"));
     for (int i = 0; i < javaFile.foundBlocks.size(); i++) {

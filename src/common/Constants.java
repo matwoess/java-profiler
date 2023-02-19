@@ -7,11 +7,11 @@ public class Constants {
   public static final Path profilerRoot = outputDir.resolve("profile");
 
   static {
-    if (!outputDir.toFile().mkdirs()) {
-      System.err.println("Error creating output directory");
+    if (outputDir.toFile().mkdirs()) {
+      System.out.println("created output directory.");
     }
-    if (!profilerRoot.toFile().mkdir()) {
-      System.err.println("Error creating profile package directory");
+    if (profilerRoot.toFile().mkdir()) {
+      System.out.println("created 'profile' package sub-directory.");
     }
   }
 }
