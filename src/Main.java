@@ -16,10 +16,10 @@ public class Main {
       printUsage();
       exit(0);
     }
-    Path sourceFolder = Path.of(args[0]);
+    Path sourcesFolder = Path.of(args[0]);
     Path mainFile = Path.of(args[1]);
-    JavaFile mainJavaFile = new JavaFile(mainFile);
-    JavaFile[] additionalJavaFiles = getAdditionalFilesToInstrument(sourceFolder, mainFile);
+    JavaFile mainJavaFile = new JavaFile(mainFile, sourcesFolder);
+    JavaFile[] additionalJavaFiles = getAdditionalFilesToInstrument(sourcesFolder, mainFile);
     Instrumenter instrumenter = new Instrumenter(mainJavaFile, additionalJavaFiles);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
@@ -30,11 +30,11 @@ public class Main {
     profiler.generateReport();
   }
 
-  private static JavaFile[] getAdditionalFilesToInstrument(Path sourceFolder, Path mainFile) {
-    try (Stream<Path> walk = Files.walk(sourceFolder)) {
+  private static JavaFile[] getAdditionalFilesToInstrument(Path sourcesFolder, Path mainFile) {
+    try (Stream<Path> walk = Files.walk(sourcesFolder)) {
       return walk
           .filter(path -> Files.isRegularFile(path) && !path.equals(mainFile))
-          .map(JavaFile::new)
+          .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
           .toArray(JavaFile[]::new);
     } catch (IOException e) {
       throw new RuntimeException(e);

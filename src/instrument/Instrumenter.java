@@ -65,6 +65,7 @@ public class Instrumenter {
       builder.append(codeInsert.code);
     }
     builder.append(fileContent.substring(prevIdx));
+    javaFile.instrumentedFile.getParent().toFile().mkdirs(); // make sure parent directory exists
     Files.writeString(javaFile.instrumentedFile, builder.toString());
   }
 

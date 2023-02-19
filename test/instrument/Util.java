@@ -22,7 +22,7 @@ public class Util {
 
   public static Instrumenter analyzeStringContent(String content) {
     Path file = createTempFileWithContent(content);
-    JavaFile javaFile = new JavaFile(file);
+    JavaFile javaFile = new JavaFile(file, file.getParent());
     Instrumenter instrumenter = new Instrumenter(javaFile);
     instrumenter.analyzeFiles();
     return instrumenter;

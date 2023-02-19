@@ -14,8 +14,9 @@ public class JavaFile {
   public List<Parser.Block> foundBlocks;
   public Path instrumentedFile;
 
-  public JavaFile(Path sourceFilePath) {
-    sourceFile = sourceFilePath;
-    instrumentedFile = instrumentDir.resolve(sourceFile.getFileName());
+  public JavaFile(Path sourceFile, Path sourcesRoot) {
+    this.sourceFile = sourceFile;
+    Path relativePathToSources = sourcesRoot.relativize(sourceFile);
+    this.instrumentedFile = instrumentDir.resolve(relativePathToSources);
   }
 }
