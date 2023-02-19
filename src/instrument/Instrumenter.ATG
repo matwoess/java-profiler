@@ -1,5 +1,6 @@
 COMPILER Instrumenter
 
+	int beginOfImports = 0;
 	List<Class> classes = new ArrayList<>();
 	Stack<String> classNameStack = new Stack<>();
 	List<Block> allBlocks = new ArrayList<>();
@@ -111,6 +112,10 @@ COMPILER Instrumenter
 			result = 31 * result + (insertBraces ? 1 : 0);
 			return result;
 		}
+	}
+
+	void markBeginOfImports() {
+		beginOfImports = t.charPos + t.val.length();
 	}
 
 	void enterClass() {
@@ -242,7 +247,9 @@ IGNORE "\t\n\r"
 
 PRODUCTIONS
 
-Instrumenter = { {ANY} Class }.
+Instrumenter = [PackageDecl] { {ANY} Class }.
+PackageDecl = "package" {ANY} ";" (. markBeginOfImports(); .)
+						.
 Class =
 			"class" ident						(. enterClass(); .)
 			{ANY} "{"

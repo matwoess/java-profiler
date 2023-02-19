@@ -37,6 +37,7 @@ public class Instrumenter {
       System.out.println("aborting...");
       exit(1);
     }
+    javaFile.beginOfImports = parser.beginOfImports;
     javaFile.foundBlocks = parser.allBlocks;
     javaFile.foundClasses = parser.classes;
   }
@@ -80,7 +81,7 @@ public class Instrumenter {
   List<CodeInsert> getCodeInserts(JavaFile javaFile, boolean isMainFile) {
     boolean initAndSafeInserted = false;
     List<CodeInsert> inserts = new ArrayList<>();
-    inserts.add(new CodeInsert(0, "import auxiliary.__Counter;"));
+    inserts.add(new CodeInsert(javaFile.beginOfImports, "import auxiliary.__Counter;"));
     for (Parser.Block block : javaFile.foundBlocks) {
       // insert order is important, in case of same CodeInsert char positions
       if (!initAndSafeInserted && isMainFile && isCounterInitBlock(block)) {
