@@ -5,7 +5,7 @@ import instrument.Parser;
 import java.nio.file.Path;
 import java.util.List;
 
-import static common.Constants.outputDir;
+import static common.Constants.instrumentDir;
 
 public class JavaFile {
   public Path sourceFile;
@@ -13,8 +13,8 @@ public class JavaFile {
   public List<Parser.Block> foundBlocks;
   public Path instrumentedFile;
 
-  public JavaFile(String sourceFilePathString) {
-    sourceFile = Path.of(sourceFilePathString);
-    instrumentedFile = outputDir.resolve(sourceFile.getFileName());
+  public JavaFile(Path sourceFilePath) {
+    sourceFile = sourceFilePath;
+    instrumentedFile = instrumentDir.resolve(sourceFile.getFileName());
   }
 }

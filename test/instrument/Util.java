@@ -22,10 +22,10 @@ public class Util {
 
   public static List<Parser.Block> getFoundBlocks(String content) {
     Path file = createTempFileWithContent(content);
-    JavaFile javaFile = new JavaFile(file.toString());
+    JavaFile javaFile = new JavaFile(file);
     Instrumenter instrumenter = new Instrumenter(javaFile);
     instrumenter.analyzeFiles();
-    return instrumenter.javaFiles[0].foundBlocks;
+    return instrumenter.mainJavaFile.foundBlocks;
   }
 
   public static Parser.Block getBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {

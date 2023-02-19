@@ -3,17 +3,24 @@ package common;
 import java.nio.file.Path;
 
 public class Constants {
-  public static final Path outputDir = Path.of("out/instrumented");
-  public static final Path profilerRoot = outputDir.resolve("profile");
+
+  public static final Path outputDir = Path.of("out", "profiler");
+  public static final Path instrumentDir = outputDir.resolve("instrumented");
+  public static final Path auxiliaryInstrumentDir = instrumentDir.resolve("auxiliary");
   public static final Path metadataFile = outputDir.resolve("metadata.txt");
-  public static final Path resultsFile = outputDir.resolve("results.txt");
+  public static final Path countsFile = outputDir.resolve("counts.txt");
+
+  public static final Path auxiliarySourceDir = Path.of("src", "auxiliary");
 
   static {
     if (outputDir.toFile().mkdirs()) {
       System.out.println("created output directory.");
     }
-    if (profilerRoot.toFile().mkdir()) {
-      System.out.println("created 'profile' package sub-directory.");
+    if (instrumentDir.toFile().mkdir()) {
+      System.out.println("created instrumented directory.");
+    }
+    if (auxiliaryInstrumentDir.toFile().mkdir()) {
+      System.out.println("created auxiliary package directory.");
     }
   }
 }
