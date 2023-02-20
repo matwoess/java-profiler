@@ -34,8 +34,7 @@ public class Instrumenter {
     int errors = parser.errors.count;
     System.out.println("Errors found: " + errors);
     if (errors > 0) {
-      System.out.println("aborting...");
-      exit(1);
+      throw new RuntimeException("Abort due to parse errors.");
     }
     javaFile.beginOfImports = parser.beginOfImports;
     javaFile.foundBlocks = parser.allBlocks;
