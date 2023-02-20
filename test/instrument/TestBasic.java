@@ -198,4 +198,52 @@ public class TestBasic {
     expectedBlocks.add(getBlock(clazz, meth, 17, 17, 223, 232));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestComments() {
+    String fileContent = String.format(baseTemplate, """
+        // Testing comments
+        /* begin comment /* no nested multi-line comments
+        // but single line ones possible
+        // Block comments start with "/*", end with "*" followed by "/".
+        end comments */
+        String s = getTempString(1);
+         """, """
+        /**
+        This is a docstring:<br/>
+        Method returns a string containing a given number.<br>
+        Is called by the {@link #main(String[]) main} method in class {@link Main Main}.
+        @param number the number which should be contained in the returned string.
+        @returns a new string containing the number.
+        */
+       static String getTempString(int number) {
+         return String.format("The number was %d", number);
+       }
+        """);
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(2, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 10, 62, 284));
+    meth = new Parser.Method("getTempString", false);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 18, 20, 625, 680));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
+  public void TestStatementBeginningWithStringLiteral() {
+    String fileContent = String.format(baseTemplate, """
+        // ignoring result
+        "Some string.".split(" ");
+         """, "");
+    "Some string.".split(" ");
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(1, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 6, 62, 117));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }

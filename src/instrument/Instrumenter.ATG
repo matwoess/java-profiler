@@ -243,6 +243,10 @@ TOKENS
 	static = "static".
 	if     = "if".
 	else   = "else".
+
+COMMENTS FROM "/*" TO "*/"
+COMMENTS FROM "//" TO '\n'
+
 IGNORE "\t\n\r"
 
 PRODUCTIONS
@@ -288,7 +292,7 @@ Statement =
 			Statement								(. checkInsertRBrace(); .)
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
-		| ident ({ANY | QuotedText | "->" Statement} ";" | ":")
+		| (ident | QuotedText) ({ANY | QuotedText | "->" Statement} ";" | ":")
 		| Block
 		| ";" .
 QuotedText = '"' {ANY} '"'.
