@@ -292,11 +292,15 @@ Statement =
 			Statement								(. checkInsertRBrace(); .)
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
-		| (ident | QuotedText) {ANY | QuotedText | "->" Statement} ";"
+		| (ident | QuotedText) {ANY | QuotedText | LambdaExpression} ";"
 		| Block
 		| ";" .
 QuotedText = '"' {ANY} '"'.
 BracketExpr = "(" {BracketExpr | ANY} ")".
+LambdaExpression = "->"				(. checkInsertLBrace(); .)
+									{ANY}
+									Statement 	(. checkInsertRBrace(); .)
+								.
 Block = "{"										(. enterBlock(); .)
 				{Statement}
 				"}"										(. leaveBlock(); .)
