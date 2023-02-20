@@ -246,4 +246,22 @@ public class TestBasic {
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 6, 62, 117));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestTernaryOperator() {
+    String fileContent = String.format(baseTemplate, """
+        int number = 6;
+        String msg = (number % 2 == 0)
+            ? "Dividable by 2"
+            : "Not dividable by 2";
+        System.out.println(msg.contains("2") ? "2 appears" : "");
+         """, "");
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(1, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 227));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }

@@ -292,7 +292,7 @@ Statement =
 			Statement								(. checkInsertRBrace(); .)
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
-		| (ident | QuotedText) ({ANY | QuotedText | "->" Statement} ";" | ":")
+		| (ident | QuotedText) {ANY | QuotedText | "->" Statement} ";"
 		| Block
 		| ";" .
 QuotedText = '"' {ANY} '"'.
