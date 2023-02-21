@@ -276,14 +276,7 @@ MethodDecl  =									(. enterMethod(); .)
 						BracketExpr Block.
 Statement =
 		if BracketExpr BlockOrSingleStatement [else BlockOrSingleStatement]
-		| "switch" BracketExpr "{"
-			{"case" {ANY} ":"				(. checkInsertLBrace(); .)
-				{Statement}						(. checkInsertRBrace(); .)
-				}
-			["default" ":"					(. checkInsertLBrace(); .)
-				{Statement}						(. checkInsertRBrace(); .)
-				]
-			"}"
+		| SwitchStatement
 		| "while" BracketExpr BlockOrSingleStatement
  		| "do" BlockOrSingleStatement "while" BracketExpr ";"
 		| "for" BracketExpr BlockOrSingleStatement
@@ -298,6 +291,16 @@ BlockOrSingleStatement =
 		Block
 		| (. checkInsertLBrace(); .) Statement (. checkInsertRBrace(); .)
 		.
+SwitchStatement =
+			"switch" BracketExpr "{"
+			{"case" {ANY} ":"				(. checkInsertLBrace(); .)
+				{Statement}						(. checkInsertRBrace(); .)
+				}
+			["default" ":"					(. checkInsertLBrace(); .)
+				{Statement}						(. checkInsertRBrace(); .)
+				]
+			"}"
+			.
 QuotedText = '"' {ANY} '"'.
 BracketExpr = "(" {BracketExpr | ANY} ")".
 LambdaExpression = "->" (Block | LambdaBody).
@@ -305,7 +308,7 @@ LambdaBody = 									(. checkInsertLBrace(); .)
 				(ANY | BracketExpr | QuotedText | ident)
 				{ANY | BracketExpr}		(. checkInsertRBrace(); .)
 				(")" | ";")
-						.
+				.
 Block = "{"										(. enterBlock(); .)
 				{Statement}
 				"}"										(. leaveBlock(); .)
