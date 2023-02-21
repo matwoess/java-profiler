@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.util.*;
 
 import static common.Constants.*;
-import static java.lang.System.exit;
 
 public class Instrumenter {
   JavaFile mainJavaFile;
