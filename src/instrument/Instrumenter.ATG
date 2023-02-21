@@ -297,10 +297,12 @@ Statement =
 		| ";" .
 QuotedText = '"' {ANY} '"'.
 BracketExpr = "(" {BracketExpr | ANY} ")".
-LambdaExpression = "->"				(. checkInsertLBrace(); .)
-									{ANY}
-									Statement 	(. checkInsertRBrace(); .)
-								.
+LambdaExpression = "->" (Block | LambdaBody).
+LambdaBody = 									(. checkInsertLBrace(); .)
+				(ANY | BracketExpr | QuotedText | ident)
+				{ANY | BracketExpr}		(. checkInsertRBrace(); .)
+				(")" | ";")
+						.
 Block = "{"										(. enterBlock(); .)
 				{Statement}
 				"}"										(. leaveBlock(); .)

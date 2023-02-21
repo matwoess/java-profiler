@@ -3,7 +3,6 @@ package instrument;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -89,7 +88,7 @@ public class TestLambdaExpressions {
     Parser.Class clazz = new Parser.Class("Main", true);
     Parser.Method meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 191));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 111, 122));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 111, 121));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -109,7 +108,7 @@ public class TestLambdaExpressions {
     Parser.Class clazz = new Parser.Class("Main", true);
     Parser.Method meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 209));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 122, 131));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 122, 130));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -128,36 +127,33 @@ public class TestLambdaExpressions {
     Parser.Class clazz = new Parser.Class("Main", true);
     Parser.Method meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 336));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 145, 190));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 5, 237, 253));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 145, 189));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 5, 237, 252));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
   @Test
-  public void TestChainedLambdasOnArray() {
+  public void TestChainedStreamsWithLambdasAsParameter() {
     String fileContent = String.format(baseTemplate, """
         int[] array = new int[]{1, 2, 3, 4, 5, 6};
         Arrays.stream(array)
             .map(x -> x*2)
             .peek(x -> System.out.printf("%d ", x))
-            .filter(x -> x > 5)
+            .filter(x -> (x > 5))
+            .reduce((acc, x) -> ((acc) + (x)))
             .ifPresent(possibleResult -> System.out.println("\\nRes: " + possibleResult));
         """);
-    int[] array = new int[]{1, 2, 3, 4, 5, 6};
-    Arrays.stream(array)
-        .map(x -> x*2)
-        .peek(x -> System.out.printf("%d ", x))
-        .filter(x -> x > 5)
-        .reduce((acc, x) -> acc + x)
-        .ifPresent(possibleResult -> System.out.println("\nRes: " + possibleResult));
     List<Parser.Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
+    assertEquals(6, blocks.size());
     List<Parser.Block> expectedBlocks = new ArrayList<>();
     Parser.Class clazz = new Parser.Class("Main", true);
     Parser.Method meth = new Parser.Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 336));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 145, 190));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 5, 237, 253));
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 11, 62, 345));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 5, 144, 148));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 6, 6, 164, 192));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 7, 7, 210, 218));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 8, 8, 243, 257));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 9, 9, 291, 338));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }
