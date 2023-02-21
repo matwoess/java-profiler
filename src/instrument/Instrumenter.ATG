@@ -275,11 +275,7 @@ StaticBlock =									(. enterStaticBlock(); .)
 MethodDecl  =									(. enterMethod(); .)
 						BracketExpr Block.
 Statement =
-		if BracketExpr						(. checkInsertLBrace(); .)
-			Statement								(. checkInsertRBrace(); .)
-			[else										(. checkInsertLBrace(); .)
-				Statement							(. checkInsertRBrace(); .)
-			]
+		if BracketExpr BlockOrSingleStatement [else BlockOrSingleStatement]
 		| "switch" BracketExpr "{"
 			{"case" {ANY} ":"				(. checkInsertLBrace(); .)
 				{Statement}						(. checkInsertRBrace(); .)
@@ -288,19 +284,20 @@ Statement =
 				{Statement}						(. checkInsertRBrace(); .)
 				]
 			"}"
-		| "while" BracketExpr			(. checkInsertLBrace(); .)
-			Statement								(. checkInsertRBrace(); .)
- 		| "do"										(. checkInsertLBrace(); .)
-			Statement 							(. checkInsertRBrace(); .)
-			"while" BracketExpr ";"
-		| "for" BracketExpr				(. checkInsertLBrace(); .)
-			Statement								(. checkInsertRBrace(); .)
+		| "while" BracketExpr BlockOrSingleStatement
+ 		| "do" BlockOrSingleStatement "while" BracketExpr ";"
+		| "for" BracketExpr BlockOrSingleStatement
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(isLabel()) ident colon
 		| (ident | QuotedText) {ANY | QuotedText | LambdaExpression} ";"
 		| Block
-		| ";" .
+		| ";"
+		.
+BlockOrSingleStatement =
+		Block
+		| (. checkInsertLBrace(); .) Statement (. checkInsertRBrace(); .)
+		.
 QuotedText = '"' {ANY} '"'.
 BracketExpr = "(" {BracketExpr | ANY} ")".
 LambdaExpression = "->" (Block | LambdaBody).
