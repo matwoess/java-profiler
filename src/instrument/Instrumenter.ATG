@@ -8,8 +8,6 @@ COMPILER Instrumenter
 	Class curClass = null;
 	Method curMeth = null;
 	Block curBlock = null;
-	Token[] prevTokens = new Token[4];
-
 
 	public static class Class {
 		String name;
@@ -136,11 +134,13 @@ COMPILER Instrumenter
 		curMeth = new Method(t.val);
 		curClass.methods.add(curMeth);
 		System.out.println("found method declaration of: " + curMeth.name);
-		if ("main".equals(prevTokens[0].val) && "void".equals(prevTokens[1].val) && "static".equals(prevTokens[2].val) && "public".equals(prevTokens[3].val)) {
-			curMeth.isMain = true;
-			curClass.isMain = true;
-			System.out.println("method is main entry point.");
-		}
+	}
+
+	void enterMainMethod() {
+		enterMethod();
+		curMeth.isMain = true;
+		curClass.isMain = true;
+		System.out.println("method is main entry point.");
 	}
 
 	void leaveMethod() {
@@ -226,14 +226,11 @@ COMPILER Instrumenter
 	  return la.kind == _ident && scanner.Peek().kind == _colon;
 	}
 
-	void logToken() {
-		if (t == prevTokens[0]) { // sometimes same token appears twice
-			return;
-		}
-		prevTokens[3] = prevTokens[2];
-		prevTokens[2] = prevTokens[1];
-		prevTokens[1] = prevTokens[0];
-		prevTokens[0] = t;
+	boolean isEntryPoint() {
+	  return la.kind == _public
+				&& scanner.Peek().kind == _static
+				&& scanner.Peek().kind == _void
+				&& scanner.Peek().kind == _main;
 	}
 
 CHARACTERS
@@ -248,6 +245,9 @@ TOKENS
 	static = "static".
 	if     = "if".
 	else   = "else".
+	public = "public".
+	void   = "void".
+	main   = "main".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -264,11 +264,16 @@ Class =
 			{ANY} "{"
 			{ Class
 				| "abstract" ident {ANY} ";"
+				| IF(isEntryPoint()) MainMethod
 				| IF(identAndLPar()) MethodDecl
 				| IF(staticAndLBrace()) StaticBlock
-				| ANY									(. logToken(); .)
+				| ANY
 			}
 			"}"											(. leaveClass(); .)
+		.
+MainMethod =
+		public static void main   (. enterMainMethod(); .)
+		BracketExpr Block
 		.
 StaticBlock =									(. enterStaticBlock(); .)
 						Block.
