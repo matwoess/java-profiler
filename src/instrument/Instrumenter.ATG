@@ -222,6 +222,10 @@ COMPILER Instrumenter
 		return t.kind == _static && la.kind == _lbrace;
 	}
 
+	boolean isLabel() {
+	  return la.kind == _ident && scanner.Peek().kind == _colon;
+	}
+
 	void logToken() {
 		if (t == prevTokens[0]) { // sometimes same token appears twice
 			return;
@@ -240,6 +244,7 @@ TOKENS
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
 	lpar   = '('.
 	lbrace = '{'.
+	colon  = ':'.
 	static = "static".
 	if     = "if".
 	else   = "else".
@@ -292,6 +297,7 @@ Statement =
 			Statement								(. checkInsertRBrace(); .)
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
+		| IF(isLabel()) ident colon
 		| (ident | QuotedText) {ANY | QuotedText | LambdaExpression} ";"
 		| Block
 		| ";" .

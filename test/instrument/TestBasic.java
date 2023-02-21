@@ -264,4 +264,33 @@ public class TestBasic {
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 227));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestLabels() {
+    String fileContent = String.format(baseTemplate, """
+        int x = 1;
+        outer:
+        while (true) {
+          inner: while (true) {
+            if (x == 1) {
+              x++;
+              break inner;
+            } else {
+              break outer;
+            }
+          }
+        }
+        """, "");
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(5, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 16, 62, 220));
+    expectedBlocks.add(getBlock(clazz, meth, 5, 14, 99, 215));
+    expectedBlocks.add(getBlock(clazz, meth, 6, 13, 123, 213));
+    expectedBlocks.add(getBlock(clazz, meth, 7, 10, 141, 177));
+    expectedBlocks.add(getBlock(clazz, meth, 10, 12, 184, 209));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }

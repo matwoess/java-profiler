@@ -194,4 +194,27 @@ public class TestMissingBraces {
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 15, 15, 214, 221));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestLabels() {
+    String fileContent = String.format(baseTemplate, """
+        int x = 1;
+        outer: while (true) while(true)
+           if(x==1)
+             return;
+           else
+             break outer;
+        """, "");
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(5, blocks.size());
+    List<Parser.Block> expectedBlocks = new ArrayList<>();
+    Parser.Class clazz = new Parser.Class("Main", true);
+    Parser.Method meth = new Parser.Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 10, 62, 165));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 8, 97, 160));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 8, 109, 160));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 6, 121, 134));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 7, 8, 142, 160));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }
