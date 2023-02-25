@@ -215,11 +215,11 @@ COMPILER Instrumenter
 	}
 
 	boolean identAndLPar() {
-		return t.kind == _ident && la.kind == _lpar;
+		return la.kind == _ident && scanner.Peek().kind == _lpar;
 	}
 
 	boolean staticAndLBrace() {
-		return t.kind == _static && la.kind == _lbrace;
+		return la.kind == _static && scanner.Peek().kind == _lbrace;
 	}
 
 	boolean isLabel() {
@@ -275,9 +275,9 @@ MainMethod =
 		public static void main   (. enterMainMethod(); .)
 		BracketExpr Block
 		.
-StaticBlock =									(. enterStaticBlock(); .)
+StaticBlock =	static 					(. enterStaticBlock(); .)
 						Block.
-MethodDecl  =									(. enterMethod(); .)
+MethodDecl  = ident 					(. enterMethod(); .)
 						BracketExpr Block.
 Statement =
 		if BracketExpr BlockOrSingleStatement [else BlockOrSingleStatement]
