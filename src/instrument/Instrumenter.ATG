@@ -227,8 +227,15 @@ COMPILER Instrumenter
 	}
 
 	boolean isEntryPoint() {
-	  return la.kind == _public
+		return la.kind == _public
 				&& scanner.Peek().kind == _static
+				&& scanner.Peek().kind == _void
+				&& scanner.Peek().kind == _main;
+	}
+
+	boolean isInterfaceEntryPoint() {
+		// the "public" can be omitted in interfaces (implied)
+		return la.kind == _static
 				&& scanner.Peek().kind == _void
 				&& scanner.Peek().kind == _main;
 	}
@@ -256,14 +263,13 @@ IGNORE "\t\n\r"
 
 PRODUCTIONS
 
-Instrumenter = [PackageDecl] { {ANY} Class }.
+Instrumenter = [PackageDecl] { Class | Interface | ANY }.
 PackageDecl = "package" {ANY} ";" (. markBeginOfImports(); .)
 						.
 Class =
 			"class" ident						(. enterClass(); .)
 			{ANY} "{"
-			{ Class
-				| "abstract" ident {ANY} ";"
+			{ Class | Interface
 				| IF(isEntryPoint()) MainMethod
 				| IF(identAndLPar()) MethodDecl
 				| IF(staticAndLBrace()) StaticBlock
@@ -271,14 +277,24 @@ Class =
 			}
 			"}"											(. leaveClass(); .)
 		.
+Interface =
+					"interface" ident		(. enterClass(); .)
+					{ANY} "{"
+					{ Interface | Class
+						| IF(isInterfaceEntryPoint()) MainMethod
+						| IF(identAndLPar()) MethodDecl
+						| ANY
+					}
+					"}"									(. leaveClass(); .)
+					.
 MainMethod =
-		public static void main   (. enterMainMethod(); .)
+		[public] static void main	(. enterMainMethod(); .)
 		BracketExpr Block
 		.
 StaticBlock =	static 					(. enterStaticBlock(); .)
 						Block.
 MethodDecl  = ident 					(. enterMethod(); .)
-						BracketExpr Block.
+						BracketExpr (";" | Block).
 Statement =
 		if BracketExpr BlockOrSingleStatement [else BlockOrSingleStatement]
 		| SwitchStatement
