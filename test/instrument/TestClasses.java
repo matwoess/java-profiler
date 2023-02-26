@@ -2,6 +2,10 @@ package instrument;
 
 import org.junit.jupiter.api.Test;
 
+import common.Block;
+import common.Method;
+import common.Class;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +29,11 @@ public class TestClasses {
                 '}';
           }
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(abstractClass);
+    List<Block> blocks = getFoundBlocks(abstractClass);
     assertEquals(1, blocks.size());
-    Parser.Class clazz = new Parser.Class("Pet");
-    Parser.Method meth = new Parser.Method("toString");
-    Parser.Block expectedBlock = getMethodBlock(clazz, meth, 6, 11, 139, 234);
+    Class clazz = new Class("Pet");
+    Method meth = new Method("toString");
+    Block expectedBlock = getMethodBlock(clazz, meth, 6, 11, 139, 234);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -66,19 +70,19 @@ public class TestClasses {
             }
           }
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(innerClassAndStaticBlocks);
+    List<Block> blocks = getFoundBlocks(innerClassAndStaticBlocks);
     assertEquals(6, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Classes", true);
-    Parser.Method meth = new Parser.Method("static");
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Classes", true);
+    Method meth = new Method("static");
     expectedBlocks.add(getBlock(clazz, meth, 4, 6, 50, 65));
-    meth = new Parser.Method("main", true);
+    meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 8, 21, 109, 471));
     expectedBlocks.add(getBlock(clazz, meth, 12, 20, 234, 467));
     expectedBlocks.add(getBlock(clazz, meth, 14, 16, 285, 352));
     expectedBlocks.add(getBlock(clazz, meth, 16, 18, 359, 427));
-    clazz = new Parser.Class("Classes.PetFarm");
-    meth = new Parser.Method("static");
+    clazz = new Class("Classes.PetFarm");
+    meth = new Method("static");
     expectedBlocks.add(getBlock(clazz, meth, 26, 28, 561, 590));
     assertIterableEquals(expectedBlocks, blocks);
   }
@@ -112,20 +116,20 @@ public class TestClasses {
             }
           }
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(deepInnerClasses);
+    List<Block> blocks = getFoundBlocks(deepInnerClasses);
     assertEquals(4, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("InnerClasses", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("InnerClasses", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 70, 275));
-    clazz = new Parser.Class("InnerClasses.Inner");
-    meth = new Parser.Method("level1");
+    clazz = new Class("InnerClasses.Inner");
+    meth = new Method("level1");
     expectedBlocks.add(getMethodBlock(clazz, meth, 11, 13, 318, 362));
-    clazz = new Parser.Class("InnerClasses.Inner.Sub");
-    meth = new Parser.Method("level2");
+    clazz = new Class("InnerClasses.Inner.Sub");
+    meth = new Method("level2");
     expectedBlocks.add(getMethodBlock(clazz, meth, 15, 17, 407, 455));
-    clazz = new Parser.Class("InnerClasses.Inner.Sub.SubSub");
-    meth = new Parser.Method("level3");
+    clazz = new Class("InnerClasses.Inner.Sub.SubSub");
+    meth = new Method("level3");
     expectedBlocks.add(getMethodBlock(clazz, meth, 19, 21, 507, 559));
     assertIterableEquals(expectedBlocks, blocks);
   }
@@ -161,21 +165,21 @@ public class TestClasses {
           }
           @Override String speak() { return "meow."; }
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(classWithInheritance);
+    List<Block> blocks = getFoundBlocks(classWithInheritance);
     assertEquals(5, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Pet");
-    Parser.Method meth = new Parser.Method("toString");
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Pet");
+    Method meth = new Method("toString");
     expectedBlocks.add(getMethodBlock(clazz, meth, 6, 11, 139, 234));
-    clazz = new Parser.Class("Dog");
-    meth = new Parser.Method("Dog");
+    clazz = new Class("Dog");
+    meth = new Method("Dog");
     expectedBlocks.add(getMethodBlock(clazz, meth, 15, 18, 298, 344));
-    meth = new Parser.Method("speak");
+    meth = new Method("speak");
     expectedBlocks.add(getMethodBlock(clazz, meth, 19, 19, 373, 391));
-    clazz = new Parser.Class("Cat");
-    meth = new Parser.Method("Cat");
+    clazz = new Class("Cat");
+    meth = new Method("Cat");
     expectedBlocks.add(getMethodBlock(clazz, meth, 23, 26, 455, 501));
-    meth = new Parser.Method("speak");
+    meth = new Method("speak");
     expectedBlocks.add(getMethodBlock(clazz, meth, 27, 27, 530, 548));
     assertIterableEquals(expectedBlocks, blocks);
   }
@@ -193,11 +197,11 @@ public class TestClasses {
           };
           void doNothing() {}
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
-    Parser.Class clazz = new Parser.Class("InitBlocks");
-    Parser.Method meth = new Parser.Method("doNothing");
-    Parser.Block expectedBlock = getMethodBlock(clazz, meth, 9, 9, 263, 264);
+    Class clazz = new Class("InitBlocks");
+    Method meth = new Method("doNothing");
+    Block expectedBlock = getMethodBlock(clazz, meth, 9, 9, 263, 264);
     assertEquals(expectedBlock, blocks.get(0));
   }
 }

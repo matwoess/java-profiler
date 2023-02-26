@@ -1,6 +1,9 @@
 package instrument;
 
+import common.Block;
+import common.Class;
 import common.JavaFile;
+import common.Method;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +31,7 @@ public class Util {
     return instrumenter;
   }
 
-  public static List<Parser.Block> getFoundBlocks(String content) {
+  public static List<Block> getFoundBlocks(String content) {
     Instrumenter instrumenter = analyzeStringContent(content);
     return instrumenter.mainJavaFile.foundBlocks;
   }
@@ -38,8 +41,8 @@ public class Util {
     return instrumenter.mainJavaFile.beginOfImports;
   }
 
-  public static Parser.Block getBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {
-    Parser.Block expected = new Parser.Block();
+  public static Block getBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
+    Block expected = new Block();
     expected.clazz = clazz;
     expected.method = meth;
     expected.beg = beg;
@@ -49,14 +52,14 @@ public class Util {
     return expected;
   }
 
-  public static Parser.Block getMethodBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {
-    Parser.Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
+  public static Block getMethodBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
+    Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
     expected.isMethodBlock = true;
     return expected;
   }
 
-  public static Parser.Block getSingleStatementBlock(Parser.Class clazz, Parser.Method meth, int beg, int end, int begPos, int endPos) {
-    Parser.Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
+  public static Block getSingleStatementBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
+    Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
     expected.insertBraces = true;
     return expected;
   }

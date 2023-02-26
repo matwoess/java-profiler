@@ -2,6 +2,10 @@ package instrument;
 
 import org.junit.jupiter.api.Test;
 
+import common.Block;
+import common.Method;
+import common.Class;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +23,7 @@ public class TestInterfaces {
           public int getAge(int userId);
           abstract void printInfo(String userName, int age);
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(abstractClass);
+    List<Block> blocks = getFoundBlocks(abstractClass);
     assertEquals(0, blocks.size());
   }
 
@@ -36,11 +40,11 @@ public class TestInterfaces {
           };
           default void doNothing() {}
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
-    Parser.Class clazz = new Parser.Class("InitBlocks");
-    Parser.Method meth = new Parser.Method("doNothing");
-    Parser.Block expectedBlock = getMethodBlock(clazz, meth, 9, 9, 275, 276);
+    Class clazz = new Class("InitBlocks");
+    Method meth = new Method("doNothing");
+    Block expectedBlock = getMethodBlock(clazz, meth, 9, 9, 275, 276);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -59,15 +63,15 @@ public class TestInterfaces {
             System.out.printf("%s: %d\\n", userName, age);
           }
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("DefaultStatic");
-    Parser.Method meth = new Parser.Method("getName");
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("DefaultStatic");
+    Method meth = new Method("getName");
     expectedBlocks.add(getMethodBlock(clazz, meth, 3, 5, 67, 91));
-    meth = new Parser.Method("getAge");
+    meth = new Method("getAge");
     expectedBlocks.add(getMethodBlock(clazz, meth, 6, 8, 133, 160));
-    meth = new Parser.Method("printInfo");
+    meth = new Method("printInfo");
     expectedBlocks.add(getMethodBlock(clazz, meth, 9, 11, 212, 266));
     assertIterableEquals(expectedBlocks, blocks);
   }
@@ -97,17 +101,17 @@ public class TestInterfaces {
             }
           }
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Interfaces.SubInterface");
-    Parser.Method meth = new Parser.Method("get");
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Interfaces.SubInterface");
+    Method meth = new Method("get");
     expectedBlocks.add(getMethodBlock(clazz, meth, 6, 8, 174, 225));
-    clazz = new Parser.Class("Interfaces.SubInterface.SubClass");
-    meth = new Parser.Method("getXPlus1");
+    clazz = new Class("Interfaces.SubInterface.SubClass");
+    meth = new Method("getXPlus1");
     expectedBlocks.add(getMethodBlock(clazz, meth, 11, 13, 278, 308));
-    clazz = new Parser.Class("Interfaces.X");
-    meth = new Parser.Method("callGet");
+    clazz = new Class("Interfaces.X");
+    meth = new Method("callGet");
     expectedBlocks.add(getMethodBlock(clazz, meth, 18, 20, 376, 395));
     assertIterableEquals(expectedBlocks, blocks);
   }
@@ -131,14 +135,14 @@ public class TestInterfaces {
             System.out.println(result);
           }
         }""";
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("WithMain.X", false);
-    Parser.Method meth = new Parser.Method("get");
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("WithMain.X", false);
+    Method meth = new Method("get");
     expectedBlocks.add(getMethodBlock(clazz, meth, 6, 8, 110, 132));
-    clazz = new Parser.Class("WithMain", true);
-    meth = new Parser.Method("main", true);
+    clazz = new Class("WithMain", true);
+    meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 11, 15, 180, 268));
     assertIterableEquals(expectedBlocks, blocks);
     // without public
@@ -152,9 +156,9 @@ public class TestInterfaces {
         }""";
     blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
-    clazz = new Parser.Class("InferredPublic", true);
-    meth = new Parser.Method("main", true);
-    Parser.Block expectedBlock = getMethodBlock(clazz, meth, 2, 6, 69, 157);
+    clazz = new Class("InferredPublic", true);
+    meth = new Method("main", true);
+    Block expectedBlock = getMethodBlock(clazz, meth, 2, 6, 69, 157);
     assertEquals(expectedBlock, blocks.get(0));
   }
 }

@@ -2,6 +2,10 @@ package instrument;
 
 import org.junit.jupiter.api.Test;
 
+import common.Block;
+import common.Method;
+import common.Class;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +27,11 @@ public class TestMissingBraces {
     String fileContent = String.format(baseTemplate, """
         if (true == false)return;
         """);
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 5, 62, 97));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 85, 92));
     assertIterableEquals(expectedBlocks, blocks);
@@ -39,11 +43,11 @@ public class TestMissingBraces {
         if (true == false) break;
         else continue;
         """);
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 6, 62, 112));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 85, 92));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 97, 107));
@@ -57,11 +61,11 @@ public class TestMissingBraces {
         else if (true == true) return;
         else continue;
         """);
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(4, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 143));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 85, 92));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 115, 123));
@@ -85,11 +89,11 @@ public class TestMissingBraces {
         }
         System.out.println(x);
         """);
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(7, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 16, 62, 269));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 5, 94, 104));
     expectedBlocks.add(getBlock(clazz, meth, 6, 8, 127, 139));
@@ -110,11 +114,11 @@ public class TestMissingBraces {
           else
             x=1;
         """);
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(5, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 10, 62, 147));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 8, 91, 142));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 8, 103, 142));
@@ -132,11 +136,11 @@ public class TestMissingBraces {
           x+=1;
         while (x<10);
         """);
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 129));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 80, 86));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 6, 102, 110));
@@ -151,11 +155,11 @@ public class TestMissingBraces {
           array[i] = i;
         for (int val : array) System.out.println(val);
         """);
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 8, 62, 188));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 5, 120, 136));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 6, 6, 158, 183));
@@ -165,26 +169,26 @@ public class TestMissingBraces {
   @Test
   public void TestSwitch() {
     String fileContent = String.format(baseTemplate, """
-       int x = 1;
-       switch (x) {
-         case 1: {
-           x += 3;
-           break;
-         }
-         case 2: case 3:
-         case 4:
-          x *= 2;
-          x = x - 1;
-         case 5:
-           break;
-         default: break;
-       }
-        """, "");
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+        int x = 1;
+        switch (x) {
+          case 1: {
+            x += 3;
+            break;
+          }
+          case 2: case 3:
+          case 4:
+           x *= 2;
+           x = x - 1;
+          case 5:
+            break;
+          default: break;
+        }
+         """, "");
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(7, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 18, 62, 228));
     expectedBlocks.add(getBlock(clazz, meth, 5, 8, 102, 129));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 9, 9, 139, 139));
@@ -205,11 +209,11 @@ public class TestMissingBraces {
            else
              break outer;
         """, "");
-    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(5, blocks.size());
-    List<Parser.Block> expectedBlocks = new ArrayList<>();
-    Parser.Class clazz = new Parser.Class("Main", true);
-    Parser.Method meth = new Parser.Method("main", true);
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 10, 62, 165));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 8, 97, 160));
     expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 8, 109, 160));

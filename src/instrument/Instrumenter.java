@@ -1,6 +1,9 @@
 package instrument;
 
+import common.Class;
+import common.Block;
 import common.JavaFile;
+import common.Method;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -81,7 +84,7 @@ public class Instrumenter {
     boolean initAndSafeInserted = false;
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(javaFile.beginOfImports, "import auxiliary.__Counter;"));
-    for (Parser.Block block : javaFile.foundBlocks) {
+    for (Block block : javaFile.foundBlocks) {
       // insert order is important, in case of same CodeInsert char positions
       if (!initAndSafeInserted && isMainFile && isCounterInitBlock(block)) {
         String initCode = String.format("__Counter.init(\"%s\");", instrumentDir.relativize(metadataFile));
@@ -106,7 +109,7 @@ public class Instrumenter {
     return inserts;
   }
 
-  boolean isCounterInitBlock(Parser.Block block) {
+  boolean isCounterInitBlock(Block block) {
     if (!block.clazz.isMain) return false;
     boolean classHasStaticBlock = block.clazz.methods.stream().anyMatch(m -> m.name.equals("static"));
     if (classHasStaticBlock) {
@@ -120,11 +123,11 @@ public class Instrumenter {
     builder.append(blockCounter).append(" ");
     for (JavaFile jFile : additionalJavaFiles) {
       builder.append(jFile.sourceFile.toUri()).append(" ");
-      for (Parser.Class clazz : jFile.foundClasses) {
+      for (Class clazz : jFile.foundClasses) {
         builder.append(clazz.name).append(" ");
-        for (Parser.Method meth : clazz.methods) {
+        for (Method meth : clazz.methods) {
           builder.append(meth.name).append(" ");
-          for (Parser.Block block : meth.blocks) {
+          for (Block block : meth.blocks) {
             builder.append(block.beg).append(" ");
             builder.append(block.end).append(" ");
             builder.append(block.isMethodBlock ? 1 : 0).append(" ");
