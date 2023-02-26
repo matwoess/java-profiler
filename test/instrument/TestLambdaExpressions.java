@@ -1,14 +1,12 @@
 package instrument;
 
-import org.junit.jupiter.api.Test;
-
 import common.Block;
-import common.Method;
 import common.Class;
+import common.Method;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static instrument.Util.*;
@@ -103,9 +101,6 @@ public class TestLambdaExpressions {
         double result = addTogether.apply(7f, 5.6f);
         System.out.println(result);
         """);
-    BiFunction<Float, Float, Float> addTogether = (x, y) -> (x + y);
-    double result = addTogether.apply(7f, 5.6f);
-    System.out.println(result);
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();

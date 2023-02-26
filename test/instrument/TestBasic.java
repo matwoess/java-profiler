@@ -240,7 +240,6 @@ public class TestBasic {
         // ignoring result
         "Some string.".split(" ");
          """, "");
-    "Some string.".split(" ");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
