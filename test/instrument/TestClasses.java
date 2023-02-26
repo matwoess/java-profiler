@@ -179,4 +179,25 @@ public class TestClasses {
     expectedBlocks.add(getMethodBlock(clazz, meth, 27, 27, 530, 548));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestMembersWithInitBlocks() {
+    String fileContent = """
+        class InitBlocks {
+          int[] ints = new int[]{0, 1, 3};
+          List<Float> floats = new ArrayList<>(Arrays.asList(0.5f, 3.4f));
+          String[] strings = new String[]{
+              String.format("%d", ints[1]),
+              floats.get(1).toString(),
+              "ASDF",
+          };
+          void doNothing() {}
+        }""";
+    List<Parser.Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(1, blocks.size());
+    Parser.Class clazz = new Parser.Class("InitBlocks");
+    Parser.Method meth = new Parser.Method("doNothing");
+    Parser.Block expectedBlock = getMethodBlock(clazz, meth, 9, 9, 263, 264);
+    assertEquals(expectedBlock, blocks.get(0));
+  }
 }
