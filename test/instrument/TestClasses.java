@@ -204,4 +204,42 @@ public class TestClasses {
     Block expectedBlock = getMethodBlock(clazz, meth, 9, 9, 263, 264);
     assertEquals(expectedBlock, blocks.get(0));
   }
+
+  @Test
+  public void TestSubClassWithFollowingMethod() {
+    // testing that the classStack works
+    String fileContent = """
+        class A {
+          class B {
+            void classBMeth() {}
+          }
+          void classAMeth1() {}
+          class C {
+            class D {
+              void classDMeth() {}
+            }
+            void classCMeth() {}
+          }
+          void classAMeth2() {}
+        }""";
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(5, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("A.B");
+    Method meth = new Method("classBMeth");
+    expectedBlocks.add(getMethodBlock(clazz, meth, 3, 3, 45, 46));
+    clazz = new Class("A");
+    meth = new Method("classAMeth1");
+    expectedBlocks.add(getMethodBlock(clazz, meth, 5, 5, 73, 74));
+    clazz = new Class("A.C.D");
+    meth = new Method("classDMeth");
+    expectedBlocks.add(getMethodBlock(clazz, meth, 8, 8, 126, 127));
+    clazz = new Class("A.C");
+    meth = new Method("classCMeth");
+    expectedBlocks.add(getMethodBlock(clazz, meth, 10, 10, 157, 158));
+    clazz = new Class("A");
+    meth = new Method("classAMeth2");
+    expectedBlocks.add(getMethodBlock(clazz, meth, 12, 12, 185, 186));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }

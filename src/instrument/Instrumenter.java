@@ -40,7 +40,7 @@ public class Instrumenter {
     }
     javaFile.beginOfImports = parser.beginOfImports;
     javaFile.foundBlocks = parser.allBlocks;
-    javaFile.foundClasses = parser.classes;
+    javaFile.foundClasses = parser.allClasses;
   }
 
   public void instrumentFiles() {
