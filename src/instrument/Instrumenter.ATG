@@ -3,7 +3,6 @@ COMPILER Instrumenter
 	int beginOfImports = 0;
 	List<Class> allClasses = new ArrayList<>();
 	Stack<Class> classStack = new Stack<>();
-	Stack<String> classNameStack = new Stack<>();
 	List<Block> allBlocks = new ArrayList<>();
 	Stack<Block> blockStack = new Stack<>();
 	Class curClass = null;
@@ -18,8 +17,8 @@ COMPILER Instrumenter
 		if (curClass != null) {
 			classStack.push(curClass);
 		}
-		classNameStack.push(t.val);
-		curClass = new Class(String.join(".", classNameStack));
+		String className = (!classStack.isEmpty()) ? classStack.peek().name + "." + t.val : t.val;
+		curClass = new Class(className);
 		allClasses.add(curClass);
 		System.out.printf("entering class <%s>\n", curClass.name);
 
@@ -27,7 +26,6 @@ COMPILER Instrumenter
 
 	void leaveClass() {
 		System.out.printf("left class <%s>\n", curClass.name);
-		classNameStack.pop();
 		if (classStack.empty()) {
 			curClass = null;
 		} else {
