@@ -137,9 +137,24 @@ public class TestInterfaces {
     Parser.Class clazz = new Parser.Class("WithMain.X", false);
     Parser.Method meth = new Parser.Method("get");
     expectedBlocks.add(getMethodBlock(clazz, meth, 6, 8, 110, 132));
-    clazz = new Parser.Class("WithMain.X", true);
+    clazz = new Parser.Class("WithMain", true);
     meth = new Parser.Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 11, 15, 180, 268));
     assertIterableEquals(expectedBlocks, blocks);
+    // without public
+    fileContent = """
+        public interface InferredPublic {
+          static void main(String[] args) {
+            WithMain x = new X();
+            int result = x.get();
+            System.out.println(result);
+          }
+        }""";
+    blocks = getFoundBlocks(fileContent);
+    assertEquals(1, blocks.size());
+    clazz = new Parser.Class("InferredPublic", true);
+    meth = new Parser.Method("main", true);
+    Parser.Block expectedBlock = getMethodBlock(clazz, meth, 2, 6, 69, 157);
+    assertEquals(expectedBlock, blocks.get(0));
   }
 }
