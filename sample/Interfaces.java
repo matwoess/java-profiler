@@ -1,9 +1,18 @@
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public interface Interfaces extends Serializable {
   int x = 0;
 
-  int[] arr = new int[]{0};
+  int[] ints = new int[]{0, 1, 3};
+  List<Float> floats = new ArrayList<>(Arrays.asList(0.5f, 3.4f));
+  String[] strings = new String[]{
+      String.format("%d", ints[1]),
+      floats.get(1).toString(),
+      "ASDF",
+  };
 
   int get();
 
@@ -12,14 +21,15 @@ public interface Interfaces extends Serializable {
   }
 
   static void increment() {
-    arr[0]++;
+    ints[0]++;
   }
+
   public interface SubInterface extends Interfaces {
     @Override
     default public int get() {
       printGreeting();
       increment();
-      return SubClass.getXPlus1() + arr[0];
+      return SubClass.getXPlus1() + ints[0];
     }
 
     class SubClass {
@@ -29,7 +39,11 @@ public interface Interfaces extends Serializable {
     }
   }
 
-  class X implements SubInterface { }
+  class X implements SubInterface {
+    void callGet() {
+      get();
+    }
+  }
 
   static void main(String[] args) {
     SubInterface x = new X();
