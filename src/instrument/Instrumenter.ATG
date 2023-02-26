@@ -270,6 +270,7 @@ Class =
 			"class" ident						(. enterClass(); .)
 			{ANY} "{"
 			{ Class | Interface
+				| "=" {ANY} ";"  // against class member with initializers
 				| IF(isEntryPoint()) MainMethod
 				| IF(identAndLPar()) MethodDecl
 				| IF(staticAndLBrace()) StaticBlock
@@ -281,6 +282,7 @@ Interface =
 					"interface" ident		(. enterClass(); .)
 					{ANY} "{"
 					{ Interface | Class
+						| "=" {ANY} ";"  // against class member with initializers
 						| IF(isInterfaceEntryPoint()) MainMethod
 						| IF(identAndLPar()) MethodDecl
 						| ANY
