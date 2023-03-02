@@ -167,13 +167,13 @@ IGNORE "\t\n\r"
 
 PRODUCTIONS
 
-Instrumenter = [PackageDecl] { Class | Interface | ANY }.
+Instrumenter = [PackageDecl] { Class | Interface | Enum | ANY }.
 PackageDecl = "package" {ANY} ";" (. markBeginOfImports(); .)
 						.
 Class =
 			"class" ident						(. enterClass(); .)
 			{ANY} "{"
-			{ Class | Interface
+			{ Class | Interface | Enum
 				| "=" {ANY} ";"  // against class member with initializers
 				| IF(isEntryPoint()) MainMethod
 				| IF(identAndLPar()) MethodDecl
@@ -185,7 +185,7 @@ Class =
 Interface =
 					"interface" ident		(. enterClass(); .)
 					{ANY} "{"
-					{ Interface | Class
+					{ Interface | Class | Enum
 						| "=" {ANY} ";"  // against class member with initializers
 						| IF(isInterfaceEntryPoint()) MainMethod
 						| IF(identAndLPar()) MethodDecl
@@ -193,6 +193,21 @@ Interface =
 					}
 					"}"									(. leaveClass(); .)
 					.
+Enum =
+			"enum" ident						(. enterClass(); .)
+			{ANY} "{"
+			{[","] ident [BracketExpr]}
+			[";"  // class body can follow only after a ";"
+				{ Enum | Class | Interface
+					| "=" {ANY} ";"  // against class member with initializers
+					| IF(isEntryPoint()) MainMethod
+					| IF(identAndLPar()) MethodDecl
+					| IF(staticAndLBrace()) StaticBlock
+					| ANY
+				}
+			]
+			"}"											(. leaveClass(); .)
+		.
 MainMethod =
 		[public] static void main	(. enterMainMethod(); .)
 		BracketExpr Block
