@@ -52,6 +52,23 @@ public enum Enums {
     }
   }
 
+  static class ClassInEnum implements InterfaceInEnum {
+    public static void printSkillLowerCase(Enums val) {
+      System.out.println(val.skill.lowercase());
+    }
+  }
+
+  private interface InterfaceInEnum {
+    default String uppercase(Enums val) {
+      return val.name().toUpperCase();
+    }
+  }
+
+  public static void callMethods() {
+    ClassInEnum.printSkillLowerCase(Enums.PRIMARY);
+    new ClassInEnum().uppercase(Enums.TERTIARY);
+  }
+
   public static void main(String[] args) {
     Enums e = PRIMARY;
     switch (e.getSkill()) {
@@ -62,6 +79,7 @@ public enum Enums {
     }
     e = SECONDARY;
     e.printSummary();
-    System.out.println(e.getSkill().lowercase());
+    ClassInEnum.printSkillLowerCase(e);
+    callMethods();
   }
 }
