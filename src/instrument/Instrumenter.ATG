@@ -235,11 +235,17 @@ BlockOrSingleStatement =
 		.
 SwitchStatement =
 			"switch" BracketExpr "{"
-			{"case" {ANY} ":"				(. checkInsertLBrace(); .)
-				{Statement}						(. checkInsertRBrace(); .)
+			{"case" {ANY}
+					(LambdaExpression
+						| ":"							(. checkInsertLBrace(); .)
+						{Statement}				(. checkInsertRBrace(); .)
+					)
 				}
-			["default" ":"					(. checkInsertLBrace(); .)
-				{Statement}						(. checkInsertRBrace(); .)
+			["default"
+					(LambdaExpression
+						|":"							(. checkInsertLBrace(); .)
+						{Statement}				(. checkInsertRBrace(); .)
+					)
 				]
 			"}"
 			.
