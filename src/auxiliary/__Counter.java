@@ -6,6 +6,11 @@ import java.nio.file.Path;
 
 
 public class __Counter {
+  static {
+    init("../metadata.txt");
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> save(("../counts.txt"))));
+  }
+
   private static int[] blockCounts;
 
   public static synchronized void inc(int n) {

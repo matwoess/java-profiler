@@ -46,17 +46,17 @@ public class Instrumenter {
   public void instrumentFiles() {
     blockCounter = 0;
     try {
-      instrument(mainJavaFile, true);
+       instrument(mainJavaFile);
       for (JavaFile additionalFile : additionalJavaFiles) {
-        instrument(additionalFile, false);
+        instrument(additionalFile);
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  void instrument(JavaFile javaFile, boolean isMain) throws IOException {
-    List<CodeInsert> codeInserts = getCodeInserts(javaFile, isMain);
+  void instrument(JavaFile javaFile) throws IOException {
+    List<CodeInsert> codeInserts = getCodeInserts(javaFile);
     String fileContent = Files.readString(javaFile.sourceFile);
     StringBuilder builder = new StringBuilder();
     int prevIdx = 0;
@@ -80,22 +80,11 @@ public class Instrumenter {
     }
   }
 
-  List<CodeInsert> getCodeInserts(JavaFile javaFile, boolean isMainFile) {
-    boolean initAndSafeInserted = false;
+  List<CodeInsert> getCodeInserts(JavaFile javaFile) {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(javaFile.beginOfImports, "import auxiliary.__Counter;"));
     for (Block block : javaFile.foundBlocks) {
       // insert order is important, in case of same CodeInsert char positions
-      if (!initAndSafeInserted && isMainFile && isCounterInitBlock(block)) {
-        String initCode = String.format("__Counter.init(\"%s\");", instrumentDir.relativize(metadataFile));
-        String saveCode = String.format(
-            "Runtime.getRuntime().addShutdownHook(new Thread(() -> {__Counter.save((\"%s\"));}));;",
-            instrumentDir.relativize(countsFile)
-        );
-        inserts.add(new CodeInsert(block.begPos, initCode));
-        inserts.add(new CodeInsert(block.begPos, saveCode));
-        initAndSafeInserted = true;
-      }
       if (block.insertBraces) {
         assert !block.isMethodBlock;
         inserts.add(new CodeInsert(block.begPos, "{"));
