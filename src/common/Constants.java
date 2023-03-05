@@ -8,9 +8,6 @@ public class Constants {
   public static final Path instrumentDir = outputDir.resolve("instrumented");
   public static final Path auxiliaryInstrumentDir = instrumentDir.resolve("auxiliary");
   public static final Path metadataFile = outputDir.resolve("metadata.txt");
-  public static final Path countsFile = outputDir.resolve("counts.txt");
-
-  public static final Path auxiliarySourceDir = Path.of("src", "auxiliary");
 
   static {
     if (outputDir.toFile().mkdirs()) {

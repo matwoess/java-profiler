@@ -3,11 +3,12 @@ package profile;
 import common.JavaFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
-import static common.Constants.*;
+import static common.Constants.auxiliaryInstrumentDir;
+import static common.Constants.instrumentDir;
 import static java.lang.System.exit;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -22,15 +23,12 @@ public class Profiler {
   }
 
   void copyAuxiliaryFiles() {
-    try (Stream<Path> walk = Files.walk(auxiliarySourceDir)) {
-      walk.filter(Files::isRegularFile).forEach(filePath -> {
-            try {
-              Files.copy(filePath, auxiliaryInstrumentDir.resolve(filePath.getFileName()), REPLACE_EXISTING);
-            } catch (IOException e) {
-              throw new RuntimeException(e);
-            }
-          }
-      );
+    String counterClass = "__Counter.class";
+    try (InputStream fileStream = getClass().getResourceAsStream("/auxiliary/" + counterClass)) {
+      if (fileStream == null) {
+        throw new RuntimeException("unable to locate auxiliary file: <" + counterClass + ">");
+      }
+      Files.copy(fileStream, auxiliaryInstrumentDir.resolve(Path.of(counterClass)), REPLACE_EXISTING);
     } catch (IOException | RuntimeException e) {
       throw new RuntimeException(e);
     }
