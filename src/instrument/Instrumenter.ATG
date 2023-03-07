@@ -8,6 +8,7 @@ COMPILER Instrumenter
 	Class curClass = null;
 	Method curMeth = null;
 	Block curBlock = null;
+	boolean inSwitchExpression = false;
 
 	void markBeginOfImports() {
 		beginOfImports = t.charPos + t.val.length();
@@ -78,6 +79,10 @@ COMPILER Instrumenter
 		allBlocks.add(curBlock);
 		curMeth.blocks.add(curBlock);
 		System.out.printf("entering block %s\n", curBlock);
+		if (missingBraces && inSwitchExpression) {
+			curBlock.isSingleStatementSwitchExpressionCase = true;
+			System.out.println("entered single statement switch expression case.");
+		}
 	}
 
 	void enterBlock() {
@@ -144,6 +149,20 @@ COMPILER Instrumenter
 				&& scanner.Peek().kind == _main;
 	}
 
+	void checkSwitchExpression() {
+		inSwitchExpression = t.kind == _equals;
+		if (inSwitchExpression) {
+			System.out.println("entered switch expression.");
+		}
+	}
+
+	void leaveSwitch() {
+		if (inSwitchExpression) {
+			inSwitchExpression = false;
+			System.out.println("left switch expression.");
+		}
+	}
+
 CHARACTERS
 	letter = 'a' .. 'z' + 'A'..'Z'.
 	digit  = '0'..'9'.
@@ -159,6 +178,7 @@ TOKENS
 	public = "public".
 	void   = "void".
 	main   = "main".
+	equals = "=".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -225,7 +245,7 @@ Statement =
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(isLabel()) ident colon
-		| (ident | QuotedText) {ANY | QuotedText | LambdaExpression} ";"
+		| (ident | QuotedText) {ANY | QuotedText | LambdaExpression | SwitchStatement} ";"
 		| Block
 		| ";"
 		.
@@ -233,7 +253,7 @@ BlockOrSingleStatement =
 		Block
 		| (. checkInsertLBrace(); .) Statement (. checkInsertRBrace(); .)
 		.
-SwitchStatement =
+SwitchStatement = 						(. checkSwitchExpression(); .)
 			"switch" BracketExpr "{"
 			{"case" {ANY}
 					(LambdaExpression
@@ -247,15 +267,15 @@ SwitchStatement =
 						{Statement}				(. checkInsertRBrace(); .)
 					)
 				]
-			"}"
+			"}"											(. leaveSwitch(); .)
 			.
 QuotedText = '"' {ANY} '"'.
 BracketExpr = "(" {BracketExpr | ANY} ")".
-LambdaExpression = "->" (Block | LambdaBody).
-LambdaBody = 									(. checkInsertLBrace(); .)
+LambdaExpression = "->" (Block | SingleStatementLambdaBody).
+SingleStatementLambdaBody = 	(. checkInsertLBrace(); .)
 				(ANY | BracketExpr | QuotedText | ident)
-				{ANY | BracketExpr}		(. checkInsertRBrace(); .)
-				(")" | ";")
+				{ANY | BracketExpr}
+				(")" | ";")						(. checkInsertRBrace(); .)
 				.
 Block = "{"										(. enterBlock(); .)
 				{Statement}

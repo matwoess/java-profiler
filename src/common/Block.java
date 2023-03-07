@@ -9,6 +9,7 @@ public class Block {
   public int endPos;
   public boolean isMethodBlock;
   public boolean insertBraces;
+  public boolean isSingleStatementSwitchExpressionCase;
 
   public String toString() {
     return String.format("%s%s: {%d[%s]-%s[%s]}%s",

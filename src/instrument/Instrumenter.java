@@ -90,6 +90,9 @@ public class Instrumenter {
         inserts.add(new CodeInsert(block.begPos, "{"));
       }
       inserts.add(new CodeInsert(block.begPos, String.format("__Counter.inc(%d);", blockCounter++)));
+      if (block.isSingleStatementSwitchExpressionCase) {
+        inserts.add(new CodeInsert(block.begPos, "yield "));
+      }
       if (block.insertBraces) {
         inserts.add(new CodeInsert(block.endPos, "}"));
       }
