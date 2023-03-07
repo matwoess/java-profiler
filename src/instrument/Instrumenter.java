@@ -98,15 +98,6 @@ public class Instrumenter {
     return inserts;
   }
 
-  boolean isCounterInitBlock(Block block) {
-    if (!block.clazz.isMain) return false;
-    boolean classHasStaticBlock = block.clazz.methods.stream().anyMatch(m -> m.name.equals("static"));
-    if (classHasStaticBlock) {
-      return block.method.name.equals("static");
-    }
-    return block.isMethodBlock && block.method.isMain;
-  }
-
   public void exportBlockData() {
     StringBuilder builder = new StringBuilder();
     builder.append(blockCounter).append(" ");
