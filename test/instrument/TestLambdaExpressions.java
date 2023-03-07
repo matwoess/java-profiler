@@ -90,7 +90,7 @@ public class TestLambdaExpressions {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 191));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 111, 121));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 111, 122));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -107,7 +107,7 @@ public class TestLambdaExpressions {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 209));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 122, 130));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 3, 3, 122, 131));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -126,8 +126,8 @@ public class TestLambdaExpressions {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 336));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 145, 189));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 5, 237, 252));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 4, 4, 145, 190));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 5, 237, 253));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -148,11 +148,11 @@ public class TestLambdaExpressions {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 11, 62, 345));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 5, 144, 148));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 6, 6, 164, 192));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 7, 7, 210, 218));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 8, 8, 243, 257));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 9, 9, 291, 338));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 5, 5, 144, 149));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 6, 6, 164, 193));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 7, 7, 210, 219));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 8, 8, 243, 258));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 9, 9, 291, 339));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }

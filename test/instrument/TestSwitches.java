@@ -47,9 +47,9 @@ public class TestSwitches {
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 17, 62, 384));
     expectedBlocks.add(getBlock(clazz, meth, 5, 9, 127, 225));
     expectedBlocks.add(getBlock(clazz, meth, 6, 8, 174, 221));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 10, 10, 249, 282));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 10, 10, 249, 283));
     expectedBlocks.add(getBlock(clazz, meth, 11, 13, 298, 313));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 14, 14, 326, 376));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 14, 14, 326, 377));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -80,7 +80,7 @@ public class TestSwitches {
     Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 20, 62, 361));
     expectedBlocks.add(getBlock(clazz, meth, 5, 7, 137, 154));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 8, 8, 166,168));
+    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 8, 8, 166,169));
     expectedBlocks.add(getBlock(clazz, meth, 9, 16, 184, 313));
     expectedBlocks.add(getBlock(clazz, meth, 10, 13, 212, 280));
     expectedBlocks.add(getBlock(clazz, meth, 13, 15, 287, 309));
