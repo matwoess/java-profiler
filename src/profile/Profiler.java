@@ -1,11 +1,13 @@
 package profile;
 
+import common.Constants;
 import common.JavaFile;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import static common.Constants.auxiliaryInstrumentDir;
 import static common.Constants.instrumentDir;
@@ -71,6 +73,20 @@ public class Profiler {
   }
 
   public void generateReport() {
-    throw new UnsupportedOperationException("not yet implemented");
+    ReportGenerator report = new ReportGenerator();
+    int[] blockCounts;
+    try {
+      blockCounts = Arrays.stream(Files.readString(Constants.resultsFile).split(" "))
+          .mapToInt(Integer::parseInt).toArray();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    report.header(mainJavaFile.sourceFile.getFileName().toString());
+    report.bodyStart();
+    report.heading(mainJavaFile.sourceFile.getFileName().toString());
+    int[] fileBlockCounts = Arrays.stream(blockCounts).limit(mainJavaFile.foundBlocks.size()).toArray();
+    report.codeDiv(mainJavaFile, fileBlockCounts);
+    report.bodyEnd();
+    report.write(Path.of("./htmlReport.html"));
   }
 }

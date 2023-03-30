@@ -11,6 +11,8 @@ public class Block {
   public boolean insertBraces;
   public boolean isSingleStatementSwitchExpressionCase;
 
+  public int hits;
+
   public String toString() {
     return String.format("%s%s: {%d[%s]-%s[%s]}%s",
         clazz.name,
