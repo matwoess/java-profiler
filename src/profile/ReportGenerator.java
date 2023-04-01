@@ -25,6 +25,7 @@ public class ReportGenerator {
         .append("<html>\n")
         .append("<head>\n")
         .append("<title>").append(title).append("</title>\n")
+        .append("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js\"></script>")
         .append("</head>\n");
   }
 
@@ -120,6 +121,7 @@ public class ReportGenerator {
   }
 
   public void bodyEnd() {
+    report.append("<script type=\"text/javascript\" src=\"./highlightBlocks.js\"></script>");
     report.append("</body>\n");
     report.append("</html>\n");
   }
