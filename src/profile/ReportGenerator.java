@@ -9,9 +9,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReportGenerator {
   StringBuilder report = new StringBuilder();
+
+  List<Block> blocks;
+
+  public ReportGenerator(List<Block> fileBlocks) {
+    blocks = fileBlocks;
+  }
 
   public void header(String title) {
     report.append("<!DOCTYPE html>\n")
@@ -30,8 +37,8 @@ public class ReportGenerator {
   }
 
   public void codeDiv(JavaFile javaFile, int[] fileBlockCounts) {
-    report.append("<div>\n");
-    report.append("<pre><code>\n");
+    report.append("<pre>\n");
+    report.append("<code>\n");
     try {
       String sourceCode = Files.readString(javaFile.sourceFile);
       List<Block> blocks = javaFile.foundBlocks;
@@ -40,7 +47,7 @@ public class ReportGenerator {
       }
       StringBuilder builder = new StringBuilder();
       int prevIdx = 0;
-      List<TagInsert> tagInserts = getTagInserts(blocks);
+      List<TagInsert> tagInserts = getTagInserts(sourceCode.length());
       for (TagInsert tagInsert : tagInserts) {
         builder.append(sourceCode, prevIdx, tagInsert.chPos());
         prevIdx = tagInsert.chPos();
@@ -48,13 +55,13 @@ public class ReportGenerator {
       }
       builder.append(sourceCode.substring(prevIdx));
       String annotatedCode = builder.toString();
-      String tabledCode = getCodeTable(annotatedCode);
-      report.append(tabledCode);
+      //String tabledCode = getCodeTable(annotatedCode);
+      report.append(annotatedCode);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    report.append("</code></pre>\n");
-    report.append("</div>\n");
+    report.append("</code>\n");
+    report.append("</pre>\n");
   }
 
   private String getCodeTable(String annotatedCode) {
@@ -78,16 +85,38 @@ public class ReportGenerator {
     return builder.toString();
   }
 
-  private List<TagInsert> getTagInserts(List<Block> blocks) {
+  private List<TagInsert> getTagInserts(int textLength) {
     List<TagInsert> inserts = new ArrayList<>();
+    inserts.add(new TagInsert(0, "<span>"));
     for (Block block : blocks) {
-      String beginTag = String.format("<blockBegin tag=\"%d\"/>", block.hits);
-      String endTag = "<blockEnd/>";
-      inserts.add(new TagInsert(block.begPos, beginTag));
-      inserts.add(new TagInsert(block.endPos, endTag));
+      inserts.add(new TagInsert(block.begPos, "</span>"));
+      inserts.add(new TagInsert(block.begPos, codeSpanAt(block.begPos)));
+      inserts.add(new TagInsert(block.endPos, "</span>"));
+      inserts.add(new TagInsert(block.endPos, codeSpanAt(block.endPos)));
     }
+    inserts.add(new TagInsert(textLength, "</span>"));
     inserts.sort(Comparator.comparing(TagInsert::chPos));
     return inserts;
+  }
+
+  private String codeSpan(List<Integer> activeBlocks, int hits) {
+    String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
+    return String.format("<span class=\"%s\" title=\"Hits: %d\"/>", classes, hits);
+  }
+
+  private String codeSpanAt(int chPos) {
+    List<Integer> activeBlocks = new ArrayList<>();
+    for (int i = 0; i < blocks.size(); i++) {
+      Block b = blocks.get(i);
+      if (b.begPos <= chPos && chPos < b.endPos) {
+        activeBlocks.add(i);
+      }
+    }
+    if (activeBlocks.isEmpty()) {
+      return "<span>";
+    } else {
+      return codeSpan(activeBlocks, blocks.get(activeBlocks.get(activeBlocks.size()-1)).hits);
+    }
   }
 
   public void bodyEnd() {

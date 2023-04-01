@@ -73,7 +73,7 @@ public class Profiler {
   }
 
   public void generateReport() {
-    ReportGenerator report = new ReportGenerator();
+    ReportGenerator report = new ReportGenerator(mainJavaFile.foundBlocks);
     int[] blockCounts;
     try {
       blockCounts = Arrays.stream(Files.readString(Constants.resultsFile).split(" "))
