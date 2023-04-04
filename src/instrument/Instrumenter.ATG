@@ -269,7 +269,7 @@ SwitchStatement = 						(. checkSwitchExpression(); .)
 				]
 			"}"											(. leaveSwitch(); .)
 			.
-QuotedText = '"' {ANY} '"'.
+QuotedText = '"' {ANY} '"'.  // TODO: single char definitions 'c' and '\n'
 BracketExpr = "(" {BracketExpr | ANY} ")".
 LambdaExpression = "->" (Block | SingleStatementLambdaBody).
 SingleStatementLambdaBody = 	(. checkInsertLBrace(); .)
