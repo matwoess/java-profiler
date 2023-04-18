@@ -102,7 +102,7 @@ public class ReportGenerator {
 
   private String codeSpan(List<Integer> activeBlocks, int hits) {
     String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
-    return String.format("<span class=\"%s\" title=\"Hits: %d\"/>", classes, hits);
+    return String.format("<span class=\"%s\" title=\"Hits: %d\">", classes, hits);
   }
 
   private String codeSpanAt(int chPos) {
