@@ -166,8 +166,15 @@ COMPILER Instrumenter
 CHARACTERS
 	letter = 'a' .. 'z' + 'A'..'Z'.
 	digit  = '0'..'9'.
+	escCh = '\\'.
+	quote = '"'.
+	apostrophe = '\''.
+ 	noQuote = ANY - quote.
+	noApostrophe = ANY - apostrophe.
 TOKENS
 	ident  = letter {letter | digit | '_'}.
+	char = apostrophe (escCh apostrophe | [escCh] noApostrophe) apostrophe.
+	string = quote { (escCh quote | [escCh] noQuote) } quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
 	lpar   = '('.
 	lbrace = '{'.
@@ -245,7 +252,7 @@ Statement =
 		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(isLabel()) ident colon
-		| (ident | QuotedText) {ANY | QuotedText | LambdaExpression | SwitchStatement} ";"
+		| (ident | string) {ANY | string | char | LambdaExpression | SwitchStatement} ";"
 		| Block
 		| ";"
 		.
@@ -269,11 +276,10 @@ SwitchStatement = 						(. checkSwitchExpression(); .)
 				]
 			"}"											(. leaveSwitch(); .)
 			.
-QuotedText = '"' {ANY} '"'.  // TODO: single char definitions 'c' and '\n'
 BracketExpr = "(" {BracketExpr | ANY} ")".
 LambdaExpression = "->" (Block | SingleStatementLambdaBody).
 SingleStatementLambdaBody = 	(. checkInsertLBrace(); .)
-				(ANY | BracketExpr | QuotedText | ident)
+				(ANY | BracketExpr | string | char | ident)
 				{ANY | BracketExpr}
 				(")" | ";")						(. checkInsertRBrace(); .)
 				.

@@ -250,6 +250,39 @@ public class TestBasic {
   }
 
   @Test
+  public void TestCharLiterals() {
+    String fileContent = String.format(baseTemplate, """
+        // ignoring result
+        char c1 = '\\"';
+        char c2 = '\\'';
+        char c3 = '\\n';
+        char c4 = '\\r';
+        char c5 = '\\t';
+         """, "");
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(1, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 10, 62, 170));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
+  public void TestStringLiteralWithEscapedCharacters() {
+    String fileContent = String.format(baseTemplate, """
+        String s = "''''\\"\\"\\"\\r\\n\\t\\"asdf";
+         """, "");
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(1, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 5, 62, 108));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
   public void TestTernaryOperator() {
     String fileContent = String.format(baseTemplate, """
         int number = 6;
