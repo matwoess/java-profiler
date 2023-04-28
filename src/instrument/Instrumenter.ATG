@@ -223,7 +223,7 @@ Interface =
 Enum =
 			"enum" ident						(. enterClass(); .)
 			{ANY} "{"
-			{[","] ident [BracketExpr]}
+			{[","] ident [ParExpr]}
 			[";"  // class body can follow only after a ";"
 				{ Enum | Class | Interface
 					| "=" {ANY} ";"  // against class member with initializers
@@ -237,19 +237,19 @@ Enum =
 		.
 MainMethod =
 		[public] static void main	(. enterMainMethod(); .)
-		BracketExpr Block
+		ParExpr Block
 		.
 StaticBlock =	static 					(. enterStaticBlock(); .)
 						Block.
 MethodDecl  = ident 					(. enterMethod(); .)
-						BracketExpr (";" | Block).
+						ParExpr (";" | Block).
 Statement =
-		if BracketExpr BlockOrSingleStatement [else BlockOrSingleStatement]
+		if ParExpr BlockOrSingleStatement [else BlockOrSingleStatement]
 		| SwitchStatement
-		| "while" BracketExpr BlockOrSingleStatement
- 		| "do" BlockOrSingleStatement "while" BracketExpr ";"
-		| "for" BracketExpr BlockOrSingleStatement
-		| "try" Block {"catch" BracketExpr Block} ["finally" Block]
+		| "while" ParExpr BlockOrSingleStatement
+ 		| "do" BlockOrSingleStatement "while" ParExpr ";"
+		| "for" ParExpr BlockOrSingleStatement
+		| "try" Block {"catch" ParExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(isLabel()) ident colon
 		| (ident | string) {ANY | string | char | LambdaExpression | SwitchStatement} ";"
@@ -261,7 +261,7 @@ BlockOrSingleStatement =
 		| (. checkInsertLBrace(); .) Statement (. checkInsertRBrace(); .)
 		.
 SwitchStatement = 						(. checkSwitchExpression(); .)
-			"switch" BracketExpr "{"
+			"switch" ParExpr "{"
 			{"case" {ANY}
 					(LambdaExpression
 						| ":"							(. checkInsertLBrace(); .)
@@ -276,11 +276,11 @@ SwitchStatement = 						(. checkSwitchExpression(); .)
 				]
 			"}"											(. leaveSwitch(); .)
 			.
-BracketExpr = "(" {BracketExpr | ANY} ")".
+ParExpr = "(" {ParExpr | ANY} ")".
 LambdaExpression = "->" (Block | SingleStatementLambdaBody).
 SingleStatementLambdaBody = 	(. checkInsertLBrace(); .)
-				(ANY | BracketExpr | string | char | ident)
-				{ANY | BracketExpr}
+				(ANY | ParExpr | string | char | ident)
+				{ANY | ParExpr}
 				(")" | ";")						(. checkInsertRBrace(); .)
 				.
 Block = "{"										(. enterBlock(); .)
