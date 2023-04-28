@@ -151,7 +151,7 @@ public class ParserState {
   }
 
   boolean staticAndLBrace() {
-    if (curClass.classType == ClassType.INTERFACE) return false;
+    if (curClass.classType == ClassType.INTERFACE) return false;  // interface cannot have static block
     return parser.la.kind == _static && parser.scanner.Peek().kind == _lbrace;
   }
 
