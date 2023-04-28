@@ -6,6 +6,7 @@ import java.util.List;
 public class Class {
   public String name;
   public boolean isMain;
+  public ClassType classType;
   public List<Method> methods = new ArrayList<>();
 
   public Class(String name) {

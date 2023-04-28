@@ -27,6 +27,8 @@ Coco/R itself) does not fall under the GNU General Public License.
 ------------------------------------------------------------------------*/
 -->begin
 
+ import common.ClassType;
+
 public class Parser {
 -->constants
 	static final boolean _T = true;

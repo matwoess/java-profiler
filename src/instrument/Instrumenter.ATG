@@ -14,16 +14,19 @@ TOKENS
 	char = apostrophe (escCh apostrophe | [escCh] noApostrophe) apostrophe.
 	string = quote { (escCh quote | [escCh] noQuote) } quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
-	lpar   = '('.
-	lbrace = '{'.
-	colon  = ':'.
-	static = "static".
-	if     = "if".
-	else   = "else".
-	public = "public".
-	void   = "void".
-	main   = "main".
-	equals = "=".
+	class      = "class".
+	interface  = "interface".
+	enum       = "enum".
+	lpar       = '('.
+	lbrace     = '{'.
+	colon      = ':'.
+	static     = "static".
+	if         = "if".
+	else       = "else".
+	public     = "public".
+	void       = "void".
+	main       = "main".
+	equals     = "=".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -32,13 +35,13 @@ IGNORE "\t\n\r"
 
 PRODUCTIONS
 
-Instrumenter = [PackageDecl] { Class | Interface | Enum | ANY }.
+Instrumenter = [PackageDecl] { Class | Enum | ANY }.
 PackageDecl = "package" {ANY} ";" (. state.markBeginOfImports(); .)
 						.
 Class =
-			"class" ident						(. state.enterClass(); .)
-			{ANY} "{"
-			{ Class | Interface | Enum
+			("class" | "interface")	(. state.enterClass(); .)
+			ident {ANY} "{"
+			{ Class | Enum
 				| "=" {ANY} ";"  // against class member with initializers
 				| IF(state.isEntryPoint()) MainMethod
 				| IF(state.identAndLPar()) MethodDecl
@@ -47,23 +50,12 @@ Class =
 			}
 			"}"											(. state.leaveClass(); .)
 		.
-Interface =
-					"interface" ident		(. state.enterClass(); .)
-					{ANY} "{"
-					{ Interface | Class | Enum
-						| "=" {ANY} ";"  // against class member with initializers
-						| IF(state.isInterfaceEntryPoint()) MainMethod
-						| IF(state.identAndLPar()) MethodDecl
-						| ANY
-					}
-					"}"									(. state.leaveClass(); .)
-					.
 Enum =
-			"enum" ident						(. state.enterClass(); .)
-			{ANY} "{"
+			"enum"									(. state.enterClass(); .)
+			ident {ANY} "{"
 			{[","] ident [ParExpr]}
 			[";"  // class body can follow only after a ";"
-				{ Enum | Class | Interface
+				{ Enum | Class
 					| "=" {ANY} ";"  // against class member with initializers
 					| IF(state.isEntryPoint()) MainMethod
 					| IF(state.identAndLPar()) MethodDecl

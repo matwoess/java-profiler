@@ -1,9 +1,7 @@
 package instrument;
 
-import common.BlockType;
+import common.*;
 import common.Class;
-import common.Block;
-import common.Method;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +35,14 @@ public class ParserState {
     if (curClass != null) {
       classStack.push(curClass);
     }
-    String className = (!classStack.isEmpty()) ? classStack.peek().name + "." + parser.t.val : parser.t.val;
+    String className = (!classStack.isEmpty()) ? classStack.peek().name + "." + parser.la.val : parser.la.val;
     curClass = new Class(className);
+    curClass.classType = switch (parser.t.kind) {
+      case _class -> ClassType.CLASS;
+      case _interface -> ClassType.INTERFACE;
+      case _enum -> ClassType.ENUM;
+      default -> throw new RuntimeException(String.format("unknown class type '%s' discovered.\n", parser.t));
+    };
     allClasses.add(curClass);
     System.out.printf("entering class <%s>\n", curClass.name);
 
@@ -147,6 +151,7 @@ public class ParserState {
   }
 
   boolean staticAndLBrace() {
+    if (curClass.classType == ClassType.INTERFACE) return false;
     return parser.la.kind == _static && parser.scanner.Peek().kind == _lbrace;
   }
 
@@ -155,17 +160,17 @@ public class ParserState {
   }
 
   boolean isEntryPoint() {
-    return parser.la.kind == _public
-        && parser.scanner.Peek().kind == _static
-        && parser.scanner.Peek().kind == _void
-        && parser.scanner.Peek().kind == _main;
-  }
-
-  boolean isInterfaceEntryPoint() {
-    // the "public" can be omitted in interfaces (implied)
-    return parser.la.kind == _static
-        && parser.scanner.Peek().kind == _void
-        && parser.scanner.Peek().kind == _main;
+    if (curClass.classType == ClassType.INTERFACE) {
+      // the "public" can be omitted in interfaces (implied)
+      return parser.la.kind == _static
+          && parser.scanner.Peek().kind == _void
+          && parser.scanner.Peek().kind == _main;
+    } else {
+      return parser.la.kind == _public
+          && parser.scanner.Peek().kind == _static
+          && parser.scanner.Peek().kind == _void
+          && parser.scanner.Peek().kind == _main;
+    }
   }
 
   void checkAssignment() {
