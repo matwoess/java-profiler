@@ -27,15 +27,6 @@ Coco/R itself) does not fall under the GNU General Public License.
 ------------------------------------------------------------------------*/
 -->begin
 
-import common.Class;
-import common.Block;
-import common.Method;
-import common.BlockType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
 public class Parser {
 -->constants
 	static final boolean _T = true;

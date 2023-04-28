@@ -36,9 +36,9 @@ public class Instrumenter {
     if (errors > 0) {
       throw new RuntimeException("Abort due to parse errors.");
     }
-    javaFile.beginOfImports = parser.beginOfImports;
-    javaFile.foundBlocks = parser.allBlocks;
-    javaFile.foundClasses = parser.allClasses;
+    javaFile.beginOfImports = parser.state.beginOfImports;
+    javaFile.foundBlocks = parser.state.allBlocks;
+    javaFile.foundClasses = parser.state.allClasses;
   }
 
   public void instrumentFiles() {

@@ -1,167 +1,5 @@
 COMPILER Instrumenter
-
-	int beginOfImports = 0;
-	List<Class> allClasses = new ArrayList<>();
-	Stack<Class> classStack = new Stack<>();
-	List<Block> allBlocks = new ArrayList<>();
-	Stack<Block> blockStack = new Stack<>();
-	Class curClass = null;
-	Method curMeth = null;
-	Block curBlock = null;
-	boolean inSwitchExpression = false;
-
-	void markBeginOfImports() {
-		beginOfImports = t.charPos + t.val.length();
-	}
-
-	void enterClass() {
-		if (curClass != null) {
-			classStack.push(curClass);
-		}
-		String className = (!classStack.isEmpty()) ? classStack.peek().name + "." + t.val : t.val;
-		curClass = new Class(className);
-		allClasses.add(curClass);
-		System.out.printf("entering class <%s>\n", curClass.name);
-
-	}
-
-	void leaveClass() {
-		System.out.printf("left class <%s>\n", curClass.name);
-		if (classStack.empty()) {
-			curClass = null;
-		} else {
-			curClass = classStack.pop();
-		}
-	}
-
-	void enterMethod() {
-		assert curClass != null;
-		curMeth = new Method(t.val);
-		curClass.methods.add(curMeth);
-		System.out.println("found method declaration of: " + curMeth.name);
-	}
-
-	void enterMainMethod() {
-		enterMethod();
-		curMeth.isMain = true;
-		curClass.isMain = true;
-		System.out.println("method is main entry point.");
-	}
-
-	void leaveMethod() {
-		curBlock.blockType = BlockType.METHOD;
-		System.out.println("left method: " + curMeth.name);
-		curMeth = null;
-	}
-
-	void enterStaticBlock() {
-		curMeth = new Method(t.val);
-		curClass.methods.add(curMeth);
-		System.out.println("found static block");
-  }
-
-	void leaveStaticBlock() {
-		System.out.println("left static block");
-		curMeth = null;
-	}
-
-	void enterBlock(BlockType blockType) {
-		assert curMeth != null;
-		if (curBlock != null) {
-			blockStack.push(curBlock);
-		}
-		curBlock = new Block();
-		curBlock.clazz = curClass;
-		curBlock.method = curMeth;
-		curBlock.beg = t.line;
-		curBlock.begPos = t.charPos + t.val.length();
-		curBlock.blockType = blockType;
-		allBlocks.add(curBlock);
-		curMeth.blocks.add(curBlock);
-		System.out.printf("entering block %s\n", curBlock);
-		if (blockType.hasNoBraces() && inSwitchExpression) {
-			curBlock.blockType = BlockType.SS_SWITCH_EXPR_CASE;
-			System.out.println("entered single statement switch expression case.");
-		}
-	}
-
-	void enterBlock() {
-		enterBlock(BlockType.BLOCK); // no missing braces
-	}
-
-	void leaveBlock() {
-		curBlock.end = t.line;
-		curBlock.endPos = t.charPos + t.val.length();
-		System.out.printf("left block %s\n", curBlock);
-		if (blockStack.empty()) {
-			if ("static".equals(curMeth.name)) {
-				leaveStaticBlock();
-			} else {
-				leaveMethod();
-			}
-			curBlock = null;
-		} else {
-			curBlock = blockStack.pop();
-		}
-	}
-
-	void checkInsertLBrace() {
-		if (t.kind == _else && la.kind == _if) {
-			System.out.println("else if found. no block.");
-			return;
-		}
-		if (la.kind != _lbrace) {
-			System.out.println("found single statement block.");
-			enterBlock(BlockType.SS_BLOCK);
-		}
-	}
-
-	void checkInsertRBrace() {
-		if (curBlock.blockType.hasNoBraces()) {
-			System.out.println("left single statement block.");
-			leaveBlock();
-		}
-	}
-
-	boolean identAndLPar() {
-		return la.kind == _ident && scanner.Peek().kind == _lpar;
-	}
-
-	boolean staticAndLBrace() {
-		return la.kind == _static && scanner.Peek().kind == _lbrace;
-	}
-
-	boolean isLabel() {
-	  return la.kind == _ident && scanner.Peek().kind == _colon;
-	}
-
-	boolean isEntryPoint() {
-		return la.kind == _public
-				&& scanner.Peek().kind == _static
-				&& scanner.Peek().kind == _void
-				&& scanner.Peek().kind == _main;
-	}
-
-	boolean isInterfaceEntryPoint() {
-		// the "public" can be omitted in interfaces (implied)
-		return la.kind == _static
-				&& scanner.Peek().kind == _void
-				&& scanner.Peek().kind == _main;
-	}
-
-	void checkSwitchExpression() {
-		inSwitchExpression = t.kind == _equals;
-		if (inSwitchExpression) {
-			System.out.println("entered switch expression.");
-		}
-	}
-
-	void leaveSwitch() {
-		if (inSwitchExpression) {
-			inSwitchExpression = false;
-			System.out.println("left switch expression.");
-		}
-	}
+	ParserState state = new ParserState(this);
 
 CHARACTERS
 	letter = 'a' .. 'z' + 'A'..'Z'.
@@ -195,53 +33,53 @@ IGNORE "\t\n\r"
 PRODUCTIONS
 
 Instrumenter = [PackageDecl] { Class | Interface | Enum | ANY }.
-PackageDecl = "package" {ANY} ";" (. markBeginOfImports(); .)
+PackageDecl = "package" {ANY} ";" (. state.markBeginOfImports(); .)
 						.
 Class =
-			"class" ident						(. enterClass(); .)
+			"class" ident						(. state.enterClass(); .)
 			{ANY} "{"
 			{ Class | Interface | Enum
 				| "=" {ANY} ";"  // against class member with initializers
-				| IF(isEntryPoint()) MainMethod
-				| IF(identAndLPar()) MethodDecl
-				| IF(staticAndLBrace()) StaticBlock
+				| IF(state.isEntryPoint()) MainMethod
+				| IF(state.identAndLPar()) MethodDecl
+				| IF(state.staticAndLBrace()) StaticBlock
 				| ANY
 			}
-			"}"											(. leaveClass(); .)
+			"}"											(. state.leaveClass(); .)
 		.
 Interface =
-					"interface" ident		(. enterClass(); .)
+					"interface" ident		(. state.enterClass(); .)
 					{ANY} "{"
 					{ Interface | Class | Enum
 						| "=" {ANY} ";"  // against class member with initializers
-						| IF(isInterfaceEntryPoint()) MainMethod
-						| IF(identAndLPar()) MethodDecl
+						| IF(state.isInterfaceEntryPoint()) MainMethod
+						| IF(state.identAndLPar()) MethodDecl
 						| ANY
 					}
-					"}"									(. leaveClass(); .)
+					"}"									(. state.leaveClass(); .)
 					.
 Enum =
-			"enum" ident						(. enterClass(); .)
+			"enum" ident						(. state.enterClass(); .)
 			{ANY} "{"
 			{[","] ident [ParExpr]}
 			[";"  // class body can follow only after a ";"
 				{ Enum | Class | Interface
 					| "=" {ANY} ";"  // against class member with initializers
-					| IF(isEntryPoint()) MainMethod
-					| IF(identAndLPar()) MethodDecl
-					| IF(staticAndLBrace()) StaticBlock
+					| IF(state.isEntryPoint()) MainMethod
+					| IF(state.identAndLPar()) MethodDecl
+					| IF(state.staticAndLBrace()) StaticBlock
 					| ANY
 				}
 			]
-			"}"											(. leaveClass(); .)
+			"}"											(. state.leaveClass(); .)
 		.
 MainMethod =
-		[public] static void main	(. enterMainMethod(); .)
+		[public] static void main	(. state.enterMainMethod(); .)
 		ParExpr Block
 		.
-StaticBlock =	static 					(. enterStaticBlock(); .)
+StaticBlock =	static 					(. state.enterStaticBlock(); .)
 						Block.
-MethodDecl  = ident 					(. enterMethod(); .)
+MethodDecl  = ident 					(. state.enterMethod(); .)
 						ParExpr (";" | Block).
 Statement =
 		if ParExpr BlockOrSingleStatement [else BlockOrSingleStatement]
@@ -251,41 +89,41 @@ Statement =
 		| "for" ParExpr BlockOrSingleStatement
 		| "try" Block {"catch" ParExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
-		| IF(isLabel()) ident colon
+		| IF(state.isLabel()) ident colon
 		| (ident | string) {ANY | string | char | LambdaExpression | SwitchStatement} ";"
 		| Block
 		| ";"
 		.
 BlockOrSingleStatement =
 		Block
-		| (. checkInsertLBrace(); .) Statement (. checkInsertRBrace(); .)
+		| (. state.checkInsertLBrace(); .) Statement (. state.checkInsertRBrace(); .)
 		.
-SwitchStatement = 						(. checkSwitchExpression(); .)
+SwitchStatement = 						(. state.checkAssignment(); .)
 			"switch" ParExpr "{"
 			{"case" {ANY}
 					(LambdaExpression
-						| ":"							(. checkInsertLBrace(); .)
-						{Statement}				(. checkInsertRBrace(); .)
+						| ":"							(. state.checkInsertLBrace(); .)
+						{Statement}				(. state.checkInsertRBrace(); .)
 					)
 				}
 			["default"
 					(LambdaExpression
-						|":"							(. checkInsertLBrace(); .)
-						{Statement}				(. checkInsertRBrace(); .)
+						|":"							(. state.checkInsertLBrace(); .)
+						{Statement}				(. state.checkInsertRBrace(); .)
 					)
 				]
-			"}"											(. leaveSwitch(); .)
+			"}"											(. state.leaveSwitch(); .)
 			.
 ParExpr = "(" {ParExpr | ANY} ")".
 LambdaExpression = "->" (Block | SingleStatementLambdaBody).
-SingleStatementLambdaBody = 	(. checkInsertLBrace(); .)
+SingleStatementLambdaBody = 	(. state.checkInsertLBrace(); .)
 				(ANY | ParExpr | string | char | ident)
 				{ANY | ParExpr}
-				(")" | ";")						(. checkInsertRBrace(); .)
+				(")" | ";")						(. state.checkInsertRBrace(); .)
 				.
-Block = "{"										(. enterBlock(); .)
+Block = "{"										(. state.enterBlock(); .)
 				{Statement}
-				"}"										(. leaveBlock(); .)
+				"}"										(. state.leaveBlock(); .)
 			.
 
 END Instrumenter.
