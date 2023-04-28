@@ -1,6 +1,22 @@
 public class Switches {
   public static void main(String[] args) {
     String value = "aBcDe";
+    switch (value.charAt(1)) {
+      case 'a':
+        System.out.println("is 'a'");
+        break;
+      case 'c':
+        System.out.println("is 'c");
+        break;
+      case 'B': {
+        System.out.println("is 'B'");
+        break;
+      }
+      default:
+        System.out.println("is other char.");
+        break;
+    }
+
     switch (value) {
       case "aBcDe" -> {
         if (value.toUpperCase().equals("ABCDE")) {
