@@ -80,7 +80,7 @@ public class TestSwitches {
     Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 20, 62, 361));
     expectedBlocks.add(getBlock(clazz, meth, 5, 7, 137, 154));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 8, 8, 166,169));
+    expectedBlocks.add(getSwitchExprSSCase(clazz, meth, 8, 8, 166,169));
     expectedBlocks.add(getBlock(clazz, meth, 9, 16, 184, 313));
     expectedBlocks.add(getBlock(clazz, meth, 10, 13, 212, 280));
     expectedBlocks.add(getBlock(clazz, meth, 13, 15, 287, 309));

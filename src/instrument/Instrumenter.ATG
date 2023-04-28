@@ -49,7 +49,7 @@ COMPILER Instrumenter
 	}
 
 	void leaveMethod() {
-		curBlock.isMethodBlock = true;
+		curBlock.blockType = BlockType.METHOD;
 		System.out.println("left method: " + curMeth.name);
 		curMeth = null;
 	}
@@ -65,7 +65,7 @@ COMPILER Instrumenter
 		curMeth = null;
 	}
 
-	void enterBlock(boolean missingBraces) {
+	void enterBlock(BlockType blockType) {
 		assert curMeth != null;
 		if (curBlock != null) {
 			blockStack.push(curBlock);
@@ -75,18 +75,18 @@ COMPILER Instrumenter
 		curBlock.method = curMeth;
 		curBlock.beg = t.line;
 		curBlock.begPos = t.charPos + t.val.length();
-		curBlock.insertBraces = missingBraces;
+		curBlock.blockType = blockType;
 		allBlocks.add(curBlock);
 		curMeth.blocks.add(curBlock);
 		System.out.printf("entering block %s\n", curBlock);
-		if (missingBraces && inSwitchExpression) {
-			curBlock.isSingleStatementSwitchExpressionCase = true;
+		if (blockType.hasNoBraces() && inSwitchExpression) {
+			curBlock.blockType = BlockType.SS_SWITCH_EXPR_CASE;
 			System.out.println("entered single statement switch expression case.");
 		}
 	}
 
 	void enterBlock() {
-		enterBlock(false); // no missing braces
+		enterBlock(BlockType.BLOCK); // no missing braces
 	}
 
 	void leaveBlock() {
@@ -112,12 +112,12 @@ COMPILER Instrumenter
 		}
 		if (la.kind != _lbrace) {
 			System.out.println("found single statement block.");
-			enterBlock(true);
+			enterBlock(BlockType.SS_BLOCK);
 		}
 	}
 
 	void checkInsertRBrace() {
-		if (curBlock.insertBraces) {
+		if (curBlock.blockType.hasNoBraces()) {
 			System.out.println("left single statement block.");
 			leaveBlock();
 		}

@@ -30,6 +30,7 @@ Coco/R itself) does not fall under the GNU General Public License.
 import common.Class;
 import common.Block;
 import common.Method;
+import common.BlockType;
 
 import java.util.ArrayList;
 import java.util.List;

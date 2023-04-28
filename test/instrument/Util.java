@@ -1,9 +1,7 @@
 package instrument;
 
-import common.Block;
+import common.*;
 import common.Class;
-import common.JavaFile;
-import common.Method;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,18 +47,25 @@ public class Util {
     expected.begPos = begPos;
     expected.end = end;
     expected.endPos = endPos;
+    expected.blockType = BlockType.BLOCK;
     return expected;
   }
 
   public static Block getMethodBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
     Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
-    expected.isMethodBlock = true;
+    expected.blockType = BlockType.METHOD;
     return expected;
   }
 
   public static Block getSingleStatementBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
     Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
-    expected.insertBraces = true;
+    expected.blockType = BlockType.SS_BLOCK;
+    return expected;
+  }
+
+  public static Block getSwitchExprSSCase(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
+    Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
+    expected.blockType = BlockType.SS_SWITCH_EXPR_CASE;
     return expected;
   }
 }

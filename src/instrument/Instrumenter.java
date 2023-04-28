@@ -1,9 +1,7 @@
 package instrument;
 
+import common.*;
 import common.Class;
-import common.Block;
-import common.JavaFile;
-import common.Method;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -85,15 +83,15 @@ public class Instrumenter {
     inserts.add(new CodeInsert(javaFile.beginOfImports, "import auxiliary.__Counter;"));
     for (Block block : javaFile.foundBlocks) {
       // insert order is important, in case of same CodeInsert char positions
-      if (block.insertBraces) {
-        assert !block.isMethodBlock;
+      if (block.blockType.hasNoBraces()) {
+        assert block.blockType != BlockType.METHOD;
         inserts.add(new CodeInsert(block.begPos, "{"));
       }
       inserts.add(new CodeInsert(block.begPos, String.format("__Counter.inc(%d);", blockCounter++)));
-      if (block.isSingleStatementSwitchExpressionCase) {
+      if (block.blockType == BlockType.SS_SWITCH_EXPR_CASE) {
         inserts.add(new CodeInsert(block.begPos, "yield "));
       }
-      if (block.insertBraces) {
+      if (block.blockType.hasNoBraces()) {
         inserts.add(new CodeInsert(block.endPos, "}"));
       }
     }
@@ -113,7 +111,7 @@ public class Instrumenter {
           for (Block block : meth.blocks) {
             builder.append(block.beg).append(" ");
             builder.append(block.end).append(" ");
-            builder.append(block.isMethodBlock ? 1 : 0).append(" ");
+            builder.append(block.blockType.ordinal()).append(" ");
           }
         }
         builder.append("#").append(" ");
