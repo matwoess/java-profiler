@@ -90,21 +90,16 @@ BlockOrSingleStatement =
 		| (. state.checkInsertLBrace(); .) Statement (. state.checkInsertRBrace(); .)
 		.
 SwitchStatement = 						(. state.checkAssignment(); .)
-			"switch" ParExpr "{"
-			{"case" {ANY}
-					(LambdaExpression
-						| ":"							(. state.checkInsertLBrace(); .)
-						{Statement}				(. state.checkInsertRBrace(); .)
-					)
-				}
-			["default"
-					(LambdaExpression
-						|":"							(. state.checkInsertLBrace(); .)
-						{Statement}				(. state.checkInsertRBrace(); .)
-					)
-				]
+			"switch" ParExpr "{" {SwitchCase}
 			"}"											(. state.leaveAssignment(); .)
 			.
+SwitchCase =
+	("case" | "default") {ANY}
+	(LambdaExpression
+		| ":"							(. state.checkInsertLBrace(); .)
+		{Statement}				(. state.checkInsertRBrace(); .)
+	)
+	.
 ParExpr = "(" {ParExpr | ANY} ")".
 LambdaExpression = "->" (Block | SingleStatementLambdaBody).
 SingleStatementLambdaBody = 	(. state.checkInsertLBrace(); .)
