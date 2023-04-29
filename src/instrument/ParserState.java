@@ -176,14 +176,14 @@ public class ParserState {
   void checkAssignment() {
     inAssignment = parser.t.kind == _equals;
     if (inAssignment) {
-      System.out.println("entered switch expression.");
+      System.out.println("entered assignment expression.");
     }
   }
 
-  void leaveSwitch() {
+  void leaveAssignment() {
     if (inAssignment) {
       inAssignment = false;
-      System.out.println("left switch expression.");
+      System.out.println("left assignment expression.");
     }
   }
 }

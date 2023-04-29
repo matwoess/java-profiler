@@ -104,7 +104,7 @@ SwitchStatement = 						(. state.checkAssignment(); .)
 						{Statement}				(. state.checkInsertRBrace(); .)
 					)
 				]
-			"}"											(. state.leaveSwitch(); .)
+			"}"											(. state.leaveAssignment(); .)
 			.
 ParExpr = "(" {ParExpr | ANY} ")".
 LambdaExpression = "->" (Block | SingleStatementLambdaBody).
