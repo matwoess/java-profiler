@@ -57,6 +57,12 @@ public class Util {
     return expected;
   }
 
+  public static Block getStaticBlock(Class clazz, int beg, int end, int begPos, int endPos) {
+    Block expected = getBlock(clazz, null, beg, end, begPos, endPos);
+    expected.blockType = BlockType.STATIC;
+    return expected;
+  }
+
   public static Block getSingleStatementBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
     Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
     expected.blockType = BlockType.SS_BLOCK;

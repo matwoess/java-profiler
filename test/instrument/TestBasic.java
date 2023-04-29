@@ -83,8 +83,7 @@ public class TestBasic {
     List<Block> blocks = getFoundBlocks(staticBlock);
     assertEquals(1, blocks.size());
     Class clazz = new Class("Static");
-    Method meth = new Method("static");
-    Block expectedBlock = getBlock(clazz, meth, 4, 6, 49, 64);
+    Block expectedBlock = getStaticBlock(clazz, 4, 6, 49, 64);
     assertEquals(expectedBlock, blocks.get(0));
   }
 

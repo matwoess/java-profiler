@@ -8,6 +8,7 @@ public class Class {
   public boolean isMain;
   public ClassType classType;
   public List<Method> methods = new ArrayList<>();
+  public List<Block> blocks = new ArrayList<>();
 
   public Class(String name) {
     this.name = name;

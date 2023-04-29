@@ -57,8 +57,7 @@ public class TestEnums {
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
     Class clazz = new Class("AB");
-    Method meth = new Method("static");
-    Block block = getBlock(clazz, meth, 4, 6, 59, 82);
+    Block block = getStaticBlock(clazz, 4, 6, 59, 82);
     assertEquals(block, blocks.get(0));
   }
 

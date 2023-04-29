@@ -1,5 +1,7 @@
 package common;
 
+import java.util.Objects;
+
 public class Block {
   public Class clazz;
   public Method method;
@@ -33,14 +35,14 @@ public class Block {
     if (begPos != block.begPos) return false;
     if (endPos != block.endPos) return false;
     if (!clazz.equals(block.clazz)) return false;
-    if (!method.equals(block.method)) return false;
+    if (!Objects.equals(method, block.method)) return false;
     return blockType == block.blockType;
   }
 
   @Override
   public int hashCode() {
     int result = clazz.hashCode();
-    result = 31 * result + method.hashCode();
+    result = 31 * result + (method != null ? method.hashCode() : 0);
     result = 31 * result + beg;
     result = 31 * result + end;
     result = 31 * result + begPos;

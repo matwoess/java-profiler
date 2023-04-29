@@ -69,8 +69,7 @@ MainMethod =
 		[public] static void main	(. state.enterMainMethod(); .)
 		ParExpr Block
 		.
-StaticBlock =	static 					(. state.enterStaticBlock(); .)
-						Block.
+StaticBlock =	static Block.
 MethodDecl  = ident 					(. state.enterMethod(); .)
 						ParExpr (";" | Block).
 Statement =
@@ -113,9 +112,8 @@ SingleStatementLambdaBody = 	(. state.checkInsertLBrace(); .)
 				{ANY | ParExpr}
 				(")" | ";")						(. state.checkInsertRBrace(); .)
 				.
-Block = "{"										(. state.enterBlock(); .)
-				{Statement}
-				"}"										(. state.leaveBlock(); .)
+Block = 											(. state.enterBlock(); .)
+				"{" {Statement} "}"		(. state.leaveBlock(); .)
 			.
 
 END Instrumenter.

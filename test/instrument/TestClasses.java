@@ -74,16 +74,14 @@ public class TestClasses {
     assertEquals(6, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Classes", true);
-    Method meth = new Method("static");
-    expectedBlocks.add(getBlock(clazz, meth, 4, 6, 50, 65));
-    meth = new Method("main", true);
+    expectedBlocks.add(getStaticBlock(clazz, 4, 6, 50, 65));
+    Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 8, 21, 109, 471));
     expectedBlocks.add(getBlock(clazz, meth, 12, 20, 234, 467));
     expectedBlocks.add(getBlock(clazz, meth, 14, 16, 285, 352));
     expectedBlocks.add(getBlock(clazz, meth, 16, 18, 359, 427));
     clazz = new Class("Classes.PetFarm");
-    meth = new Method("static");
-    expectedBlocks.add(getBlock(clazz, meth, 26, 28, 561, 590));
+    expectedBlocks.add(getStaticBlock(clazz, 26, 28, 561, 590));
     assertIterableEquals(expectedBlocks, blocks);
   }
 

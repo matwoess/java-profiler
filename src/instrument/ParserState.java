@@ -45,7 +45,6 @@ public class ParserState {
     };
     allClasses.add(curClass);
     System.out.printf("entering class <%s>\n", curClass.name);
-
   }
 
   void leaveClass() {
@@ -77,30 +76,31 @@ public class ParserState {
     curMeth = null;
   }
 
-  void enterStaticBlock() {
-    curMeth = new Method(parser.t.val);
-    curClass.methods.add(curMeth);
-    System.out.println("found static block");
-  }
-
-  void leaveStaticBlock() {
-    System.out.println("left static block");
-    curMeth = null;
-  }
-
   void enterBlock(BlockType blockType) {
-    assert curMeth != null;
+    assert curClass != null;
+    if (curMeth == null) {
+      System.out.println("found class-level block.");
+      if (parser.t.kind == _static && parser.la.kind == _lbrace) {
+        System.out.println("found static block");
+        blockType = BlockType.STATIC;
+      }
+    }
     if (curBlock != null) {
       blockStack.push(curBlock);
     }
     curBlock = new Block();
     curBlock.clazz = curClass;
     curBlock.method = curMeth;
-    curBlock.beg = parser.t.line;
-    curBlock.begPos = parser.t.charPos + parser.t.val.length();
+    Token blockStartToken = blockType.hasNoBraces() ? parser.t : parser.la; // la == '{'
+    curBlock.beg = blockStartToken.line;
+    curBlock.begPos = blockStartToken.charPos + blockStartToken.val.length();
     curBlock.blockType = blockType;
     allBlocks.add(curBlock);
-    curMeth.blocks.add(curBlock);
+    if (curMeth != null) {
+      curMeth.blocks.add(curBlock);
+    } else {
+      curClass.blocks.add(curBlock);
+    }
     System.out.printf("entering block %s\n", curBlock);
     if (blockType.hasNoBraces() && inAssignment) {
       curBlock.blockType = BlockType.SS_SWITCH_EXPR_CASE;
@@ -117,8 +117,8 @@ public class ParserState {
     curBlock.endPos = parser.t.charPos + parser.t.val.length();
     System.out.printf("left block %s\n", curBlock);
     if (blockStack.empty()) {
-      if ("static".equals(curMeth.name)) {
-        leaveStaticBlock();
+      if (curBlock.blockType == BlockType.STATIC) {
+        System.out.println("left static block");;
       } else {
         leaveMethod();
       }
