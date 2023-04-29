@@ -22,6 +22,41 @@ public class TestSwitches {
       }
       """;
 
+
+  @Test
+  public void TestSwitch() {
+    String fileContent = String.format(baseTemplate, """
+        int x = 1;
+        switch (x) {
+          case 1: {
+            i += 3;
+            break;
+          }
+          case 2: {}
+          case 3: {
+           i *= 2;
+           i = i - 1;
+          }
+          case 4: {
+            break;
+          }
+          default: { break; }
+        }
+        """);
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(6, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 20, 62, 239));
+    expectedBlocks.add(getBlock(clazz, meth, 5, 8, 102, 129));
+    expectedBlocks.add(getBlock(clazz, meth, 9, 9, 141, 142));
+    expectedBlocks.add(getBlock(clazz, meth, 10, 13, 154, 183));
+    expectedBlocks.add(getBlock(clazz, meth, 14, 16, 195, 210));
+    expectedBlocks.add(getBlock(clazz, meth, 17, 17, 223, 232));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
   @Test
   public void TestNewSwitch() {
     String fileContent = String.format(baseTemplate, """
@@ -80,7 +115,7 @@ public class TestSwitches {
     Method meth = new Method("main", true);
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 20, 62, 361));
     expectedBlocks.add(getBlock(clazz, meth, 5, 7, 137, 154));
-    expectedBlocks.add(getSwitchExprSSCase(clazz, meth, 8, 8, 166,169));
+    expectedBlocks.add(getSwitchExprSSCase(clazz, meth, 8, 8, 166, 169));
     expectedBlocks.add(getBlock(clazz, meth, 9, 16, 184, 313));
     expectedBlocks.add(getBlock(clazz, meth, 10, 13, 212, 280));
     expectedBlocks.add(getBlock(clazz, meth, 13, 15, 287, 309));
