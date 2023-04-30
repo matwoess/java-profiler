@@ -69,6 +69,12 @@ public class Util {
     return expected;
   }
 
+  public static Block getLambdaSSBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
+    Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
+    expected.blockType = BlockType.SS_LAMBDA;
+    return expected;
+  }
+
   public static Block getSwitchExprSSCase(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
     Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
     expected.blockType = BlockType.SS_SWITCH_EXPR_CASE;

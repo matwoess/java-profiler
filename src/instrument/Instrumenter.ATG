@@ -101,7 +101,9 @@ SwitchCase =
 	)
 	.
 ParExpr = "(" {ParExpr | ANY} ")".
-LambdaExpression = "->" (Block | SingleStatementLambdaBody).
+LambdaExpression = "->"				(. state.enterLambda(); .)
+		(Block | SingleStatementLambdaBody) (. state.leaveLambda(); .)
+	.
 SingleStatementLambdaBody = 	(. state.checkInsertLBrace(); .)
 				(ANY | ParExpr | string | char | ident)
 				{ANY | ParExpr}

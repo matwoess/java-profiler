@@ -22,6 +22,7 @@ public class ParserState {
   Method curMeth = null;
   Block curBlock = null;
   boolean inAssignment = false;
+  boolean inLambda = false;
 
   public ParserState(Parser p) {
     parser = p;
@@ -134,8 +135,13 @@ public class ParserState {
       return;
     }
     if (parser.la.kind != _lbrace) {
-      System.out.println("found single statement block.");
-      enterBlock(BlockType.SS_BLOCK);
+      if (inLambda) {
+        System.out.println("found single-statement lambda block");
+        enterBlock(BlockType.SS_LAMBDA);
+      } else {
+        System.out.println("found single statement block.");
+        enterBlock(BlockType.SS_BLOCK);
+      }
     }
   }
 
@@ -185,5 +191,13 @@ public class ParserState {
       inAssignment = false;
       System.out.println("left assignment expression.");
     }
+  }
+
+  void enterLambda() {
+    inLambda = true;
+  }
+
+  void leaveLambda() {
+    inLambda = false;
   }
 }

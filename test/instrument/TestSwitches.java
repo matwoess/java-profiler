@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static instrument.Util.*;
-import static instrument.Util.getSingleStatementBlock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
@@ -82,9 +81,9 @@ public class TestSwitches {
     expectedBlocks.add(getMethodBlock(clazz, meth, 2, 17, 62, 384));
     expectedBlocks.add(getBlock(clazz, meth, 5, 9, 127, 225));
     expectedBlocks.add(getBlock(clazz, meth, 6, 8, 174, 221));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 10, 10, 249, 283));
+    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 10, 10, 249, 283));
     expectedBlocks.add(getBlock(clazz, meth, 11, 13, 298, 313));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 14, 14, 326, 377));
+    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 14, 14, 326, 377));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
