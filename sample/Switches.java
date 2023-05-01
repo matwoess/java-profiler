@@ -1,5 +1,14 @@
 public class Switches {
+  static int globalInt = switch ("switch".hashCode()) {
+    case 12345 -> 5;
+    case 6789 -> 6;
+    default -> {
+      yield 8;
+    }
+  };
+
   public static void main(String[] args) {
+    System.out.println(globalInt);
     String value = "aBcDe";
     switch (value.charAt(1)) {
       case 'a':

@@ -121,5 +121,33 @@ public class TestSwitches {
     assertIterableEquals(expectedBlocks, blocks);
   }
 
+  @Test
+  public void TestClassLevelSwitchExpression() {
+    String fileContent = """
+        public class ClassLevelSwitch {
+          static int globalInt = switch ("switch".hashCode()) {
+            case 12345 -> 5;
+            case 6789 -> 6;
+            default -> {
+              yield 8;
+            }
+          };
+        
+          public static void main(String[] args) {
+            System.out.println(globalInt);
+          }
+        }
+        """;
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(4, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("ClassLevelSwitch", true);
+    expectedBlocks.add(getSwitchExprSSCase(clazz, null, 3, 3, 105, 108));
+    expectedBlocks.add(getSwitchExprSSCase(clazz, null, 4, 4, 125, 128));
+    expectedBlocks.add(getBlock(clazz, null, 5, 7, 145, 166));
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 10, 12, 215, 254));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 
 }
