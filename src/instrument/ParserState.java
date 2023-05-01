@@ -103,7 +103,7 @@ public class ParserState {
     } else {
       curClass.blocks.add(curBlock);
     }
-    System.out.printf("entering %s\n", curBlock.describe());
+    System.out.printf("entering %s\n", curBlock);
   }
 
   void enterBlock() {
@@ -113,7 +113,7 @@ public class ParserState {
   void leaveBlock() {
     curBlock.end = parser.t.line;
     curBlock.endPos = parser.t.charPos + parser.t.val.length();
-    System.out.printf("left %s\n", curBlock.describe());
+    System.out.printf("left %s\n", curBlock);
     if (blockStack.empty()) {
       if (curMeth != null) {
         leaveMethod();

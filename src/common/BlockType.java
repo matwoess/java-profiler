@@ -7,20 +7,7 @@ public enum BlockType {
     return this == SS_BLOCK || this == SS_LAMBDA || this == SS_SWITCH_EXPR_CASE;
   }
 
-  @Override
   public String toString() {
-    return switch (this) {
-      case BLOCK -> "b";
-      case METHOD -> "m";
-      case STATIC -> "static";
-      case SS_BLOCK -> "ssb";
-      case SS_SWITCH_EXPR_CASE -> "sssec";
-      case LAMBDA -> "l";
-      case SS_LAMBDA -> "ssl";
-    };
-  }
-
-  public String describe() {
     String prefix = switch (this) {
       case BLOCK -> "";
       case METHOD -> "method ";

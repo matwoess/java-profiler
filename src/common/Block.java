@@ -14,25 +14,16 @@ public class Block {
   public int hits;
 
   public String toString() {
-    return String.format("%s%s: {%d[%s]-%s[%s]} %s",
+     return String.format("%s%s: {%d[%s]-%s[%s]} (%s)%s",
         clazz.name,
         method != null ? ("." + method.name) : "",
         beg,
         begPos,
         end != 0 ? end : "?",
         endPos != 0 ? endPos : "?",
-        blockType.toString()
+        blockType.toString(),
+        method == null ? " [class-level]" : ""
     );
-  }
-
-  public String describe() {
-    StringBuilder sb = new StringBuilder();
-    if (this.method == null) {
-      sb.append("class-level ");
-    }
-    sb.append(blockType.describe());
-    sb.append(" ").append(this);
-    return sb.toString();
   }
 
   @Override
