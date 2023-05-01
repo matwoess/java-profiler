@@ -25,6 +25,16 @@ public class Block {
     );
   }
 
+  public String describe() {
+    StringBuilder sb = new StringBuilder();
+    if (this.method == null) {
+      sb.append("class-level ");
+    }
+    sb.append(blockType.describe());
+    sb.append(" ").append(this);
+    return sb.toString();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

@@ -80,9 +80,7 @@ public class ParserState {
   void enterBlock(BlockType blockType) {
     assert curClass != null;
     if (curMeth == null) {
-      System.out.println("found class-level block.");
       if (parser.t.kind == _static && parser.la.kind == _lbrace) {
-        System.out.println("found static block");
         blockType = BlockType.STATIC;
       }
     }
@@ -95,6 +93,9 @@ public class ParserState {
     Token blockStartToken = blockType.hasNoBraces() ? parser.t : parser.la; // la == '{'
     curBlock.beg = blockStartToken.line;
     curBlock.begPos = blockStartToken.charPos + blockStartToken.val.length();
+    if (blockType.hasNoBraces() && inAssignment) {
+      blockType = BlockType.SS_SWITCH_EXPR_CASE;
+    }
     curBlock.blockType = blockType;
     allBlocks.add(curBlock);
     if (curMeth != null) {
@@ -102,11 +103,7 @@ public class ParserState {
     } else {
       curClass.blocks.add(curBlock);
     }
-    System.out.printf("entering block %s\n", curBlock);
-    if (blockType.hasNoBraces() && inAssignment) {
-      curBlock.blockType = BlockType.SS_SWITCH_EXPR_CASE;
-      System.out.println("entered single statement switch expression case.");
-    }
+    System.out.printf("entering %s\n", curBlock.describe());
   }
 
   void enterBlock() {
@@ -116,11 +113,9 @@ public class ParserState {
   void leaveBlock() {
     curBlock.end = parser.t.line;
     curBlock.endPos = parser.t.charPos + parser.t.val.length();
-    System.out.printf("left block %s\n", curBlock);
+    System.out.printf("left %s\n", curBlock.describe());
     if (blockStack.empty()) {
-      if (curBlock.blockType == BlockType.STATIC) {
-        System.out.println("left static block");;
-      } else {
+      if (curMeth != null) {
         leaveMethod();
       }
       curBlock = null;
@@ -136,10 +131,8 @@ public class ParserState {
     }
     if (parser.la.kind != _lbrace) {
       if (inLambda) {
-        System.out.println("found single-statement lambda block");
         enterBlock(BlockType.SS_LAMBDA);
       } else {
-        System.out.println("found single statement block.");
         enterBlock(BlockType.SS_BLOCK);
       }
     }
@@ -147,7 +140,6 @@ public class ParserState {
 
   void checkInsertRBrace() {
     if (curBlock.blockType.hasNoBraces()) {
-      System.out.println("left single statement block.");
       leaveBlock();
     }
   }
