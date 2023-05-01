@@ -44,7 +44,7 @@ public class Instrumenter {
   public void instrumentFiles() {
     blockCounter = 0;
     try {
-       instrument(mainJavaFile);
+      instrument(mainJavaFile);
       for (JavaFile additionalFile : additionalJavaFiles) {
         instrument(additionalFile);
       }
@@ -68,21 +68,17 @@ public class Instrumenter {
     Files.writeString(javaFile.instrumentedFile, builder.toString());
   }
 
-  static class CodeInsert {
-    int chPos;
-    String code;
-
-    public CodeInsert(int chPos, String code) {
-      this.chPos = chPos;
-      this.code = code;
-    }
+  record CodeInsert(int chPos, String code) {
   }
 
   List<CodeInsert> getCodeInserts(JavaFile javaFile) {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(javaFile.beginOfImports, "import auxiliary.__Counter;"));
     for (Block block : javaFile.foundBlocks) {
-      if (block.blockType == BlockType.SS_LAMBDA) continue; // not yet supported
+      if (block.blockType == BlockType.SS_LAMBDA) {
+        blockCounter++;
+        continue; // not yet supported
+      }
       // insert order is important, in case of same CodeInsert char positions
       if (block.blockType.hasNoBraces()) {
         assert block.blockType != BlockType.METHOD;
