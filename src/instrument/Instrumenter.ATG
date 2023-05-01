@@ -39,32 +39,27 @@ Instrumenter = [PackageDecl] { Class | Enum | ANY }.
 PackageDecl = "package" {ANY} ";" (. state.markBeginOfImports(); .)
 						.
 Class =
-			("class" | "interface")	(. state.enterClass(); .)
-			ident {ANY} "{"
-			{ Class | Enum
-				| "=" {ANY} Statement
-				| IF(state.isEntryPoint()) MainMethod
-				| IF(state.identAndLPar()) MethodDecl
-				| IF(state.staticAndLBrace()) StaticBlock
-				| ANY
-			}
-			"}"											(. state.leaveClass(); .)
-		.
+		("class" | "interface")	(. state.enterClass(); .)
+		ident {ANY} "{"
+		ClassBody								(. state.leaveClass(); .)
+	.
 Enum =
-			"enum"									(. state.enterClass(); .)
-			ident {ANY} "{"
-			{[","] ident [ParExpr]}
-			[";"  // class body can follow only after a ";"
-				{ Enum | Class
-					| "=" {ANY} Statement
-					| IF(state.isEntryPoint()) MainMethod
-					| IF(state.identAndLPar()) MethodDecl
-					| IF(state.staticAndLBrace()) StaticBlock
-					| ANY
-				}
-			]
-			"}"											(. state.leaveClass(); .)
-		.
+	"enum"										(. state.enterClass(); .)
+	ident {ANY} "{"
+	{[","] ident [ParExpr]}
+	([";" ClassBody] // class body can follow only after a ";"
+		| "}") 									(. state.leaveClass(); .)
+	.
+ClassBody =
+	{ Enum | Class
+		| "=" {ANY} Statement
+		| IF(state.isEntryPoint()) MainMethod
+		| IF(state.identAndLPar()) MethodDecl
+		| IF(state.staticAndLBrace()) StaticBlock
+		| ANY
+	}
+	"}"
+.
 MainMethod =
 		[public] static void main	(. state.enterMainMethod(); .)
 		ParExpr Block
