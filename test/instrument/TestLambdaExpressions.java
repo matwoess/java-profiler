@@ -155,4 +155,66 @@ public class TestLambdaExpressions {
     expectedBlocks.add(getLambdaSSBlock(clazz, meth, 9, 9, 291, 339));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestClassLevelLambdaMembers() {
+    String fileContent = """
+        private class LambdaMembers {
+          static Runnable printHello = () -> {
+            System.out.println("Hello!");
+          };
+          static Function<Integer, Double> divideByTwo = x -> {
+            return x / 2.0;
+          };
+          static Consumer<Double> printDouble = (d) -> {
+            System.out.println(d);
+          };
+          public static void main(String[] args) {
+            printHello.run();
+            Stream.of(3, 6, 9).map(divideByTwo).forEach(printDouble);
+          }
+        }
+        """;
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(4, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("LambdaMembers", true);
+    expectedBlocks.add(getBlock(clazz, null, 2, 4, 68, 106));
+    expectedBlocks.add(getBlock(clazz, null, 5, 7, 163, 187));
+    expectedBlocks.add(getBlock(clazz, null, 8, 10, 237, 268));
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 11, 14, 312, 400));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
+  public void TestClassLevelSingleStatementLambdas() {
+    String fileContent = """
+        class LambdaMembers {
+          static Runnable printHello = () -> System.out.println("Hello!");
+          static Function<Integer, Double> divideByTwo = x -> x / 2.0;
+          static Consumer<Double> printDouble = (d) ->
+            System.out.println(d);
+          static Function<Integer, Integer> addTwo = x -> x + 2;
+          static int[] ints = Arrays.stream(new int[]{5, 4}).map(x -> x * 2).toArray();
+          
+          public static void main(String[] args) {
+            printHello.run();
+            Stream.of(3, 6, 9).map.(addTwo).map(divideByTwo).forEach(printDouble);
+          }
+        }
+        """;
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(6, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("LambdaMembers", true);
+    expectedBlocks.add(getLambdaSSBlock(clazz, null, 2, 2, 58, 88));
+    expectedBlocks.add(getLambdaSSBlock(clazz, null, 3, 3, 142, 151));
+    expectedBlocks.add(getLambdaSSBlock(clazz, null, 4, 5, 198, 225));
+    expectedBlocks.add(getLambdaSSBlock(clazz, null, 6, 6, 275, 282));
+    expectedBlocks.add(getLambdaSSBlock(clazz, null, 7, 7, 344, 351));
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getMethodBlock(clazz, meth, 9, 12, 406, 507));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }
