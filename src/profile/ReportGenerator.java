@@ -1,6 +1,7 @@
 package profile;
 
 import common.Block;
+import common.BlockType;
 import common.JavaFile;
 
 import java.io.IOException;
@@ -100,9 +101,25 @@ public class ReportGenerator {
     return inserts;
   }
 
-  private String codeSpan(List<Integer> activeBlocks, int hits) {
+  private String codeSpan(List<Integer> activeBlocks, Block block) {
+    String description = block.toString();
+    int hits = block.hits;
+    String title;
+    String coverageClass;
+    if (block.blockType == BlockType.SS_LAMBDA) { // currently not supported
+      coverageClass = "u";
+      title = String.format("%s&#10;&#10;%s",
+          description,
+          "This type of block is currently not supported by the instrumenter."
+      );
+    } else {
+      coverageClass = hits > 0 ? "c" : "nc";
+      String coverageStatus = hits > 0 ? "covered" : "not covered";
+      // &#10; == <br/> == newLine
+      title = String.format("%s&#10;&#10;Hits: %d (%s)", description, hits, coverageStatus);
+    }
     String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
-    return String.format("<span class=\"%s\" title=\"Hits: %d\">", classes, hits);
+    return String.format("<span class=\"%s %s\" title=\"%s\">", coverageClass, classes, title);
   }
 
   private String codeSpanAt(int chPos) {
@@ -116,7 +133,8 @@ public class ReportGenerator {
     if (activeBlocks.isEmpty()) {
       return "<span>";
     } else {
-      return codeSpan(activeBlocks, blocks.get(activeBlocks.get(activeBlocks.size()-1)).hits);
+      Block lastBlock = blocks.get(activeBlocks.get(activeBlocks.size() - 1));
+      return codeSpan(activeBlocks, lastBlock);
     }
   }
 
