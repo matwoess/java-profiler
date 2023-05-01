@@ -82,6 +82,7 @@ public class Instrumenter {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(javaFile.beginOfImports, "import auxiliary.__Counter;"));
     for (Block block : javaFile.foundBlocks) {
+      if (block.blockType == BlockType.SS_LAMBDA) continue; // not yet supported
       // insert order is important, in case of same CodeInsert char positions
       if (block.blockType.hasNoBraces()) {
         assert block.blockType != BlockType.METHOD;

@@ -5,7 +5,18 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class Lambdas {
+  static Runnable printHello = () -> {
+    System.out.println("Hello!");
+  };
+
+  static Function<Integer, Integer> addTwo = x -> x + 2;
+   static int[] ints = Arrays.stream(new int[] {5,4}).map(x -> x*2).toArray();
+
   public static void main(String[] args) {
+    for (int i = 0; i < 15; i++) {
+      printHello.run();
+    }
+    Arrays.stream(ints).map(i -> addTwo.apply(i)).forEach(System.out::println);
     "xyz".chars().forEach(ch -> {
       System.out.println(ch);
     });

@@ -42,7 +42,7 @@ Class =
 			("class" | "interface")	(. state.enterClass(); .)
 			ident {ANY} "{"
 			{ Class | Enum
-				| "=" {ANY} ";"  // against class member with initializers
+				| "=" {ANY} (";" /*class members with initializers*/ | LambdaExpression)
 				| IF(state.isEntryPoint()) MainMethod
 				| IF(state.identAndLPar()) MethodDecl
 				| IF(state.staticAndLBrace()) StaticBlock
@@ -56,7 +56,7 @@ Enum =
 			{[","] ident [ParExpr]}
 			[";"  // class body can follow only after a ";"
 				{ Enum | Class
-					| "=" {ANY} ";"  // against class member with initializers
+					| "=" {ANY} (";" /*class members with initializers*/ | LambdaExpression)
 					| IF(state.isEntryPoint()) MainMethod
 					| IF(state.identAndLPar()) MethodDecl
 					| IF(state.staticAndLBrace()) StaticBlock
