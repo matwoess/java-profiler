@@ -196,7 +196,7 @@ public class TestLambdaExpressions {
           static Consumer<Double> printDouble = (d) ->
             System.out.println(d);
           static Function<Integer, Integer> addTwo = x -> x + 2;
-          static int[] ints = Arrays.stream(new int[]{5, 4}).map(x -> x * 2).toArray();
+          static int[] ints = Arrays.stream(new int[]{5, 4}).map(x -> x * 2).filter(x -> x < 10).toArray();
           
           public static void main(String[] args) {
             printHello.run();
@@ -205,7 +205,7 @@ public class TestLambdaExpressions {
         }
         """;
     List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(6, blocks.size());
+    assertEquals(7, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("LambdaMembers", true);
     expectedBlocks.add(getLambdaSSBlock(clazz, null, 2, 2, 58, 88));
@@ -213,8 +213,9 @@ public class TestLambdaExpressions {
     expectedBlocks.add(getLambdaSSBlock(clazz, null, 4, 5, 198, 225));
     expectedBlocks.add(getLambdaSSBlock(clazz, null, 6, 6, 275, 282));
     expectedBlocks.add(getLambdaSSBlock(clazz, null, 7, 7, 344, 351));
+    expectedBlocks.add(getLambdaSSBlock(clazz, null, 7, 7, 363, 371));
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 9, 12, 406, 507));
+    expectedBlocks.add(getMethodBlock(clazz, meth, 9, 12, 426, 527));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }

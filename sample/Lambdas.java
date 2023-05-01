@@ -14,7 +14,7 @@ public class Lambdas {
   };
 
   static Function<Integer, Integer> addTwo = x -> x + 2;
-  static int[] ints = Arrays.stream(new int[]{5, 4}).map(x -> x * 2).toArray();
+   static int[] ints = Arrays.stream(new int[]{5, 4}).map(x -> x * 2).filter(x -> x < 10).toArray();
 
   public static void main(String[] args) {
     for (int i = 0; i < 15; i++) {
