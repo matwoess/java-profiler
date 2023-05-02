@@ -22,7 +22,8 @@ public class ParserState {
   Method curMeth = null;
   Block curBlock = null;
   boolean inAssignment = false;
-  boolean inLambda = false;
+  boolean inArrowExpression = false;
+  boolean inSwitch = false;
 
   public ParserState(Parser p) {
     parser = p;
@@ -77,13 +78,12 @@ public class ParserState {
     curMeth = null;
   }
 
+  void enterBlock() {  // no missing braces
+    enterBlock(getBlockTypeByContext(false));
+  }
+
   void enterBlock(BlockType blockType) {
     assert curClass != null;
-    if (curMeth == null) {
-      if (parser.t.kind == _static && parser.la.kind == _lbrace) {
-        blockType = BlockType.STATIC;
-      }
-    }
     if (curBlock != null) {
       blockStack.push(curBlock);
     }
@@ -94,7 +94,7 @@ public class ParserState {
     curBlock.beg = blockStartToken.line;
     curBlock.begPos = blockStartToken.charPos + blockStartToken.val.length();
     if (blockType.hasNoBraces() && inAssignment) {
-      blockType = BlockType.SS_SWITCH_EXPR_CASE;
+      blockType = BlockType.SS_SWITCH_ARROW_CASE;
     }
     curBlock.blockType = blockType;
     allBlocks.add(curBlock);
@@ -104,10 +104,6 @@ public class ParserState {
       curClass.blocks.add(curBlock);
     }
     System.out.printf("entering %s\n", curBlock);
-  }
-
-  void enterBlock() {
-    enterBlock(BlockType.BLOCK); // no missing braces
   }
 
   void leaveBlock() {
@@ -124,24 +120,53 @@ public class ParserState {
     }
   }
 
-  void checkInsertLBrace() {
+  void checkSingleStatement() {
     if (parser.t.kind == _else && parser.la.kind == _if) {
       System.out.println("else if found. no block.");
       return;
     }
     if (parser.la.kind != _lbrace) {
-      if (inLambda) {
-        enterBlock(BlockType.SS_LAMBDA);
-      } else {
-        enterBlock(BlockType.SS_BLOCK);
-      }
+      enterBlock(getBlockTypeByContext(true));
     }
   }
 
-  void checkInsertRBrace() {
+  void leaveSingleStatement() {
     if (curBlock.blockType.hasNoBraces()) {
       leaveBlock();
     }
+  }
+
+  BlockType getBlockTypeByContext(boolean missingBraces) {
+    BlockType blockType;
+    if (missingBraces) {
+      if (inArrowExpression) {
+        if (inSwitch) {
+          blockType = BlockType.SS_SWITCH_ARROW_CASE;
+        } else {
+          blockType = BlockType.SS_LAMBDA;
+        }
+      } else if (inSwitch) {
+          blockType = BlockType.SWITCH_CASE;
+      } else {
+        blockType = BlockType.SS_BLOCK;
+      }
+    }
+    else {
+      if (curMeth == null && parser.t.kind == _static && parser.la.kind == _lbrace) {
+        blockType = BlockType.STATIC;
+      } else if (inSwitch) {
+        if (inArrowExpression) {
+          blockType = BlockType.SWITCH_ARROW_CASE;
+        } else {
+          blockType = BlockType.SWITCH_CASE;
+        }
+      } else if (inArrowExpression) {
+        blockType = BlockType.LAMBDA;
+      } else {
+        blockType = BlockType.BLOCK;
+      }
+    }
+    return blockType;
   }
 
   boolean identAndLPar() {
@@ -185,11 +210,19 @@ public class ParserState {
     }
   }
 
-  void enterLambda() {
-    inLambda = true;
+  void enterSwitch() {
+    inSwitch = true;
   }
 
-  void leaveLambda() {
-    inLambda = false;
+  void leaveSwitch() {
+    inSwitch = false;
+  }
+
+  void enterArrowExpression() {
+    inArrowExpression = true;
+  }
+
+  void leaveArrowExpression() {
+    inArrowExpression = false;
   }
 }

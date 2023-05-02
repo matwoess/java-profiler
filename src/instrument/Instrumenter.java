@@ -85,7 +85,7 @@ public class Instrumenter {
         inserts.add(new CodeInsert(block.begPos, "{"));
       }
       inserts.add(new CodeInsert(block.begPos, String.format("__Counter.inc(%d);", blockCounter++)));
-      if (block.blockType == BlockType.SS_SWITCH_EXPR_CASE) {
+      if (block.blockType == BlockType.SS_SWITCH_ARROW_CASE) {
         inserts.add(new CodeInsert(block.begPos, "yield "));
       }
       if (block.blockType.hasNoBraces()) {

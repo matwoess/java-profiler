@@ -82,27 +82,27 @@ Statement =
 		.
 BlockOrSingleStatement =
 		Block
-		| (. state.checkInsertLBrace(); .) Statement (. state.checkInsertRBrace(); .)
+		| (. state.checkSingleStatement(); .) Statement (. state.leaveSingleStatement(); .)
 		.
-SwitchStatement = 						(. state.checkAssignment(); .)
+SwitchStatement = 						(. state.checkAssignment(); state.enterSwitch(); .)
 			"switch" ParExpr "{" {SwitchCase}
-			"}"											(. state.leaveAssignment(); .)
+			"}"											(. state.leaveAssignment(); state.leaveSwitch(); .)
 			.
 SwitchCase =
 	("case" | "default") {ANY}
 	(LambdaExpression
-		| ":"							(. state.checkInsertLBrace(); .)
-		{Statement}				(. state.checkInsertRBrace(); .)
+		| ":"											(. state.checkSingleStatement(); .)
+		{Statement}								(. state.leaveSingleStatement(); .)
 	)
 	.
 ParExpr = "(" {ParExpr | ANY} ")".
-LambdaExpression = "->"				(. state.enterLambda(); .)
-		(Block | SingleStatementLambdaBody) (. state.leaveLambda(); .)
+LambdaExpression = "->"									(. state.enterArrowExpression(); .)
+		(Block | SingleStatementLambdaBody) (. state.leaveArrowExpression(); .)
 	.
-SingleStatementLambdaBody = 	(. state.checkInsertLBrace(); .)
+SingleStatementLambdaBody = 	(. state.checkSingleStatement(); .)
 				(ANY | ParExpr | string | char | ident)
 				{ANY | ParExpr}
-				(")" | ";")						(. state.checkInsertRBrace(); .)
+				(")" | ";")						(. state.leaveSingleStatement(); .)
 				.
 Block = 											(. state.enterBlock(); .)
 				"{" {Statement} "}"		(. state.leaveBlock(); .)

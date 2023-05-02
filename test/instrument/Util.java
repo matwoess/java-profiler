@@ -77,7 +77,7 @@ public class Util {
 
   public static Block getSwitchExprSSCase(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
     Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
-    expected.blockType = BlockType.SS_SWITCH_EXPR_CASE;
+     expected.blockType = BlockType.SS_SWITCH_ARROW_CASE;
     return expected;
   }
 }
