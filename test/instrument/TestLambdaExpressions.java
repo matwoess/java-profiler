@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static common.BlockType.*;
 import static instrument.Util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -34,8 +35,8 @@ public class TestLambdaExpressions {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 131));
-    expectedBlocks.add(getBlock(clazz, meth, 3, 5, 96, 124));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 131));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 5, 96, 124));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -51,8 +52,8 @@ public class TestLambdaExpressions {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 197));
-    expectedBlocks.add(getBlock(clazz, meth, 3, 3, 115, 131));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 197));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 3, 115, 131));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -69,8 +70,8 @@ public class TestLambdaExpressions {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 8, 62, 164));
-    expectedBlocks.add(getBlock(clazz, meth, 3, 5, 102, 122));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 164));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 5, 102, 122));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -89,8 +90,8 @@ public class TestLambdaExpressions {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 191));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 3, 3, 111, 122));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 191));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 3, 3, 111, 122));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -106,8 +107,8 @@ public class TestLambdaExpressions {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 7, 62, 209));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 3, 3, 122, 131));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 209));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 3, 3, 122, 131));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -125,9 +126,9 @@ public class TestLambdaExpressions {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 336));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 4, 4, 145, 190));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 5, 5, 237, 253));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 9, 62, 336));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 4, 4, 145, 190));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 5, 5, 237, 253));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -147,12 +148,12 @@ public class TestLambdaExpressions {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 11, 62, 345));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 5, 5, 144, 149));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 6, 6, 164, 193));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 7, 7, 210, 219));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 8, 8, 243, 258));
-    expectedBlocks.add(getLambdaSSBlock(clazz, meth, 9, 9, 291, 339));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 11, 62, 345));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 5, 5, 144, 149));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 6, 6, 164, 193));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 7, 7, 210, 219));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 8, 8, 243, 258));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 9, 9, 291, 339));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -179,11 +180,11 @@ public class TestLambdaExpressions {
     assertEquals(4, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("LambdaMembers", true);
-    expectedBlocks.add(getBlock(clazz, null, 2, 4, 68, 106));
-    expectedBlocks.add(getBlock(clazz, null, 5, 7, 163, 187));
-    expectedBlocks.add(getBlock(clazz, null, 8, 10, 237, 268));
+    expectedBlocks.add(getBlock(BLOCK, clazz, null, 2, 4, 68, 106));
+    expectedBlocks.add(getBlock(BLOCK, clazz, null, 5, 7, 163, 187));
+    expectedBlocks.add(getBlock(BLOCK, clazz, null, 8, 10, 237, 268));
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 11, 14, 312, 400));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 14, 312, 400));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -208,14 +209,14 @@ public class TestLambdaExpressions {
     assertEquals(7, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("LambdaMembers", true);
-    expectedBlocks.add(getLambdaSSBlock(clazz, null, 2, 2, 58, 88));
-    expectedBlocks.add(getLambdaSSBlock(clazz, null, 3, 3, 142, 151));
-    expectedBlocks.add(getLambdaSSBlock(clazz, null, 4, 5, 198, 225));
-    expectedBlocks.add(getLambdaSSBlock(clazz, null, 6, 6, 275, 282));
-    expectedBlocks.add(getLambdaSSBlock(clazz, null, 7, 7, 344, 351));
-    expectedBlocks.add(getLambdaSSBlock(clazz, null, 7, 7, 363, 371));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 2, 2, 58, 88));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 3, 3, 142, 151));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 4, 5, 198, 225));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 6, 6, 275, 282));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 7, 7, 344, 351));
+    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 7, 7, 363, 371));
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 9, 12, 426, 527));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 9, 12, 426, 527));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }

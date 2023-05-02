@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static common.BlockType.*;
 import static instrument.Util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -65,7 +66,7 @@ public class TestBasic {
     assertEquals(1, blocks.size());
     Class clazz = new Class("HelloWorld", true);
     Method meth = new Method("main", true);
-    Block expectedBlock = getMethodBlock(clazz, meth, 2, 4, 68, 112);
+    Block expectedBlock = getBlock(METHOD, clazz, meth, 2, 4, 68, 112);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -83,7 +84,7 @@ public class TestBasic {
     List<Block> blocks = getFoundBlocks(staticBlock);
     assertEquals(1, blocks.size());
     Class clazz = new Class("Static");
-    Block expectedBlock = getStaticBlock(clazz, 4, 6, 49, 64);
+    Block expectedBlock = getBlock(STATIC, clazz, null, 4, 6, 49, 64);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -108,10 +109,10 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 16, 62, 244));
-    expectedBlocks.add(getBlock(clazz, meth, 5, 13, 136, 211));
-    expectedBlocks.add(getBlock(clazz, meth, 7, 9, 165, 178));
-    expectedBlocks.add(getBlock(clazz, meth, 10, 12, 194, 209));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 16, 62, 244));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 13, 136, 211));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 7, 9, 165, 178));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 12, 194, 209));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -132,9 +133,9 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 12, 62, 188));
-    expectedBlocks.add(getBlock(clazz, meth, 4, 9, 95, 153));
-    expectedBlocks.add(getBlock(clazz, meth, 6, 8, 113, 129));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 12, 62, 188));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 9, 95, 153));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 8, 113, 129));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -159,11 +160,11 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 15, 62, 336));
-    expectedBlocks.add(getBlock(clazz, meth, 4, 6, 84, 99));
-    expectedBlocks.add(getBlock(clazz, meth, 6, 8, 132, 185));
-    expectedBlocks.add(getBlock(clazz, meth, 8, 10, 215, 279));
-    expectedBlocks.add(getBlock(clazz, meth, 10, 12, 289, 301));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 15, 62, 336));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 6, 84, 99));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 8, 132, 185));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 8, 10, 215, 279));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 12, 289, 301));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -177,25 +178,25 @@ public class TestBasic {
         end comments */
         String s = getTempString(1);
          """, """
-        /**
-        This is a docstring:<br/>
-        Method returns a string containing a given number.<br>
-        Is called by the {@link #main(String[]) main} method in class {@link Main Main}.
-        @param number the number which should be contained in the returned string.
-        @returns a new string containing the number.
-        */
-       static String getTempString(int number) {
-         return String.format("The number was %d", number);
-       }
-        """);
+         /**
+         This is a docstring:<br/>
+         Method returns a string containing a given number.<br>
+         Is called by the {@link #main(String[]) main} method in class {@link Main Main}.
+         @param number the number which should be contained in the returned string.
+         @returns a new string containing the number.
+         */
+        static String getTempString(int number) {
+          return String.format("The number was %d", number);
+        }
+         """);
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 10, 62, 284));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 284));
     meth = new Method("getTempString", false);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 18, 20, 625, 680));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 18, 20, 625, 680));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -210,7 +211,7 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 6, 62, 117));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 6, 62, 117));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -229,7 +230,7 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 10, 62, 170));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 170));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -243,7 +244,7 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 5, 62, 108));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 5, 62, 108));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -261,7 +262,7 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 62, 227));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 9, 62, 227));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -286,11 +287,11 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 16, 62, 220));
-    expectedBlocks.add(getBlock(clazz, meth, 5, 14, 99, 215));
-    expectedBlocks.add(getBlock(clazz, meth, 6, 13, 123, 213));
-    expectedBlocks.add(getBlock(clazz, meth, 7, 10, 141, 177));
-    expectedBlocks.add(getBlock(clazz, meth, 10, 12, 184, 209));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 16, 62, 220));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 14, 99, 215));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 13, 123, 213));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 7, 10, 141, 177));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 12, 184, 209));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }

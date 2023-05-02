@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static common.BlockType.*;
 import static instrument.Util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -57,7 +58,7 @@ public class TestEnums {
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
     Class clazz = new Class("AB");
-    Block block = getStaticBlock(clazz, 4, 6, 59, 82);
+    Block block = getBlock(STATIC, clazz, null, 4, 6, 59, 82);
     assertEquals(block, blocks.get(0));
   }
 
@@ -76,7 +77,7 @@ public class TestEnums {
     assertEquals(1, blocks.size());
     Class clazz = new Class("Enum");
     Method meth = new Method("lowercase");
-    Block block = getMethodBlock(clazz, meth, 4, 6, 90, 132);
+    Block block = getBlock(METHOD, clazz, meth, 4, 6, 90, 132);
     assertEquals(block, blocks.get(0));
   }
 
@@ -102,7 +103,7 @@ public class TestEnums {
     assertEquals(1, blocks.size());
     Class clazz = new Class("WithConstructor");
     Method meth = new Method("WithConstructor");
-    Block block = getMethodBlock(clazz, meth, 10, 14, 276, 359);
+    Block block = getBlock(METHOD, clazz, meth, 10, 14, 276, 359);
     assertEquals(block, blocks.get(0));
   }
 
@@ -128,9 +129,9 @@ public class TestEnums {
     Class clazz = new Class("WithMain", true);
     Method meth = new Method("main", true);
     List<Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock(clazz, meth, 5, 13, 80, 222));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 8, 9, 133, 158));
-    expectedBlocks.add(getSingleStatementBlock(clazz, meth, 10, 11, 173, 212));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 13, 80, 222));
+    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 8, 9, 133, 158));
+    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 10, 11, 173, 212));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -162,13 +163,13 @@ public class TestEnums {
     Class clazz = new Class("WithSubClassAndInterface.ClassInEnum");
     Method meth = new Method("printName");
     List<Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getMethodBlock(clazz, meth, 5, 7, 169, 213));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 7, 169, 213));
     clazz = new Class("WithSubClassAndInterface.InterfaceInEnum");
     meth = new Method("lowercase");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 11, 13, 317, 362));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 13, 317, 362));
     clazz = new Class("WithSubClassAndInterface");
     meth = new Method("callMethods");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 16, 19, 404, 499));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 16, 19, 404, 499));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }

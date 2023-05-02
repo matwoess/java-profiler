@@ -39,45 +39,15 @@ public class Util {
     return instrumenter.mainJavaFile.beginOfImports;
   }
 
-  public static Block getBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
-    Block expected = new Block();
-    expected.clazz = clazz;
-    expected.method = meth;
-    expected.beg = beg;
-    expected.begPos = begPos;
-    expected.end = end;
-    expected.endPos = endPos;
-    expected.blockType = BlockType.BLOCK;
-    return expected;
-  }
-
-  public static Block getMethodBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
-    Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
-    expected.blockType = BlockType.METHOD;
-    return expected;
-  }
-
-  public static Block getStaticBlock(Class clazz, int beg, int end, int begPos, int endPos) {
-    Block expected = getBlock(clazz, null, beg, end, begPos, endPos);
-    expected.blockType = BlockType.STATIC;
-    return expected;
-  }
-
-  public static Block getSingleStatementBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
-    Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
-    expected.blockType = BlockType.SS_BLOCK;
-    return expected;
-  }
-
-  public static Block getLambdaSSBlock(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
-    Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
-    expected.blockType = BlockType.SS_LAMBDA;
-    return expected;
-  }
-
-  public static Block getSwitchExprSSCase(Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
-    Block expected = getBlock(clazz, meth, beg, end, begPos, endPos);
-     expected.blockType = BlockType.SS_SWITCH_ARROW_CASE;
-    return expected;
+  public static Block getBlock(BlockType blockType, Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
+    Block block = new Block();
+    block.blockType = blockType;
+    block.clazz = clazz;
+    block.method = meth;
+    block.beg = beg;
+    block.begPos = begPos;
+    block.end = end;
+    block.endPos = endPos;
+    return block;
   }
 }

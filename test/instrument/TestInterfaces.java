@@ -9,8 +9,8 @@ import common.Class;
 import java.util.ArrayList;
 import java.util.List;
 
-import static instrument.Util.getFoundBlocks;
-import static instrument.Util.getMethodBlock;
+import static common.BlockType.METHOD;
+import static instrument.Util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
@@ -44,7 +44,7 @@ public class TestInterfaces {
     assertEquals(1, blocks.size());
     Class clazz = new Class("InitBlocks");
     Method meth = new Method("doNothing");
-    Block expectedBlock = getMethodBlock(clazz, meth, 9, 9, 275, 276);
+    Block expectedBlock = getBlock(METHOD, clazz, meth, 9, 9, 275, 276);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -68,11 +68,11 @@ public class TestInterfaces {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("DefaultStatic");
     Method meth = new Method("getName");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 3, 5, 67, 91));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 3, 5, 67, 91));
     meth = new Method("getAge");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 6, 8, 133, 160));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 8, 133, 160));
     meth = new Method("printInfo");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 9, 11, 212, 266));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 9, 11, 212, 266));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -106,13 +106,13 @@ public class TestInterfaces {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Interfaces.SubInterface");
     Method meth = new Method("get");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 6, 8, 174, 225));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 8, 174, 225));
     clazz = new Class("Interfaces.SubInterface.SubClass");
     meth = new Method("getXPlus1");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 11, 13, 278, 308));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 13, 278, 308));
     clazz = new Class("Interfaces.X");
     meth = new Method("callGet");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 18, 20, 376, 395));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 18, 20, 376, 395));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -140,10 +140,10 @@ public class TestInterfaces {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("WithMain.X", false);
     Method meth = new Method("get");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 6, 8, 110, 132));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 8, 110, 132));
     clazz = new Class("WithMain", true);
     meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 11, 15, 180, 268));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 15, 180, 268));
     assertIterableEquals(expectedBlocks, blocks);
     // without public
     fileContent = """
@@ -158,7 +158,7 @@ public class TestInterfaces {
     assertEquals(1, blocks.size());
     clazz = new Class("InferredPublic", true);
     meth = new Method("main", true);
-    Block expectedBlock = getMethodBlock(clazz, meth, 2, 6, 69, 157);
+    Block expectedBlock = getBlock(METHOD, clazz, meth, 2, 6, 69, 157);
     assertEquals(expectedBlock, blocks.get(0));
   }
 }

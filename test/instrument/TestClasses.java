@@ -9,6 +9,7 @@ import common.Class;
 import java.util.ArrayList;
 import java.util.List;
 
+import static common.BlockType.*;
 import static instrument.Util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -33,7 +34,7 @@ public class TestClasses {
     assertEquals(1, blocks.size());
     Class clazz = new Class("Pet");
     Method meth = new Method("toString");
-    Block expectedBlock = getMethodBlock(clazz, meth, 6, 11, 139, 234);
+    Block expectedBlock = getBlock(METHOD, clazz, meth, 6, 11, 139, 234);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -74,14 +75,14 @@ public class TestClasses {
     assertEquals(6, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Classes", true);
-    expectedBlocks.add(getStaticBlock(clazz, 4, 6, 50, 65));
+    expectedBlocks.add(getBlock(STATIC, clazz, null, 4, 6, 50, 65));
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 8, 21, 109, 471));
-    expectedBlocks.add(getBlock(clazz, meth, 12, 20, 234, 467));
-    expectedBlocks.add(getBlock(clazz, meth, 14, 16, 285, 352));
-    expectedBlocks.add(getBlock(clazz, meth, 16, 18, 359, 427));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 21, 109, 471));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 12, 20, 234, 467));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 14, 16, 285, 352));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 16, 18, 359, 427));
     clazz = new Class("Classes.PetFarm");
-    expectedBlocks.add(getStaticBlock(clazz, 26, 28, 561, 590));
+    expectedBlocks.add(getBlock(STATIC, clazz, null, 26, 28, 561, 590));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -119,16 +120,16 @@ public class TestClasses {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("InnerClasses", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getMethodBlock(clazz, meth, 2, 9, 70, 275));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 9, 70, 275));
     clazz = new Class("InnerClasses.Inner");
     meth = new Method("level1");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 11, 13, 318, 362));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 13, 318, 362));
     clazz = new Class("InnerClasses.Inner.Sub");
     meth = new Method("level2");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 15, 17, 407, 455));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 15, 17, 407, 455));
     clazz = new Class("InnerClasses.Inner.Sub.SubSub");
     meth = new Method("level3");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 19, 21, 507, 559));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 19, 21, 507, 559));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -168,17 +169,17 @@ public class TestClasses {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Pet");
     Method meth = new Method("toString");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 6, 11, 139, 234));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 11, 139, 234));
     clazz = new Class("Dog");
     meth = new Method("Dog");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 15, 18, 298, 344));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 15, 18, 298, 344));
     meth = new Method("speak");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 19, 19, 373, 391));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 19, 19, 373, 391));
     clazz = new Class("Cat");
     meth = new Method("Cat");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 23, 26, 455, 501));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 23, 26, 455, 501));
     meth = new Method("speak");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 27, 27, 530, 548));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 27, 27, 530, 548));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -199,7 +200,7 @@ public class TestClasses {
     assertEquals(1, blocks.size());
     Class clazz = new Class("InitBlocks");
     Method meth = new Method("doNothing");
-    Block expectedBlock = getMethodBlock(clazz, meth, 9, 9, 263, 264);
+    Block expectedBlock = getBlock(METHOD, clazz, meth, 9, 9, 263, 264);
     assertEquals(expectedBlock, blocks.get(0));
   }
 
@@ -225,19 +226,19 @@ public class TestClasses {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("A.B");
     Method meth = new Method("classBMeth");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 3, 3, 45, 46));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 3, 3, 45, 46));
     clazz = new Class("A");
     meth = new Method("classAMeth1");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 5, 5, 73, 74));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 5, 73, 74));
     clazz = new Class("A.C.D");
     meth = new Method("classDMeth");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 8, 8, 126, 127));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 8, 126, 127));
     clazz = new Class("A.C");
     meth = new Method("classCMeth");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 10, 10, 157, 158));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 10, 10, 157, 158));
     clazz = new Class("A");
     meth = new Method("classAMeth2");
-    expectedBlocks.add(getMethodBlock(clazz, meth, 12, 12, 185, 186));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 12, 12, 185, 186));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }
