@@ -130,8 +130,8 @@ public class TestEnums {
     Method meth = new Method("main", true);
     List<Block> expectedBlocks = new ArrayList<>();
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 13, 80, 222));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 8, 9, 133, 158));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 10, 11, 173, 212));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 8, 9, 133, 158));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 10, 11, 173, 212));
     assertIterableEquals(expectedBlocks, blocks);
   }
 

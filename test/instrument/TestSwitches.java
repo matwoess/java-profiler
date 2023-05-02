@@ -49,11 +49,11 @@ public class TestSwitches {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 20, 62, 239));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 5, 8, 102, 129));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 9, 9, 141, 142));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 10, 13, 154, 183));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 14, 16, 195, 210));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 17, 17, 223, 232));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 5, 8, 100, 129));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 9, 9, 139, 142));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 10, 13, 152, 183));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 14, 16, 193, 210));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 17, 17, 221, 232));
     assertIterableEquals(expectedBlocks, blocks);
   }
 

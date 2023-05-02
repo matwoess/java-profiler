@@ -191,12 +191,12 @@ public class TestMissingBraces {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 18, 62, 228));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 8, 102, 129));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 9, 9, 139, 139));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 9, 9, 147, 147));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 10, 12, 157, 182));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 13, 14, 192, 203));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 15, 15, 214, 221));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 5, 8, 100, 129));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 9, 9, 139, 139));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 9, 9, 147, 147));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 10, 12, 157, 182));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 13, 14, 192, 203));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 15, 15, 214, 221));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
