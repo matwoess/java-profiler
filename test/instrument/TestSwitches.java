@@ -49,11 +49,11 @@ public class TestSwitches {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 20, 62, 239));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 8, 102, 129));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 9, 141, 142));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 13, 154, 183));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 14, 16, 195, 210));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 17, 17, 223, 232));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 5, 8, 102, 129));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 9, 9, 141, 142));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 10, 13, 154, 183));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 14, 16, 195, 210));
+    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 17, 17, 223, 232));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -80,11 +80,11 @@ public class TestSwitches {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 17, 62, 384));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 9, 127, 225));
+    expectedBlocks.add(getBlock(SWITCH_ARROW_CASE, clazz, meth, 5, 9, 127, 225));
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 8, 174, 221));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 10, 10, 249, 283));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 11, 13, 298, 313));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 14, 14, 326, 377));
+    expectedBlocks.add(getBlock(SS_SWITCH_ARROW_CASE, clazz, meth, 10, 10, 249, 283));
+    expectedBlocks.add(getBlock(SWITCH_ARROW_CASE, clazz, meth, 11, 13, 298, 313));
+    expectedBlocks.add(getBlock(SS_SWITCH_ARROW_CASE, clazz, meth, 14, 14, 326, 377));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -114,9 +114,9 @@ public class TestSwitches {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 20, 62, 361));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 7, 137, 154));
+    expectedBlocks.add(getBlock(SWITCH_ARROW_CASE, clazz, meth, 5, 7, 137, 154));
     expectedBlocks.add(getBlock(SS_SWITCH_ARROW_CASE, clazz, meth, 8, 8, 166, 169));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 16, 184, 313));
+    expectedBlocks.add(getBlock(SWITCH_ARROW_CASE, clazz, meth, 9, 16, 184, 313));
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 13, 212, 280));
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 13, 15, 287, 309));
     assertIterableEquals(expectedBlocks, blocks);
@@ -145,7 +145,7 @@ public class TestSwitches {
     Class clazz = new Class("ClassLevelSwitch", true);
     expectedBlocks.add(getBlock(SS_SWITCH_ARROW_CASE, clazz, null, 3, 3, 105, 108));
     expectedBlocks.add(getBlock(SS_SWITCH_ARROW_CASE, clazz, null, 4, 4, 125, 128));
-    expectedBlocks.add(getBlock(BLOCK, clazz, null, 5, 7, 145, 166));
+    expectedBlocks.add(getBlock(SWITCH_ARROW_CASE, clazz, null, 5, 7, 145, 166));
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 10, 12, 215, 254));
     assertIterableEquals(expectedBlocks, blocks);

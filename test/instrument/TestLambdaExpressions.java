@@ -36,7 +36,7 @@ public class TestLambdaExpressions {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 131));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 5, 96, 124));
+    expectedBlocks.add(getBlock(LAMBDA, clazz, meth, 3, 5, 96, 124));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -53,7 +53,7 @@ public class TestLambdaExpressions {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 197));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 3, 115, 131));
+    expectedBlocks.add(getBlock(LAMBDA, clazz, meth, 3, 3, 115, 131));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -71,7 +71,7 @@ public class TestLambdaExpressions {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 164));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 5, 102, 122));
+    expectedBlocks.add(getBlock(LAMBDA, clazz, meth, 3, 5, 102, 122));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -180,9 +180,9 @@ public class TestLambdaExpressions {
     assertEquals(4, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("LambdaMembers", true);
-    expectedBlocks.add(getBlock(BLOCK, clazz, null, 2, 4, 68, 106));
-    expectedBlocks.add(getBlock(BLOCK, clazz, null, 5, 7, 163, 187));
-    expectedBlocks.add(getBlock(BLOCK, clazz, null, 8, 10, 237, 268));
+    expectedBlocks.add(getBlock(LAMBDA, clazz, null, 2, 4, 68, 106));
+    expectedBlocks.add(getBlock(LAMBDA, clazz, null, 5, 7, 163, 187));
+    expectedBlocks.add(getBlock(LAMBDA, clazz, null, 8, 10, 237, 268));
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 14, 312, 400));
     assertIterableEquals(expectedBlocks, blocks);
