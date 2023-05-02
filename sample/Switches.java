@@ -45,6 +45,7 @@ public class Switches {
         yield 2;
       }
       case 1 -> 5;
+      case 2 -> throw new RuntimeException();
       default -> {
         if (dependingOn < 10) {
           System.out.println("none of the above");

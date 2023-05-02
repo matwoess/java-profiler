@@ -1,7 +1,6 @@
 package profile;
 
 import common.Block;
-import common.BlockType;
 import common.JavaFile;
 
 import java.io.IOException;
@@ -106,7 +105,7 @@ public class ReportGenerator {
     int hits = block.hits;
     String title;
     String coverageClass;
-    if (block.blockType == BlockType.SS_LAMBDA) { // currently not supported
+    if (block.blockType.isNotYetSupported()) { // currently not supported
       coverageClass = "u";
       title = String.format("%s&#10;&#10;%s",
           description,

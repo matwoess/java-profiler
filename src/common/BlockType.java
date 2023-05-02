@@ -7,6 +7,10 @@ public enum BlockType {
     return this == SS_BLOCK || this == SWITCH_CASE || this == SS_LAMBDA || this == SS_SWITCH_ARROW_CASE;
   }
 
+  public boolean isNotYetSupported() {
+    return this == SS_LAMBDA || this == SS_SWITCH_ARROW_CASE;
+  }
+
   public String toString() {
     String prefix = switch (this) {
       case BLOCK -> "";
