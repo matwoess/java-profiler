@@ -76,36 +76,37 @@ Statement =
 		| "try" Block {"catch" ParExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
-		| (ident | string | ParExpr) {ANY | string | char | LambdaExpression | SwitchStatement} ";"
+		| (ident | string | ParExpr) {ANY | string | char | ArrowExpression<false, false> | SwitchStatement} ";"
 		| Block
 		| ";"
 		.
 BlockOrSingleStatement =
 		Block
-		| (. state.checkSingleStatement(); .) Statement (. state.leaveSingleStatement(); .)
+		| (. state.checkSingleStatement(false, false, false); .) Statement (. state.leaveSingleStatement(); .)
 		.
-SwitchStatement = 						(. state.checkAssignment(); state.enterSwitch(); .)
-			"switch" ParExpr "{" {SwitchCase}
-			"}"											(. state.leaveAssignment(); state.leaveSwitch(); .)
+SwitchStatement = 						(. boolean inAssignment = state.isAssignment(); .)
+			"switch" ParExpr "{" {SwitchCase<true>}
+			"}"
 			.
-SwitchCase =
+SwitchCase<boolean inAssignment> =
 	("case" | "default") {ANY}
-	(LambdaExpression
-		| ":"											(. state.checkSingleStatement(); .)
+	(ArrowExpression<true, inAssignment>
+		| ":"											(. state.checkSingleStatement(false, true, false); .)
 		{Statement}								(. state.leaveSingleStatement(); .)
 	)
 	.
 ParExpr = "(" {ParExpr | ANY} ")".
-LambdaExpression = "->"									(. state.enterArrowExpression(); .)
-		(Block | SingleStatementLambdaBody) (. state.leaveArrowExpression(); .)
+ArrowExpression<boolean inSwitch, boolean inAssignment> =
+		"->" (Block | SSArrowBody<inSwitch, inAssignment>)
 	.
-SingleStatementLambdaBody = 	(. state.checkSingleStatement(); .)
+SSArrowBody<boolean inSwitch, boolean inAssignment> =
+ 																		(. state.checkSingleStatement(inAssignment, inSwitch, true); .)
 				(ANY | ParExpr | string | char | ident)
 				{ANY | ParExpr}
-				(")" | ";")						(. state.leaveSingleStatement(); .)
+				(")" | ";")									(. state.leaveSingleStatement(); .)
 				.
-Block = 											(. state.enterBlock(); .)
-				"{" {Statement} "}"		(. state.leaveBlock(); .)
+Block = 														(. state.enterBlock(); .)
+				"{" {Statement} "}"					(. state.leaveBlock(); .)
 			.
 
 END Instrumenter.

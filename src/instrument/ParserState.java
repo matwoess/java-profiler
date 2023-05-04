@@ -21,9 +21,6 @@ public class ParserState {
   Class curClass = null;
   Method curMeth = null;
   Block curBlock = null;
-  boolean inAssignment = false;
-  boolean inArrowExpression = false;
-  boolean inSwitch = false;
 
   public ParserState(Parser p) {
     parser = p;
@@ -79,7 +76,7 @@ public class ParserState {
   }
 
   void enterBlock() {  // no missing braces
-    enterBlock(getBlockTypeByContext(false));
+    enterBlock(getBlockTypeByContext(false, false, false, false));
   }
 
   void enterBlock(BlockType blockType) {
@@ -93,9 +90,6 @@ public class ParserState {
     Token blockStartToken = blockType.hasNoBraces() ? parser.t : parser.la; // la == '{'
     curBlock.beg = blockStartToken.line;
     curBlock.begPos = blockStartToken.charPos + blockStartToken.val.length();
-    if (blockType.hasNoBraces() && inAssignment) {
-      blockType = BlockType.SS_SWITCH_ARROW_CASE;
-    }
     curBlock.blockType = blockType;
     allBlocks.add(curBlock);
     if (curMeth != null) {
@@ -120,13 +114,13 @@ public class ParserState {
     }
   }
 
-  void checkSingleStatement() {
+  void checkSingleStatement(boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
     if (parser.t.kind == _else && parser.la.kind == _if) {
       System.out.println("else if found. no block.");
       return;
     }
     if (parser.la.kind != _lbrace) {
-      enterBlock(getBlockTypeByContext(true));
+      enterBlock(getBlockTypeByContext(true, isAssignment, isSwitch, isArrowExpr));
     }
   }
 
@@ -136,37 +130,24 @@ public class ParserState {
     }
   }
 
-  BlockType getBlockTypeByContext(boolean missingBraces) {
-    BlockType blockType;
-    if (missingBraces) {
-      if (inArrowExpression) {
-        if (inSwitch) {
-          blockType = BlockType.SS_SWITCH_ARROW_CASE;
-        } else {
-          blockType = BlockType.SS_LAMBDA;
-        }
-      } else if (inSwitch) {
-          blockType = BlockType.SWITCH_CASE;
-      } else {
-        blockType = BlockType.SS_BLOCK;
+  BlockType getBlockTypeByContext(boolean missingBraces, boolean inAssignment, boolean inSwitch, boolean inArrowExpr) {
+    if (curMeth == null && parser.t.kind == _static && parser.la.kind == _lbrace) {
+      return BlockType.STATIC;
+    }
+    if (!missingBraces) {
+      return BlockType.BLOCK;
+    }
+    if (inArrowExpr) {
+      if (inSwitch && inAssignment) {
+        return BlockType.SS_SWITCH_EXPR_ARROW_CASE;
+      } else if (!inSwitch) {
+        return BlockType.SS_LAMBDA;
       }
     }
-    else {
-      if (curMeth == null && parser.t.kind == _static && parser.la.kind == _lbrace) {
-        blockType = BlockType.STATIC;
-      } else if (inSwitch) {
-        if (inArrowExpression) {
-          blockType = BlockType.SWITCH_ARROW_CASE;
-        } else {
-          blockType = BlockType.SWITCH_CASE;
-        }
-      } else if (inArrowExpression) {
-        blockType = BlockType.LAMBDA;
-      } else {
-        blockType = BlockType.BLOCK;
-      }
+    if (inSwitch && !inArrowExpr) {
+      return BlockType.SWITCH_CASE;
     }
-    return blockType;
+    return BlockType.SS_BLOCK;
   }
 
   boolean identAndLPar() {
@@ -196,33 +177,7 @@ public class ParserState {
     }
   }
 
-  void checkAssignment() {
-    inAssignment = parser.t.kind == _equals;
-    if (inAssignment) {
-      System.out.println("entered assignment expression.");
-    }
-  }
-
-  void leaveAssignment() {
-    if (inAssignment) {
-      inAssignment = false;
-      System.out.println("left assignment expression.");
-    }
-  }
-
-  void enterSwitch() {
-    inSwitch = true;
-  }
-
-  void leaveSwitch() {
-    inSwitch = false;
-  }
-
-  void enterArrowExpression() {
-    inArrowExpression = true;
-  }
-
-  void leaveArrowExpression() {
-    inArrowExpression = false;
+  boolean isAssignment() {
+    return parser.t.kind == _equals;
   }
 }
