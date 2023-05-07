@@ -85,7 +85,7 @@ BlockOrSingleStatement =
 		| (. state.checkSingleStatement(false, false, false); .) Statement (. state.leaveSingleStatement(); .)
 		.
 SwitchStatement = 						(. boolean inAssignment = state.isAssignment(); .)
-			"switch" ParExpr "{" {SwitchCase<true>}
+			"switch" ParExpr "{" {SwitchCase<inAssignment>}
 			"}"
 			.
 SwitchCase<boolean inAssignment> =
