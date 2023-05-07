@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ public class Classes {
     i = 0;
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException, RuntimeException {
     PetFarm farm = new PetFarm();
     farm.pets.add(new Dog("Barky", 2));
     farm.pets.add(new Cat("Molly", 7));

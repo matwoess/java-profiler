@@ -241,4 +241,31 @@ public class TestClasses {
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 12, 12, 185, 186));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestMethodsWithThrowsDeclarations() {
+    // testing that the classStack works
+    String fileContent = """
+        abstract class ThrowClass {
+          public abstract void method1() throws IOException;
+          
+          protected static int errorCode(int n) throws ArithmeticException, RuntimeException {
+            return n / (n-1);
+          }
+          
+          public static void main() throws IOException, RuntimeException {
+            int err = errorCode(1);
+            throw new RuntimeException(String.valueOf(err));
+          }
+        }""";
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(2, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("ThrowClass", true);
+    Method meth = new Method("errorCode");
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 4, 6, 168, 194));
+    meth = new Method("main", true);
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 11, 262, 347));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }
