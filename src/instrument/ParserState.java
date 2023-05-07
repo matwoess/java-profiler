@@ -76,7 +76,7 @@ public class ParserState {
   }
 
   void enterBlock() {  // no missing braces
-    enterBlock(getBlockTypeByContext(false, false, false, false));
+    enterBlock(getBlockTypeByContext());
   }
 
   void enterBlock(BlockType blockType) {
@@ -130,6 +130,10 @@ public class ParserState {
     }
   }
 
+  BlockType getBlockTypeByContext() {
+    return getBlockTypeByContext(false, false, false, false);
+  }
+
   BlockType getBlockTypeByContext(boolean missingBraces, boolean inAssignment, boolean inSwitch, boolean inArrowExpr) {
     if (curMeth == null && parser.t.kind == _static && parser.la.kind == _lbrace) {
       return BlockType.STATIC;
@@ -137,14 +141,11 @@ public class ParserState {
     if (!missingBraces) {
       return BlockType.BLOCK;
     }
-    if (inArrowExpr) {
-      if (inSwitch && inAssignment) {
-        return BlockType.SS_SWITCH_EXPR_ARROW_CASE;
-      } else if (!inSwitch) {
-        return BlockType.SS_LAMBDA;
-      }
-    }
-    if (inSwitch && !inArrowExpr) {
+    if (inArrowExpr && inSwitch && inAssignment) {
+      return BlockType.SS_SWITCH_EXPR_ARROW_CASE;
+    } else if (inArrowExpr && !inSwitch) {
+      return BlockType.SS_LAMBDA;
+    } else if (!inArrowExpr && inSwitch) {
       return BlockType.SWITCH_CASE;
     }
     return BlockType.SS_BLOCK;
