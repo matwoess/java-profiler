@@ -249,6 +249,24 @@ public class TestBasic {
   }
 
   @Test
+  public void TestMethodWithDoubleBackslashInString() {
+    String fileContent = String.format(baseTemplate, """
+        boolean b = "Text\\".endsWith("\\\\");
+        if (b) {
+          System.out.println("does end with \\\\");
+        }
+        """, "");
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(2, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 160));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 6, 111, 155));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
   public void TestTernaryOperator() {
     String fileContent = String.format(baseTemplate, """
         int number = 6;

@@ -2,17 +2,20 @@ COMPILER Instrumenter
 	ParserState state = new ParserState(this);
 
 CHARACTERS
+	cr = '\r'.
+	lf = '\n'.
+	tab = '\t'.
 	letter = 'a' .. 'z' + 'A'..'Z'.
 	digit  = '0'..'9'.
 	escCh = '\\'.
 	quote = '"'.
 	apostrophe = '\''.
- 	noQuote = ANY - quote.
-	noApostrophe = ANY - apostrophe.
+ 	noQuote = ANY - quote - cr - lf.
+	noApostrophe = ANY - apostrophe - cr - lf.
 TOKENS
 	ident  = letter {letter | digit | '_'}.
-	char = apostrophe (escCh apostrophe | [escCh] noApostrophe) apostrophe.
-	string = quote { (escCh quote | [escCh] noQuote) } quote.
+	char = apostrophe [escCh] noApostrophe apostrophe.
+	string = quote { ( escCh escCh | [escCh] noQuote) } quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
 	class      = "class".
 	interface  = "interface".
@@ -31,7 +34,7 @@ TOKENS
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
 
-IGNORE "\t\n\r"
+IGNORE tab + cr + lf
 
 PRODUCTIONS
 
