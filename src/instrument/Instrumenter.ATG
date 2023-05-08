@@ -5,7 +5,7 @@ CHARACTERS
 	cr = '\r'.
 	lf = '\n'.
 	tab = '\t'.
-	letter = 'a' .. 'z' + 'A'..'Z'.
+	letter = 'a' .. 'z' + 'A'..'Z' + '_'.
 	digit  = '0'..'9'.
 	escCh = '\\'.
 	quote = '"'.
@@ -13,7 +13,7 @@ CHARACTERS
  	noQuote = ANY - quote - cr - lf.
 	noApostrophe = ANY - apostrophe - cr - lf.
 TOKENS
-	ident  = letter {letter | digit | '_'}.
+	ident  = letter {letter | digit}.
 	char = apostrophe [escCh] noApostrophe apostrophe.
 	string = quote { ( escCh escCh | [escCh] noQuote) } quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
