@@ -169,6 +169,44 @@ public class TestBasic {
   }
 
   @Test
+  public void TestTryWithResourceStatement() {
+    String fileContent = """
+        public class TryWithResource {
+          static class MyClosable implements AutoCloseable {
+            public void open() {
+              System.out.println("Opening resource...");
+            }
+          
+            public void close() throws Exception {
+              System.out.println("closing resource...");
+            }
+          }
+          
+          public static void main(String[] args) {
+            try (MyClosable resource = new MyClosable()) {
+              resource.open();
+            } catch (Exception e) {
+              throw new RuntimeException(e);
+            }
+          }
+        }""";
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(5, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("TryWithResource.MyClosable");
+    Method meth = new Method("open");
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 3, 5, 108, 163));
+    meth = new Method("close");
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 7, 9, 207, 262));
+    clazz = new Class("TryWithResource", true);
+    meth = new Method("main", true);
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 12, 18, 310, 459));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 13, 15, 361, 390));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 15, 17, 412, 455));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
   public void TestComments() {
     String fileContent = String.format(baseTemplate, """
         // Testing comments

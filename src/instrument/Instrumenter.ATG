@@ -76,7 +76,7 @@ Statement =
 		| "while" ParExpr BlockOrSingleStatement
  		| "do" BlockOrSingleStatement "while" ParExpr ";"
 		| "for" ParExpr BlockOrSingleStatement
-		| "try" Block {"catch" ParExpr Block} ["finally" Block]
+		| "try" [ParExpr] Block {"catch" ParExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
 		| (ident | string | ParExpr) {ANY | string | char | ArrowExpression<false, false> | SwitchStatement} ";"
