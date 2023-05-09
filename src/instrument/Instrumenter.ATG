@@ -55,7 +55,7 @@ Enum =
 	.
 ClassBody =
 	{ Enum | Class
-		| "=" {ANY} Statement
+		| "=" (BraceExpr | {ANY} Statement)
 		| IF(state.isEntryPoint()) MainMethod
 		| IF(state.identAndLPar()) MethodDecl
 		| IF(state.staticAndLBrace()) StaticBlock
@@ -99,6 +99,7 @@ SwitchCase<boolean inAssignment> =
 	)
 	.
 ParExpr = "(" {ParExpr | ANY} ")".
+BraceExpr = "{" {BraceExpr | ANY} "}".
 ArrowExpression<boolean inSwitch, boolean inAssignment> =
 		"->" (Block | SSArrowBody<inSwitch, inAssignment>)
 	.

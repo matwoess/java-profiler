@@ -31,8 +31,12 @@ public class Classes {
 
     static {
       pets.add(new Cat("Bob", 5));
+      System.out.println(strings[0] + intArray[0][1]);
     }
   }
+
+  private static final String[] strings = {"String1", "String2"};
+  private static final int[][] intArray = {{1, 2}, {123, 456}};
 }
 
 abstract class Pet {

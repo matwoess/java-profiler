@@ -205,6 +205,25 @@ public class TestClasses {
   }
 
   @Test
+  public void TestMembersWithImplicitInitializers() {
+    String fileContent = """
+        class ImplicitInitBlocks {
+          static String[] strings = {"String1", "String2"};
+          private static final int[][] intArray = {
+            {55, 44},
+            {123, 456}
+          };
+          void doNothing() {}
+        }""";
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(1, blocks.size());
+    Class clazz = new Class("ImplicitInitBlocks");
+    Method meth = new Method("doNothing");
+    Block expectedBlock = getBlock(METHOD, clazz, meth, 7, 7, 177, 178);
+    assertEquals(expectedBlock, blocks.get(0));
+  }
+
+  @Test
   public void TestSubClassWithFollowingMethod() {
     // testing that the classStack works
     String fileContent = """
