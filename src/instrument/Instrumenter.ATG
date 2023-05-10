@@ -38,9 +38,10 @@ IGNORE tab + cr + lf
 
 PRODUCTIONS
 
-Instrumenter = [PackageDecl] { Class | Enum | ANY }.
+Instrumenter = [PackageDecl] { Annotation | Class | Enum | ANY }.
 PackageDecl = "package" {ANY} ";" (. state.markBeginOfImports(); .)
 						.
+Annotation = "@" ident [ParExpr].
 Class =
 		("class" | "interface")	(. state.enterClass(); .)
 		ident {ANY} "{"
@@ -59,6 +60,7 @@ ClassBody =
 		| IF(state.isEntryPoint()) MainMethod
 		| IF(state.identAndLPar()) MethodDecl
 		| IF(state.staticAndLBrace()) StaticBlock
+		| Annotation
 		| ANY
 	}
 	"}"
@@ -79,6 +81,7 @@ Statement =
 		| "try" [ParExpr] Block {"catch" ParExpr Block} ["finally" Block]
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
+		| Annotation
 		| (ident | string | ParExpr) {ANY | string | char | ArrowExpression<false, false> | SwitchStatement} ";"
 		| Block
 		| ";"
