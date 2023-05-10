@@ -30,7 +30,7 @@ public class TestAnnotations {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Annotations", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 4, 5, 114, 118));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 4, 5, 112, 116));
     assertIterableEquals(expectedBlocks, blocks);
    }
 
