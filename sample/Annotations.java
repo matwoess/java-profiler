@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -13,6 +14,13 @@ public class Annotations {
     Integer i1 = Integer.parseInt("asdf");
     @SuppressWarnings("unused")
     List<String> filenames = new ArrayList<>(List.of("file1.java", "file2.txt"));
+    filenames.sort(new Comparator<String>() {
+      @Override
+      @SuppressWarnings({"unused", "unchecked"})
+      public int compare(String s1, String s2) {
+        return s1.compareTo(s2);
+      }
+    });
   }
 
   @Override

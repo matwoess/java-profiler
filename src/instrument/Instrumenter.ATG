@@ -21,6 +21,7 @@ TOKENS
 	interface  = "interface".
 	enum       = "enum".
 	lpar       = '('.
+	rpar       = ')'.
 	lbrace     = '{'.
 	colon      = ':'.
 	static     = "static".
@@ -30,6 +31,7 @@ TOKENS
 	void       = "void".
 	main       = "main".
 	equals     = "=".
+	new        = "new".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -82,7 +84,13 @@ Statement =
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
 		| Annotation
-		| (ident | string | ParExpr) {ANY | string | char | ArrowExpression<false, false> | SwitchStatement} ";"
+		| (new | ident | string | ParExpr)
+				{string | char
+					| ArrowExpression<false, false>
+					| SwitchStatement
+					| IF(state.isAnonymousClass()) AnonymousClass
+					| ANY
+				} ";"
 		| Block
 		| ";"
 		.
@@ -112,6 +120,7 @@ SSArrowBody<boolean inSwitch, boolean inAssignment> =
 				{ANY | ParExpr}
 				(")" | ";")									(. state.leaveSingleStatement(); .)
 				.
+AnonymousClass = "(" "new" ident {ANY} ParExpr "{" ClassBody ")".
 Block = 														(. state.enterBlock(); .)
 				"{" {Statement} "}"					(. state.leaveBlock(); .)
 			.

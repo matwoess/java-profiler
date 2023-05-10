@@ -178,6 +178,29 @@ public class ParserState {
     }
   }
 
+  boolean isAnonymousClass() {
+    boolean beginningTokens =
+        parser.la.kind == _lpar
+            && parser.scanner.Peek().kind == _new
+            && parser.scanner.Peek().kind == _ident
+            && parser.scanner.Peek().kind == _lpar;
+    if (!beginningTokens) return false;
+    boolean closedParenthesis = false;
+    Token laToken;
+    while ((laToken = parser.scanner.Peek()) != null) {
+      if (laToken.kind == _rpar) {
+        if (!closedParenthesis) {
+          closedParenthesis = true;
+          continue;
+        } else {
+          return false;
+        }
+      }
+      if (laToken.kind == _lbrace) return true;
+    }
+    return false;
+  }
+
   boolean isAssignment() {
     return parser.t.kind == _equals;
   }
