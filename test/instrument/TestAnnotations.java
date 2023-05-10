@@ -76,7 +76,7 @@ public class TestAnnotations {
         public class Annotations {
           public static void main(String[] args) {
             @SuppressWarnings("ParseError")
-            Integer i1 = Integer.parseInt("asdf");
+            Integer i1 = Integer.parseInt("000555");
             @SuppressWarnings("unused")
             String s = "a";
           }
@@ -87,7 +87,7 @@ public class TestAnnotations {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Annotations", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 69, 204));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 69, 206));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }

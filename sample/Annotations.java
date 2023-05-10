@@ -11,7 +11,7 @@ public class Annotations {
   @Deprecated
   public static void main(String[] args) {
     @SuppressWarnings("ParseError")
-    Integer i1 = Integer.parseInt("asdf");
+    Integer i1 = Integer.parseInt("000555");
     @SuppressWarnings("unused")
     List<String> filenames = new ArrayList<>(List.of("file1.java", "file2.txt"));
     filenames.sort(new Comparator<String>() {
