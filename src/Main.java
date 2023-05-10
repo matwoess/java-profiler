@@ -33,7 +33,7 @@ public class Main {
   private static JavaFile[] getAdditionalFilesToInstrument(Path sourcesFolder, Path mainFile) {
     try (Stream<Path> walk = Files.walk(sourcesFolder)) {
       return walk
-          .filter(path -> Files.isRegularFile(path) && !path.equals(mainFile) && path.endsWith(".java"))
+          .filter(path -> Files.isRegularFile(path) && !path.equals(mainFile) && path.toString().endsWith(".java"))
           .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
           .toArray(JavaFile[]::new);
     } catch (IOException e) {
