@@ -22,6 +22,7 @@ TOKENS
 	enum       = "enum".
 	lpar       = '('.
 	rpar       = ')'.
+	lbrac      = '['.
 	lbrace     = '{'.
 	colon      = ':'.
 	static     = "static".
@@ -88,7 +89,7 @@ Statement =
 				{string | char
 					| ArrowExpression<false, false>
 					| SwitchStatement
-					| IF(state.isAnonymousClass()) AnonymousClass
+					| IF(state.isAnonymousClassOrInitializer()) AnonymousClassOrInitializer
 					| ANY
 				} ";"
 		| Block
@@ -120,7 +121,7 @@ SSArrowBody<boolean inSwitch, boolean inAssignment> =
 				{ANY | ParExpr}
 				(")" | ";")									(. state.leaveSingleStatement(); .)
 				.
-AnonymousClass = "(" "new" ident {ANY} ParExpr "{" ClassBody ")".
+AnonymousClassOrInitializer = "new" ident {ANY} ParExpr BraceExpr.
 Block = 														(. state.enterBlock(); .)
 				"{" {Statement} "}"					(. state.leaveBlock(); .)
 			.
