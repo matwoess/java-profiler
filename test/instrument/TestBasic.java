@@ -305,6 +305,28 @@ public class TestBasic {
   }
 
   @Test
+  public void TestTernaryOperatorInReturn() {
+    String fileContent = String.format(baseTemplate, """
+        if (false) {
+          return 0;
+        }
+        return false ? -1 : 0;
+        """, """
+        public void doNothing() {}
+        """);
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(3, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 121));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 5, 79, 93));
+    meth = new Method("doNothing");
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 9, 9, 150, 151));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
   public void TestTernaryOperator() {
     String fileContent = String.format(baseTemplate, """
         int number = 6;
