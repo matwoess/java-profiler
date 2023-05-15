@@ -3,7 +3,7 @@ package common;
 import java.nio.file.Path;
 import java.util.List;
 
-import static common.Constants.instrumentDir;
+import static misc.Constants.instrumentDir;
 
 public class JavaFile {
   public Path sourceFile;

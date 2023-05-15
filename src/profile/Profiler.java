@@ -1,6 +1,6 @@
 package profile;
 
-import common.Constants;
+import misc.Constants;
 import common.JavaFile;
 import misc.Util;
 
@@ -10,8 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import static common.Constants.auxiliaryInstrumentDir;
-import static common.Constants.instrumentDir;
+import static misc.Constants.auxiliaryInstrumentDir;
+import static misc.Constants.instrumentDir;
 import static java.lang.System.exit;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 

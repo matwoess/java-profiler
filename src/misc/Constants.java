@@ -1,4 +1,4 @@
-package common;
+package misc;
 
 import java.nio.file.Path;
 

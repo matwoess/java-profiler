@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 
-import static common.Constants.*;
+import static misc.Constants.*;
 
 public class Instrumenter {
   JavaFile[] javaFiles;
