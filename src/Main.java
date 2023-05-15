@@ -48,7 +48,7 @@ public class Main {
   }
 
   private static void instrumentSingleFile(Path file) {
-    JavaFile mainJavaFile = new JavaFile(file, file.getParent());
+    JavaFile mainJavaFile = new JavaFile(file);
     Instrumenter instrumenter = new Instrumenter(mainJavaFile);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
@@ -77,7 +77,7 @@ public class Main {
   }
 
   private static void instrumentCompileAndRun(Path mainFile, String[] programArgs) {
-    JavaFile mainJavaFile = new JavaFile(mainFile, mainFile.getParent());
+    JavaFile mainJavaFile = new JavaFile(mainFile);
     Instrumenter instrumenter = new Instrumenter(mainJavaFile);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();

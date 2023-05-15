@@ -17,4 +17,9 @@ public class JavaFile {
     Path relativePathToSources = sourcesRoot.relativize(sourceFile);
     this.instrumentedFile = instrumentDir.resolve(relativePathToSources);
   }
+
+  public JavaFile(Path sourceFile) {
+    this.sourceFile = sourceFile;
+    this.instrumentedFile = instrumentDir.resolve(sourceFile);
+  }
 }
