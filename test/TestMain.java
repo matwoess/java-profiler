@@ -16,6 +16,7 @@ public class TestMain {
         .filter(file -> !file.isDirectory())
         .forEach(jFile -> {
               String[] args = new String[]{
+                  "-d",
                   samplesFolder.toString(),
                   jFile.toString(),
               };
