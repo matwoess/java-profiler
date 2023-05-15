@@ -4,6 +4,7 @@ import common.Block;
 import common.JavaFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class ReportGenerator {
     report.append("<pre>\n");
     report.append("<code>\n");
     try {
-      String sourceCode = Files.readString(javaFile.sourceFile);
+      String sourceCode = Files.readString(javaFile.sourceFile, StandardCharsets.UTF_8);
       List<Block> blocks = javaFile.foundBlocks;
       for (int i = 0; i < blocks.size(); i++) {
         blocks.get(i).hits = fileBlockCounts[i];

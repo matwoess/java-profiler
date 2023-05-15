@@ -4,6 +4,7 @@ import common.*;
 import common.Class;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -59,7 +60,7 @@ public class Instrumenter {
 
   void instrument(JavaFile javaFile) throws IOException {
     List<CodeInsert> codeInserts = getCodeInserts(javaFile);
-    String fileContent = Files.readString(javaFile.sourceFile);
+    String fileContent = Files.readString(javaFile.sourceFile, StandardCharsets.UTF_8);
     StringBuilder builder = new StringBuilder();
     int prevIdx = 0;
     for (CodeInsert codeInsert : codeInserts) {
