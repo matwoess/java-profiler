@@ -1,19 +1,16 @@
 package profile;
 
 import misc.Constants;
-import model.JavaFile;
 import misc.Util;
+import model.JavaFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import static misc.Constants.auxiliaryInstrumentDir;
-import static misc.Constants.instrumentDir;
 import static java.lang.System.exit;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static misc.Constants.instrumentDir;
 
 public class Profiler {
   JavaFile mainJavaFile;
@@ -22,19 +19,6 @@ public class Profiler {
   public Profiler(JavaFile mainJavaFile, JavaFile... additionalJavaFiles) {
     this.mainJavaFile = mainJavaFile;
     this.additionalJavaFiles = additionalJavaFiles;
-    copyAuxiliaryFiles();
-  }
-
-  void copyAuxiliaryFiles() {
-    String counterClass = "__Counter.class";
-    try (InputStream fileStream = getClass().getResourceAsStream("/auxiliary/" + counterClass)) {
-      if (fileStream == null) {
-        throw new RuntimeException("unable to locate auxiliary file: <" + counterClass + ">");
-      }
-      Files.copy(fileStream, auxiliaryInstrumentDir.resolve(Path.of(counterClass)), REPLACE_EXISTING);
-    } catch (IOException | RuntimeException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   public void compileInstrumented() {

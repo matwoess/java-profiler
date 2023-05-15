@@ -6,8 +6,10 @@ import model.Class;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static misc.Constants.*;
 
 public class Instrumenter {
@@ -49,6 +51,7 @@ public class Instrumenter {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    copyAuxiliaryFiles();
   }
 
   void instrument(JavaFile javaFile) throws IOException {
@@ -117,4 +120,17 @@ public class Instrumenter {
       throw new RuntimeException(e);
     }
   }
+
+  void copyAuxiliaryFiles() {
+    String counterClass = "__Counter.class";
+    try (InputStream fileStream = getClass().getResourceAsStream("/auxiliary/" + counterClass)) {
+      if (fileStream == null) {
+        throw new RuntimeException("unable to locate auxiliary file: <" + counterClass + ">");
+      }
+      Files.copy(fileStream, auxiliaryInstrumentDir.resolve(Path.of(counterClass)), REPLACE_EXISTING);
+    } catch (IOException | RuntimeException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 }
