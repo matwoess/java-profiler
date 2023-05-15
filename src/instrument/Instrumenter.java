@@ -11,20 +11,16 @@ import java.util.*;
 import static common.Constants.*;
 
 public class Instrumenter {
-  JavaFile mainJavaFile;
-  JavaFile[] additionalJavaFiles;
+  JavaFile[] javaFiles;
   int blockCounter;
 
-  public Instrumenter(JavaFile mainJavaFile, JavaFile... additionalJavaFiles) {
-    this.mainJavaFile = mainJavaFile;
-    this.additionalJavaFiles = additionalJavaFiles;
+  public Instrumenter(JavaFile... javaFiles) {
+    assert javaFiles.length > 0;
+    this.javaFiles = javaFiles;
   }
 
   public void analyzeFiles() {
-    if (mainJavaFile != null) {
-      analyze(mainJavaFile);
-    }
-    for (JavaFile additionalFile : additionalJavaFiles) {
+    for (JavaFile additionalFile : javaFiles) {
       analyze(additionalFile);
     }
   }
@@ -47,11 +43,8 @@ public class Instrumenter {
   public void instrumentFiles() {
     blockCounter = 0;
     try {
-      if (mainJavaFile != null) {
-        instrument(mainJavaFile);
-      }
-      for (JavaFile additionalFile : additionalJavaFiles) {
-        instrument(additionalFile);
+      for (JavaFile javaFile : javaFiles) {
+        instrument(javaFile);
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -101,7 +94,7 @@ public class Instrumenter {
   public void exportBlockData() {
     StringBuilder builder = new StringBuilder();
     builder.append(blockCounter).append(" ");
-    for (JavaFile jFile : additionalJavaFiles) {
+    for (JavaFile jFile : javaFiles) {
       builder.append(jFile.sourceFile.toUri()).append(" ");
       for (Class clazz : jFile.foundClasses) {
         builder.append(clazz.name).append(" ");

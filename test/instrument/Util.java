@@ -31,12 +31,12 @@ public class Util {
 
   public static List<Block> getFoundBlocks(String content) {
     Instrumenter instrumenter = analyzeStringContent(content);
-    return instrumenter.mainJavaFile.foundBlocks;
+    return instrumenter.javaFiles[0].foundBlocks;
   }
 
   public static int getBeginOfImports(String content) {
     Instrumenter instrumenter = analyzeStringContent(content);
-    return instrumenter.mainJavaFile.beginOfImports;
+    return instrumenter.javaFiles[0].beginOfImports;
   }
 
   public static Block getBlock(BlockType blockType, Class clazz, Method meth, int beg, int end, int begPos, int endPos) {

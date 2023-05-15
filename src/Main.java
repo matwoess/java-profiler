@@ -1,5 +1,6 @@
 import common.JavaFile;
 import instrument.Instrumenter;
+import misc.Util;
 import profile.Profiler;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class Main {
 
   private static void instrumentFolder(Path folder) {
     JavaFile[] javaFiles = getJavaFilesInFolder(folder, null);
-    Instrumenter instrumenter = new Instrumenter(null, javaFiles);
+    Instrumenter instrumenter = new Instrumenter(javaFiles);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportBlockData();
@@ -66,7 +67,7 @@ public class Main {
   private static void instrumentFolderCompileAndRun(Path instrumentDir, Path mainFile, String[] programArgs) {
     JavaFile mainJavaFile = new JavaFile(mainFile, instrumentDir);
     JavaFile[] additionalJavaFiles = getJavaFilesInFolder(instrumentDir, mainFile);
-    Instrumenter instrumenter = new Instrumenter(mainJavaFile, additionalJavaFiles);
+    Instrumenter instrumenter = new Instrumenter(Util.prependToArray(additionalJavaFiles, mainJavaFile));
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportBlockData();

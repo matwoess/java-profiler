@@ -2,6 +2,7 @@ package profile;
 
 import common.Constants;
 import common.JavaFile;
+import misc.Util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +61,7 @@ public class Profiler {
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
         .directory(instrumentDir.toFile())
-        .command(getRunCommand(classFileName, programArgs));
+        .command(Util.prependToArray(programArgs, "java", classFileName));
     try {
       int exitCode = builder.start().waitFor();
       if (exitCode != 0) {
@@ -70,14 +71,6 @@ public class Profiler {
     } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  private String[] getRunCommand(String classFileName, String[] programArgs) {
-    String[] javaRunCommand = new String[programArgs.length+2];
-    javaRunCommand[0] = "java";
-    javaRunCommand[1] = classFileName;
-    System.arraycopy(programArgs, 0, javaRunCommand, 2, programArgs.length);
-    return javaRunCommand;
   }
 
   public void generateReport() {
