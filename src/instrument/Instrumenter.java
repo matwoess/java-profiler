@@ -60,7 +60,7 @@ public class Instrumenter {
 
   void instrument(JavaFile javaFile) throws IOException {
     List<CodeInsert> codeInserts = getCodeInserts(javaFile);
-    String fileContent = Files.readString(javaFile.sourceFile, StandardCharsets.UTF_8);
+     String fileContent = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
     StringBuilder builder = new StringBuilder();
     int prevIdx = 0;
     for (CodeInsert codeInsert : codeInserts) {

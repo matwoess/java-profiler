@@ -42,7 +42,7 @@ public class ReportGenerator {
     report.append("<pre>\n");
     report.append("<code>\n");
     try {
-      String sourceCode = Files.readString(javaFile.sourceFile, StandardCharsets.UTF_8);
+      String sourceCode = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
       List<Block> blocks = javaFile.foundBlocks;
       for (int i = 0; i < blocks.size(); i++) {
         blocks.get(i).hits = fileBlockCounts[i];
