@@ -20,7 +20,9 @@ public class Instrumenter {
   }
 
   public void analyzeFiles() {
-    analyze(mainJavaFile);
+    if (mainJavaFile != null) {
+      analyze(mainJavaFile);
+    }
     for (JavaFile additionalFile : additionalJavaFiles) {
       analyze(additionalFile);
     }
@@ -44,7 +46,9 @@ public class Instrumenter {
   public void instrumentFiles() {
     blockCounter = 0;
     try {
-      instrument(mainJavaFile);
+      if (mainJavaFile != null) {
+        instrument(mainJavaFile);
+      }
       for (JavaFile additionalFile : additionalJavaFiles) {
         instrument(additionalFile);
       }

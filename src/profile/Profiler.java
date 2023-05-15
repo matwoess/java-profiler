@@ -53,14 +53,14 @@ public class Profiler {
     }
   }
 
-  public void profile() {
+  public void profile(String[] programArgs) {
     Path mainFile = mainJavaFile.instrumentedFile;
     String fileName = mainFile.getFileName().toString();
     String classFileName = fileName.substring(0, fileName.lastIndexOf("."));
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
         .directory(instrumentDir.toFile())
-        .command("java", classFileName);
+        .command(getRunCommand(classFileName, programArgs));
     try {
       int exitCode = builder.start().waitFor();
       if (exitCode != 0) {
@@ -70,6 +70,14 @@ public class Profiler {
     } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private String[] getRunCommand(String classFileName, String[] programArgs) {
+    String[] javaRunCommand = new String[programArgs.length+2];
+    javaRunCommand[0] = "java";
+    javaRunCommand[1] = classFileName;
+    System.arraycopy(programArgs, 0, javaRunCommand, 2, programArgs.length);
+    return javaRunCommand;
   }
 
   public void generateReport() {
