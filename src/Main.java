@@ -1,4 +1,4 @@
-import common.JavaFile;
+import model.JavaFile;
 import instrument.Instrumenter;
 import misc.Util;
 import profile.Profiler;

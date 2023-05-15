@@ -1,4 +1,4 @@
-package common;
+package model;
 
 public enum BlockType {
   BLOCK, METHOD, STATIC, SS_BLOCK, SWITCH_CASE, SS_LAMBDA, SS_SWITCH_EXPR_ARROW_CASE;

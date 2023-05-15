@@ -1,14 +1,14 @@
 package instrument;
 
-import common.Block;
-import common.Class;
-import common.Method;
+import model.Block;
+import model.Class;
+import model.Method;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static common.BlockType.METHOD;
+import static model.BlockType.METHOD;
 import static instrument.Util.getBlock;
 import static instrument.Util.getFoundBlocks;
 import static org.junit.jupiter.api.Assertions.assertEquals;

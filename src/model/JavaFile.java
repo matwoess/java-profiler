@@ -1,4 +1,4 @@
-package common;
+package model;
 
 import java.nio.file.Path;
 import java.util.List;

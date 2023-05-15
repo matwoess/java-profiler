@@ -1,7 +1,7 @@
 package profile;
 
 import misc.Constants;
-import common.JavaFile;
+import model.JavaFile;
 import misc.Util;
 
 import java.io.IOException;

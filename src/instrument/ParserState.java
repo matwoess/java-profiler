@@ -1,7 +1,7 @@
 package instrument;
 
-import common.*;
-import common.Class;
+import model.*;
+import model.Class;
 
 import java.util.ArrayList;
 import java.util.List;

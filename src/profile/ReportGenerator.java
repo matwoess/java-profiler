@@ -1,7 +1,7 @@
 package profile;
 
-import common.Block;
-import common.JavaFile;
+import model.Block;
+import model.JavaFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

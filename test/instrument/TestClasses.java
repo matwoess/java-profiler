@@ -2,14 +2,14 @@ package instrument;
 
 import org.junit.jupiter.api.Test;
 
-import common.Block;
-import common.Method;
-import common.Class;
+import model.Block;
+import model.Method;
+import model.Class;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static common.BlockType.*;
+import static model.BlockType.*;
 import static instrument.Util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
