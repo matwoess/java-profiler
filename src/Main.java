@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static misc.Util.assertJavaSourceFile;
+
 public class Main {
 
   public static void main(String[] args) {
@@ -49,6 +51,7 @@ public class Main {
   }
 
   private static void instrumentSingleFile(Path file) {
+    assertJavaSourceFile(file);
     JavaFile mainJavaFile = new JavaFile(file);
     Instrumenter instrumenter = new Instrumenter(mainJavaFile);
     instrumenter.analyzeFiles();
@@ -78,6 +81,7 @@ public class Main {
   }
 
   private static void instrumentCompileAndRun(Path mainFile, String[] programArgs) {
+    assertJavaSourceFile(mainFile);
     JavaFile mainJavaFile = new JavaFile(mainFile);
     Instrumenter instrumenter = new Instrumenter(mainJavaFile);
     instrumenter.analyzeFiles();
@@ -92,7 +96,7 @@ public class Main {
   private static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path mainFile) {
     try (Stream<Path> walk = Files.walk(sourcesFolder)) {
       return walk
-          .filter(path -> Files.isRegularFile(path) && !path.equals(mainFile) && path.toString().endsWith(".java"))
+          .filter(path -> Files.isRegularFile(path) && !path.equals(mainFile) && Util.isJavaFile(path))
           .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
           .toArray(JavaFile[]::new);
     } catch (IOException e) {
