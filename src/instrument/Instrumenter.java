@@ -1,16 +1,20 @@
 package instrument;
 
-import model.*;
+import misc.Util;
 import model.Class;
+import model.*;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static misc.Constants.*;
+import static misc.Constants.auxiliaryInstrumentDir;
+import static misc.Constants.metadataFile;
 
 public class Instrumenter {
   JavaFile[] javaFiles;
@@ -123,14 +127,7 @@ public class Instrumenter {
 
   void copyAuxiliaryFiles() {
     String counterClass = "__Counter.class";
-    try (InputStream fileStream = getClass().getResourceAsStream("/auxiliary/" + counterClass)) {
-      if (fileStream == null) {
-        throw new RuntimeException("unable to locate auxiliary file: <" + counterClass + ">");
-      }
-      Files.copy(fileStream, auxiliaryInstrumentDir.resolve(Path.of(counterClass)), REPLACE_EXISTING);
-    } catch (IOException | RuntimeException e) {
-      throw new RuntimeException(e);
-    }
+    Util.copyResource("/auxiliary/" + counterClass, auxiliaryInstrumentDir.resolve(Path.of(counterClass)));
   }
 
 }

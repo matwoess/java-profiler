@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 import static java.lang.System.exit;
-import static misc.Constants.instrumentDir;
+import static misc.Constants.*;
 
 public class Profiler {
   JavaFile mainJavaFile;
@@ -72,6 +72,12 @@ public class Profiler {
     int[] fileBlockCounts = Arrays.stream(blockCounts).limit(mainJavaFile.foundBlocks.size()).toArray();
     report.codeDiv(mainJavaFile, fileBlockCounts);
     report.bodyEnd();
-    report.write(Path.of("./htmlReport.html"));
+    report.write(reportIndexFile); // TODO: generate by file and index
+    copyJavaScriptFiles();
+  }
+
+  private void copyJavaScriptFiles() {
+    String highlightHelper = "highlightBlocks.js";
+    Util.copyResource("/js/" + highlightHelper, reportDir.resolve(Path.of(highlightHelper)));
   }
 }

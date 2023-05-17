@@ -12,6 +12,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static misc.Constants.*;
+
 public class ReportGenerator {
   StringBuilder report = new StringBuilder();
 
@@ -139,7 +141,7 @@ public class ReportGenerator {
   }
 
   public void bodyEnd() {
-    report.append("<script type=\"text/javascript\" src=\"./highlightBlocks.js\"></script>");
+    report.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", reportDir.relativize(reportHighlightHelper)));
     report.append("</body>\n");
     report.append("</html>\n");
   }
