@@ -141,7 +141,7 @@ public class ReportGenerator {
   }
 
   public void bodyEnd() {
-    report.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", reportDir.relativize(reportHighlightHelper)));
+    report.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", reportDir.relativize(reportHighlighter)));
     report.append("</body>\n");
     report.append("</html>\n");
   }

@@ -77,7 +77,7 @@ public class Profiler {
   }
 
   private void copyJavaScriptFiles() {
-    String highlightHelper = "highlightBlocks.js";
-    Util.copyResource("/js/" + highlightHelper, reportDir.resolve(Path.of(highlightHelper)));
+    String highlighter = "highlighter.js";
+    Util.copyResource("/js/" + highlighter, reportDir.resolve(highlighter));
   }
 }
