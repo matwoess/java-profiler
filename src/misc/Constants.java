@@ -12,7 +12,7 @@ public class Constants {
 
   public static final Path reportDir = outputDir.resolve("report");
   public static final Path reportIndexFile = reportDir.resolve("index.html");
-  public static final Path reportHighlightHelper = reportDir.resolve("highlightBlocks.js");
+  public static final Path reportHighlighter = reportDir.resolve("highlighter.js");
 
   static {
     if (outputDir.toFile().mkdirs()) {
