@@ -9,6 +9,10 @@ import java.util.Comparator;
 
 public class ReportIndexWriter extends AbstractHtmlWriter {
 
+  public ReportIndexWriter() {
+    title = "Report";
+  }
+
   public void sortedFileTable(JavaFile[] allJavaFiles) {
     JavaFile[] sortedFiles = Arrays.stream(allJavaFiles)
         .sorted(Comparator.comparingInt(JavaFile::getAggregatedMethodBlockCounts).reversed())

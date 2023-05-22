@@ -70,6 +70,7 @@ public class Profiler {
     ReportIndexWriter index = new ReportIndexWriter();
     index.header();
     index.bodyStart();
+    index.heading(index.title);
     index.sortedFileTable(allJavaFiles);
     index.write(Constants.reportIndexFile);
     index.bodyEnd();
