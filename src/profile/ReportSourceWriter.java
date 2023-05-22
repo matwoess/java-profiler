@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 import static misc.Constants.*;
 
 public class ReportSourceWriter extends AbstractHtmlWriter {
-  StringBuilder report = new StringBuilder();
-
   JavaFile javaFile;
 
   public ReportSourceWriter(JavaFile javaFile, String title) {
@@ -24,14 +22,14 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     includeScripts = new String[]{
         "https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     };
-    bodyScripts = new String[] {
+    bodyScripts = new String[]{
         javaFile.getReportHtmlFile().getParent().relativize(reportHighlighter).toString()
     };
   }
 
   public void codeDiv() {
-    report.append("<pre>\n");
-    report.append("<code>\n");
+    content.append("<pre>\n");
+    content.append("<code>\n");
     try {
       String sourceCode = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
       StringBuilder builder = new StringBuilder();
@@ -45,12 +43,12 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       builder.append(sourceCode.substring(prevIdx));
       String annotatedCode = builder.toString();
       //String tabledCode = getCodeTable(annotatedCode);
-      report.append(annotatedCode);
+      content.append(annotatedCode);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    report.append("</code>\n");
-    report.append("</pre>\n");
+    content.append("</code>\n");
+    content.append("</pre>\n");
   }
 
   private String getCodeTable(String annotatedCode) {
