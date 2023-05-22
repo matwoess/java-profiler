@@ -6,7 +6,6 @@ import model.JavaFile;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -14,33 +13,23 @@ import java.util.stream.Collectors;
 
 import static misc.Constants.*;
 
-public class ReportGenerator {
+public class ReportSourceWriter extends HtmlWriter {
   StringBuilder report = new StringBuilder();
 
-  List<Block> blocks;
+  JavaFile javaFile;
 
-  public ReportGenerator(List<Block> fileBlocks) {
-    blocks = fileBlocks;
+  public ReportSourceWriter(JavaFile javaFile, String title) {
+    this.javaFile = javaFile;
+    this.title = title;
+    includeScripts = new String[]{
+        "https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+    };
+    bodyScripts = new String[] {
+        javaFile.getReportHtmlFile().getParent().relativize(reportHighlighter).toString()
+    };
   }
 
-  public void header(String title) {
-    report.append("<!DOCTYPE html>\n")
-        .append("<html>\n")
-        .append("<head>\n")
-        .append("<title>").append(title).append("</title>\n")
-        .append("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js\"></script>")
-        .append("</head>\n");
-  }
-
-  public void bodyStart() {
-    report.append("<body>\n");
-  }
-
-  public void heading(String main) {
-    report.append("<h1>").append(main).append("</h1>\n");
-  }
-
-  public void codeDiv(JavaFile javaFile) {
+  public void codeDiv() {
     report.append("<pre>\n");
     report.append("<code>\n");
     try {
@@ -88,7 +77,7 @@ public class ReportGenerator {
   private List<TagInsert> getTagInserts(int textLength) {
     List<TagInsert> inserts = new ArrayList<>();
     inserts.add(new TagInsert(0, "<span>"));
-    for (Block block : blocks) {
+    for (Block block : javaFile.foundBlocks) {
       inserts.add(new TagInsert(block.begPos, "</span>"));
       inserts.add(new TagInsert(block.begPos, codeSpanAt(block.begPos)));
       inserts.add(new TagInsert(block.endPos, "</span>"));
@@ -122,8 +111,8 @@ public class ReportGenerator {
 
   private String codeSpanAt(int chPos) {
     List<Integer> activeBlocks = new ArrayList<>();
-    for (int i = 0; i < blocks.size(); i++) {
-      Block b = blocks.get(i);
+    for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
+      Block b = javaFile.foundBlocks.get(i);
       if (b.begPos <= chPos && chPos < b.endPos) {
         activeBlocks.add(i);
       }
@@ -131,25 +120,11 @@ public class ReportGenerator {
     if (activeBlocks.isEmpty()) {
       return "<span>";
     } else {
-      Block lastBlock = blocks.get(activeBlocks.get(activeBlocks.size() - 1));
+      Block lastBlock = javaFile.foundBlocks.get(activeBlocks.get(activeBlocks.size() - 1));
       return codeSpan(activeBlocks, lastBlock);
     }
   }
 
-  public void bodyEnd(Path reportFilePath) {
-    report.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", reportFilePath.getParent().relativize(reportHighlighter)));
-    report.append("</body>\n");
-    report.append("</html>\n");
-  }
-
-  public void write(Path destPath) {
-    destPath.getParent().toFile().mkdirs(); // make sure parent directory exists
-    try {
-      Files.writeString(destPath, report.toString());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
 }
 
 record TagInsert(int chPos, String tag) {

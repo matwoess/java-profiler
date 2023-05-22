@@ -69,9 +69,10 @@ public class Profiler {
     }
     ReportIndexWriter index = new ReportIndexWriter();
     index.header();
+    index.bodyStart();
     index.sortedFileTable(allJavaFiles);
-    index.footer();
     index.write(Constants.reportIndexFile);
+    index.bodyEnd();
     copyJavaScriptFiles();
   }
 
@@ -97,12 +98,13 @@ public class Profiler {
   }
 
   private void generateReportFile(JavaFile jFile) {
-    ReportGenerator report = new ReportGenerator(jFile.foundBlocks);
-    report.header(jFile.sourceFile.getFileName().toString());
+    String fileName = jFile.sourceFile.getFileName().toString();
+    ReportSourceWriter report = new ReportSourceWriter(jFile, fileName);
+    report.header();
     report.bodyStart();
-    report.heading(jFile.sourceFile.getFileName().toString());
-    report.codeDiv(jFile);
-    report.bodyEnd(jFile.getReportHtmlFile());
+    report.heading(fileName);
+    report.codeDiv();
+    report.bodyEnd();
     report.write(jFile.getReportHtmlFile());
   }
 
