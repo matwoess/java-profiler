@@ -1,5 +1,6 @@
 package profile;
 
+import misc.CodeInsert;
 import model.Block;
 import model.JavaFile;
 
@@ -34,11 +35,11 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       String sourceCode = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
       StringBuilder builder = new StringBuilder();
       int prevIdx = 0;
-      List<TagInsert> tagInserts = getTagInserts(sourceCode.length());
-      for (TagInsert tagInsert : tagInserts) {
+      List<CodeInsert> tagInserts = getTagInserts(sourceCode.length());
+      for (CodeInsert tagInsert : tagInserts) {
         builder.append(sourceCode, prevIdx, tagInsert.chPos());
         prevIdx = tagInsert.chPos();
-        builder.append(tagInsert.tag());
+        builder.append(tagInsert.code());
       }
       builder.append(sourceCode.substring(prevIdx));
       String annotatedCode = builder.toString();
@@ -72,17 +73,17 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     return builder.toString();
   }
 
-  private List<TagInsert> getTagInserts(int textLength) {
-    List<TagInsert> inserts = new ArrayList<>();
-    inserts.add(new TagInsert(0, "<span>"));
+  private List<CodeInsert> getTagInserts(int textLength) {
+    List<CodeInsert> inserts = new ArrayList<>();
+    inserts.add(new CodeInsert(0, "<span>"));
     for (Block block : javaFile.foundBlocks) {
-      inserts.add(new TagInsert(block.begPos, "</span>"));
-      inserts.add(new TagInsert(block.begPos, codeSpanAt(block.begPos)));
-      inserts.add(new TagInsert(block.endPos, "</span>"));
-      inserts.add(new TagInsert(block.endPos, codeSpanAt(block.endPos)));
+      inserts.add(new CodeInsert(block.begPos, "</span>"));
+      inserts.add(new CodeInsert(block.begPos, codeSpanAt(block.begPos)));
+      inserts.add(new CodeInsert(block.endPos, "</span>"));
+      inserts.add(new CodeInsert(block.endPos, codeSpanAt(block.endPos)));
     }
-    inserts.add(new TagInsert(textLength, "</span>"));
-    inserts.sort(Comparator.comparing(TagInsert::chPos));
+    inserts.add(new CodeInsert(textLength, "</span>"));
+    inserts.sort(Comparator.comparing(CodeInsert::chPos));
     return inserts;
   }
 
@@ -123,7 +124,4 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     }
   }
 
-}
-
-record TagInsert(int chPos, String tag) {
 }

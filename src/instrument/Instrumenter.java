@@ -1,5 +1,6 @@
 package instrument;
 
+import misc.CodeInsert;
 import misc.Util;
 import model.Class;
 import model.*;
@@ -64,16 +65,13 @@ public class Instrumenter {
     StringBuilder builder = new StringBuilder();
     int prevIdx = 0;
     for (CodeInsert codeInsert : codeInserts) {
-      builder.append(fileContent, prevIdx, codeInsert.chPos);
-      prevIdx = codeInsert.chPos;
-      builder.append(codeInsert.code);
+      builder.append(fileContent, prevIdx, codeInsert.chPos());
+      prevIdx = codeInsert.chPos();
+      builder.append(codeInsert.code());
     }
     builder.append(fileContent.substring(prevIdx));
     javaFile.instrumentedFile.getParent().toFile().mkdirs(); // make sure parent directory exists
     Files.writeString(javaFile.instrumentedFile, builder.toString());
-  }
-
-  record CodeInsert(int chPos, String code) {
   }
 
   List<CodeInsert> getCodeInserts(JavaFile javaFile) {
@@ -94,7 +92,7 @@ public class Instrumenter {
         inserts.add(new CodeInsert(block.endPos, "}"));
       }
     }
-    inserts.sort(Comparator.comparing(insert -> insert.chPos));
+    inserts.sort(Comparator.comparing(CodeInsert::chPos));
     return inserts;
   }
 
