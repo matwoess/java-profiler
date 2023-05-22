@@ -26,6 +26,7 @@ public class Util {
     }
   }
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   public static void copyResource(String resourceName, Path destination) {
     try (InputStream resource = Util.class.getResourceAsStream(resourceName);) {
       if (resource == null) {
