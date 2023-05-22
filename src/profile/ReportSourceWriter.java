@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static misc.Constants.*;
 
-public class ReportSourceWriter extends HtmlWriter {
+public class ReportSourceWriter extends AbstractHtmlWriter {
   StringBuilder report = new StringBuilder();
 
   JavaFile javaFile;

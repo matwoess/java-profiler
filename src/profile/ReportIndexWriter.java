@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class ReportIndexWriter extends HtmlWriter {
+public class ReportIndexWriter extends AbstractHtmlWriter {
   StringBuilder fileContent = new StringBuilder();
 
   public void sortedFileTable(JavaFile[] allJavaFiles) {

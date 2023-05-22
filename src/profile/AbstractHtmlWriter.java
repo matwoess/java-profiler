@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class HtmlWriter {
+public abstract class AbstractHtmlWriter {
   StringBuilder report = new StringBuilder();
   public String title;
   public String[] includeScripts;
