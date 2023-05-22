@@ -11,6 +11,17 @@ public class ReportIndexWriter extends AbstractHtmlWriter {
 
   public ReportIndexWriter() {
     title = "Report";
+    cssStyle = """
+        table {
+          border-collapse: collapse;
+        }
+        table, th, td {
+          border: 1p x solid #ddd;
+        }
+        th, td {
+          padding: 8px;
+        }
+        """;
   }
 
   public void sortedFileTable(JavaFile[] allJavaFiles) {
@@ -20,7 +31,7 @@ public class ReportIndexWriter extends AbstractHtmlWriter {
     content.append("<table>\n")
         .append("<tr>\n")
         .append("<th>Method invocations</th>\n")
-        .append("<th>Detailed report<th>\n")
+        .append("<th>Detailed report</th>\n")
         .append("</tr>\n");
     for (JavaFile jFile : sortedFiles) {
       Path href = Constants.reportDir.relativize(jFile.getReportHtmlFile());

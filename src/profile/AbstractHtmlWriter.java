@@ -9,6 +9,7 @@ public abstract class AbstractHtmlWriter {
   public String title;
   public String[] includeScripts;
   public String[] bodyScripts;
+  public String cssStyle;
 
   public void header() {
     content.append("<!DOCTYPE html>\n").append("<html>\n").append("<head>\n");
@@ -19,6 +20,9 @@ public abstract class AbstractHtmlWriter {
       for (String scriptSrc : includeScripts) {
         content.append(String.format("<script src=\"%s\"></script>\n", scriptSrc));
       }
+    }
+    if (cssStyle != null) {
+      content.append("<style>\n").append(cssStyle).append("</style>\n");
     }
     content.append("</head>\n");
   }
