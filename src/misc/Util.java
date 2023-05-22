@@ -31,6 +31,7 @@ public class Util {
       if (resource == null) {
         throw new RuntimeException("unable to locate resource: <" + resourceName + ">");
       }
+      destination.toFile().mkdirs();
       Files.copy(resource, destination, REPLACE_EXISTING);
     } catch (IOException | RuntimeException e) {
       throw new RuntimeException(e);

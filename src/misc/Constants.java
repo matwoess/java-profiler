@@ -14,18 +14,4 @@ public class Constants {
   public static final Path reportIndexFile = reportDir.resolve("index.html");
   public static final Path reportHighlighter = reportDir.resolve("highlighter.js");
 
-  static {
-    if (outputDir.toFile().mkdirs()) {
-      System.out.println("created output directory.");
-    }
-    if (instrumentDir.toFile().mkdir()) {
-      System.out.println("created instrumented directory.");
-    }
-    if (auxiliaryInstrumentDir.toFile().mkdir()) {
-      System.out.println("created auxiliary package directory.");
-    }
-    if (reportDir.toFile().mkdir()) {
-      System.out.println("created report directory.");
-    }
-  }
 }
