@@ -1,5 +1,7 @@
 package model;
 
+import misc.Constants;
+
 import java.nio.file.Path;
 import java.util.List;
 
@@ -21,5 +23,18 @@ public class JavaFile {
   public JavaFile(Path sourceFile) {
     this.sourceFile = sourceFile;
     this.instrumentedFile = instrumentDir.resolve(sourceFile);
+  }
+
+  public Path getReportFile() {
+    return Constants.reportDir.resolve(sourceFile);
+  }
+
+  public Path getReportHtmlFile() {
+    Path reportFilePath = getReportFile();
+    return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
+  }
+
+  public int getAggregatedMethodBlockCounts() {
+    return foundBlocks.stream().filter(b -> b.blockType == BlockType.METHOD).mapToInt(b -> b.hits).sum();
   }
 }

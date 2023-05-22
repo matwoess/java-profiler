@@ -2,15 +2,18 @@ package profile;
 
 import misc.Constants;
 import misc.Util;
+import model.Block;
 import model.JavaFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.PrimitiveIterator;
 
 import static java.lang.System.exit;
-import static misc.Constants.*;
+import static misc.Constants.instrumentDir;
+import static misc.Constants.reportDir;
 
 public class Profiler {
   JavaFile mainJavaFile;
@@ -58,22 +61,49 @@ public class Profiler {
   }
 
   public void generateReport() {
-    ReportGenerator report = new ReportGenerator(mainJavaFile.foundBlocks);
-    int[] blockCounts;
+    // TODO: read metadata and create JavaFile list instead
+    JavaFile[] allJavaFiles = Util.prependToArray(additionalJavaFiles, mainJavaFile);
+    addHitCountToJavaFileBlocks(allJavaFiles);
+    for (JavaFile jFile : allJavaFiles) {
+      generateReportFile(jFile);
+    }
+    ReportIndexWriter index = new ReportIndexWriter();
+    index.header();
+    index.sortedFileTable(allJavaFiles);
+    index.footer();
+    index.write(Constants.reportIndexFile);
+    copyJavaScriptFiles();
+  }
+
+  private static void addHitCountToJavaFileBlocks(JavaFile[] allJavaFiles) {
+    PrimitiveIterator.OfInt allBlockCounts;
     try {
-      blockCounts = Arrays.stream(Files.readString(Constants.resultsFile).split(" "))
-          .mapToInt(Integer::parseInt).toArray();
+      allBlockCounts = Arrays.stream(Files.readString(Constants.resultsFile).split(" "))
+          .mapToInt(Integer::parseInt).iterator();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    report.header(mainJavaFile.sourceFile.getFileName().toString());
+    for (JavaFile jFile : allJavaFiles) {
+      for (Block block : jFile.foundBlocks) {
+        if (!allBlockCounts.hasNext()) {
+          throw new RuntimeException("Ran out of block counts. Mismatching entry counts");
+        }
+        block.hits = allBlockCounts.next();
+      }
+    }
+    if (allBlockCounts.hasNext()) {
+      throw new RuntimeException("Too many block counts. Mismatching entry counts!");
+    }
+  }
+
+  private void generateReportFile(JavaFile jFile) {
+    ReportGenerator report = new ReportGenerator(jFile.foundBlocks);
+    report.header(jFile.sourceFile.getFileName().toString());
     report.bodyStart();
-    report.heading(mainJavaFile.sourceFile.getFileName().toString());
-    int[] fileBlockCounts = Arrays.stream(blockCounts).limit(mainJavaFile.foundBlocks.size()).toArray();
-    report.codeDiv(mainJavaFile, fileBlockCounts);
-    report.bodyEnd();
-    report.write(reportIndexFile); // TODO: generate by file and index
-    copyJavaScriptFiles();
+    report.heading(jFile.sourceFile.getFileName().toString());
+    report.codeDiv(jFile);
+    report.bodyEnd(jFile.getReportHtmlFile());
+    report.write(jFile.getReportHtmlFile());
   }
 
   private void copyJavaScriptFiles() {

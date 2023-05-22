@@ -40,15 +40,11 @@ public class ReportGenerator {
     report.append("<h1>").append(main).append("</h1>\n");
   }
 
-  public void codeDiv(JavaFile javaFile, int[] fileBlockCounts) {
+  public void codeDiv(JavaFile javaFile) {
     report.append("<pre>\n");
     report.append("<code>\n");
     try {
       String sourceCode = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
-      List<Block> blocks = javaFile.foundBlocks;
-      for (int i = 0; i < blocks.size(); i++) {
-        blocks.get(i).hits = fileBlockCounts[i];
-      }
       StringBuilder builder = new StringBuilder();
       int prevIdx = 0;
       List<TagInsert> tagInserts = getTagInserts(sourceCode.length());
@@ -140,13 +136,14 @@ public class ReportGenerator {
     }
   }
 
-  public void bodyEnd() {
-    report.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", reportDir.relativize(reportHighlighter)));
+  public void bodyEnd(Path reportFilePath) {
+    report.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", reportFilePath.getParent().relativize(reportHighlighter)));
     report.append("</body>\n");
     report.append("</html>\n");
   }
 
   public void write(Path destPath) {
+    destPath.getParent().toFile().mkdirs(); // make sure parent directory exists
     try {
       Files.writeString(destPath, report.toString());
     } catch (IOException e) {
