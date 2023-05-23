@@ -5,17 +5,39 @@ CHARACTERS
 	cr = '\r'.
 	lf = '\n'.
 	tab = '\t'.
-	letter = 'a' .. 'z' + 'A'..'Z' + '_'.
+	letter = 'a'..'z' + 'A'..'Z' + '_'.
 	digit  = '0'..'9'.
-	escCh = '\\'.
+	bslash = '\\'.
 	quote = '"'.
 	apostrophe = '\''.
- 	noQuote = ANY - quote - cr - lf.
-	noApostrophe = ANY - apostrophe - cr - lf.
+	character = ANY - apostrophe- bslash - cr - lf.
+ 	stringChar = ANY - quote - bslash - cr - lf.
+	escapableChar = 'b'+ 's' + 't' + 'n' + 'f' + 'r' + quote + apostrophe + bslash.
+	hexDigit = digit + 'a'..'f' + 'A'..'F'.
+	zeroToThree = "0123".
+	octalDigit = "01234567".
 TOKENS
 	ident  = letter {letter | digit}.
-	char = apostrophe [escCh] noApostrophe apostrophe.
-	string = quote { ( escCh escCh | [escCh] noQuote) } quote.
+	//unicodeEscape = bslash 'u' {'u'} hexDigit hexDigit hexDigit hexDigit.
+	//octalEscape = bslash (octalDigit | octalDigit octalDigit | zeroToThree octalDigit octalDigit).
+	char =
+		apostrophe (
+			bslash (
+				escapableChar
+				| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
+				| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
+			)
+			| character
+		) apostrophe.
+	string =
+		quote {(
+			bslash (
+				escapableChar
+				| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
+				| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
+			)
+			| stringChar
+		)} quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
 	class      = "class".
 	interface  = "interface".

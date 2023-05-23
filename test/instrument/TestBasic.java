@@ -289,7 +289,7 @@ public class TestBasic {
   @Test
   public void TestMethodWithDoubleBackslashInString() {
     String fileContent = String.format(baseTemplate, """
-        boolean b = "Text\\".endsWith("\\\\");
+        boolean b = "Text\\\\".endsWith("\\\\");
         if (b) {
           System.out.println("does end with \\\\");
         }
@@ -299,8 +299,8 @@ public class TestBasic {
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 160));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 6, 111, 155));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 161));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 6, 112, 156));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
