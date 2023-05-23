@@ -79,3 +79,22 @@ class Cat extends Pet {
     return "meow.";
   }
 }
+
+class SmallDog extends Dog {
+  boolean amSmall;
+
+  public SmallDog(String name, int age) {
+    super(name, age);
+    amSmall = true;
+    super.speak();
+  }
+
+  @Override
+  String speak() {
+    if (amSmall) {
+      return "wuf!";
+    } else {
+      return super.speak();
+    }
+  }
+}

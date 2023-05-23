@@ -12,6 +12,7 @@ public class Block {
   public BlockType blockType;
 
   public int hits;
+  public int endOfSuperCall;
 
   public String toString() {
      return String.format("%s%s: {%d[%s]-%s[%s]} (%s)%s",

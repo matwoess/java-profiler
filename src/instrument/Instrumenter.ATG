@@ -105,6 +105,7 @@ Statement =
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
 		| Annotation
+		| "super" (ParExpr  ";" (. state.markEndOfSuperCall(); .) | "." {ANY}  ";")
 		| ("++" | "--" | new | ident | string | ParExpr)
 				{string | char
 					| ArrowExpression<false, false>

@@ -1,7 +1,7 @@
 package model;
 
 public enum BlockType {
-  BLOCK, METHOD, STATIC, SS_BLOCK, SWITCH_CASE, SS_LAMBDA, SS_SWITCH_EXPR_ARROW_CASE;
+  BLOCK, METHOD, CONSTRUCTOR, STATIC, SS_BLOCK, SWITCH_CASE, SS_LAMBDA, SS_SWITCH_EXPR_ARROW_CASE;
 
   public boolean hasNoBraces() {
     return this == SS_BLOCK || this == SWITCH_CASE || this == SS_LAMBDA || this == SS_SWITCH_EXPR_ARROW_CASE;
@@ -15,6 +15,7 @@ public enum BlockType {
     String prefix = switch (this) {
       case BLOCK -> "";
       case METHOD -> "method ";
+      case CONSTRUCTOR -> "constructor ";
       case STATIC -> "static ";
       case SS_BLOCK -> "single-statement ";
       case SWITCH_CASE -> "switch case ";

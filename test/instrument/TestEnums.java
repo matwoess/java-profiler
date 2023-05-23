@@ -103,7 +103,7 @@ public class TestEnums {
     assertEquals(1, blocks.size());
     Class clazz = new Class("WithConstructor");
     Method meth = new Method("WithConstructor");
-    Block block = getBlock(METHOD, clazz, meth, 10, 14, 276, 359);
+    Block block = getBlock(CONSTRUCTOR, clazz, meth, 10, 14, 276, 359);
     assertEquals(block, blocks.get(0));
   }
 

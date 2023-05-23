@@ -172,12 +172,12 @@ public class TestClasses {
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 11, 139, 234));
     clazz = new Class("Dog");
     meth = new Method("Dog");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 15, 18, 298, 344));
+    expectedBlocks.add(getBlock(CONSTRUCTOR, clazz, meth, 15, 18, 298, 344));
     meth = new Method("speak");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 19, 19, 373, 391));
     clazz = new Class("Cat");
     meth = new Method("Cat");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 23, 26, 455, 501));
+    expectedBlocks.add(getBlock(CONSTRUCTOR, clazz, meth, 23, 26, 455, 501));
     meth = new Method("speak");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 27, 27, 530, 548));
     assertIterableEquals(expectedBlocks, blocks);

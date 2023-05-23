@@ -13,6 +13,7 @@ public class ParserState {
   Parser parser;
 
   int beginOfImports = 0;
+  int endOfSuperCall;
 
   List<Class> allClasses = new ArrayList<>();
   Stack<Class> classStack = new Stack<>();
@@ -28,6 +29,10 @@ public class ParserState {
 
   void markBeginOfImports() {
     beginOfImports = parser.t.charPos + parser.t.val.length();
+  }
+
+  void markEndOfSuperCall() {
+    endOfSuperCall = parser.t.charPos + parser.t.val.length();
   }
 
   void enterClass() {
@@ -71,8 +76,15 @@ public class ParserState {
 
   void leaveMethod() {
     curBlock.blockType = BlockType.METHOD;
+    if (curMeth.name.equals(curClass.name)) { // TODO: not entirely correct, also must not have return type
+      curBlock.blockType = BlockType.CONSTRUCTOR;
+      if (endOfSuperCall != 0) {
+        curBlock.endOfSuperCall = endOfSuperCall;
+      }
+    }
     System.out.println("left method: " + curMeth.name);
     curMeth = null;
+    endOfSuperCall = 0;
   }
 
   void enterBlock() {  // no missing braces
