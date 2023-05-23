@@ -244,35 +244,39 @@ public class TestBasic {
   }
 
   @Test
-  public void TestCharLiterals() {
+  public void TestEscapedCharLiterals() {
     String fileContent = String.format(baseTemplate, """
         // ignoring result
-        char c1 = '\\"';
-        char c2 = '\\'';
-        char c3 = '\\n';
-        char c4 = '\\r';
-        char c5 = '\\t';
+        char c = '\\"'; c = '\\'';
+        c = '\\n'; c = '\\r'; c = '\\t';
+        c = '\\\\';
+        c = '\\b'; c = '\\s'; c = '\\f';
+        c = '\\0'; c = '\\1'; c = '\\2'; c = '\\3';
+        c = '\\6'; c = '\\67';
+        c = '\\uFF1A'; c = '\\uuu231A';
+        c = '\\064'; c = '\\377';
          """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 170));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 13, 62, 300));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
   @Test
   public void TestStringLiteralWithEscapedCharacters() {
     String fileContent = String.format(baseTemplate, """
-        String s = "''''\\"\\"\\"\\r\\n\\t\\"asdf";
+        String s = "''''\\"\\"\\"\\r\\n\\t\\"\\f\\b\\s_asdf";
+        s = "\\u42FA_\\uuuADA1_\\1_\\155adsf\\6_\\43_Text";
          """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 5, 62, 108));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 6, 62, 161));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
