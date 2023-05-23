@@ -15,21 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestLambdaExpressions {
-  public String baseTemplate = """
-      public class Main {
-        public static void main(String[] args) {
-          %s
-        }
-      }
-      """;
-
   @Test
   public void TestSimpleForEach() {
     String fileContent = String.format(baseTemplate, """
         "xyz".chars().forEach(ch -> {
           System.out.println(ch);
         });
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -46,7 +38,7 @@ public class TestLambdaExpressions {
         Function<Integer, Integer> doubleFn = (num) -> { return num*2; };
         int result = doubleFn.apply(5);
         System.out.println(result);
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -64,7 +56,7 @@ public class TestLambdaExpressions {
           return "Hello";
         };
         System.out.println(getHello.get());
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -81,7 +73,7 @@ public class TestLambdaExpressions {
         Function<Integer, Double> divideBy3 = num -> num / 3.0;
         double result = divideBy3.apply(7);
         System.out.println(result);
-        """);
+        """, "");
     Function<Integer, Double> divideBy3 = num -> num / 3.0;
     double result = divideBy3.apply(7);
     System.out.println(result);
@@ -101,7 +93,7 @@ public class TestLambdaExpressions {
         BiFunction<Float, Float, Float> addTogether = (x, y) -> (x + y);
         double result = addTogether.apply(7f, 5.6f);
         System.out.println(result);
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -120,7 +112,7 @@ public class TestLambdaExpressions {
         Predicate<String> isNotBlank = (String str) -> !str.isBlank();
         int result = parseIntIf.apply("234", isNotBlank);
         System.out.println(result);
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -142,7 +134,7 @@ public class TestLambdaExpressions {
             .filter(x -> (x > 5))
             .reduce((acc, x) -> ((acc) + (x)))
             .ifPresent(possibleResult -> System.out.println("\\nRes: " + possibleResult));
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(6, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();

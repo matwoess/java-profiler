@@ -10,6 +10,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Util {
+  public static final String baseTemplate = """
+      public class Main {
+        public static void main(String[] args) {
+          %s
+        }
+         %s
+      }
+      """;
+
   private static Path createTempFileWithContent(String content) {
     try {
       List<String> fileContent = Arrays.asList(content.split("\n"));

@@ -15,19 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestMissingBraces {
-  public String baseTemplate = """
-      public class Main {
-        public static void main(String[] args) {
-          %s
-        }
-      }
-      """;
-
   @Test
   public void TestIf() {
     String fileContent = String.format(baseTemplate, """
         if (true == false)return;
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -43,7 +35,7 @@ public class TestMissingBraces {
     String fileContent = String.format(baseTemplate, """
         if (true == false) break;
         else continue;
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -61,7 +53,7 @@ public class TestMissingBraces {
         if (true == false) break;
         else if (true == true) return;
         else continue;
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(4, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -89,7 +81,7 @@ public class TestMissingBraces {
           if (x == 53) return; else x = 0;
         }
         System.out.println(x);
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(7, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -114,7 +106,7 @@ public class TestMissingBraces {
             return;
           else
             x=1;
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(5, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -136,7 +128,7 @@ public class TestMissingBraces {
         do
           x+=1;
         while (x<10);
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -155,7 +147,7 @@ public class TestMissingBraces {
         for (int i = 0; i < 5; i++)
           array[i] = i;
         for (int val : array) System.out.println(val);
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();

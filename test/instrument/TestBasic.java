@@ -14,16 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestBasic {
-
-  public String baseTemplate = """
-      public class Main {
-        public static void main(String[] args) {
-          %s
-        }
-         %s
-      }
-      """;
-
   @Test
   public void TestEmptyProgram() {
     String emptyClass = """
