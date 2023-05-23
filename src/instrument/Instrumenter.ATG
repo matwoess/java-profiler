@@ -18,8 +18,6 @@ CHARACTERS
 	octalDigit = "01234567".
 TOKENS
 	ident  = letter {letter | digit}.
-	// unicodeEscape = bslash 'u' {'u'} hexDigit hexDigit hexDigit hexDigit.
-	// octalEscape = bslash (octalDigit | octalDigit octalDigit | zeroToThree octalDigit octalDigit).
 	char =
 		apostrophe (
 			bslash (
@@ -107,7 +105,7 @@ Statement =
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
 		| Annotation
-		| ("++" | new | ident | string | ParExpr)
+		| ("++" | "--" | new | ident | string | ParExpr)
 				{string | char
 					| ArrowExpression<false, false>
 					| SwitchStatement
