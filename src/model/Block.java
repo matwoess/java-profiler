@@ -15,11 +15,12 @@ public class Block {
   public int endOfSuperCall;
 
   public String toString() {
-     return String.format("%s%s: {%d[%s]-%s[%s]} (%s)%s",
+     return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s",
         clazz.name,
         method != null ? ("." + method.name) : "",
         beg,
         begPos,
+        endOfSuperCall != 0 ? "(" + endOfSuperCall + ")" : "",
         end != 0 ? end : "?",
         endPos != 0 ? endPos : "?",
         blockType.toString(),
@@ -36,6 +37,7 @@ public class Block {
     if (end != block.end) return false;
     if (begPos != block.begPos) return false;
     if (endPos != block.endPos) return false;
+    if (endOfSuperCall != block.endOfSuperCall) return false;
     if (!clazz.equals(block.clazz)) return false;
     if (!Objects.equals(method, block.method)) return false;
     return blockType == block.blockType;
@@ -50,6 +52,7 @@ public class Block {
     result = 31 * result + begPos;
     result = 31 * result + endPos;
     result = 31 * result + blockType.hashCode();
+    result = 31 * result + endOfSuperCall;
     return result;
   }
 }

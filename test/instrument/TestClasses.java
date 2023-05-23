@@ -287,4 +287,54 @@ public class TestClasses {
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 11, 262, 347));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestInheritedClassWithSuperCall() {
+    String classWithInheritance = """
+        class Dog {
+          String name;
+          int age;
+          public Dog(String name, int age) {
+            this.name = name;
+            this.age = age;
+          }
+          String speak() {
+            return "woof";
+          }
+        }
+        class SmallDog extends Dog {
+          boolean amSmall;
+          public SmallDog(String name, int age) {
+            super(name, age);
+            amSmall = true;
+            super.speak();
+          }
+          @Override
+          String speak() {
+            if (amSmall) {
+              return "wuf!";
+            } else {
+              return super.speak();
+            }
+          }
+        }""";
+    List<Block> blocks = getFoundBlocks(classWithInheritance);
+    assertEquals(6, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Dog");
+    Method meth = new Method("Dog");
+    expectedBlocks.add(getBlock(CONSTRUCTOR, clazz, meth, 4, 7, 74, 120));
+    meth = new Method("speak");
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 10, 139, 162));
+    clazz = new Class("SmallDog");
+    meth = new Method("SmallDog");
+    Block blockWithSuperCall = getBlock(CONSTRUCTOR, clazz, meth, 14, 18, 254, 319);
+    blockWithSuperCall.endOfSuperCall = blockWithSuperCall.begPos + "\n    super(name, age);".length();
+    expectedBlocks.add(blockWithSuperCall);
+    meth = new Method("speak");
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 20, 26, 350, 441));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 21, 23, 369, 396));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 23, 25, 403, 437));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }
