@@ -10,16 +10,16 @@ CHARACTERS
 	bslash = '\\'.
 	quote = '"'.
 	apostrophe = '\''.
-	character = ANY - apostrophe- bslash - cr - lf.
- 	stringChar = ANY - quote - bslash - cr - lf.
+	noApostrophe = ANY - apostrophe- bslash - cr - lf.
+ 	noQuote = ANY - quote - bslash - cr - lf.
 	escapableChar = 'b'+ 's' + 't' + 'n' + 'f' + 'r' + quote + apostrophe + bslash.
 	hexDigit = digit + 'a'..'f' + 'A'..'F'.
 	zeroToThree = "0123".
 	octalDigit = "01234567".
 TOKENS
 	ident  = letter {letter | digit}.
-	//unicodeEscape = bslash 'u' {'u'} hexDigit hexDigit hexDigit hexDigit.
-	//octalEscape = bslash (octalDigit | octalDigit octalDigit | zeroToThree octalDigit octalDigit).
+	// unicodeEscape = bslash 'u' {'u'} hexDigit hexDigit hexDigit hexDigit.
+	// octalEscape = bslash (octalDigit | octalDigit octalDigit | zeroToThree octalDigit octalDigit).
 	char =
 		apostrophe (
 			bslash (
@@ -27,7 +27,7 @@ TOKENS
 				| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
 				| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
 			)
-			| character
+			| noApostrophe
 		) apostrophe.
 	string =
 		quote {(
@@ -36,7 +36,7 @@ TOKENS
 				| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
 				| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
 			)
-			| stringChar
+			| noQuote
 		)} quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
 	class      = "class".
@@ -107,7 +107,7 @@ Statement =
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
 		| Annotation
-		| (new | ident | string | ParExpr)
+		| ("++" | new | ident | string | ParExpr)
 				{string | char
 					| ArrowExpression<false, false>
 					| SwitchStatement
