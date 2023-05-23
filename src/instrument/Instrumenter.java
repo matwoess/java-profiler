@@ -1,11 +1,10 @@
 package instrument;
 
 import misc.CodeInsert;
+import misc.IO;
 import misc.Util;
-import model.Class;
 import model.*;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,7 +14,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import static misc.Constants.auxiliaryInstrumentDir;
-import static misc.Constants.metadataFile;
 
 public class Instrumenter {
   JavaFile[] javaFiles;
@@ -61,7 +59,7 @@ public class Instrumenter {
 
   void instrument(JavaFile javaFile) throws IOException {
     List<CodeInsert> codeInserts = getCodeInserts(javaFile);
-     String fileContent = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
+    String fileContent = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
     StringBuilder builder = new StringBuilder();
     int prevIdx = 0;
     for (CodeInsert codeInsert : codeInserts) {
@@ -102,31 +100,8 @@ public class Instrumenter {
     return inserts;
   }
 
-  public void exportBlockData() {
-    StringBuilder builder = new StringBuilder();
-    builder.append(blockCounter).append(" ");
-    for (JavaFile jFile : javaFiles) {
-      builder.append(jFile.sourceFile.toUri()).append(" ");
-      for (Class clazz : jFile.foundClasses) {
-        builder.append(clazz.name).append(" ");
-        for (Method meth : clazz.methods) {
-          builder.append(meth.name).append(" ");
-          for (Block block : meth.blocks) {
-            builder.append(block.beg).append(" ");
-            builder.append(block.end).append(" ");
-            builder.append(block.blockType.ordinal()).append(" ");
-          }
-        }
-        builder.append("#").append(" ");
-      }
-    }
-    try (FileOutputStream fos = new FileOutputStream(metadataFile.toFile())) {
-      byte[] data = builder.toString().getBytes();
-      fos.write(data, 0, data.length);
-      fos.flush();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  public void exportMetadata() {
+    IO.exportMetadata(new IO.Metadata(blockCounter, javaFiles));
   }
 
   void copyAuxiliaryFiles() {

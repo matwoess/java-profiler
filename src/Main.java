@@ -56,7 +56,7 @@ public class Main {
     Instrumenter instrumenter = new Instrumenter(mainJavaFile);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
-    instrumenter.exportBlockData();
+    instrumenter.exportMetadata();
   }
 
   private static void instrumentFolder(Path folder) {
@@ -64,7 +64,7 @@ public class Main {
     Instrumenter instrumenter = new Instrumenter(javaFiles);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
-    instrumenter.exportBlockData();
+    instrumenter.exportMetadata();
   }
 
   private static void instrumentFolderCompileAndRun(Path instrumentDir, Path mainFile, String[] programArgs) {
@@ -73,7 +73,7 @@ public class Main {
     Instrumenter instrumenter = new Instrumenter(Util.prependToArray(additionalJavaFiles, mainJavaFile));
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
-    instrumenter.exportBlockData();
+    instrumenter.exportMetadata();
     Profiler profiler = new Profiler(mainJavaFile, additionalJavaFiles);
     profiler.compileInstrumented();
     profiler.profile(programArgs);
@@ -86,7 +86,7 @@ public class Main {
     Instrumenter instrumenter = new Instrumenter(mainJavaFile);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
-    instrumenter.exportBlockData();
+    instrumenter.exportMetadata();
     Profiler profiler = new Profiler(mainJavaFile);
     profiler.compileInstrumented();
     profiler.profile(programArgs);
