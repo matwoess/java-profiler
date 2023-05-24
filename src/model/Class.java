@@ -1,9 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Class {
+public class Class implements Serializable {
   public String name;
   public boolean isMain;
   public ClassType classType;

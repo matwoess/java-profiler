@@ -1,9 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Method {
+public class Method implements Serializable {
   public String name;
   public boolean isMain;
   public List<Block> blocks = new ArrayList<>();

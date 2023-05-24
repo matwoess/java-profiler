@@ -1,6 +1,8 @@
 package auxiliary;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -18,11 +20,9 @@ public class __Counter {
   }
 
   public static synchronized void init(String fileName) {
-    try {
-      String fileContent = Files.readString(Path.of(fileName));
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
       // number of blocks is the first value of the metadata file
-      String nBlockString = fileContent.substring(0, fileContent.indexOf(" "));
-      int nBlocks = Integer.parseInt(nBlockString);
+      int nBlocks = ois.readInt();
       blockCounts = new int[nBlocks];
     } catch (IOException | NumberFormatException e) {
       throw new RuntimeException(e);

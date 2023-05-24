@@ -1,6 +1,7 @@
 package profile;
 
 import misc.Constants;
+import misc.IO;
 import misc.Util;
 import model.Block;
 import model.JavaFile;
@@ -61,8 +62,12 @@ public class Profiler {
   }
 
   public void generateReport() {
-    // TODO: read metadata and create JavaFile list instead
-    JavaFile[] allJavaFiles = Util.prependToArray(additionalJavaFiles, mainJavaFile);
+    JavaFile[] allJavaFiles;
+    if (mainJavaFile != null) {
+      allJavaFiles = Util.prependToArray(additionalJavaFiles, mainJavaFile);
+    } else {
+      allJavaFiles = IO.importMetadata().javaFiles();
+    }
     addHitCountToJavaFileBlocks(allJavaFiles);
     for (JavaFile jFile : allJavaFiles) {
       generateReportFile(jFile);

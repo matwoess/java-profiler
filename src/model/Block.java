@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Block {
+public class Block implements Serializable {
   public Class clazz;
   public Method method;
   public int beg;
@@ -11,11 +12,11 @@ public class Block {
   public int endPos;
   public BlockType blockType;
 
-  public int hits;
   public int endOfSuperCall;
+  transient public int hits;
 
   public String toString() {
-     return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s",
+    return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s",
         clazz.name,
         method != null ? ("." + method.name) : "",
         beg,

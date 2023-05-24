@@ -2,17 +2,19 @@ package model;
 
 import misc.Constants;
 
+import java.io.*;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static misc.Constants.instrumentDir;
 
-public class JavaFile {
-  public Path sourceFile;
+public class JavaFile implements Serializable {
   public int beginOfImports = 0;
   public List<Class> foundClasses;
   public List<Block> foundBlocks;
-  public Path instrumentedFile;
+  public transient Path sourceFile;
+  public transient Path instrumentedFile;
 
   public JavaFile(Path sourceFile, Path sourcesRoot) {
     this.sourceFile = sourceFile;
@@ -36,5 +38,19 @@ public class JavaFile {
 
   public int getAggregatedMethodBlockCounts() {
     return foundBlocks.stream().filter(b -> b.blockType == BlockType.METHOD).mapToInt(b -> b.hits).sum();
+  }
+
+  @Serial
+  private void writeObject(ObjectOutputStream oos) throws IOException {
+    oos.defaultWriteObject();
+    oos.writeUTF(sourceFile.toString());
+    oos.writeUTF(instrumentedFile.toString());
+  }
+
+  @Serial
+  private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+    ois.defaultReadObject();
+    sourceFile = Paths.get(ois.readUTF());
+    instrumentedFile = Paths.get(ois.readUTF());
   }
 }
