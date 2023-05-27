@@ -366,4 +366,30 @@ public class TestBasic {
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 12, 184, 209));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestIncrementAndDecrement() {
+    String fileContent = String.format(baseTemplate, """
+        int x = 1;
+        while (true) {
+          if (x == 1) {
+            --x;
+            ++x;
+            ++(x);
+          } else {
+            break;
+          }
+        }
+        """, "");
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(4, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 14, 62, 170));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 12, 92, 165));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 9, 108, 141));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 11, 148, 163));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
 }
