@@ -105,12 +105,12 @@ Statement =
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
 		| Annotation
-		| "super" (ParExpr  ";" (. state.markEndOfSuperCall(); .) | "." {ANY}  ";")
-		| ("++" | "--" | new | ident | string | ParExpr)
+		| "super" (ParExpr  ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
+		| ("++" | "--" | ParExpr | Instantiation | ident | string)
 				{string | char
 					| ArrowExpression<false, false>
 					| SwitchStatement
-					| IF(state.isAnonymousClassOrInitializer()) AnonymousClassOrInitializer
+					| Instantiation
 					| ANY
 				} ";"
 		| Block
@@ -133,6 +133,8 @@ SwitchCase<boolean inAssignment> =
 	.
 ParExpr = "(" {ParExpr | ANY} ")".
 BraceExpr = "{" {BraceExpr | ANY} "}".
+BracketExpr = "[" {ANY} "]".
+AngleBracketExpr = "<" {ANY} ">".
 ArrowExpression<boolean inSwitch, boolean inAssignment> =
 		"->" (Block | SSArrowBody<inSwitch, inAssignment>)
 	.
@@ -142,7 +144,7 @@ SSArrowBody<boolean inSwitch, boolean inAssignment> =
 				{ANY | ParExpr}
 				(")" | ";")									(. state.leaveSingleStatement(); .)
 				.
-AnonymousClassOrInitializer = "new" ident {ANY} ParExpr BraceExpr.
+Instantiation = "new" ident {["."] ident} (BracketExpr [BraceExpr] | [AngleBracketExpr] ParExpr ["{" ClassBody]).
 Block = 														(. state.enterBlock(); .)
 				"{" {Statement} "}"					(. state.leaveBlock(); .)
 			.

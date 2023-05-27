@@ -190,20 +190,6 @@ public class ParserState {
     }
   }
 
-  boolean isAnonymousClassOrInitializer() {
-    boolean beginningTokens =
-        parser.la.kind == _new
-            && parser.scanner.Peek().kind == _ident;
-    if (!beginningTokens) return false;
-    Token laToken;
-    while ((laToken = parser.scanner.Peek()) != null) {
-      if (laToken.kind == _lbrac) return false;
-      if (laToken.val.equals(";")) return false;
-      if (laToken.kind == _lbrace) return true;
-    }
-    return false;
-  }
-
   boolean isAssignment() {
     return parser.t.kind == _equals;
   }
