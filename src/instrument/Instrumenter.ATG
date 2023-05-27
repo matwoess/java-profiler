@@ -106,7 +106,9 @@ Statement =
 		| IF(state.isLabel()) ident colon
 		| Annotation
 		| "super" (ParExpr  ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
-		| ("++" | "--" | ParExpr | Instantiation | ident | string)
+		| ("++" | "--") ["("] ident [")"] ";"
+		| "throw" ["new"] ident [ParExpr] ";" // TODO: investigate if needed
+		| (ParExpr | Instantiation | ident | string)
 				{string | char
 					| ArrowExpression<false, false>
 					| SwitchStatement
