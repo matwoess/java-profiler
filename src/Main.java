@@ -24,6 +24,12 @@ public class Main {
         return;
       }
       instrumentOnly(args[1]);
+    } else if (args[0].equals("-r") || args[0].equals("--generate-report")) {
+      if (args.length != 1) {
+        printUsage();
+        return;
+      }
+      generateReportOnly();
     } else if (args[0].equals("-d") || args[0].equals("--sources-directory")) {
       if (args.length < 3) {
         printUsage();
@@ -48,6 +54,11 @@ public class Main {
     } else {
       instrumentFolder(targetPath);
     }
+  }
+
+  private static void generateReportOnly() {
+    Profiler profiler = new Profiler(null);
+    profiler.generateReport();
   }
 
   private static void instrumentSingleFile(Path file) {
