@@ -69,4 +69,59 @@ public class TestAnonymousClasses {
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 28, 30, 692, 713));
     assertIterableEquals(expectedBlocks, blocks);
   }
+
+  @Test
+  public void TestAs2ndArgumentInClassLevelMethodWithGenericType() {
+    String fileContent = String.format(baseTemplate, "", """
+        static List<Integer> getSortedIntegers(List<Integer> arrayList) {
+          Collections.sort(arrayList, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer i1, Integer i2) {
+              if (i1.equals(i2)) {
+                return 0;
+              }
+             
+              return i1 < i2 ? -1 : 1;
+            }
+          });
+          return arrayList;
+        }
+        """);
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(4, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 4, 62, 71));
+    meth = new Method("getSortedIntegers");
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 17, 140, 380));
+    clazz = new Class("Main.Anonymous");
+    meth = new Method("compare");
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 8, 14, 261, 352));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 11, 288, 314));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
+  @Test
+  public void TestAsStatementStartInMethod() {
+    String fileContent = String.format(baseTemplate, """
+        new Main() {
+          @Override
+          public int hashCode() {
+            return super.hashCode();
+          }
+        };
+        """, "");
+    List<Block> blocks = getFoundBlocks(fileContent);
+    assertEquals(2, blocks.size());
+    List<Block> expectedBlocks = new ArrayList<>();
+    Class clazz = new Class("Main", true);
+    Method meth = new Method("main", true);
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 158));
+    clazz = new Class("Main.Anonymous");
+    meth = new Method("hashCode");
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 7, 117, 150));
+    assertIterableEquals(expectedBlocks, blocks);
+  }
+
 }
