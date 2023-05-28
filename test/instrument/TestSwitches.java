@@ -14,14 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestSwitches {
-  public String baseTemplate = """
-      public class Main {
-        public static void main(String[] args) {
-          %s
-        }
-      }
-      """;
-
 
   @Test
   public void TestSwitch() {
@@ -42,7 +34,7 @@ public class TestSwitches {
           }
           default: { break; }
         }
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(6, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -73,7 +65,7 @@ public class TestSwitches {
           }
           default -> throw new RuntimeException("should never happen");
         }
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(6, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
@@ -107,7 +99,7 @@ public class TestSwitches {
           }
         };
         System.out.println("result=" + result);
-        """);
+        """, "");
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(6, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
