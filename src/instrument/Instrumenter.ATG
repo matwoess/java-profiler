@@ -146,7 +146,11 @@ SSArrowBody<boolean inSwitch, boolean inAssignment> =
 				{ANY | ParExpr}
 				(")" | ";")									(. state.leaveSingleStatement(); .)
 				.
-Instantiation = "new" ident {["."] ident} (BracketExpr [BraceExpr] | [AngleBracketExpr] ParExpr ["{" ClassBody]).
+Instantiation = "new" ident {["."] ident}
+		(BracketExpr [BraceExpr] // array initializer
+			| [AngleBracketExpr] ParExpr ["{" (. state.enterClass(true); .) ClassBody (. state.leaveClass();.)]
+		)
+		.
 Block = 														(. state.enterBlock(); .)
 				"{" {Statement} "}"					(. state.leaveBlock(); .)
 			.

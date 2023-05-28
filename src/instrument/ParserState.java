@@ -36,17 +36,26 @@ public class ParserState {
   }
 
   void enterClass() {
+    enterClass(false);
+  }
+
+  void enterClass(boolean anonymous) {
     if (curClass != null) {
       classStack.push(curClass);
     }
-    String className = (!classStack.isEmpty()) ? classStack.peek().name + "." + parser.la.val : parser.la.val;
-    curClass = new Class(className);
-    curClass.classType = switch (parser.t.kind) {
-      case _class -> ClassType.CLASS;
-      case _interface -> ClassType.INTERFACE;
-      case _enum -> ClassType.ENUM;
-      default -> throw new RuntimeException(String.format("unknown class type '%s' discovered.\n", parser.t));
-    };
+    String className = (anonymous) ? "Anonymous" : parser.la.val;
+    String fullClassName = (!classStack.isEmpty()) ? classStack.peek().name + "." + className : className;
+    curClass = new Class(fullClassName);
+    if (anonymous) {
+      curClass.classType = ClassType.ANONYMOUS;
+    } else {
+      curClass.classType = switch (parser.t.kind) {
+        case _class -> ClassType.CLASS;
+        case _interface -> ClassType.INTERFACE;
+        case _enum -> ClassType.ENUM;
+        default -> throw new RuntimeException(String.format("unknown class type '%s' discovered.\n", parser.t));
+      };
+    }
     allClasses.add(curClass);
     System.out.printf("entering class <%s>\n", curClass.name);
   }
