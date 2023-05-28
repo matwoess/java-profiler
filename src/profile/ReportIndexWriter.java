@@ -16,7 +16,7 @@ public class ReportIndexWriter extends AbstractHtmlWriter {
           border-collapse: collapse;
         }
         table, th, td {
-          border: 1p x solid #ddd;
+          border: 1px solid #ddd;
         }
         th, td {
           padding: 8px;
