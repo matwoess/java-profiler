@@ -19,6 +19,7 @@ public class ParserState {
   Stack<Class> classStack = new Stack<>();
   List<Block> allBlocks = new ArrayList<>();
   Stack<Block> blockStack = new Stack<>();
+  Stack<Method> methodStack = new Stack<>();
   Class curClass = null;
   Method curMeth = null;
   Block curBlock = null;
@@ -43,6 +44,10 @@ public class ParserState {
     if (curClass != null) {
       classStack.push(curClass);
     }
+    if (curMeth != null) {
+      methodStack.push(curMeth);
+      curMeth = null;
+    }
     String className = (anonymous) ? "Anonymous" : parser.la.val;
     String fullClassName = (!classStack.isEmpty()) ? classStack.peek().name + "." + className : className;
     curClass = new Class(fullClassName);
@@ -66,6 +71,9 @@ public class ParserState {
       curClass = null;
     } else {
       curClass = classStack.pop();
+    }
+    if (!methodStack.empty()) {
+      curMeth = methodStack.pop();
     }
   }
 
