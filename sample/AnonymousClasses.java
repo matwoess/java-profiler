@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FilenameFilter;
+ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +50,7 @@ public class AnonymousClasses {
     return arrayList;
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     Path currentDir = Path.of(".");
     File firstJFile = firstJavaFile(currentDir);
     System.out.println("first java file in current directory is: " + firstJFile);
@@ -58,5 +59,13 @@ public class AnonymousClasses {
     arrayList.add(1);
     arrayList.add(2);
     getSortedIntegers(arrayList);
+    new AnonymousClasses() {
+      @Override
+      public int hashCode() {
+        return super.hashCode();
+      }
+    };
+    new Classes().main(null);
+    new Classes.PetFarm().equals(null);
   }
 }
