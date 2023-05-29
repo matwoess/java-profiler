@@ -56,13 +56,13 @@ public class TestAnonymousClasses {
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 31, 118, 715));
     clazz = new Class("Main.Anonymous");
     meth = new Method("accept");
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 13, 289, 361));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 10, 13, 289, 361));
     clazz = new Class("Main.Anonymous.X");
     meth = new Method("methodInX");
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 16, 18, 408, 503));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 16, 18, 408, 503));
     clazz = new Class("Main.Anonymous");
     meth = new Method("returnTrue");
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 21, 24, 544, 590));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 21, 24, 544, 590));
     clazz = new Class("Main", true);
     meth = new Method("firstJavaFile");
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 26, 28, 653, 685));
@@ -97,7 +97,7 @@ public class TestAnonymousClasses {
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 17, 140, 380));
     clazz = new Class("Main.Anonymous");
     meth = new Method("compare");
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 8, 14, 261, 352));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 14, 261, 352));
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 11, 288, 314));
     assertIterableEquals(expectedBlocks, blocks);
   }
@@ -120,7 +120,7 @@ public class TestAnonymousClasses {
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 158));
     clazz = new Class("Main.Anonymous");
     meth = new Method("hashCode");
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 7, 117, 150));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 7, 117, 150));
     assertIterableEquals(expectedBlocks, blocks);
   }
 

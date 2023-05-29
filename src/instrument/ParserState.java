@@ -13,7 +13,6 @@ public class ParserState {
   Parser parser;
 
   int beginOfImports = 0;
-  int endOfSuperCall;
 
   List<Class> allClasses = new ArrayList<>();
   Stack<Class> classStack = new Stack<>();
@@ -33,7 +32,8 @@ public class ParserState {
   }
 
   void markEndOfSuperCall() {
-    endOfSuperCall = parser.t.charPos + parser.t.val.length();
+    assert curClass != null && curMeth != null && curBlock.blockType == BlockType.CONSTRUCTOR;
+    curBlock.endOfSuperCall = parser.t.charPos + parser.t.val.length();
   }
 
   void enterClass() {
@@ -67,13 +67,13 @@ public class ParserState {
 
   void leaveClass() {
     System.out.printf("left class <%s>\n", curClass.name);
+    if (curClass.classType == ClassType.ANONYMOUS && !methodStack.empty()) {
+      curMeth = methodStack.pop();
+    }
     if (classStack.empty()) {
       curClass = null;
     } else {
       curClass = classStack.pop();
-    }
-    if (!methodStack.empty()) {
-      curMeth = methodStack.pop();
     }
   }
 
@@ -91,21 +91,8 @@ public class ParserState {
     System.out.println("method is main entry point.");
   }
 
-  void leaveMethod() {
-    curBlock.blockType = BlockType.METHOD;
-    if (curMeth.name.equals(curClass.name)) { // TODO: not entirely correct, also must not have return type
-      curBlock.blockType = BlockType.CONSTRUCTOR;
-      if (endOfSuperCall != 0) {
-        curBlock.endOfSuperCall = endOfSuperCall;
-      }
-    }
-    System.out.println("left method: " + curMeth.name);
-    curMeth = null;
-    endOfSuperCall = 0;
-  }
-
-  void enterBlock() {  // no missing braces
-    enterBlock(getBlockTypeByContext());
+  void enterBlock(boolean isMethod) {  // no missing braces
+    enterBlock(getBlockTypeByContext(isMethod));
   }
 
   void enterBlock(BlockType blockType) {
@@ -129,17 +116,19 @@ public class ParserState {
     System.out.printf("entering %s\n", curBlock);
   }
 
-  void leaveBlock() {
+  void leaveBlock(boolean isMethod) {
     curBlock.end = parser.t.line;
     curBlock.endPos = parser.t.charPos + parser.t.val.length();
-    System.out.printf("left %s\n", curBlock);
     if (blockStack.empty()) {
-      if (curMeth != null) {
-        leaveMethod();
-      }
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
+    }
+    if (isMethod) {
+      System.out.println("left method: " + curMeth.name);
+      curMeth = null;
+    } else {
+      System.out.printf("left %s\n", curBlock);
     }
   }
 
@@ -155,11 +144,18 @@ public class ParserState {
 
   void leaveSingleStatement() {
     if (curBlock.blockType.hasNoBraces()) {
-      leaveBlock();
+      leaveBlock(false);
     }
   }
 
-  BlockType getBlockTypeByContext() {
+  BlockType getBlockTypeByContext(boolean isMethod) {
+    if (isMethod) {
+      if (curMeth.name.equals(curClass.name)) { // TODO: not entirely correct, also must not have return type
+        return BlockType.CONSTRUCTOR;
+      } else {
+        return BlockType.METHOD;
+      }
+    }
     return getBlockTypeByContext(false, false, false, false);
   }
 
