@@ -72,15 +72,19 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   }
 
   private List<CodeInsert> getTagInserts(String sourceCode) {
+    char lf = '\n';
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(0, "<span>"));
     for (Block block : javaFile.foundBlocks) {
-      inserts.add(new CodeInsert(block.begPos, "</span>"));
-      inserts.add(new CodeInsert(block.begPos, codeSpanAt(block.begPos)));
-      inserts.add(new CodeInsert(block.endPos, "</span>"));
-      inserts.add(new CodeInsert(block.endPos, codeSpanAt(block.endPos)));
+      if (sourceCode.charAt(block.begPos) != lf) { // optimization to not add 0-length block spans
+        inserts.add(new CodeInsert(block.begPos, "</span>"));
+        inserts.add(new CodeInsert(block.begPos, codeSpanAt(block.begPos)));
+      }
+      if (sourceCode.charAt(block.endPos) != lf) { // optimization to not add 0-length block spans
+        inserts.add(new CodeInsert(block.endPos, "</span>"));
+        inserts.add(new CodeInsert(block.endPos, codeSpanAt(block.endPos)));
+      }
     }
-    char lf = '\n';
     for (int index = sourceCode.indexOf(lf); index >= 0; index = sourceCode.indexOf(lf, index + 1)) {
       inserts.add(new CodeInsert(index, "</span>"));
       inserts.add(new CodeInsert(index + 1, codeSpanAt(index + 1)));
