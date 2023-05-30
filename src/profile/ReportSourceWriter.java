@@ -35,7 +35,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       String sourceCode = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
       StringBuilder builder = new StringBuilder();
       int prevIdx = 0;
-      List<CodeInsert> tagInserts = getTagInserts(sourceCode.length());
+      List<CodeInsert> tagInserts = getTagInserts(sourceCode);
       for (CodeInsert tagInsert : tagInserts) {
         builder.append(sourceCode, prevIdx, tagInsert.chPos());
         prevIdx = tagInsert.chPos();
@@ -43,8 +43,8 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       }
       builder.append(sourceCode.substring(prevIdx));
       String annotatedCode = builder.toString();
-      //String tabledCode = getCodeTable(annotatedCode);
-      content.append(annotatedCode);
+      String tabledCode = getCodeTable(annotatedCode);
+      content.append(tabledCode);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -55,12 +55,11 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   private String getCodeTable(String annotatedCode) {
     StringBuilder builder = new StringBuilder();
     builder.append("<table>\n");
-    builder.append("<tbody>\n");
     int lineNr = 1;
     String[] splitLines = annotatedCode.split("\n");
     for (String line : splitLines) {
       builder.append("<tr>");
-      builder.append("<td class=\"lineNr\">");
+      builder.append("<td class=\"lNr\">");
       builder.append(lineNr);
       lineNr++;
       builder.append("</td><td class=\"code\">");
@@ -68,12 +67,11 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       builder.append("</td>");
       builder.append("</tr>\n");
     }
-    builder.append("</tbody>\n");
     builder.append("</table>\n");
     return builder.toString();
   }
 
-  private List<CodeInsert> getTagInserts(int textLength) {
+  private List<CodeInsert> getTagInserts(String sourceCode) {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(0, "<span>"));
     for (Block block : javaFile.foundBlocks) {
@@ -82,7 +80,12 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       inserts.add(new CodeInsert(block.endPos, "</span>"));
       inserts.add(new CodeInsert(block.endPos, codeSpanAt(block.endPos)));
     }
-    inserts.add(new CodeInsert(textLength, "</span>"));
+    char lf = '\n';
+    for (int index = sourceCode.indexOf(lf); index >= 0; index = sourceCode.indexOf(lf, index + 1)) {
+      inserts.add(new CodeInsert(index, "</span>"));
+      inserts.add(new CodeInsert(index + 1, codeSpanAt(index + 1)));
+    }
+    inserts.add(new CodeInsert(sourceCode.length(), "</span>"));
     inserts.sort(Comparator.comparing(CodeInsert::chPos));
     return inserts;
   }
