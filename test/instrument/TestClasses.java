@@ -329,7 +329,7 @@ public class TestClasses {
     clazz = new Class("SmallDog");
     meth = new Method("SmallDog");
     Block blockWithSuperCall = getBlock(CONSTRUCTOR, clazz, meth, 14, 18, 254, 319);
-    blockWithSuperCall.endOfSuperCall = blockWithSuperCall.begPos + "\n    super(name, age);".length();
+    blockWithSuperCall.incInsertPosition = blockWithSuperCall.begPos + "\n    super(name, age);".length();
     expectedBlocks.add(blockWithSuperCall);
     meth = new Method("speak");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 20, 26, 350, 441));

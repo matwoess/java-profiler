@@ -85,13 +85,7 @@ public class Instrumenter {
         assert block.blockType != BlockType.METHOD;
         inserts.add(new CodeInsert(block.begPos, "{"));
       }
-      int counterIncrementPosition = block.begPos;
-      if (block.blockType == BlockType.CONSTRUCTOR) {
-        if (block.endOfSuperCall != 0) {
-          counterIncrementPosition = block.endOfSuperCall;
-        }
-      }
-      inserts.add(new CodeInsert(counterIncrementPosition, String.format("__Counter.inc(%d);", blockCounter++)));
+      inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc(%d);", blockCounter++)));
       if (block.blockType.hasNoBraces()) {
         inserts.add(new CodeInsert(block.endPos, "}"));
       }

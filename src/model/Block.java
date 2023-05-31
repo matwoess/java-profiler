@@ -12,7 +12,7 @@ public class Block implements Serializable {
   public int endPos;
   public BlockType blockType;
 
-  public int endOfSuperCall;
+  public int incInsertPosition;
   transient public int hits;
 
   public String toString() {
@@ -21,7 +21,7 @@ public class Block implements Serializable {
         method != null ? ("." + method.name) : "",
         beg,
         begPos,
-        endOfSuperCall != 0 ? "(" + endOfSuperCall + ")" : "",
+        incInsertPosition != 0 ? "(" + incInsertPosition + ")" : "",
         end != 0 ? end : "?",
         endPos != 0 ? endPos : "?",
         blockType.toString(),
@@ -38,7 +38,7 @@ public class Block implements Serializable {
     if (end != block.end) return false;
     if (begPos != block.begPos) return false;
     if (endPos != block.endPos) return false;
-    if (endOfSuperCall != block.endOfSuperCall) return false;
+    if (incInsertPosition != block.incInsertPosition) return false;
     if (!clazz.equals(block.clazz)) return false;
     if (!Objects.equals(method, block.method)) return false;
     return blockType == block.blockType;
@@ -53,7 +53,11 @@ public class Block implements Serializable {
     result = 31 * result + begPos;
     result = 31 * result + endPos;
     result = 31 * result + blockType.hashCode();
-    result = 31 * result + endOfSuperCall;
+    result = 31 * result + incInsertPosition;
     return result;
+  }
+
+  public int getIncInsertPos() {
+    return (incInsertPosition != 0) ? incInsertPosition : begPos;
   }
 }

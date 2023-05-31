@@ -33,7 +33,7 @@ public class ParserState {
 
   void markEndOfSuperCall() {
     assert curClass != null && curMeth != null && curBlock.blockType == BlockType.CONSTRUCTOR;
-    curBlock.endOfSuperCall = parser.t.charPos + parser.t.val.length();
+    curBlock.incInsertPosition = parser.t.charPos + parser.t.val.length();
   }
 
   void enterClass() {
@@ -103,9 +103,14 @@ public class ParserState {
     curBlock = new Block();
     curBlock.clazz = curClass;
     curBlock.method = curMeth;
-    Token blockStartToken = blockType.hasNoBraces() ? parser.t : parser.la; // la == '{'
-    curBlock.beg = blockStartToken.line;
-    curBlock.begPos = blockStartToken.charPos + blockStartToken.val.length();
+    if (blockType.hasNoBraces()) {
+      curBlock.beg = parser.t.line;
+      curBlock.begPos = parser.t.charPos + parser.t.val.length();
+    } else { // la == '{'
+      curBlock.beg = parser.la.line;
+      curBlock.begPos = parser.la.charPos;
+      curBlock.incInsertPosition = parser.la.charPos + parser.la.val.length();
+    }
     curBlock.blockType = blockType;
     allBlocks.add(curBlock);
     if (curMeth != null) {
