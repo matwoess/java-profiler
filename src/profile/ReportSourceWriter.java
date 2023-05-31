@@ -23,6 +23,15 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     includeScripts = new String[]{
         "https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     };
+    cssStyle = """
+        td.lNr {
+          text-align: right;
+          background-color: #eee;
+        }
+        td.hits {
+          background-color: #ddd;
+        }
+        """;
     bodyScripts = new String[]{
         javaFile.getReportHtmlFile().getParent().relativize(reportHighlighter).toString()
     };
@@ -59,12 +68,9 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     String[] splitLines = annotatedCode.split("\n");
     for (String line : splitLines) {
       builder.append("<tr>");
-      builder.append("<td class=\"lNr\">");
-      builder.append(lineNr);
-      lineNr++;
-      builder.append("</td><td class=\"code\">");
-      builder.append(line);
-      builder.append("</td>");
+      builder.append("<td class=\"hits\">").append(getHitsForLine(lineNr)).append("</td>");
+      builder.append("<td class=\"lNr\">").append(lineNr++).append("</td>");
+      builder.append("<td class=\"code\">").append(line).append("</td");
       builder.append("</tr>\n");
     }
     builder.append("</table>\n");
@@ -92,6 +98,17 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     inserts.add(new CodeInsert(sourceCode.length(), "</span>"));
     inserts.sort(Comparator.comparing(CodeInsert::chPos));
     return inserts;
+  }
+
+  private String getHitsForLine(int lineNr) {
+    List<Block> activeBlocks = new ArrayList<>();
+    for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
+      Block b = javaFile.foundBlocks.get(i);
+      if (b.beg <= lineNr && lineNr <= b.end) {
+        activeBlocks.add(b);
+      }
+    }
+    return String.join(" ", activeBlocks.stream().map(b -> Integer.toString(b.hits)).toArray(String[]::new));
   }
 
   private String codeSpan(List<Integer> activeBlocks, Block block) {
