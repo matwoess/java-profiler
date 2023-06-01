@@ -70,7 +70,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       builder.append("<tr>");
       builder.append("<td class=\"hits\">").append(getHitsForLine(lineNr)).append("</td>");
       builder.append("<td class=\"lNr\">").append(lineNr++).append("</td>");
-      builder.append("<td class=\"code\">").append(line).append("</td");
+      builder.append("<td class=\"code\">").append(line).append("</td>");
       builder.append("</tr>\n");
     }
     builder.append("</table>\n");
