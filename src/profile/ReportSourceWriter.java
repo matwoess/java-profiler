@@ -46,7 +46,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       int prevIdx = 0;
       List<CodeInsert> tagInserts = getTagInserts(sourceCode);
       for (CodeInsert tagInsert : tagInserts) {
-        builder.append(sourceCode, prevIdx, tagInsert.chPos());
+        builder.append(escapeHtmlTagCharacters(sourceCode.substring(prevIdx, tagInsert.chPos())));
         prevIdx = tagInsert.chPos();
         builder.append(tagInsert.code());
       }
@@ -59,6 +59,10 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     }
     content.append("</code>\n");
     content.append("</pre>\n");
+  }
+
+  public static String escapeHtmlTagCharacters(String code) {
+    return code.replace("<", "&lt;").replace(">", "&gt;");
   }
 
   private String getCodeTable(String annotatedCode) {
