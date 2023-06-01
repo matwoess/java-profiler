@@ -54,7 +54,12 @@ public class Util {
     block.clazz = clazz;
     block.method = meth;
     block.beg = beg;
-    block.begPos = begPos;
+    if (block.blockType.hasNoBraces()) {
+      block.begPos = begPos;
+    } else {
+      block.incInsertPosition = begPos;
+      block.begPos = begPos - 1;
+    }
     block.end = end;
     block.endPos = endPos;
     return block;
