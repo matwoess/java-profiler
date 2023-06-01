@@ -1,16 +1,11 @@
 package auxiliary;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
+import java.io.*;
 
 public class __Counter {
   static {
-    init("../metadata.txt");
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> save(("../counts.txt"))));
+    init("../metadata.dat");
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> save(("../counts.dat"))));
   }
 
   private static int[] blockCounts;
@@ -21,8 +16,7 @@ public class __Counter {
 
   public static synchronized void init(String fileName) {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
-      // number of blocks is the first value of the metadata file
-      int nBlocks = ois.readInt();
+      int nBlocks = ois.readInt(); // number of blocks is the first value of the metadata file
       blockCounts = new int[nBlocks];
     } catch (IOException | NumberFormatException e) {
       throw new RuntimeException(e);
@@ -30,15 +24,12 @@ public class __Counter {
   }
 
   public static synchronized void save(String fileName) {
-    Path countsFile = Path.of(fileName);
-    StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < blockCounts.length; i++) {
-      int block = blockCounts[i];
-      builder.append(block).append(" ");
-    }
-    try {
-      Files.writeString(countsFile, builder.toString());
-    } catch (IOException e) {
+    try (DataOutputStream dis = new DataOutputStream(new FileOutputStream(fileName))) {
+      dis.writeInt(blockCounts.length);
+      for (int blockCount : blockCounts) {
+        dis.writeInt(blockCount);
+      }
+    } catch (IOException | NumberFormatException e) {
       throw new RuntimeException(e);
     }
   }

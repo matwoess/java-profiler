@@ -6,8 +6,9 @@ import misc.Util;
 import model.Block;
 import model.JavaFile;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.PrimitiveIterator;
@@ -83,13 +84,17 @@ public class Profiler {
   }
 
   private static void addHitCountToJavaFileBlocks(JavaFile[] allJavaFiles) {
-    PrimitiveIterator.OfInt allBlockCounts;
-    try {
-      allBlockCounts = Arrays.stream(Files.readString(Constants.resultsFile).split(" "))
-          .mapToInt(Integer::parseInt).iterator();
+    int[] counts;
+    try (DataInputStream dis = new DataInputStream(new FileInputStream(Constants.resultsFile.toString()))) {
+      int nCounts = dis.readInt();
+      counts = new int[nCounts];
+      for (int i = 0; i < nCounts; i++) {
+        counts[i] = dis.readInt();
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    PrimitiveIterator.OfInt allBlockCounts = Arrays.stream(counts).iterator();
     for (JavaFile jFile : allJavaFiles) {
       for (Block block : jFile.foundBlocks) {
         if (!allBlockCounts.hasNext()) {
