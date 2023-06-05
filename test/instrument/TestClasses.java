@@ -289,7 +289,7 @@ public class TestClasses {
   }
 
   @Test
-  public void TestInheritedClassWithSuperCall() {
+  public void TestInheritedClassWithSuperCallAndThisCall() {
     String classWithInheritance = """
         class Dog {
           String name;
@@ -309,6 +309,10 @@ public class TestClasses {
             amSmall = true;
             super.speak();
           }
+          public SmallDog(String name, int age, boolean small) {
+            this(name, age);
+            amSmall = small;
+          }
           @Override
           String speak() {
             if (amSmall) {
@@ -319,7 +323,7 @@ public class TestClasses {
           }
         }""";
     List<Block> blocks = getFoundBlocks(classWithInheritance);
-    assertEquals(6, blocks.size());
+    assertEquals(7, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
     Class clazz = new Class("Dog");
     Method meth = new Method("Dog");
@@ -331,10 +335,13 @@ public class TestClasses {
     Block blockWithSuperCall = getBlock(CONSTRUCTOR, clazz, meth, 14, 18, 254, 319);
     blockWithSuperCall.incInsertPosition = blockWithSuperCall.incInsertPosition + "\n    super(name, age);".length();
     expectedBlocks.add(blockWithSuperCall);
+    Block blockWithThisCall = getBlock(CONSTRUCTOR, clazz, meth, 19, 22, 376, 422);
+    blockWithThisCall.incInsertPosition = blockWithThisCall.incInsertPosition + "\n    this(name, age);".length();
+    expectedBlocks.add(blockWithThisCall);
     meth = new Method("speak");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 20, 26, 350, 441));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 21, 23, 369, 396));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 23, 25, 403, 437));
+    expectedBlocks.add(getBlock(METHOD, clazz, meth, 24, 30, 453, 544));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 25, 27, 472, 499));
+    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 27, 29, 506, 540));
     assertIterableEquals(expectedBlocks, blocks);
   }
 }
