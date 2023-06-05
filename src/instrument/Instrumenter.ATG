@@ -53,6 +53,7 @@ TOKENS
 	main       = "main".
 	equals     = "=".
 	new        = "new".
+	this        = "this".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -105,10 +106,11 @@ Statement =
 		| ("break" | "return" | "continue") {ANY} ";"
 		| IF(state.isLabel()) ident colon
 		| Annotation
-		| "super" (ParExpr  ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
+		| "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
+		| IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
 		| ("++" | "--") ["("] ident [")"] ";"
 		| "throw" ["new"] ident [ParExpr] ";" // TODO: investigate if needed
-		| (ParExpr | Instantiation | ident | string)
+		| (ParExpr | Instantiation | ident | string | this)
 				{string | char
 					| ArrowExpression<false, false>
 					| SwitchStatement

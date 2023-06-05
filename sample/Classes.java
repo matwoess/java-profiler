@@ -89,6 +89,11 @@ class SmallDog extends Dog {
     super.speak();
   }
 
+  public SmallDog(String name, int age, boolean small) {
+    this(name, age);
+    amSmall = small;
+  }
+
   @Override
   String speak() {
     if (amSmall) {

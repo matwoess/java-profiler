@@ -194,6 +194,10 @@ public class ParserState {
     return parser.la.kind == _ident && parser.scanner.Peek().kind == _colon;
   }
 
+  boolean thisAndLPar() {
+    return parser.la.kind == _this && parser.scanner.Peek().kind == _lpar;
+  }
+
   boolean isEntryPoint() {
     if (curClass.classType == ClassType.INTERFACE) {
       // the "public" can be omitted in interfaces (implied)
