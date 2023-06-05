@@ -18,31 +18,36 @@ public class Main {
       printUsage();
       return;
     }
-    if (args[0].equals("-i") || args[0].equals("--instrument-only")) {
-      if (args.length != 2) {
-        printUsage();
-        return;
+    switch (args[0]) {
+      case "-i", "--instrument-only" -> {
+        if (args.length != 2) {
+          printUsage();
+          return;
+        }
+        instrumentOnly(args[1]);
       }
-      instrumentOnly(args[1]);
-    } else if (args[0].equals("-r") || args[0].equals("--generate-report")) {
-      if (args.length != 1) {
-        printUsage();
-        return;
+      case "-r", "--generate-report" -> {
+        if (args.length != 1) {
+          printUsage();
+          return;
+        }
+        generateReportOnly();
       }
-      generateReportOnly();
-    } else if (args[0].equals("-d") || args[0].equals("--sources-directory")) {
-      if (args.length < 3) {
-        printUsage();
-        return;
+      case "-d", "--sources-directory" -> {
+        if (args.length < 3) {
+          printUsage();
+          return;
+        }
+        Path instrumentDir = Path.of(args[1]);
+        Path mainFile = Path.of(args[2]);
+        String[] programArgs = Arrays.copyOfRange(args, 2, args.length);
+        instrumentFolderCompileAndRun(instrumentDir, mainFile, programArgs);
       }
-      Path instrumentDir = Path.of(args[1]);
-      Path mainFile = Path.of(args[2]);
-      String[] programArgs = Arrays.copyOfRange(args, 2, args.length);
-      instrumentFolderCompileAndRun(instrumentDir, mainFile, programArgs);
-    } else {
-      String[] programArgs = Arrays.copyOfRange(args, 1, args.length);
-      Path mainFile = Path.of(args[1]);
-      instrumentCompileAndRun(mainFile, programArgs);
+      default -> {
+        String[] programArgs = Arrays.copyOfRange(args, 1, args.length);
+        Path mainFile = Path.of(args[1]);
+        instrumentCompileAndRun(mainFile, programArgs);
+      }
     }
   }
 
@@ -116,12 +121,16 @@ public class Main {
 
   }
 
-  static void printUsage() {  // TODO: update
+  static void printUsage() {
     System.out.println("""
-        Usage: <main class> [-h] FOLDER FILE
-          FOLDER          Folder containing java source files. All java files in it will be instrumented.
-          FILE            Main java class file (entry point). Will be instrumented and executed.
-          -h,--help       Display this message and quit.
+        Usage: <main class> [option] [<main-file>] [arguments]
+        Options:
+          -h, --help                        Display this message and quit
+          -d, --sources-directory <dir>     directory containing java files to additionally instrument
+          -i, --instrument-only <file|dir>  only instrument a single file or directory of java files
+          -r, --generate-report             only generate a report from metadata and counts
+        Main file:    the path to the main java file; after instrumentation it will be compiled and run
+        Arguments:    will be passed to the main java class if given
         """);
   }
 }
