@@ -45,7 +45,7 @@ public class Main {
       }
       default -> {
         String[] programArgs = Arrays.copyOfRange(args, 1, args.length);
-        Path mainFile = Path.of(args[1]);
+        Path mainFile = Path.of(args[0]);
         instrumentCompileAndRun(mainFile, programArgs);
       }
     }
