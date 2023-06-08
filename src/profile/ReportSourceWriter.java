@@ -109,9 +109,16 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
       Block b = javaFile.foundBlocks.get(i);
       if (b.beg <= lineNr && lineNr <= b.end) {
-        String coverageStatus = b.hits > 0 ? "c" : "nc";
         String blockTag = "b" + i;
-        builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, blockTag, b.hits));
+        String hits = Integer.toString(b.hits);
+        String coverageStatus;
+        if (b.blockType.isNotYetSupported()) {
+          coverageStatus = "u";
+          hits = "?";
+        } else {
+          coverageStatus = b.hits > 0 ? "c" : "nc";
+        }
+        builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, blockTag, hits));
         builder.append(" ");
       }
     }
