@@ -4,6 +4,7 @@ import misc.Constants;
 import misc.IO;
 import misc.Util;
 import model.Block;
+import model.Class;
 import model.JavaFile;
 
 import java.io.DataInputStream;
@@ -73,7 +74,7 @@ public class Profiler {
     for (JavaFile jFile : allJavaFiles) {
       generateReportFile(jFile);
     }
-    ReportIndexWriter index = new ReportIndexWriter();
+    ReportClassIndexWriter index = new ReportClassIndexWriter();
     index.header();
     index.bodyStart();
     index.heading(index.title);
@@ -110,13 +111,23 @@ public class Profiler {
 
   private void generateReportFile(JavaFile jFile) {
     String fileName = jFile.sourceFile.getFileName().toString();
+    Path reportHtmlFile = jFile.getReportHtmlFile();
     ReportSourceWriter report = new ReportSourceWriter(jFile, fileName);
     report.header();
     report.bodyStart();
     report.heading(fileName);
     report.codeDiv();
     report.bodyEnd();
-    report.write(jFile.getReportHtmlFile());
+    report.write(reportHtmlFile);
+    for (Class clazz : jFile.foundClasses) {
+      ReportMethodIndexWriter methodIndex = new ReportMethodIndexWriter(clazz.name);
+      methodIndex.header();
+      methodIndex.bodyStart();
+      methodIndex.heading(clazz.name);
+      methodIndex.sortedMethodTable(clazz, reportHtmlFile);
+      methodIndex.bodyEnd();
+      methodIndex.write(clazz.getReportMethodIndexPath());
+    }
   }
 
   private void copyJavaScriptFiles() {

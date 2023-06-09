@@ -7,10 +7,10 @@ import model.JavaFile;
 import java.nio.file.Path;
 import java.util.*;
 
-public class ReportIndexWriter extends AbstractHtmlWriter {
+public class ReportClassIndexWriter extends AbstractHtmlWriter {
 
-  public ReportIndexWriter() {
-    title = "Report";
+  public ReportClassIndexWriter() {
+    title = "Classes";
     cssStyle = """
         table {
           border-collapse: collapse;
@@ -43,14 +43,14 @@ public class ReportIndexWriter extends AbstractHtmlWriter {
         .append("</tr>\n");
     for (Class clazz : sortedClasses) {
       JavaFile javaFile = fileByClass.get(clazz);
-      Path href = Constants.reportDir.relativize(javaFile.getReportHtmlFile());
+      Path methIdxHref = clazz.getReportMethodIndexPath().getFileName();
+      Path sourceFileHref = Constants.reportDir.relativize(javaFile.getReportHtmlFile());
       content.append("<tr>\n")
           .append("<td>").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
-          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", href, clazz.name))
-          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", href, javaFile.sourceFile.toFile().getName()))
+          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.name))
+          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", sourceFileHref, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
     }
     content.append("</table>\n");
   }
-
 }

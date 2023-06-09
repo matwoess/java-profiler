@@ -18,6 +18,16 @@ public class Method implements Serializable {
     this.isMain = isMain;
   }
 
+  public boolean isAbstract() {
+    return blocks.size() == 0;
+  }
+
+  public Block getMethodBlock() {
+    Block methodBlock = blocks.get(0);
+    assert methodBlock.blockType == BlockType.METHOD;
+    return methodBlock;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
