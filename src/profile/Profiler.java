@@ -77,7 +77,7 @@ public class Profiler {
     index.header();
     index.bodyStart();
     index.heading(index.title);
-    index.sortedFileTable(allJavaFiles);
+    index.sortedClassTable(allJavaFiles);
     index.write(Constants.reportIndexFile);
     index.bodyEnd();
     copyJavaScriptFiles();

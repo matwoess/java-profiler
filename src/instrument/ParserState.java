@@ -116,7 +116,7 @@ public class ParserState {
     if (curMeth != null) {
       curMeth.blocks.add(curBlock);
     } else {
-      curClass.blocks.add(curBlock);
+      curClass.classBlocks.add(curBlock);
     }
     System.out.printf("entering %s\n", curBlock);
   }

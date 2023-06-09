@@ -9,7 +9,7 @@ public class Class implements Serializable {
   public boolean isMain;
   public ClassType classType;
   public List<Method> methods = new ArrayList<>();
-  public List<Block> blocks = new ArrayList<>();
+  public List<Block> classBlocks = new ArrayList<>();
 
   public Class(String name) {
     this.name = name;
@@ -20,13 +20,23 @@ public class Class implements Serializable {
     this.isMain = isMain;
   }
 
+
+  public int getAggregatedMethodBlockCounts() {
+    return methods.stream()
+        .flatMap(method -> method.blocks.stream())
+        .filter(b -> b.blockType == BlockType.METHOD)
+        .mapToInt(b -> b.hits)
+        .sum();
+  }
+
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Class method = (Class) o;
-    if (isMain != method.isMain) return false;
-    return name.equals(method.name);
+    Class clazz = (Class) o;
+    if (isMain != clazz.isMain) return false;
+    return name.equals(clazz.name);
   }
 
   @Override

@@ -1,11 +1,11 @@
 package profile;
 
 import misc.Constants;
+import model.Class;
 import model.JavaFile;
 
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 
 public class ReportIndexWriter extends AbstractHtmlWriter {
 
@@ -24,21 +24,30 @@ public class ReportIndexWriter extends AbstractHtmlWriter {
         """;
   }
 
-  public void sortedFileTable(JavaFile[] allJavaFiles) {
-    JavaFile[] sortedFiles = Arrays.stream(allJavaFiles)
-        .sorted(Comparator.comparingInt(JavaFile::getAggregatedMethodBlockCounts).reversed())
-        .toArray(JavaFile[]::new);
+  public void sortedClassTable(JavaFile[] allJavaFiles) {
+    Map<Class, JavaFile> fileByClass = new HashMap<>();
+    for (JavaFile jFile : allJavaFiles) {
+      for (Class clazz : jFile.foundClasses) {
+        fileByClass.put(clazz, jFile);
+      }
+    }
+    List<Class> sortedClasses = Arrays.stream(allJavaFiles)
+        .flatMap(f -> f.foundClasses.stream())
+        .sorted(Comparator.comparingInt(Class::getAggregatedMethodBlockCounts).reversed())
+        .toList();
     content.append("<table>\n")
         .append("<tr>\n")
         .append("<th>Method invocations</th>\n")
-        .append("<th>Detailed report</th>\n")
+        .append("<th>Class</th>\n")
+        .append("<th>Source file</th>\n")
         .append("</tr>\n");
-    for (JavaFile jFile : sortedFiles) {
-      Path href = Constants.reportDir.relativize(jFile.getReportHtmlFile());
-      Path filePath = Constants.reportDir.relativize(jFile.getReportFile());
+    for (Class clazz : sortedClasses) {
+      JavaFile javaFile = fileByClass.get(clazz);
+      Path href = Constants.reportDir.relativize(javaFile.getReportHtmlFile());
       content.append("<tr>\n")
-          .append("<td>").append(jFile.getAggregatedMethodBlockCounts()).append("</td>\n")
-          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", href, filePath))
+          .append("<td>").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
+          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", href, clazz.name))
+          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", href, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
     }
     content.append("</table>\n");

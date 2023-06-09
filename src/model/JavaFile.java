@@ -36,10 +36,6 @@ public class JavaFile implements Serializable {
     return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 
-  public int getAggregatedMethodBlockCounts() {
-    return foundBlocks.stream().filter(b -> b.blockType == BlockType.METHOD).mapToInt(b -> b.hits).sum();
-  }
-
   @Serial
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.defaultWriteObject();
