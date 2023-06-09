@@ -26,10 +26,10 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     cssStyle = """
         td.lNr {
           text-align: right;
-          background-color: #eee;
+          background-color: #dedede;
         }
         td.hits {
-          background-color: #ddd;
+          background-color: #eee;
         }
         """;
     bodyScripts = new String[]{
