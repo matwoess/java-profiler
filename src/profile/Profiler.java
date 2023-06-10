@@ -68,16 +68,14 @@ public class Profiler {
       allJavaFiles = IO.importMetadata().javaFiles();
     }
     addHitCountToJavaFileBlocks(allJavaFiles);
+    new ReportClassIndexWriter(allJavaFiles).write(IO.reportIndexFile);
     for (JavaFile jFile : allJavaFiles) {
-      generateReportFile(jFile);
+      Path reportSourceFile = jFile.getReportSourceFile();
+      new ReportSourceWriter(jFile).write(reportSourceFile);
+      for (Class clazz : jFile.foundClasses) {
+        new ReportMethodIndexWriter(clazz, reportSourceFile).write(clazz.getReportMethodIndexPath());
+      }
     }
-    ReportClassIndexWriter index = new ReportClassIndexWriter();
-    index.header();
-    index.bodyStart();
-    index.heading(index.title);
-    index.sortedClassTable(allJavaFiles);
-    index.write(IO.reportIndexFile);
-    index.bodyEnd();
     IO.copyJavaScriptFiles();
   }
 
@@ -103,27 +101,6 @@ public class Profiler {
     }
     if (allBlockCounts.hasNext()) {
       throw new RuntimeException("Too many block counts. Mismatching entry counts!");
-    }
-  }
-
-  private void generateReportFile(JavaFile jFile) {
-    String fileName = jFile.sourceFile.getFileName().toString();
-    Path reportHtmlFile = jFile.getReportHtmlFile();
-    ReportSourceWriter report = new ReportSourceWriter(jFile, fileName);
-    report.header();
-    report.bodyStart();
-    report.heading(fileName);
-    report.codeDiv();
-    report.bodyEnd();
-    report.write(reportHtmlFile);
-    for (Class clazz : jFile.foundClasses) {
-      ReportMethodIndexWriter methodIndex = new ReportMethodIndexWriter(clazz.name);
-      methodIndex.header();
-      methodIndex.bodyStart();
-      methodIndex.heading(clazz.name);
-      methodIndex.sortedMethodTable(clazz, reportHtmlFile);
-      methodIndex.bodyEnd();
-      methodIndex.write(clazz.getReportMethodIndexPath());
     }
   }
 

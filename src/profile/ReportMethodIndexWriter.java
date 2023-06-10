@@ -9,9 +9,13 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ReportMethodIndexWriter extends AbstractHtmlWriter {
+  Class clazz;
+  Path reportSourceFile;
 
-  public ReportMethodIndexWriter(String className) {
-    title = "Methods in " + className;
+  public ReportMethodIndexWriter(Class clazz, Path reportSourceFile) {
+    this.clazz = clazz;
+    this.reportSourceFile = reportSourceFile;
+    title = "Methods in " + clazz.name;
     cssStyle = """
         table {
           border-collapse: collapse;
@@ -25,7 +29,12 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         """;
   }
 
-  public void sortedMethodTable(Class clazz, Path reportSourceFile) {
+  @Override
+  public void body() {
+    sortedMethodTable();
+  }
+
+  public void sortedMethodTable() {
     List<Method> sortedMethods = clazz.methods.stream()
         .filter(method -> !method.isAbstract())
         .sorted(Comparator.comparingInt((Method m) -> m.getMethodBlock().hits).reversed())
@@ -45,5 +54,4 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
     }
     content.append("</table>\n");
   }
-
 }

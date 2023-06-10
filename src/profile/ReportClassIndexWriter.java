@@ -8,8 +8,10 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class ReportClassIndexWriter extends AbstractHtmlWriter {
+  JavaFile[] allJavaFiles;
 
-  public ReportClassIndexWriter() {
+  public ReportClassIndexWriter(JavaFile[] allJavaFiles) {
+    this.allJavaFiles = allJavaFiles;
     title = "Classes";
     cssStyle = """
         table {
@@ -24,7 +26,12 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         """;
   }
 
-  public void sortedClassTable(JavaFile[] allJavaFiles) {
+  @Override
+  public void body() {
+    sortedClassTable();
+  }
+
+  public void sortedClassTable() {
     Map<Class, JavaFile> fileByClass = new HashMap<>();
     for (JavaFile jFile : allJavaFiles) {
       for (Class clazz : jFile.foundClasses) {
@@ -44,7 +51,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     for (Class clazz : sortedClasses) {
       JavaFile javaFile = fileByClass.get(clazz);
       Path methIdxHref = clazz.getReportMethodIndexPath().getFileName();
-      Path sourceFileHref = IO.reportDir.relativize(javaFile.getReportHtmlFile());
+      Path sourceFileHref = IO.reportDir.relativize(javaFile.getReportSourceFile());
       content.append("<tr>\n")
           .append("<td>").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.name))

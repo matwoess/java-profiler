@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 public class ReportSourceWriter extends AbstractHtmlWriter {
   JavaFile javaFile;
 
-  public ReportSourceWriter(JavaFile javaFile, String title) {
+  public ReportSourceWriter(JavaFile javaFile) {
     this.javaFile = javaFile;
-    this.title = title;
+    this.title = javaFile.sourceFile.getFileName().toString();
     includeScripts = new String[]{
         "https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     };
@@ -32,8 +32,13 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         }
         """;
     bodyScripts = new String[]{
-        javaFile.getReportHtmlFile().getParent().relativize(IO.reportHighlighter).toString()
+        javaFile.getReportSourceFile().getParent().relativize(IO.reportHighlighter).toString()
     };
+  }
+
+  @Override
+  public void body() {
+    codeDiv();
   }
 
   public void codeDiv() {

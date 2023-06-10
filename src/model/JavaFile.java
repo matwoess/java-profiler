@@ -25,12 +25,8 @@ public class JavaFile implements Serializable {
     this.instrumentedFile = IO.instrumentDir.resolve(sourceFile);
   }
 
-  public Path getReportFile() {
-    return IO.reportDir.resolve(sourceFile);
-  }
-
-  public Path getReportHtmlFile() {
-    Path reportFilePath = getReportFile();
+  public Path getReportSourceFile() {
+    Path reportFilePath = IO.reportDir.resolve(sourceFile);
     return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 

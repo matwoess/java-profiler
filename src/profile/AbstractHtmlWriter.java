@@ -1,5 +1,7 @@
 package profile;
 
+import misc.IO;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,6 +37,8 @@ public abstract class AbstractHtmlWriter {
     content.append("<h1>").append(heading).append("</h1>\n");
   }
 
+  public abstract void body();
+
   public void bodyEnd() {
     if (bodyScripts != null) {
       for (String bodyScript : bodyScripts) {
@@ -45,8 +49,17 @@ public abstract class AbstractHtmlWriter {
     content.append("</html>\n");
   }
 
+  public void generate() {
+    header();
+    bodyStart();
+    heading(title);
+    body();
+    bodyEnd();
+  }
+
   public void write(Path destPath) {
-    destPath.getParent().toFile().mkdirs(); // make sure parent directory exists
+    this.generate();
+    IO.createDirectoriesIfNotExists(destPath);
     try {
       Files.writeString(destPath, content.toString());
     } catch (IOException e) {
