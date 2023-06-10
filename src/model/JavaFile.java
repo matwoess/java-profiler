@@ -25,11 +25,6 @@ public class JavaFile implements Serializable {
     this.instrumentedFile = IO.instrumentDir.resolve(sourceFile);
   }
 
-  public Path getReportSourceFile() {
-    Path reportFilePath = IO.reportDir.resolve(sourceFile);
-    return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
-  }
-
   @Serial
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.defaultWriteObject();

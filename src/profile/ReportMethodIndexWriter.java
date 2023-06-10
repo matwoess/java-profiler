@@ -2,6 +2,7 @@ package profile;
 
 import misc.IO;
 import model.Class;
+import model.JavaFile;
 import model.Method;
 
 import java.nio.file.Path;
@@ -12,9 +13,9 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
   Class clazz;
   Path reportSourceFile;
 
-  public ReportMethodIndexWriter(Class clazz, Path reportSourceFile) {
+  public ReportMethodIndexWriter(Class clazz, JavaFile javaFile) {
     this.clazz = clazz;
-    this.reportSourceFile = reportSourceFile;
+    this.reportSourceFile = IO.getReportSourceFilePath(javaFile);
     title = "Methods in " + clazz.name;
     cssStyle = """
         table {
@@ -44,14 +45,19 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .append("<th>Invocations</th>\n")
         .append("<th>Method</th>\n")
         .append("</tr>\n");
+    Path sourceFileHref = IO.reportDir.relativize(reportSourceFile);
     for (Method meth : sortedMethods) {
-      Path href = IO.reportDir.relativize(reportSourceFile);
-      String lineNrRef = href + "#" + meth.getMethodBlock().beg;
+      String lineNrRef = sourceFileHref + "#" + meth.getMethodBlock().beg;
       content.append("<tr>\n")
           .append("<td>").append(meth.getMethodBlock().hits).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, meth.name))
           .append("</tr>\n");
     }
     content.append("</table>\n");
+  }
+
+  @Override
+  public Path getFileOutputPath() {
+    return IO.getReportMethodIndexPath(clazz);
   }
 }

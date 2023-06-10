@@ -3,7 +3,10 @@ package misc;
 import model.JavaFile;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class IO {
   public static final Path outputDir = Path.of("out", "profiler");
@@ -40,14 +43,26 @@ public class IO {
     return metadata;
   }
 
+  public static void copyResource(String resourceName, Path destination) {
+    try (InputStream resource = Util.class.getResourceAsStream(resourceName);) {
+      if (resource == null) {
+        throw new RuntimeException("unable to locate resource: <" + resourceName + ">");
+      }
+      IO.createDirectoriesIfNotExists(destination);
+      Files.copy(resource, destination, REPLACE_EXISTING);
+    } catch (IOException | RuntimeException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public static void copyAuxiliaryFiles() {
     String counterClass = "__Counter.class";
-    Util.copyResource("/auxiliary/" + counterClass, auxiliaryInstrumentDir.resolve(Path.of(counterClass)));
+    copyResource("/auxiliary/" + counterClass, auxiliaryInstrumentDir.resolve(Path.of(counterClass)));
   }
 
   public static void copyJavaScriptFiles() {
     String highlighter = "highlighter.js";
-    Util.copyResource("/js/" + highlighter, reportDir.resolve(highlighter));
+    copyResource("/js/" + highlighter, reportDir.resolve(highlighter));
   }
 
   @SuppressWarnings("UnusedReturnValue")
@@ -57,5 +72,14 @@ public class IO {
     } else {
       return fileOrFolder.getParent().toFile().mkdirs();
     }
+  }
+
+  public static Path getReportMethodIndexPath(model.Class clazz) {
+    return IO.reportDir.resolve("index_" + clazz.name + ".html");
+  }
+
+  public static Path getReportSourceFilePath(JavaFile javaFile) {
+    Path reportFilePath = IO.reportDir.resolve(javaFile.sourceFile);
+    return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 }

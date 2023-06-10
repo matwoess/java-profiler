@@ -68,12 +68,11 @@ public class Profiler {
       allJavaFiles = IO.importMetadata().javaFiles();
     }
     addHitCountToJavaFileBlocks(allJavaFiles);
-    new ReportClassIndexWriter(allJavaFiles).write(IO.reportIndexFile);
+    new ReportClassIndexWriter(allJavaFiles).write();
     for (JavaFile jFile : allJavaFiles) {
-      Path reportSourceFile = jFile.getReportSourceFile();
-      new ReportSourceWriter(jFile).write(reportSourceFile);
+      new ReportSourceWriter(jFile).write();
       for (Class clazz : jFile.foundClasses) {
-        new ReportMethodIndexWriter(clazz, reportSourceFile).write(clazz.getReportMethodIndexPath());
+        new ReportMethodIndexWriter(clazz, jFile).write();
       }
     }
     IO.copyJavaScriptFiles();

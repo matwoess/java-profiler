@@ -57,8 +57,9 @@ public abstract class AbstractHtmlWriter {
     bodyEnd();
   }
 
-  public void write(Path destPath) {
+  public void write() {
     this.generate();
+    Path destPath = getFileOutputPath();
     IO.createDirectoriesIfNotExists(destPath);
     try {
       Files.writeString(destPath, content.toString());
@@ -66,5 +67,7 @@ public abstract class AbstractHtmlWriter {
       throw new RuntimeException(e);
     }
   }
+
+  public abstract Path getFileOutputPath();
 
 }

@@ -8,6 +8,7 @@ import model.JavaFile;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,7 +33,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         }
         """;
     bodyScripts = new String[]{
-        javaFile.getReportSourceFile().getParent().relativize(IO.reportHighlighter).toString()
+        IO.getReportSourceFilePath(javaFile).getParent().relativize(IO.reportHighlighter).toString()
     };
   }
 
@@ -167,4 +168,8 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     }
   }
 
+  @Override
+  public Path getFileOutputPath() {
+    return IO.getReportSourceFilePath(javaFile);
+  }
 }

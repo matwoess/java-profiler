@@ -50,8 +50,8 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         .append("</tr>\n");
     for (Class clazz : sortedClasses) {
       JavaFile javaFile = fileByClass.get(clazz);
-      Path methIdxHref = clazz.getReportMethodIndexPath().getFileName();
-      Path sourceFileHref = IO.reportDir.relativize(javaFile.getReportSourceFile());
+      Path methIdxHref = IO.getReportMethodIndexPath(clazz).getFileName();
+      Path sourceFileHref = IO.reportDir.relativize(IO.getReportSourceFilePath(javaFile));
       content.append("<tr>\n")
           .append("<td>").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.name))
@@ -59,5 +59,10 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
           .append("</tr>\n");
     }
     content.append("</table>\n");
+  }
+
+  @Override
+  public Path getFileOutputPath() {
+    return IO.reportIndexFile;
   }
 }

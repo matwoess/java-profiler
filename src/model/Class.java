@@ -31,10 +31,6 @@ public class Class implements Serializable {
         .sum();
   }
 
-  public Path getReportMethodIndexPath() {
-    return IO.reportDir.resolve("index_" + name + ".html");
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
