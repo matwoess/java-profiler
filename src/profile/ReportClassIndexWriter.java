@@ -1,6 +1,6 @@
 package profile;
 
-import misc.Constants;
+import misc.IO;
 import model.Class;
 import model.JavaFile;
 
@@ -44,7 +44,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     for (Class clazz : sortedClasses) {
       JavaFile javaFile = fileByClass.get(clazz);
       Path methIdxHref = clazz.getReportMethodIndexPath().getFileName();
-      Path sourceFileHref = Constants.reportDir.relativize(javaFile.getReportHtmlFile());
+      Path sourceFileHref = IO.reportDir.relativize(javaFile.getReportHtmlFile());
       content.append("<tr>\n")
           .append("<td>").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.name))

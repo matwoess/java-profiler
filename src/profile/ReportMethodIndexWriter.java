@@ -1,6 +1,6 @@
 package profile;
 
-import misc.Constants;
+import misc.IO;
 import model.Class;
 import model.Method;
 
@@ -36,7 +36,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .append("<th>Method</th>\n")
         .append("</tr>\n");
     for (Method meth : sortedMethods) {
-      Path href = Constants.reportDir.relativize(reportSourceFile);
+      Path href = IO.reportDir.relativize(reportSourceFile);
       String lineNrRef = href + "#" + meth.getMethodBlock().beg;
       content.append("<tr>\n")
           .append("<td>").append(meth.getMethodBlock().hits).append("</td>\n")

@@ -2,18 +2,14 @@ package instrument;
 
 import misc.CodeInsert;
 import misc.IO;
-import misc.Util;
 import model.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import static misc.Constants.auxiliaryInstrumentDir;
 
 public class Instrumenter {
   JavaFile[] javaFiles;
@@ -25,8 +21,8 @@ public class Instrumenter {
   }
 
   public void analyzeFiles() {
-    for (JavaFile additionalFile : javaFiles) {
-      analyze(additionalFile);
+    for (JavaFile javaFile : javaFiles) {
+      analyze(javaFile);
     }
   }
 
@@ -54,7 +50,9 @@ public class Instrumenter {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    copyAuxiliaryFiles();
+    IO.copyAuxiliaryFiles();
+    System.out.println();
+    System.out.println("Total block found: " + blockCounter);
   }
 
   void instrument(JavaFile javaFile) throws IOException {
@@ -68,7 +66,7 @@ public class Instrumenter {
       builder.append(codeInsert.code());
     }
     builder.append(fileContent.substring(prevIdx));
-    javaFile.instrumentedFile.getParent().toFile().mkdirs(); // make sure parent directory exists
+    IO.createDirectoriesIfNotExists(javaFile.instrumentedFile);
     Files.writeString(javaFile.instrumentedFile, builder.toString());
   }
 
@@ -78,7 +76,7 @@ public class Instrumenter {
     for (Block block : javaFile.foundBlocks) {
       if (block.blockType.isNotYetSupported()) {
         blockCounter++;
-        continue; // not yet supported
+        continue;
       }
       // insert order is important, in case of same CodeInsert char positions
       if (block.blockType.hasNoBraces()) {
@@ -96,11 +94,6 @@ public class Instrumenter {
 
   public void exportMetadata() {
     IO.exportMetadata(new IO.Metadata(blockCounter, javaFiles));
-  }
-
-  void copyAuxiliaryFiles() {
-    String counterClass = "__Counter.class";
-    Util.copyResource("/auxiliary/" + counterClass, auxiliaryInstrumentDir.resolve(Path.of(counterClass)));
   }
 
 }

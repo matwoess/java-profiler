@@ -1,6 +1,5 @@
 package profile;
 
-import misc.Constants;
 import misc.IO;
 import misc.Util;
 import model.Block;
@@ -15,8 +14,6 @@ import java.util.Arrays;
 import java.util.PrimitiveIterator;
 
 import static java.lang.System.exit;
-import static misc.Constants.instrumentDir;
-import static misc.Constants.reportDir;
 
 public class Profiler {
   JavaFile mainJavaFile;
@@ -31,7 +28,7 @@ public class Profiler {
     Path mainFile = mainJavaFile.instrumentedFile;
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
-        .directory(instrumentDir.toFile())
+        .directory(IO.instrumentDir.toFile())
         .command("javac", mainFile.getFileName().toString());
     try {
       int exitCode = builder.start().waitFor();
@@ -50,7 +47,7 @@ public class Profiler {
     String classFileName = fileName.substring(0, fileName.lastIndexOf("."));
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
-        .directory(instrumentDir.toFile())
+        .directory(IO.instrumentDir.toFile())
         .command(Util.prependToArray(programArgs, "java", classFileName));
     try {
       int exitCode = builder.start().waitFor();
@@ -79,14 +76,14 @@ public class Profiler {
     index.bodyStart();
     index.heading(index.title);
     index.sortedClassTable(allJavaFiles);
-    index.write(Constants.reportIndexFile);
+    index.write(IO.reportIndexFile);
     index.bodyEnd();
-    copyJavaScriptFiles();
+    IO.copyJavaScriptFiles();
   }
 
   private static void addHitCountToJavaFileBlocks(JavaFile[] allJavaFiles) {
     int[] counts;
-    try (DataInputStream dis = new DataInputStream(new FileInputStream(Constants.resultsFile.toString()))) {
+    try (DataInputStream dis = new DataInputStream(new FileInputStream(IO.resultsFile.toString()))) {
       int nCounts = dis.readInt();
       counts = new int[nCounts];
       for (int i = 0; i < nCounts; i++) {
@@ -130,8 +127,4 @@ public class Profiler {
     }
   }
 
-  private void copyJavaScriptFiles() {
-    String highlighter = "highlighter.js";
-    Util.copyResource("/js/" + highlighter, reportDir.resolve(highlighter));
-  }
 }

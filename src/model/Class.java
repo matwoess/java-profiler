@@ -1,6 +1,6 @@
 package model;
 
-import misc.Constants;
+import misc.IO;
 
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -32,7 +32,7 @@ public class Class implements Serializable {
   }
 
   public Path getReportMethodIndexPath() {
-    return Constants.reportDir.resolve("index_" + name + ".html");
+    return IO.reportDir.resolve("index_" + name + ".html");
   }
 
   @Override

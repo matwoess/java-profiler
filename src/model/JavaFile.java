@@ -1,13 +1,11 @@
 package model;
 
-import misc.Constants;
+import misc.IO;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
-import static misc.Constants.instrumentDir;
 
 public class JavaFile implements Serializable {
   public int beginOfImports = 0;
@@ -19,16 +17,16 @@ public class JavaFile implements Serializable {
   public JavaFile(Path sourceFile, Path sourcesRoot) {
     this.sourceFile = sourceFile;
     Path relativePathToSources = sourcesRoot.relativize(sourceFile);
-    this.instrumentedFile = instrumentDir.resolve(relativePathToSources);
+    this.instrumentedFile = IO.instrumentDir.resolve(relativePathToSources);
   }
 
   public JavaFile(Path sourceFile) {
     this.sourceFile = sourceFile;
-    this.instrumentedFile = instrumentDir.resolve(sourceFile);
+    this.instrumentedFile = IO.instrumentDir.resolve(sourceFile);
   }
 
   public Path getReportFile() {
-    return Constants.reportDir.resolve(sourceFile);
+    return IO.reportDir.resolve(sourceFile);
   }
 
   public Path getReportHtmlFile() {

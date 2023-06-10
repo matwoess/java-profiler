@@ -1,6 +1,7 @@
 package profile;
 
 import misc.CodeInsert;
+import misc.IO;
 import model.Block;
 import model.JavaFile;
 
@@ -11,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static misc.Constants.*;
 
 public class ReportSourceWriter extends AbstractHtmlWriter {
   JavaFile javaFile;
@@ -33,7 +32,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         }
         """;
     bodyScripts = new String[]{
-        javaFile.getReportHtmlFile().getParent().relativize(reportHighlighter).toString()
+        javaFile.getReportHtmlFile().getParent().relativize(IO.reportHighlighter).toString()
     };
   }
 
