@@ -14,7 +14,7 @@ public class ParserState {
 
   int beginOfImports = 0;
 
-  List<Class> allClasses = new ArrayList<>();
+  List<Class> topLevelClasses = new ArrayList<>();
   Stack<Class> classStack = new Stack<>();
   List<Block> allBlocks = new ArrayList<>();
   Stack<Block> blockStack = new Stack<>();
@@ -48,9 +48,11 @@ public class ParserState {
       methodStack.push(curMeth);
       curMeth = null;
     }
-    String className = (anonymous) ? "Anonymous" : parser.la.val;
-    String fullClassName = (!classStack.isEmpty()) ? classStack.peek().name + "." + className : className;
-    curClass = new Class(fullClassName);
+    String className = (anonymous) ? null : parser.la.val;
+    curClass = new Class(className);
+    if (!classStack.isEmpty()) {
+      curClass.setParentClass(classStack.peek());
+    }
     if (anonymous) {
       curClass.classType = ClassType.ANONYMOUS;
     } else {
@@ -61,12 +63,14 @@ public class ParserState {
         default -> throw new RuntimeException(String.format("unknown class type '%s' discovered.\n", parser.t));
       };
     }
-    allClasses.add(curClass);
-    System.out.printf("entering class <%s>\n", curClass.name);
+    if (classStack.isEmpty()) {
+      topLevelClasses.add(curClass);
+    }
+    System.out.printf("entering class <%s>\n", curClass);
   }
 
   void leaveClass() {
-    System.out.printf("left class <%s>\n", curClass.name);
+    System.out.printf("left class <%s>\n", curClass);
     if (curClass.classType == ClassType.ANONYMOUS && !methodStack.empty()) {
       curMeth = methodStack.pop();
     }

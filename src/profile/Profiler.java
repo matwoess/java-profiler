@@ -71,7 +71,7 @@ public class Profiler {
     new ReportClassIndexWriter(allJavaFiles).write();
     for (JavaFile jFile : allJavaFiles) {
       new ReportSourceWriter(jFile).write();
-      for (Class clazz : jFile.foundClasses) {
+      for (Class clazz : jFile.topLevelClasses) {
         new ReportMethodIndexWriter(clazz, jFile).write();
       }
     }

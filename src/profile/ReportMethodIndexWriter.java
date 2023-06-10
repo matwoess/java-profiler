@@ -16,7 +16,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
   public ReportMethodIndexWriter(Class clazz, JavaFile javaFile) {
     this.clazz = clazz;
     this.reportSourceFile = IO.getReportSourceFilePath(javaFile);
-    title = "Methods in " + clazz.name;
+    title = "Methods in " + clazz.getName();
     cssStyle = """
         table {
           border-collapse: collapse;

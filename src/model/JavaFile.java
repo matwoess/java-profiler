@@ -9,7 +9,7 @@ import java.util.List;
 
 public class JavaFile implements Serializable {
   public int beginOfImports = 0;
-  public List<Class> foundClasses;
+  public List<Class> topLevelClasses;
   public List<Block> foundBlocks;
   public transient Path sourceFile;
   public transient Path instrumentedFile;

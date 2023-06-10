@@ -34,12 +34,12 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
   public void sortedClassTable() {
     Map<Class, JavaFile> fileByClass = new HashMap<>();
     for (JavaFile jFile : allJavaFiles) {
-      for (Class clazz : jFile.foundClasses) {
+      for (Class clazz : jFile.topLevelClasses) {
         fileByClass.put(clazz, jFile);
       }
     }
     List<Class> sortedClasses = Arrays.stream(allJavaFiles)
-        .flatMap(f -> f.foundClasses.stream())
+        .flatMap(f -> f.topLevelClasses.stream())
         .sorted(Comparator.comparingInt(Class::getAggregatedMethodBlockCounts).reversed())
         .toList();
     content.append("<table>\n")
@@ -54,7 +54,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       Path sourceFileHref = IO.reportDir.relativize(IO.getReportSourceFilePath(javaFile));
       content.append("<tr>\n")
           .append("<td>").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
-          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.name))
+          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.getName()))
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", sourceFileHref, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
     }

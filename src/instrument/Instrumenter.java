@@ -38,7 +38,7 @@ public class Instrumenter {
     }
     javaFile.beginOfImports = parser.state.beginOfImports;
     javaFile.foundBlocks = parser.state.allBlocks;
-    javaFile.foundClasses = parser.state.allClasses;
+    javaFile.topLevelClasses = parser.state.topLevelClasses;
   }
 
   public void instrumentFiles() {
