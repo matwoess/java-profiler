@@ -20,7 +20,6 @@ public class Class implements Serializable {
     this.isMain = isMain;
   }
 
-
   public int getAggregatedMethodBlockCounts() {
     return methods.stream()
         .flatMap(method -> method.blocks.stream())
@@ -29,6 +28,9 @@ public class Class implements Serializable {
         .sum();
   }
 
+  public Path getReportMethodIndexPath() {
+    return Constants.reportDir.resolve("index_" + name + ".html");
+  }
 
   @Override
   public boolean equals(Object o) {
