@@ -37,9 +37,10 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .append("</tr>\n");
     for (Method meth : sortedMethods) {
       Path href = Constants.reportDir.relativize(reportSourceFile);
+      String lineNrRef = href + "#" + meth.getMethodBlock().beg;
       content.append("<tr>\n")
           .append("<td>").append(meth.getMethodBlock().hits).append("</td>\n")
-          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", href, meth.name))
+          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, meth.name))
           .append("</tr>\n");
     }
     content.append("</table>\n");
