@@ -1,3 +1,4 @@
+import misc.Util;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -52,7 +53,7 @@ public class TestMain {
       throw new RuntimeException("no sample files found");
     }
     Stream.of(sampleFiles)
-        .filter(file -> !file.isDirectory())
+        .filter(file -> Util.isJavaFile(file.toPath()))
         .forEach(jFile -> {
               String[] args = new String[]{
                   "-d",

@@ -24,7 +24,7 @@ public class Method implements Serializable {
 
   public Block getMethodBlock() {
     Block methodBlock = blocks.get(0);
-    assert methodBlock.blockType == BlockType.METHOD;
+    assert methodBlock.blockType == BlockType.METHOD || methodBlock.blockType == BlockType.CONSTRUCTOR;
     return methodBlock;
   }
 
