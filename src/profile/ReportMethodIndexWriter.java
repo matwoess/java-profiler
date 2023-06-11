@@ -19,6 +19,9 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
     this.reportSourceFile = IO.getReportSourceFilePath(javaFile);
     title = "Methods in " + clazz.getFullName();
     cssStyle = """
+        body {
+          font-family: Arial, sans-serif;
+        }
         table {
           border-collapse: collapse;
         }
@@ -27,6 +30,13 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         }
         th, td {
           padding: 8px;
+        }
+        td.hits {
+          text-align: right;
+        }
+        a {
+          color: MediumBlue;
+          text-decoration: none;
         }
         """;
   }
@@ -51,10 +61,10 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
       Block methBlock = meth.getMethodBlock();
       String lineNrRef = sourceFileHref + "#" + methBlock.beg;
       String methName = (methBlock.clazz != clazz)
-          ? methBlock.clazz.getName() + "." + meth.name
+          ? methBlock.clazz.getName() + "::" + meth.name
           : meth.name;
       content.append("<tr>\n")
-          .append("<td>").append(meth.getMethodBlock().hits).append("</td>\n")
+          .append("<td class=\"hits\">").append(meth.getMethodBlock().hits).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, methName))
           .append("</tr>\n");
     }

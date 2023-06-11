@@ -14,6 +14,9 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     this.allJavaFiles = allJavaFiles;
     title = "Classes";
     cssStyle = """
+        body {
+          font-family: Arial, sans-serif;
+        }
         table {
           border-collapse: collapse;
         }
@@ -22,6 +25,13 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         }
         th, td {
           padding: 8px;
+        }
+        td.hits {
+          text-align: right;
+        }
+        a {
+          color: MediumBlue;
+          text-decoration: none;
         }
         """;
   }
@@ -53,7 +63,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       Path methIdxHref = IO.getReportMethodIndexPath(clazz).getFileName();
       Path sourceFileHref = IO.reportDir.relativize(IO.getReportSourceFilePath(javaFile));
       content.append("<tr>\n")
-          .append("<td>").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
+          .append("<td class=\"hits\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.getName()))
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", sourceFileHref, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
