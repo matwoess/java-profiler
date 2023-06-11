@@ -18,6 +18,7 @@ public class IO {
   public static final Path reportDir = outputDir.resolve("report");
   public static final Path reportIndexFile = reportDir.resolve("index.html");
   public static final Path reportHighlighter = reportDir.resolve("highlighter.js");
+  public static final Path reportIndexSymLink = Path.of(".", "report.html");
 
   public record Metadata(int blocksCount, JavaFile[] javaFiles) {
   }
@@ -71,6 +72,14 @@ public class IO {
       return fileOrFolder.toFile().mkdirs();
     } else {
       return fileOrFolder.getParent().toFile().mkdirs();
+    }
+  }
+
+  public static void createSymbolicLink(Path link, Path target) {
+    try {
+      Files.createSymbolicLink(link, target);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 

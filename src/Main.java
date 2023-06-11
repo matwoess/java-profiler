@@ -64,6 +64,7 @@ public class Main {
   private static void generateReportOnly() {
     Profiler profiler = new Profiler(null);
     profiler.generateReport();
+    profiler.createSymLinkForReport();
   }
 
   private static void instrumentSingleFile(Path file) {
@@ -94,6 +95,7 @@ public class Main {
     profiler.compileInstrumented();
     profiler.profile(programArgs);
     profiler.generateReport();
+    profiler.createSymLinkForReport();
   }
 
   private static void instrumentCompileAndRun(Path mainFile, String[] programArgs) {
@@ -107,6 +109,7 @@ public class Main {
     profiler.compileInstrumented();
     profiler.profile(programArgs);
     profiler.generateReport();
+    profiler.createSymLinkForReport();
   }
 
   private static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path mainFile) {

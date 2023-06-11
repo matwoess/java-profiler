@@ -103,4 +103,7 @@ public class Profiler {
     }
   }
 
+  public void createSymLinkForReport() {
+    IO.createSymbolicLink(IO.reportIndexSymLink, IO.reportIndexFile);
+  }
 }
