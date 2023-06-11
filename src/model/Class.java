@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Class implements Serializable {
   public String name;
   public boolean isMain;
-  public ClassType classType;
+  public ClassType classType = ClassType.CLASS;
   public String packageName = "<default>";
   public Class parentClass;
   public List<Class> innerClasses = new ArrayList<>();
@@ -20,8 +20,13 @@ public class Class implements Serializable {
   }
 
   public Class(String name, boolean isMain) {
-    this.name = name;
+    this(name);
     this.isMain = isMain;
+  }
+
+  public Class(String name, ClassType type, boolean isMain) {
+    this(name, isMain);
+    this.classType = type;
   }
 
   public void setParentClass(Class parentClass) {

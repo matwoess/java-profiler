@@ -2,6 +2,7 @@ package instrument;
 
 import model.Block;
 import model.Class;
+import model.ClassType;
 import model.Method;
 import org.junit.jupiter.api.Test;
 
@@ -54,20 +55,22 @@ public class TestAnonymousClasses {
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 4, 62, 71));
     meth = new Method("firstJavaFile");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 31, 118, 715));
-    clazz = new Class("Main.Anonymous");
+    Class innerClass = new Class(null, ClassType.ANONYMOUS, false);
+    innerClass.setParentClass(clazz);
     meth = new Method("accept");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 10, 13, 289, 361));
-    clazz = new Class("Main.Anonymous.X");
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 10, 13, 289, 361));
+    Class subInnerClass = new Class("X");
+    subInnerClass.setParentClass(innerClass);
     meth = new Method("methodInX");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 16, 18, 408, 503));
-    clazz = new Class("Main.Anonymous");
+    expectedBlocks.add(getBlock(METHOD, subInnerClass, meth, 16, 18, 408, 503));
     meth = new Method("returnTrue");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 21, 24, 544, 590));
-    clazz = new Class("Main", true);
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 21, 24, 544, 590));
     meth = new Method("firstJavaFile");
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 26, 28, 653, 685));
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 28, 30, 692, 713));
     assertIterableEquals(expectedBlocks, blocks);
+    assertEquals("Main$1", innerClass.getName());
+    assertEquals("Main$1$X", subInnerClass.getName());
   }
 
   @Test
@@ -95,11 +98,13 @@ public class TestAnonymousClasses {
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 4, 62, 71));
     meth = new Method("getSortedIntegers");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 17, 140, 380));
-    clazz = new Class("Main.Anonymous");
+    Class innerClass = new Class(null, ClassType.ANONYMOUS, false);
+    innerClass.setParentClass(clazz);
     meth = new Method("compare");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 14, 261, 352));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 11, 288, 314));
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 8, 14, 261, 352));
+    expectedBlocks.add(getBlock(BLOCK, innerClass, meth, 9, 11, 288, 314));
     assertIterableEquals(expectedBlocks, blocks);
+    assertEquals("Main$1", innerClass.getName());
   }
 
   @Test
@@ -118,10 +123,12 @@ public class TestAnonymousClasses {
     Class clazz = new Class("Main", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 158));
-    clazz = new Class("Main.Anonymous");
+    Class innerClass = new Class(null, ClassType.ANONYMOUS, false);
+    innerClass.setParentClass(clazz);
     meth = new Method("hashCode");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 7, 117, 150));
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 5, 7, 117, 150));
     assertIterableEquals(expectedBlocks, blocks);
+    assertEquals("Main$1", innerClass.getName());
   }
 
 }

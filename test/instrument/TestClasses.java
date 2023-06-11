@@ -81,8 +81,9 @@ public class TestClasses {
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 12, 20, 234, 467));
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 14, 16, 285, 352));
     expectedBlocks.add(getBlock(BLOCK, clazz, meth, 16, 18, 359, 427));
-    clazz = new Class("Classes.PetFarm");
-    expectedBlocks.add(getBlock(STATIC, clazz, null, 26, 28, 561, 590));
+    Class innerClass = new Class("PetFarm");
+    innerClass.setParentClass(clazz);
+    expectedBlocks.add(getBlock(STATIC, innerClass, null, 26, 28, 561, 590));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -121,15 +122,19 @@ public class TestClasses {
     Class clazz = new Class("InnerClasses", true);
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 9, 70, 275));
-    clazz = new Class("InnerClasses.Inner");
+    Class innerClass = new Class("Inner");
+    innerClass.setParentClass(clazz);
     meth = new Method("level1");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 13, 318, 362));
-    clazz = new Class("InnerClasses.Inner.Sub");
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 11, 13, 318, 362));
+    Class subInnerClass = new Class("Sub");
+    subInnerClass.setParentClass(innerClass);
     meth = new Method("level2");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 15, 17, 407, 455));
+    expectedBlocks.add(getBlock(METHOD, subInnerClass, meth, 15, 17, 407, 455));
     clazz = new Class("InnerClasses.Inner.Sub.SubSub");
+    Class subSubInnerClass = new Class("SubSub");
+    subSubInnerClass.setParentClass(subInnerClass);
     meth = new Method("level3");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 19, 21, 507, 559));
+    expectedBlocks.add(getBlock(METHOD, subSubInnerClass, meth, 19, 21, 507, 559));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -243,22 +248,28 @@ public class TestClasses {
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(5, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("A.B");
+    Class clazz = new Class("A");
+    Class innerClass1 = new Class("B");
+    innerClass1.setParentClass(clazz);
     Method meth = new Method("classBMeth");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 3, 3, 45, 46));
-    clazz = new Class("A");
+    expectedBlocks.add(getBlock(METHOD, innerClass1, meth, 3, 3, 45, 46));
     meth = new Method("classAMeth1");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 5, 73, 74));
-    clazz = new Class("A.C.D");
+    Class innerClass2 = new Class("C");
+    innerClass2.setParentClass(clazz);
+    Class subInnerClass = new Class("D");
+    subInnerClass.setParentClass(innerClass2);
     meth = new Method("classDMeth");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 8, 126, 127));
-    clazz = new Class("A.C");
+    expectedBlocks.add(getBlock(METHOD, subInnerClass, meth, 8, 8, 126, 127));
     meth = new Method("classCMeth");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 10, 10, 157, 158));
-    clazz = new Class("A");
+    expectedBlocks.add(getBlock(METHOD, innerClass2, meth, 10, 10, 157, 158));
     meth = new Method("classAMeth2");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 12, 12, 185, 186));
     assertIterableEquals(expectedBlocks, blocks);
+    assertEquals("A", clazz.getName());
+    assertEquals("A$B", innerClass1.getName());
+    assertEquals("A$C$D", subInnerClass.getName());
+    assertEquals("A$C", innerClass2.getName());
   }
 
   @Test

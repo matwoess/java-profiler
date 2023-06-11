@@ -2,6 +2,7 @@ package instrument;
 
 import model.Block;
 import model.Class;
+import model.ClassType;
 import model.Method;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +58,7 @@ public class TestEnums {
         }""";
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
-    Class clazz = new Class("AB");
+    Class clazz = new Class("AB", ClassType.ENUM, false);
     Block block = getBlock(STATIC, clazz, null, 4, 6, 59, 82);
     assertEquals(block, blocks.get(0));
   }
@@ -75,7 +76,7 @@ public class TestEnums {
         }""";
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
-    Class clazz = new Class("Enum");
+    Class clazz = new Class("Enum", ClassType.ENUM, false);
     Method meth = new Method("lowercase");
     Block block = getBlock(METHOD, clazz, meth, 4, 6, 90, 132);
     assertEquals(block, blocks.get(0));
@@ -101,7 +102,7 @@ public class TestEnums {
         }""";
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
-    Class clazz = new Class("WithConstructor");
+    Class clazz = new Class("WithConstructor", ClassType.ENUM, false);
     Method meth = new Method("WithConstructor");
     Block block = getBlock(CONSTRUCTOR, clazz, meth, 10, 14, 276, 359);
     assertEquals(block, blocks.get(0));
@@ -126,7 +127,7 @@ public class TestEnums {
         }""";
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
-    Class clazz = new Class("WithMain", true);
+    Class clazz = new Class("WithMain", ClassType.ENUM, true);
     Method meth = new Method("main", true);
     List<Block> expectedBlocks = new ArrayList<>();
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 13, 80, 222));
@@ -160,14 +161,16 @@ public class TestEnums {
         }""";
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
-    Class clazz = new Class("WithSubClassAndInterface.ClassInEnum");
+    Class clazz = new Class("WithSubClassAndInterface", ClassType.ENUM, false);
+    Class innerClass = new Class("ClassInEnum");
+    innerClass.setParentClass(clazz);
     Method meth = new Method("printName");
     List<Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 7, 169, 213));
-    clazz = new Class("WithSubClassAndInterface.InterfaceInEnum");
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 5, 7, 169, 213));
+    innerClass = new Class("InterfaceInEnum", ClassType.INTERFACE, false);
+    innerClass.setParentClass(clazz);
     meth = new Method("lowercase");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 13, 317, 362));
-    clazz = new Class("WithSubClassAndInterface");
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 11, 13, 317, 362));
     meth = new Method("callMethods");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 16, 19, 404, 499));
     assertIterableEquals(expectedBlocks, blocks);

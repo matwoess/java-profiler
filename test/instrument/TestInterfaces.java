@@ -1,5 +1,6 @@
 package instrument;
 
+import model.ClassType;
 import org.junit.jupiter.api.Test;
 
 import model.Block;
@@ -42,7 +43,7 @@ public class TestInterfaces {
         }""";
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
-    Class clazz = new Class("InitBlocks");
+    Class clazz = new Class("InitBlocks", ClassType.INTERFACE, false);
     Method meth = new Method("doNothing");
     Block expectedBlock = getBlock(METHOD, clazz, meth, 9, 9, 275, 276);
     assertEquals(expectedBlock, blocks.get(0));
@@ -66,7 +67,7 @@ public class TestInterfaces {
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("DefaultStatic");
+    Class clazz = new Class("DefaultStatic", ClassType.INTERFACE, false);
     Method meth = new Method("getName");
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 3, 5, 67, 91));
     meth = new Method("getAge");
@@ -104,15 +105,19 @@ public class TestInterfaces {
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(3, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Interfaces.SubInterface");
+    Class clazz = new Class("Interfaces", ClassType.INTERFACE, false);
+    Class innerClass = new Class("SubInterface", ClassType.INTERFACE, false);
+    innerClass.setParentClass(clazz);
     Method meth = new Method("get");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 8, 174, 225));
-    clazz = new Class("Interfaces.SubInterface.SubClass");
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 6, 8, 174, 225));
+    Class innerInnerClass = new Class("SubClass");
+    innerInnerClass.setParentClass(innerClass);
     meth = new Method("getXPlus1");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 13, 278, 308));
-    clazz = new Class("Interfaces.X");
+    expectedBlocks.add(getBlock(METHOD, innerInnerClass, meth, 11, 13, 278, 308));
+    innerClass = new Class("X");
+    innerClass.setParentClass(clazz);
     meth = new Method("callGet");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 18, 20, 376, 395));
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 18, 20, 376, 395));
     assertIterableEquals(expectedBlocks, blocks);
   }
 
@@ -138,10 +143,11 @@ public class TestInterfaces {
     List<Block> blocks = getFoundBlocks(fileContent);
     assertEquals(2, blocks.size());
     List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("WithMain.X", false);
+    Class clazz = new Class("WithMain", ClassType.INTERFACE, true);
+    Class innerClass = new Class("X", false);
     Method meth = new Method("get");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 8, 110, 132));
-    clazz = new Class("WithMain", true);
+    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 6, 8, 110, 132));
+    innerClass.setParentClass(clazz);
     meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 15, 180, 268));
     assertIterableEquals(expectedBlocks, blocks);
@@ -156,7 +162,7 @@ public class TestInterfaces {
         }""";
     blocks = getFoundBlocks(fileContent);
     assertEquals(1, blocks.size());
-    clazz = new Class("InferredPublic", true);
+    clazz = new Class("InferredPublic", ClassType.INTERFACE, true);
     meth = new Method("main", true);
     Block expectedBlock = getBlock(METHOD, clazz, meth, 2, 6, 69, 157);
     assertEquals(expectedBlock, blocks.get(0));
