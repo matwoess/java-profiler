@@ -24,9 +24,15 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         "https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     };
     cssStyle = """
+        body {
+          font-family: Helvetica Neue, Verdana, sans-serif;
+        }
         td.lNr {
           text-align: right;
           background-color: #dedede;
+        }
+        :target td.lNr {
+          background-color: Gold;
         }
         td.hits {
           background-color: #eee;

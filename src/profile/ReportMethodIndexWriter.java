@@ -20,7 +20,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
     title = "Methods in " + clazz.getFullName();
     cssStyle = """
         body {
-          font-family: Arial, sans-serif;
+          font-family: Helvetica Neue, Verdana, sans-serif;
         }
         table {
           border-collapse: collapse;

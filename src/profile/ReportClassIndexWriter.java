@@ -15,7 +15,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     title = "Classes";
     cssStyle = """
         body {
-          font-family: Arial, sans-serif;
+          font-family: Helvetica Neue, Verdana, sans-serif;
         }
         table {
           border-collapse: collapse;
