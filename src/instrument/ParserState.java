@@ -13,6 +13,7 @@ public class ParserState {
   Parser parser;
 
   int beginOfImports = 0;
+  String packageName;
 
   List<Class> topLevelClasses = new ArrayList<>();
   Stack<Class> classStack = new Stack<>();
@@ -27,8 +28,9 @@ public class ParserState {
     parser = p;
   }
 
-  void markBeginOfImports() {
-    beginOfImports = parser.t.charPos + parser.t.val.length();
+  void markBeginOfImports(List<String> packageName) {
+    this.packageName = String.join(".", packageName);
+    this.beginOfImports = parser.t.charPos + parser.t.val.length();
   }
 
   void markEndOfSuperCall() {
@@ -50,6 +52,9 @@ public class ParserState {
     }
     String className = (anonymous) ? null : parser.la.val;
     curClass = new Class(className);
+    if (packageName != null) {
+      curClass.packageName = packageName;
+    }
     if (!classStack.isEmpty()) {
       curClass.setParentClass(classStack.peek());
     }

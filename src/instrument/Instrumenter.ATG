@@ -63,8 +63,12 @@ IGNORE tab + cr + lf
 PRODUCTIONS
 
 Instrumenter = [PackageDecl] { Annotation | Class | Enum | ANY }.
-PackageDecl = "package" {ANY} ";" (. state.markBeginOfImports(); .)
-						.
+PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
+		ident 							(. packageName.add(t.val); .)
+		{'.' ident 					(. packageName.add(t.val); .)
+		}
+		";" 								(. state.markBeginOfImports(packageName); .)
+		.
 Annotation = "@" ident [ParExpr].
 Class =
 		("class" | "interface")	(. state.enterClass(); .)

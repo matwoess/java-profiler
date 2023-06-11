@@ -24,7 +24,7 @@ public class TestBasic {
   }
 
   @Test
-  public void TestBeginOfImports() {
+  public void TestBeginOfImportsAndPackageName() {
     String withoutPackage = """
         import static java.lang.System.exit;
         import java.util.ArrayList;
@@ -33,14 +33,18 @@ public class TestBasic {
     int beginOfImports = getBeginOfImports(withoutPackage);
     assertEquals(0, beginOfImports);
     String withPackage = """
-        package name.of._the_.package ;
+        package name.Of._the_.pkg ;
         import static java.lang.System.exit;
         import java.util.ArrayList;
         class Empty {
+          void meth() {
+          }
         }""";
     beginOfImports = getBeginOfImports(withPackage);
-    int lengthOfPackageDeclaration = "package name.of._the_.package ;".length();
+    int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
     assertEquals(lengthOfPackageDeclaration, beginOfImports);
+    List<Block> blocks = getFoundBlocks(withPackage);
+    assertEquals("name.Of._the_.pkg.Empty", blocks.get(0).clazz.getName());
   }
 
   @Test
