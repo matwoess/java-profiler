@@ -1,6 +1,7 @@
 package profile;
 
 import misc.IO;
+import model.Block;
 import model.Class;
 import model.JavaFile;
 import model.Method;
@@ -16,7 +17,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
   public ReportMethodIndexWriter(Class clazz, JavaFile javaFile) {
     this.clazz = clazz;
     this.reportSourceFile = IO.getReportSourceFilePath(javaFile);
-    title = "Methods in " + clazz.getName();
+    title = "Methods in " + clazz.getFullName();
     cssStyle = """
         table {
           border-collapse: collapse;
@@ -36,7 +37,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
   }
 
   public void sortedMethodTable() {
-    List<Method> sortedMethods = clazz.methods.stream()
+    List<Method> sortedMethods = clazz.getMethodsRecursive().stream()
         .filter(method -> !method.isAbstract())
         .sorted(Comparator.comparingInt((Method m) -> m.getMethodBlock().hits).reversed())
         .toList();
@@ -47,10 +48,14 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .append("</tr>\n");
     Path sourceFileHref = IO.reportDir.relativize(reportSourceFile);
     for (Method meth : sortedMethods) {
-      String lineNrRef = sourceFileHref + "#" + meth.getMethodBlock().beg;
+      Block methBlock = meth.getMethodBlock();
+      String lineNrRef = sourceFileHref + "#" + methBlock.beg;
+      String methName = (methBlock.clazz != clazz)
+          ? methBlock.clazz.getName() + "." + meth.name
+          : meth.name;
       content.append("<tr>\n")
           .append("<td>").append(meth.getMethodBlock().hits).append("</td>\n")
-          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, meth.name))
+          .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, methName))
           .append("</tr>\n");
     }
     content.append("</table>\n");

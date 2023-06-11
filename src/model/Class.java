@@ -32,26 +32,25 @@ public class Class implements Serializable {
   public void setParentClass(Class parentClass) {
     this.parentClass = parentClass;
     parentClass.innerClasses.add(this);
+    if (name == null) {
+      this.name = String.valueOf(parentClass.innerClasses.size());
+    }
   }
 
   public String getName() {
-    StringBuilder builder = new StringBuilder();
     if (parentClass != null) {
-      builder.append(parentClass).append("$");
-      if (classType == ClassType.ANONYMOUS) {
-        builder.append(parentClass.innerClasses.indexOf(this) + 1);
-      }
-      if (name != null) {
-        builder.append(name);
-      }
+      return parentClass.getFullName() + "$" + name;
     } else {
-      if (!packageName.equals("<default>")) {
-        builder.append(packageName);
-        builder.append(".");
-      }
-      builder.append(name);
+      return name;
     }
-    return builder.toString();
+  }
+
+  public String getFullName() {
+    if (packageName.equals("<default>")) {
+      return getName();
+    } else {
+      return packageName + "." + getName();
+    }
   }
 
   @Override
@@ -59,8 +58,18 @@ public class Class implements Serializable {
     return this.getName();
   }
 
+  public List<Method> getMethodsRecursive() {
+    List<Method> allMethods = new ArrayList<>(methods);
+    if (innerClasses.size() > 0) {
+      for (Class clazz : innerClasses) {
+        allMethods.addAll(clazz.getMethodsRecursive());
+      }
+    }
+    return allMethods;
+  }
+
   public int getAggregatedMethodBlockCounts() {
-    return methods.stream()
+    return getMethodsRecursive().stream()
         .flatMap(method -> method.blocks.stream())
         .filter(b -> b.blockType == BlockType.METHOD)
         .mapToInt(b -> b.hits)

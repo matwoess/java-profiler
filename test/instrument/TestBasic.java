@@ -44,7 +44,9 @@ public class TestBasic {
     int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
     assertEquals(lengthOfPackageDeclaration, beginOfImports);
     List<Block> blocks = getFoundBlocks(withPackage);
-    assertEquals("name.Of._the_.pkg.Empty", blocks.get(0).clazz.getName());
+    Class clazz = blocks.get(0).clazz;
+    assertEquals("name.Of._the_.pkg.Empty", clazz.getFullName());
+    assertEquals("Empty", clazz.getName());
   }
 
   @Test
