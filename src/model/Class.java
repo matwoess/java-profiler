@@ -39,7 +39,7 @@ public class Class implements Serializable {
 
   public String getName() {
     if (parentClass != null) {
-      return parentClass.getFullName() + "$" + name;
+      return parentClass.getName() + "$" + name;
     } else {
       return name;
     }
