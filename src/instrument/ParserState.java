@@ -28,7 +28,7 @@ public class ParserState {
     parser = p;
   }
 
-  void markBeginOfImports(List<String> packageName) {
+  void setPackageName(List<String> packageName) {
     this.packageName = String.join(".", packageName);
     this.beginOfImports = parser.t.charPos + parser.t.val.length();
   }

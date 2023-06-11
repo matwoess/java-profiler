@@ -67,7 +67,7 @@ PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
 		ident 							(. packageName.add(t.val); .)
 		{'.' ident 					(. packageName.add(t.val); .)
 		}
-		";" 								(. state.markBeginOfImports(packageName); .)
+		";" 								(. state.setPackageName(packageName); .)
 		.
 Annotation = "@" ident [ParExpr].
 Class =
