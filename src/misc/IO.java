@@ -77,6 +77,9 @@ public class IO {
 
   public static void createSymbolicLink(Path link, Path target) {
     try {
+      if (Files.exists(link) && Files.isSymbolicLink(link)) {
+        Files.delete(link);
+      }
       Files.createSymbolicLink(link, target);
     } catch (IOException e) {
       throw new RuntimeException(e);
