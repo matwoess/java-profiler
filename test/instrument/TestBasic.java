@@ -39,6 +39,10 @@ public class TestBasic {
         class Empty {
           void meth() {
           }
+          class InEmpty {
+            void innerMeth() {
+            }
+          }
         }""";
     beginOfImports = getBeginOfImports(withPackage);
     int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
@@ -47,6 +51,9 @@ public class TestBasic {
     Class clazz = blocks.get(0).clazz;
     assertEquals("name.Of._the_.pkg.Empty", clazz.getFullName());
     assertEquals("Empty", clazz.getName());
+    clazz = blocks.get(1).clazz;
+    assertEquals("name.Of._the_.pkg.Empty$InEmpty", clazz.getFullName());
+    assertEquals("Empty$InEmpty", clazz.getName());
   }
 
   @Test
