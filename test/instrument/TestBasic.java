@@ -1,6 +1,7 @@
 package instrument;
 
 import model.Block;
+import model.JavaFile;
 import model.Method;
 import model.Class;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static instrument.ProgramBuilder.*;
 import static model.BlockType.*;
 import static instrument.Util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,11 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 public class TestBasic {
   @Test
   public void TestEmptyProgram() {
-    String emptyClass = """
+    String fileContent = """
         class Empty {
         }""";
-    List<Block> blocks = getFoundBlocks(emptyClass);
-    assertEquals(0, blocks.size());
+    JavaFile expected = jFile(
+        jClass("Empty")
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -32,7 +36,7 @@ public class TestBasic {
         }""";
     int beginOfImports = getBeginOfImports(withoutPackage);
     assertEquals(0, beginOfImports);
-    String withPackage = """
+    String fileContent = """
         package name.Of._the_.pkg ;
         import static java.lang.System.exit;
         import java.util.ArrayList;
@@ -44,38 +48,50 @@ public class TestBasic {
             }
           }
         }""";
-    beginOfImports = getBeginOfImports(withPackage);
     int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
-    assertEquals(lengthOfPackageDeclaration, beginOfImports);
-    List<Block> blocks = getFoundBlocks(withPackage);
-    Class clazz = blocks.get(0).clazz;
-    assertEquals("name.Of._the_.pkg.Empty", clazz.getFullName());
-    assertEquals("Empty", clazz.getName());
-    clazz = blocks.get(1).clazz;
-    assertEquals("name.Of._the_.pkg.Empty$InEmpty", clazz.getFullName());
-    assertEquals("Empty$InEmpty", clazz.getName());
+    JavaFile expected = jFile("name.Of._the_.pkg", lengthOfPackageDeclaration,
+        jClass("Empty",
+            jMethod("meth",
+                jBlock(METHOD, 5, 6, 122, 126)
+            ),
+            jClass("InEmpty",
+                jMethod("innerMeth",
+                    jBlock(METHOD, 8, 9, 167, 173)
+                )
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    Class tlClass = expected.topLevelClasses.get(0);
+    Class innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
+    assertEquals("name.Of._the_.pkg.Empty", tlClass.getFullName());
+    assertEquals("Empty", tlClass.getName());
+    assertEquals("name.Of._the_.pkg.Empty$InEmpty", innerClass.getFullName());
+    assertEquals("Empty$InEmpty", innerClass.getName());
   }
 
   @Test
   public void TestHelloWorld() {
-    String helloWorld = """
+    String fileContent = """
         public class HelloWorld {
           public static void main(String[] args) {
             System.out.println("Hello World!");
           }
         }
         """;
-    List<Block> blocks = getFoundBlocks(helloWorld);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("HelloWorld", true);
-    Method meth = new Method("main", true);
-    Block expectedBlock = getBlock(METHOD, clazz, meth, 2, 4, 68, 112);
-    assertEquals(expectedBlock, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass("HelloWorld", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 4, 68, 112)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
   public void TestStaticBlock() {
-    String staticBlock = """
+    String fileContent = """
         public class Static {
           static int x;
           
@@ -84,11 +100,11 @@ public class TestBasic {
           }
         }
         """;
-    List<Block> blocks = getFoundBlocks(staticBlock);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("Static");
-    Block expectedBlock = getBlock(STATIC, clazz, null, 4, 6, 49, 64);
-    assertEquals(expectedBlock, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass("Static",
+            jBlock(STATIC, 4, 6, 49, 64))
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -107,16 +123,17 @@ public class TestBasic {
         }
         System.out.println(output);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(4, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 16, 62, 244));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 13, 136, 211));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 7, 9, 165, 178));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 12, 194, 209));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 16, 62, 244),
+                jBlock(BLOCK, 5, 13, 136, 211),
+                jBlock(BLOCK, 7, 9, 165, 178),
+                jBlock(BLOCK, 10, 12, 194, 209)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -131,15 +148,16 @@ public class TestBasic {
         }
         System.out.println("x=" + x);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 12, 62, 188));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 9, 95, 153));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 8, 113, 129));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 12, 62, 188),
+                jBlock(BLOCK, 4, 9, 95, 153),
+                jBlock(BLOCK, 6, 8, 113, 129)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 
@@ -158,17 +176,18 @@ public class TestBasic {
         }
         System.out.println("x=" + x);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(5, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 15, 62, 336));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 6, 84, 99));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 8, 132, 185));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 8, 10, 215, 279));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 12, 289, 301));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 15, 62, 336),
+                jBlock(BLOCK, 4, 6, 84, 99),
+                jBlock(BLOCK, 6, 8, 132, 185),
+                jBlock(BLOCK, 8, 10, 215, 279),
+                jBlock(BLOCK, 10, 12, 289, 301)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -193,21 +212,24 @@ public class TestBasic {
             }
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(5, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("TryWithResource", true);
-    Class innerClass = new Class("MyClosable");
-    innerClass.setParentClass(clazz);
-    Method meth = new Method("open");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 3, 5, 108, 163));
-    meth = new Method("close");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 7, 9, 207, 262));
-    meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 12, 18, 310, 459));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 13, 15, 361, 390));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 15, 17, 412, 455));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("TryWithResource", true,
+            jClass("MyClosable",
+                jMethod("open",
+                    jBlock(METHOD, 3, 5, 108, 163)
+                ),
+                jMethod("close",
+                    jBlock(METHOD, 7, 9, 207, 262)
+                )
+            ),
+            jMethod("main", true,
+                jBlock(METHOD, 12, 18, 310, 459),
+                jBlock(BLOCK, 13, 15, 361, 390),
+                jBlock(BLOCK, 15, 17, 412, 455)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -231,15 +253,17 @@ public class TestBasic {
           return String.format("The number was %d", number);
         }
          """);
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 284));
-    meth = new Method("getTempString", false);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 18, 20, 625, 680));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 10, 62, 284)
+            ),
+            jMethod("getTempString", false,
+                jBlock(METHOD, 18, 20, 625, 680)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -248,13 +272,14 @@ public class TestBasic {
         // ignoring result
         "Some string.".split(" ");
          """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 6, 62, 117));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 6, 62, 117)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -270,13 +295,14 @@ public class TestBasic {
         c = '\\uFF1A'; c = '\\uuu231A';
         c = '\\064'; c = '\\377';
          """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 13, 62, 300));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 13, 62, 300)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -292,6 +318,14 @@ public class TestBasic {
     Method meth = new Method("main", true);
     expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 6, 62, 161));
     assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 6, 62, 161)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -302,14 +336,15 @@ public class TestBasic {
           System.out.println("does end with \\\\");
         }
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 161));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 6, 112, 156));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 8, 62, 161),
+                jBlock(BLOCK, 4, 6, 112, 156)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -322,16 +357,18 @@ public class TestBasic {
         """, """
         public void doNothing() {}
         """);
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 121));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 5, 79, 93));
-    meth = new Method("doNothing");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 9, 9, 150, 151));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 8, 62, 121),
+                jBlock(BLOCK, 3, 5, 79, 93)
+            ),
+            jMethod("doNothing",
+                jBlock(METHOD, 9, 9, 150, 151)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -343,13 +380,14 @@ public class TestBasic {
             : "Not dividable by 2";
         System.out.println(msg.contains("2") ? "2 appears" : "");
          """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 9, 62, 227));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 9, 62, 227)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -368,17 +406,18 @@ public class TestBasic {
           }
         }
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(5, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 16, 62, 220));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 14, 99, 215));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 13, 123, 213));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 7, 10, 141, 177));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 12, 184, 209));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 16, 62, 220),
+                jBlock(BLOCK, 5, 14, 99, 215),
+                jBlock(BLOCK, 6, 13, 123, 213),
+                jBlock(BLOCK, 7, 10, 141, 177),
+                jBlock(BLOCK, 10, 12, 184, 209)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -395,15 +434,16 @@ public class TestBasic {
           }
         }
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(4, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 14, 62, 170));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 4, 12, 92, 165));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 9, 108, 141));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 11, 148, 163));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 14, 62, 170),
+                jBlock(BLOCK, 4, 12, 92, 165),
+                jBlock(BLOCK, 5, 9, 108, 141),
+                jBlock(BLOCK, 9, 11, 148, 163)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

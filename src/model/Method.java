@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Method implements Serializable {
+public class Method implements Serializable, Component {
   public String name;
   public boolean isMain;
   public List<Block> blocks = new ArrayList<>();

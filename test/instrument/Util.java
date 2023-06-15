@@ -9,6 +9,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+
 public class Util {
   public static final String baseTemplate = """
       public class Main {
@@ -43,6 +46,11 @@ public class Util {
     return instrumenter.javaFiles[0].foundBlocks;
   }
 
+  public static JavaFile parseJavaFile(String content) {
+    Instrumenter instrumenter = analyzeStringContent(content);
+    return instrumenter.javaFiles[0];
+  }
+
   public static int getBeginOfImports(String content) {
     Instrumenter instrumenter = analyzeStringContent(content);
     return instrumenter.javaFiles[0].beginOfImports;
@@ -63,5 +71,13 @@ public class Util {
     block.end = end;
     block.endPos = endPos;
     return block;
+  }
+
+  public static void assertResultEquals(JavaFile expected, JavaFile actual) {
+    assertEquals(expected.foundBlocks.size(), actual.foundBlocks.size());
+    assertEquals(expected.topLevelClasses.size(), actual.topLevelClasses.size());
+    assertIterableEquals(expected.topLevelClasses, actual.topLevelClasses);
+    assertIterableEquals(expected.foundBlocks, actual.foundBlocks);
+    assertEquals(expected.beginOfImports, actual.beginOfImports);
   }
 }

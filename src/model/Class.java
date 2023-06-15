@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Class implements Serializable {
+public class Class implements Serializable, Component {
   public String name;
   public boolean isMain;
   public ClassType classType = ClassType.CLASS;

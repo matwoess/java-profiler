@@ -3,7 +3,7 @@ package model;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Block implements Serializable {
+public class Block implements Serializable, Component {
   public Class clazz;
   public Method method;
   public int beg;
