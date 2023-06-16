@@ -41,36 +41,9 @@ public class Util {
     return instrumenter;
   }
 
-  public static List<Block> getFoundBlocks(String content) {
-    Instrumenter instrumenter = analyzeStringContent(content);
-    return instrumenter.javaFiles[0].foundBlocks;
-  }
-
   public static JavaFile parseJavaFile(String content) {
     Instrumenter instrumenter = analyzeStringContent(content);
     return instrumenter.javaFiles[0];
-  }
-
-  public static int getBeginOfImports(String content) {
-    Instrumenter instrumenter = analyzeStringContent(content);
-    return instrumenter.javaFiles[0].beginOfImports;
-  }
-
-  public static Block getBlock(BlockType blockType, Class clazz, Method meth, int beg, int end, int begPos, int endPos) {
-    Block block = new Block();
-    block.blockType = blockType;
-    block.clazz = clazz;
-    block.method = meth;
-    block.beg = beg;
-    if (block.blockType.hasNoBraces()) {
-      block.begPos = begPos;
-    } else {
-      block.incInsertPosition = begPos;
-      block.begPos = begPos - 1;
-    }
-    block.end = end;
-    block.endPos = endPos;
-    return block;
   }
 
   public static void assertResultEquals(JavaFile expected, JavaFile actual) {

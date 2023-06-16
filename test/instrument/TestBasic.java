@@ -28,14 +28,18 @@ public class TestBasic {
   }
 
   @Test
-  public void TestBeginOfImportsAndPackageName() {
-    String withoutPackage = """
+  public void TestBeginOfImportsAndPackageName_NoPackage() {
+    String fileContent = """
         import static java.lang.System.exit;
         import java.util.ArrayList;
         class Empty {
         }""";
-    int beginOfImports = getBeginOfImports(withoutPackage);
-    assertEquals(0, beginOfImports);
+    JavaFile expected = jFile("<default>", 0, jClass("Empty"));
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void TestBeginOfImportsAndPackageName() {
     String fileContent = """
         package name.Of._the_.pkg ;
         import static java.lang.System.exit;
@@ -312,13 +316,6 @@ public class TestBasic {
         String s = "''''\\"\\"\\"\\r\\n\\t\\"\\f\\b\\s_asdf";
         s = "\\u42FA_\\uuuADA1_\\1_\\155adsf\\6_\\43_Text";
          """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 6, 62, 161));
-    assertIterableEquals(expectedBlocks, blocks);
     JavaFile expected = jFile(
         jClass("Main", true,
             jMethod("main", true,
