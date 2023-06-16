@@ -74,6 +74,11 @@ public class ProgramBuilder {
     return jMethod(name, false, blocks);
   }
 
+  public static Method jMethod(String name, boolean isMain, int beg, int end, int begPos, int endPos, Block... blocks) {
+    Block methodBlock = jBlock(BlockType.METHOD, beg, end, begPos, endPos);
+    return jMethod(name, isMain, misc.Util.prependToArray(blocks, methodBlock));
+  }
+
   public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block();
     b.blockType = type;

@@ -172,25 +172,19 @@ public class TestClasses {
         }""";
     JavaFile expected = jFile(
         jClass("Pet",
-            jMethod("toString",
-                jBlock(METHOD, 6, 11, 139, 234)
-            )
+            jMethod("toString", false, 6, 11, 139, 234)
         ),
         jClass("Dog",
             jMethod("Dog",
                 jBlock(CONSTRUCTOR, 15, 18, 298, 344)
             ),
-            jMethod("speak",
-                jBlock(METHOD, 19, 19, 373, 391)
-            )
+            jMethod("speak", false, 19, 19, 373, 391)
         ),
         jClass("Cat",
             jMethod("Cat",
                 jBlock(CONSTRUCTOR, 23, 26, 455, 501)
             ),
-            jMethod("speak",
-                jBlock(METHOD, 27, 27, 530, 548)
-            )
+            jMethod("speak", false, 27, 27, 530, 548)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -211,9 +205,7 @@ public class TestClasses {
         }""";
     JavaFile expected = jFile(
         jClass("InitBlocks",
-            jMethod("doNothing",
-                jBlock(METHOD, 9, 9, 263, 264)
-            )
+            jMethod("doNothing", false, 9, 9, 263, 264)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -232,9 +224,7 @@ public class TestClasses {
         }""";
     JavaFile expected = jFile(
         jClass("ImplicitInitBlocks",
-            jMethod("doNothing",
-                jBlock(METHOD, 7, 7, 177, 178)
-            )
+            jMethod("doNothing", false, 7, 7, 177, 178)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -260,26 +250,16 @@ public class TestClasses {
     JavaFile expected = jFile(
         jClass("A",
             jClass("B",
-                jMethod("classBMeth",
-                    jBlock(METHOD, 3, 3, 45, 46)
-                )
+                jMethod("classBMeth", false, 3, 3, 45, 46)
             ),
-            jMethod("classAMeth1",
-                jBlock(METHOD, 5, 5, 73, 74)
-            ),
+            jMethod("classAMeth1", false, 5, 5, 73, 74),
             jClass("C",
                 jClass("D",
-                    jMethod("classDMeth",
-                        jBlock(METHOD, 8, 8, 126, 127)
-                    )
+                    jMethod("classDMeth", false, 8, 8, 126, 127)
                 ),
-                jMethod("classCMeth",
-                    jBlock(METHOD, 10, 10, 157, 158)
-                )
+                jMethod("classCMeth", false, 10, 10, 157, 158)
             ),
-            jMethod("classAMeth2",
-                jBlock(METHOD, 12, 12, 185, 186)
-            )
+            jMethod("classAMeth2", false, 12, 12, 185, 186)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -311,12 +291,8 @@ public class TestClasses {
         }""";
     JavaFile expected = jFile(
         jClass("ThrowClass", true,
-            jMethod("errorCode",
-                jBlock(METHOD, 4, 6, 168, 194)
-            ),
-            jMethod("main", true,
-                jBlock(METHOD, 8, 11, 262, 347)
-            )
+            jMethod("errorCode", false, 4, 6, 168, 194),
+            jMethod("main", true, 8, 11, 262, 347)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -361,9 +337,7 @@ public class TestClasses {
             jMethod("Dog",
                 jBlock(CONSTRUCTOR, 4, 7, 74, 120)
             ),
-            jMethod("speak",
-                jBlock(METHOD, 8, 10, 139, 162)
-            )
+            jMethod("speak", false, 8, 10, 139, 162)
         ),
         jClass("SmallDog",
             jMethod("SmallDog",
@@ -372,8 +346,7 @@ public class TestClasses {
             jMethod("SmallDog",
                 jBlock(CONSTRUCTOR, 19, 22, 376, 422, "\n    this(name, age);".length())
             ),
-            jMethod("speak",
-                jBlock(METHOD, 24, 30, 453, 544),
+            jMethod("speak", false, 24, 30, 453, 544,
                 jBlock(BLOCK, 25, 27, 472, 499),
                 jBlock(BLOCK, 27, 29, 506, 540)
             )

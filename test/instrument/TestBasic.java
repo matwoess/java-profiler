@@ -55,9 +55,7 @@ public class TestBasic {
     int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
     JavaFile expected = jFile("name.Of._the_.pkg", lengthOfPackageDeclaration,
         jClass("Empty",
-            jMethod("meth",
-                jBlock(METHOD, 5, 6, 122, 126)
-            ),
+            jMethod("meth", false, 5, 6, 122, 126),
             jClass("InEmpty",
                 jMethod("innerMeth",
                     jBlock(METHOD, 8, 9, 167, 173)
@@ -85,9 +83,7 @@ public class TestBasic {
         """;
     JavaFile expected = jFile(
         jClass("HelloWorld", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 4, 68, 112)
-            )
+            jMethod("main", true, 2, 4, 68, 112)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -130,8 +126,7 @@ public class TestBasic {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 16, 62, 244),
+            jMethod("main", true, 2, 16, 62, 244,
                 jBlock(BLOCK, 5, 13, 136, 211),
                 jBlock(BLOCK, 7, 9, 165, 178),
                 jBlock(BLOCK, 10, 12, 194, 209)
@@ -155,8 +150,7 @@ public class TestBasic {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 12, 62, 188),
+            jMethod("main", true, 2, 12, 62, 188,
                 jBlock(BLOCK, 4, 9, 95, 153),
                 jBlock(BLOCK, 6, 8, 113, 129)
             )
@@ -183,8 +177,7 @@ public class TestBasic {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 15, 62, 336),
+            jMethod("main", true, 2, 15, 62, 336,
                 jBlock(BLOCK, 4, 6, 84, 99),
                 jBlock(BLOCK, 6, 8, 132, 185),
                 jBlock(BLOCK, 8, 10, 215, 279),
@@ -227,8 +220,7 @@ public class TestBasic {
                     jBlock(METHOD, 7, 9, 207, 262)
                 )
             ),
-            jMethod("main", true,
-                jBlock(METHOD, 12, 18, 310, 459),
+            jMethod("main", true, 12, 18, 310, 459,
                 jBlock(BLOCK, 13, 15, 361, 390),
                 jBlock(BLOCK, 15, 17, 412, 455)
             )
@@ -260,12 +252,8 @@ public class TestBasic {
          """);
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 10, 62, 284)
-            ),
-            jMethod("getTempString", false,
-                jBlock(METHOD, 18, 20, 625, 680)
-            )
+            jMethod("main", true, 2, 10, 62, 284),
+            jMethod("getTempString", false, 18, 20, 625, 680)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -279,9 +267,7 @@ public class TestBasic {
          """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 6, 62, 117)
-            )
+            jMethod("main", true, 2, 6, 62, 117)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -302,9 +288,7 @@ public class TestBasic {
          """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 13, 62, 300)
-            )
+            jMethod("main", true, 2, 13, 62, 300)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -318,9 +302,7 @@ public class TestBasic {
          """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 6, 62, 161)
-            )
+            jMethod("main", true, 2, 6, 62, 161)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -336,8 +318,7 @@ public class TestBasic {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 8, 62, 161),
+            jMethod("main", true, 2, 8, 62, 161,
                 jBlock(BLOCK, 4, 6, 112, 156)
             )
         )
@@ -357,13 +338,10 @@ public class TestBasic {
         """);
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 8, 62, 121),
+            jMethod("main", true, 2, 8, 62, 121,
                 jBlock(BLOCK, 3, 5, 79, 93)
             ),
-            jMethod("doNothing",
-                jBlock(METHOD, 9, 9, 150, 151)
-            )
+            jMethod("doNothing", false, 9, 9, 150, 151)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -380,9 +358,7 @@ public class TestBasic {
          """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 9, 62, 227)
-            )
+            jMethod("main", true, 2, 9, 62, 227)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -406,8 +382,7 @@ public class TestBasic {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 16, 62, 220),
+            jMethod("main", true, 2, 16, 62, 220,
                 jBlock(BLOCK, 5, 14, 99, 215),
                 jBlock(BLOCK, 6, 13, 123, 213),
                 jBlock(BLOCK, 7, 10, 141, 177),
@@ -434,8 +409,7 @@ public class TestBasic {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 14, 62, 170),
+            jMethod("main", true, 2, 14, 62, 170,
                 jBlock(BLOCK, 4, 12, 92, 165),
                 jBlock(BLOCK, 5, 9, 108, 141),
                 jBlock(BLOCK, 9, 11, 148, 163)

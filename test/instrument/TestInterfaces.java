@@ -171,9 +171,7 @@ public class TestInterfaces {
         }""";
     JavaFile expected = jFile(
         jClass(INTERFACE, "InferredPublic", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 6, 69, 157)
-            )
+            jMethod("main", true, 2, 6, 69, 157)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));

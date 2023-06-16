@@ -204,9 +204,7 @@ public class TestLambdaExpressions {
             jBlock(SS_LAMBDA, 6, 6, 275, 282),
             jBlock(SS_LAMBDA, 7, 7, 344, 351),
             jBlock(SS_LAMBDA, 7, 7, 363, 371),
-            jMethod("main", true,
-                jBlock(METHOD, 9, 12, 426, 527)
-            )
+            jMethod("main", true, 9, 12, 426, 527)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));

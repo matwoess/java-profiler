@@ -206,8 +206,7 @@ public class TestMissingBraces {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 10, 62, 165),
+            jMethod("main", true, 2, 10, 62, 165,
                 jBlock(SS_BLOCK, 4, 8, 97, 160),
                 jBlock(SS_BLOCK, 4, 8, 109, 160),
                 jBlock(SS_BLOCK, 5, 6, 121, 134),

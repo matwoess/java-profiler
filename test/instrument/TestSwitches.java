@@ -134,9 +134,7 @@ public class TestSwitches {
             jBlock(SS_SWITCH_EXPR_ARROW_CASE, 3, 3, 105, 108),
             jBlock(SS_SWITCH_EXPR_ARROW_CASE, 4, 4, 125, 128),
             jBlock(BLOCK, 5, 7, 145, 166),
-            jMethod("main", true,
-                jBlock(METHOD, 10, 12, 215, 254)
-            )
+            jMethod("main", true, 10, 12, 215, 254)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));

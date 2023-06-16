@@ -46,26 +46,17 @@ public class TestAnonymousClasses {
          """);
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 4, 62, 71)
-            ),
-            jMethod("firstJavaFile",
-                jBlock(METHOD, 5, 31, 118, 715),
+            jMethod("main", true, 2, 4, 62, 71),
+            jMethod("firstJavaFile", false, 5, 31, 118, 715,
                 jBlock(BLOCK, 26, 28, 653, 685),
                 jBlock(BLOCK, 28, 30, 692, 713)
             ),
             jClass(ANONYMOUS, null, false,
-                jMethod("accept",
-                    jBlock(METHOD, 10, 13, 289, 361)
-                ),
+                jMethod("accept", false, 10, 13, 289, 361),
                 jClass("X",
-                    jMethod("methodInX",
-                        jBlock(METHOD, 16, 18, 408, 503)
-                    )
+                    jMethod("methodInX", false, 16, 18, 408, 503)
                 ),
-                jMethod("returnTrue",
-                    jBlock(METHOD, 21, 24, 544, 590)
-                )
+                jMethod("returnTrue", false, 21, 24, 544, 590)
             )
         )
     );
@@ -94,15 +85,10 @@ public class TestAnonymousClasses {
         """);
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 4, 62, 71)
-            ),
-            jMethod("getSortedIntegers",
-                jBlock(METHOD, 5, 17, 140, 380)
-            ),
+            jMethod("main", true, 2, 4, 62, 71),
+            jMethod("getSortedIntegers", false, 5, 17, 140, 380),
             jClass(ANONYMOUS, null, false,
-                jMethod("compare",
-                    jBlock(METHOD, 8, 14, 261, 352),
+                jMethod("compare", false, 8, 14, 261, 352,
                     jBlock(BLOCK, 9, 11, 288, 314)
                 )
             )
@@ -124,13 +110,9 @@ public class TestAnonymousClasses {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 10, 62, 158)
-            ),
+            jMethod("main", true, 2, 10, 62, 158),
             jClass(ANONYMOUS, null, false,
-                jMethod("hashCode",
-                    jBlock(METHOD, 5, 7, 117, 150)
-                )
+                jMethod("hashCode", false, 5, 7, 117, 150)
             )
         )
     );
