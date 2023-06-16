@@ -178,9 +178,7 @@ public class TestEnums {
                     jBlock(METHOD, 11, 13, 317, 362)
                 )
             ),
-            jMethod("callMethods",
-                jBlock(METHOD, 16, 19, 404, 499)
-            )
+            jMethod("callMethods", false, 16, 19, 404, 499)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));

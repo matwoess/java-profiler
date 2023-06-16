@@ -80,9 +80,7 @@ public class TestAnnotations {
         """;
     JavaFile expected = jFile(
         jClass("Annotations", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 7, 69, 206)
-            )
+            jMethod("main", true, 2, 7, 69, 206)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
