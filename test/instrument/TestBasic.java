@@ -102,7 +102,8 @@ public class TestBasic {
         """;
     JavaFile expected = jFile(
         jClass("Static",
-            jBlock(STATIC, 4, 6, 49, 64))
+            jBlock(STATIC, 4, 6, 49, 64)
+        )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }

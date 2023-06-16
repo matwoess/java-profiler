@@ -1,18 +1,13 @@
 package instrument;
 
-import model.Block;
-import model.Class;
-import model.ClassType;
-import model.Method;
+import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static instrument.ProgramBuilder.*;
+import static instrument.Util.parseJavaFile;
 import static model.BlockType.*;
-import static instrument.Util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static model.ClassType.ENUM;
+import static model.ClassType.INTERFACE;
 
 public class TestEnums {
   @Test
@@ -20,8 +15,10 @@ public class TestEnums {
     String fileContent = """
         enum Empty {
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(0, blocks.size());
+    JavaFile expected = jFile(
+        jClass(ENUM, "Empty", false)
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -31,8 +28,10 @@ public class TestEnums {
           LOW, MEDIUM, HIGH,
           WEAK, STRONG, GREAT
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(0, blocks.size());
+    JavaFile expected = jFile(
+        jClass(ENUM, "Adjective", false)
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -41,8 +40,10 @@ public class TestEnums {
         enum AB {
           A, B;
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(0, blocks.size());
+    JavaFile expected = jFile(
+        jClass(ENUM, "AB", false)
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 
@@ -56,11 +57,12 @@ public class TestEnums {
             ID = 1237877L;
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("AB", ClassType.ENUM, false);
-    Block block = getBlock(STATIC, clazz, null, 4, 6, 59, 82);
-    assertEquals(block, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass(ENUM, "AB", false,
+            jBlock(STATIC, 4, 6, 59, 82)
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 
@@ -74,12 +76,14 @@ public class TestEnums {
             return this.name().toLowerCase();
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("Enum", ClassType.ENUM, false);
-    Method meth = new Method("lowercase");
-    Block block = getBlock(METHOD, clazz, meth, 4, 6, 90, 132);
-    assertEquals(block, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass(ENUM, "Enum", false,
+            jMethod("lowercase",
+                jBlock(METHOD, 4, 6, 90, 132)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -100,12 +104,14 @@ public class TestEnums {
             this.floatVal = num;
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("WithConstructor", ClassType.ENUM, false);
-    Method meth = new Method("WithConstructor");
-    Block block = getBlock(CONSTRUCTOR, clazz, meth, 10, 14, 276, 359);
-    assertEquals(block, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass(ENUM, "WithConstructor", false,
+            jMethod("WithConstructor",
+                jBlock(CONSTRUCTOR, 10, 14, 276, 359)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -125,15 +131,16 @@ public class TestEnums {
             }
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    Class clazz = new Class("WithMain", ClassType.ENUM, true);
-    Method meth = new Method("main", true);
-    List<Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 13, 80, 222));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 8, 9, 133, 158));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 10, 11, 173, 212));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass(ENUM, "WithMain", true,
+            jMethod("main", true,
+                jBlock(METHOD, 5, 13, 80, 222),
+                jBlock(SWITCH_CASE, 8, 9, 133, 158),
+                jBlock(SWITCH_CASE, 10, 11, 173, 212)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -159,20 +166,23 @@ public class TestEnums {
             new ClassInEnum().lowercase(C);
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    Class clazz = new Class("WithSubClassAndInterface", ClassType.ENUM, false);
-    Class innerClass = new Class("ClassInEnum");
-    innerClass.setParentClass(clazz);
-    Method meth = new Method("printName");
-    List<Block> expectedBlocks = new ArrayList<>();
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 5, 7, 169, 213));
-    innerClass = new Class("InterfaceInEnum", ClassType.INTERFACE, false);
-    innerClass.setParentClass(clazz);
-    meth = new Method("lowercase");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 11, 13, 317, 362));
-    meth = new Method("callMethods");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 16, 19, 404, 499));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass(ENUM, "WithSubClassAndInterface", false,
+            jClass("ClassInEnum",
+                jMethod("printName",
+                    jBlock(METHOD, 5, 7, 169, 213)
+                )
+            ),
+            jClass(INTERFACE, "InterfaceInEnum", false,
+                jMethod("lowercase",
+                    jBlock(METHOD, 11, 13, 317, 362)
+                )
+            ),
+            jMethod("callMethods",
+                jBlock(METHOD, 16, 19, 404, 499)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

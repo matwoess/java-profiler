@@ -18,6 +18,7 @@ public class ProgramBuilder {
       javaFile.foundBlocks.addAll(clazz.getMethodsRecursive().stream()
           .flatMap(method -> method.blocks.stream())
           .toList());
+      javaFile.foundBlocks.addAll(clazz.innerClasses.stream().flatMap(ic -> ic.classBlocks.stream()).toList());
       javaFile.foundBlocks.addAll(clazz.classBlocks);
       javaFile.foundBlocks.sort(Comparator.comparingInt(b -> b.begPos));
     }
@@ -28,7 +29,7 @@ public class ProgramBuilder {
     JavaFile javaFile = jFile(classes);
     javaFile.beginOfImports = beginOfImports;
     javaFile.topLevelClasses.forEach(clazz -> clazz.packageName = packageName);
-    javaFile.topLevelClasses.stream().flatMap(tlc->tlc.innerClasses.stream()).forEach(clazz -> clazz.packageName = packageName);
+    javaFile.topLevelClasses.stream().flatMap(tlc -> tlc.innerClasses.stream()).forEach(clazz -> clazz.packageName = packageName);
     return javaFile;
   }
 
@@ -52,6 +53,12 @@ public class ProgramBuilder {
 
   public static Class jClass(String name, Component... classChildren) {
     return jClass(name, false, classChildren);
+  }
+
+  public static Class jClass(ClassType classType, String name, boolean isMain, Component... classChildren) {
+    Class clazz = jClass(name, isMain, classChildren);
+    clazz.classType = classType;
+    return clazz;
   }
 
   public static Method jMethod(String name, boolean isMain, Block... blocks) {
@@ -79,6 +86,12 @@ public class ProgramBuilder {
       b.begPos = begPos - 1;
     }
     b.endPos = endPos;
+    return b;
+  }
+
+  public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos, int incInsertPosOffset) {
+    Block b = jBlock(type, beg, end, begPos, endPos);
+    b.incInsertPosition += incInsertPosOffset;
     return b;
   }
 }

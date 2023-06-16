@@ -1,23 +1,18 @@
 package instrument;
 
+import model.Class;
+import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import model.Block;
-import model.Method;
-import model.Class;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import static instrument.ProgramBuilder.*;
+import static instrument.Util.parseJavaFile;
 import static model.BlockType.*;
-import static instrument.Util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestClasses {
   @Test
   public void TestAbstractClass() {
-    String abstractClass = """
+    String fileContent = """
         abstract class Pet {
           String name;
           int age;
@@ -30,17 +25,19 @@ public class TestClasses {
                 '}';
           }
         }""";
-    List<Block> blocks = getFoundBlocks(abstractClass);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("Pet");
-    Method meth = new Method("toString");
-    Block expectedBlock = getBlock(METHOD, clazz, meth, 6, 11, 139, 234);
-    assertEquals(expectedBlock, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass("Pet",
+            jMethod("toString",
+                jBlock(METHOD, 6, 11, 139, 234)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
   public void TestInnerClassAndStaticBlocks() {
-    String innerClassAndStaticBlocks = """
+    String fileContent = """
         public class Classes {
           static int i;
           
@@ -71,26 +68,27 @@ public class TestClasses {
             }
           }
         }""";
-    List<Block> blocks = getFoundBlocks(innerClassAndStaticBlocks);
-    assertEquals(6, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Classes", true);
-    expectedBlocks.add(getBlock(STATIC, clazz, null, 4, 6, 50, 65));
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 21, 109, 471));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 12, 20, 234, 467));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 14, 16, 285, 352));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 16, 18, 359, 427));
-    Class innerClass = new Class("PetFarm");
-    innerClass.setParentClass(clazz);
-    expectedBlocks.add(getBlock(STATIC, innerClass, null, 26, 28, 561, 590));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Classes", true,
+            jBlock(STATIC, 4, 6, 50, 65),
+            jMethod("main", true,
+                jBlock(METHOD, 8, 21, 109, 471),
+                jBlock(BLOCK, 12, 20, 234, 467),
+                jBlock(BLOCK, 14, 16, 285, 352),
+                jBlock(BLOCK, 16, 18, 359, 427)
+            ),
+            jClass("PetFarm",
+                jBlock(STATIC, 26, 28, 561, 590)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 
   @Test
   public void TestDeepInnerClasses() {
-    String deepInnerClasses = """
+    String fileContent = """
         public class InnerClasses {
           public static void main(String[] args) {
             Inner inner = new Inner();
@@ -116,31 +114,34 @@ public class TestClasses {
             }
           }
         }""";
-    List<Block> blocks = getFoundBlocks(deepInnerClasses);
-    assertEquals(4, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("InnerClasses", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 9, 70, 275));
-    Class innerClass = new Class("Inner");
-    innerClass.setParentClass(clazz);
-    meth = new Method("level1");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 11, 13, 318, 362));
-    Class subInnerClass = new Class("Sub");
-    subInnerClass.setParentClass(innerClass);
-    meth = new Method("level2");
-    expectedBlocks.add(getBlock(METHOD, subInnerClass, meth, 15, 17, 407, 455));
-    clazz = new Class("InnerClasses.Inner.Sub.SubSub");
-    Class subSubInnerClass = new Class("SubSub");
-    subSubInnerClass.setParentClass(subInnerClass);
-    meth = new Method("level3");
-    expectedBlocks.add(getBlock(METHOD, subSubInnerClass, meth, 19, 21, 507, 559));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("InnerClasses", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 9, 70, 275)
+            ),
+            jClass("Inner",
+                jMethod("level1",
+                    jBlock(METHOD, 11, 13, 318, 362)
+                ),
+                jClass("Sub",
+                    jMethod("level2",
+                        jBlock(METHOD, 15, 17, 407, 455)
+                    ),
+                    jClass("SubSub",
+                        jMethod("level3",
+                            jBlock(METHOD, 19, 21, 507, 559)
+                        )
+                    )
+                )
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
   public void TestClassWithInheritanceAndConstructors() {
-    String classWithInheritance = """
+    String fileContent = """
         abstract class Pet {
           String name;
           int age;
@@ -169,23 +170,30 @@ public class TestClasses {
           }
           @Override String speak() { return "meow."; }
         }""";
-    List<Block> blocks = getFoundBlocks(classWithInheritance);
-    assertEquals(5, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Pet");
-    Method meth = new Method("toString");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 11, 139, 234));
-    clazz = new Class("Dog");
-    meth = new Method("Dog");
-    expectedBlocks.add(getBlock(CONSTRUCTOR, clazz, meth, 15, 18, 298, 344));
-    meth = new Method("speak");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 19, 19, 373, 391));
-    clazz = new Class("Cat");
-    meth = new Method("Cat");
-    expectedBlocks.add(getBlock(CONSTRUCTOR, clazz, meth, 23, 26, 455, 501));
-    meth = new Method("speak");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 27, 27, 530, 548));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Pet",
+            jMethod("toString",
+                jBlock(METHOD, 6, 11, 139, 234)
+            )
+        ),
+        jClass("Dog",
+            jMethod("Dog",
+                jBlock(CONSTRUCTOR, 15, 18, 298, 344)
+            ),
+            jMethod("speak",
+                jBlock(METHOD, 19, 19, 373, 391)
+            )
+        ),
+        jClass("Cat",
+            jMethod("Cat",
+                jBlock(CONSTRUCTOR, 23, 26, 455, 501)
+            ),
+            jMethod("speak",
+                jBlock(METHOD, 27, 27, 530, 548)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -201,12 +209,14 @@ public class TestClasses {
           };
           void doNothing() {}
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("InitBlocks");
-    Method meth = new Method("doNothing");
-    Block expectedBlock = getBlock(METHOD, clazz, meth, 9, 9, 263, 264);
-    assertEquals(expectedBlock, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass("InitBlocks",
+            jMethod("doNothing",
+                jBlock(METHOD, 9, 9, 263, 264)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -220,12 +230,14 @@ public class TestClasses {
           };
           void doNothing() {}
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("ImplicitInitBlocks");
-    Method meth = new Method("doNothing");
-    Block expectedBlock = getBlock(METHOD, clazz, meth, 7, 7, 177, 178);
-    assertEquals(expectedBlock, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass("ImplicitInitBlocks",
+            jMethod("doNothing",
+                jBlock(METHOD, 7, 7, 177, 178)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -245,31 +257,40 @@ public class TestClasses {
           }
           void classAMeth2() {}
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(5, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("A");
-    Class innerClass1 = new Class("B");
-    innerClass1.setParentClass(clazz);
-    Method meth = new Method("classBMeth");
-    expectedBlocks.add(getBlock(METHOD, innerClass1, meth, 3, 3, 45, 46));
-    meth = new Method("classAMeth1");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 5, 73, 74));
-    Class innerClass2 = new Class("C");
-    innerClass2.setParentClass(clazz);
-    Class subInnerClass = new Class("D");
-    subInnerClass.setParentClass(innerClass2);
-    meth = new Method("classDMeth");
-    expectedBlocks.add(getBlock(METHOD, subInnerClass, meth, 8, 8, 126, 127));
-    meth = new Method("classCMeth");
-    expectedBlocks.add(getBlock(METHOD, innerClass2, meth, 10, 10, 157, 158));
-    meth = new Method("classAMeth2");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 12, 12, 185, 186));
-    assertIterableEquals(expectedBlocks, blocks);
-    assertEquals("A", clazz.getName());
+    JavaFile expected = jFile(
+        jClass("A",
+            jClass("B",
+                jMethod("classBMeth",
+                    jBlock(METHOD, 3, 3, 45, 46)
+                )
+            ),
+            jMethod("classAMeth1",
+                jBlock(METHOD, 5, 5, 73, 74)
+            ),
+            jClass("C",
+                jClass("D",
+                    jMethod("classDMeth",
+                        jBlock(METHOD, 8, 8, 126, 127)
+                    )
+                ),
+                jMethod("classCMeth",
+                    jBlock(METHOD, 10, 10, 157, 158)
+                )
+            ),
+            jMethod("classAMeth2",
+                jBlock(METHOD, 12, 12, 185, 186)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    Class tlClass = expected.topLevelClasses.get(0);
+    Class innerClass1 = tlClass.innerClasses.get(0);
+    Class innerClass2 = tlClass.innerClasses.get(1);
+    Class subInnerClass = innerClass2.innerClasses.get(0);
+    assertEquals("A", tlClass.getName());
     assertEquals("A$B", innerClass1.getName());
-    assertEquals("A$C$D", subInnerClass.getName());
     assertEquals("A$C", innerClass2.getName());
+    assertEquals("A$C$D", subInnerClass.getName());
   }
 
   @Test
@@ -288,20 +309,22 @@ public class TestClasses {
             throw new RuntimeException(String.valueOf(err));
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("ThrowClass", true);
-    Method meth = new Method("errorCode");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 4, 6, 168, 194));
-    meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 11, 262, 347));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("ThrowClass", true,
+            jMethod("errorCode",
+                jBlock(METHOD, 4, 6, 168, 194)
+            ),
+            jMethod("main", true,
+                jBlock(METHOD, 8, 11, 262, 347)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
   public void TestInheritedClassWithSuperCallAndThisCall() {
-    String classWithInheritance = """
+    String fileContent = """
         class Dog {
           String name;
           int age;
@@ -333,26 +356,29 @@ public class TestClasses {
             }
           }
         }""";
-    List<Block> blocks = getFoundBlocks(classWithInheritance);
-    assertEquals(7, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Dog");
-    Method meth = new Method("Dog");
-    expectedBlocks.add(getBlock(CONSTRUCTOR, clazz, meth, 4, 7, 74, 120));
-    meth = new Method("speak");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 8, 10, 139, 162));
-    clazz = new Class("SmallDog");
-    meth = new Method("SmallDog");
-    Block blockWithSuperCall = getBlock(CONSTRUCTOR, clazz, meth, 14, 18, 254, 319);
-    blockWithSuperCall.incInsertPosition = blockWithSuperCall.incInsertPosition + "\n    super(name, age);".length();
-    expectedBlocks.add(blockWithSuperCall);
-    Block blockWithThisCall = getBlock(CONSTRUCTOR, clazz, meth, 19, 22, 376, 422);
-    blockWithThisCall.incInsertPosition = blockWithThisCall.incInsertPosition + "\n    this(name, age);".length();
-    expectedBlocks.add(blockWithThisCall);
-    meth = new Method("speak");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 24, 30, 453, 544));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 25, 27, 472, 499));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 27, 29, 506, 540));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Dog",
+            jMethod("Dog",
+                jBlock(CONSTRUCTOR, 4, 7, 74, 120)
+            ),
+            jMethod("speak",
+                jBlock(METHOD, 8, 10, 139, 162)
+            )
+        ),
+        jClass("SmallDog",
+            jMethod("SmallDog",
+                jBlock(CONSTRUCTOR, 14, 18, 254, 319, "\n    super(name, age);".length())
+            ),
+            jMethod("SmallDog",
+                jBlock(CONSTRUCTOR, 19, 22, 376, 422, "\n    this(name, age);".length())
+            ),
+            jMethod("speak",
+                jBlock(METHOD, 24, 30, 453, 544),
+                jBlock(BLOCK, 25, 27, 472, 499),
+                jBlock(BLOCK, 27, 29, 506, 540)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

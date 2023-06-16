@@ -1,31 +1,27 @@
 package instrument;
 
-import model.ClassType;
+import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import model.Block;
-import model.Method;
-import model.Class;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import static instrument.ProgramBuilder.*;
+import static instrument.Util.parseJavaFile;
 import static model.BlockType.METHOD;
-import static instrument.Util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static model.ClassType.CLASS;
+import static model.ClassType.INTERFACE;
 
 public class TestInterfaces {
   @Test
   public void TestAbstractMethodsNoBlock() {
-    String abstractClass = """
+    String fileContent = """
         interface AbstractMethods {
           String getName();
           public int getAge(int userId);
           abstract void printInfo(String userName, int age);
         }""";
-    List<Block> blocks = getFoundBlocks(abstractClass);
-    assertEquals(0, blocks.size());
+    JavaFile expected = jFile(
+        jClass(INTERFACE, "AbstractMethods", false)
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -41,12 +37,14 @@ public class TestInterfaces {
           };
           default void doNothing() {}
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    Class clazz = new Class("InitBlocks", ClassType.INTERFACE, false);
-    Method meth = new Method("doNothing");
-    Block expectedBlock = getBlock(METHOD, clazz, meth, 9, 9, 275, 276);
-    assertEquals(expectedBlock, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass(INTERFACE, "InitBlocks", false,
+            jMethod("doNothing",
+                jBlock(METHOD, 9, 9, 275, 276)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -64,17 +62,20 @@ public class TestInterfaces {
             System.out.printf("%s: %d\\n", userName, age);
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("DefaultStatic", ClassType.INTERFACE, false);
-    Method meth = new Method("getName");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 3, 5, 67, 91));
-    meth = new Method("getAge");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 6, 8, 133, 160));
-    meth = new Method("printInfo");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 9, 11, 212, 266));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass(INTERFACE, "DefaultStatic", false,
+            jMethod("getName",
+                jBlock(METHOD, 3, 5, 67, 91)
+            ),
+            jMethod("getAge",
+                jBlock(METHOD, 6, 8, 133, 160)
+            ),
+            jMethod("printInfo",
+                jBlock(METHOD, 9, 11, 212, 266)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -102,27 +103,30 @@ public class TestInterfaces {
             }
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Interfaces", ClassType.INTERFACE, false);
-    Class innerClass = new Class("SubInterface", ClassType.INTERFACE, false);
-    innerClass.setParentClass(clazz);
-    Method meth = new Method("get");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 6, 8, 174, 225));
-    Class innerInnerClass = new Class("SubClass");
-    innerInnerClass.setParentClass(innerClass);
-    meth = new Method("getXPlus1");
-    expectedBlocks.add(getBlock(METHOD, innerInnerClass, meth, 11, 13, 278, 308));
-    innerClass = new Class("X");
-    innerClass.setParentClass(clazz);
-    meth = new Method("callGet");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 18, 20, 376, 395));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass(INTERFACE, "Interfaces", false,
+            jClass(INTERFACE, "SubInterface", false,
+                jMethod("get",
+                    jBlock(METHOD, 6, 8, 174, 225)
+                ),
+                jClass(CLASS, "SubClass", false,
+                    jMethod("getXPlus1",
+                        jBlock(METHOD, 11, 13, 278, 308)
+                    )
+                )
+            ),
+            jClass("X",
+                jMethod("callGet",
+                    jBlock(METHOD, 18, 20, 376, 395)
+                )
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
-  public void TestMainEntryPoint() {
+  public void TestMainEntryPointPublic() {
     String fileContent = """
         public interface WithMain {
           int get();
@@ -140,19 +144,24 @@ public class TestInterfaces {
             System.out.println(result);
           }
         }""";
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("WithMain", ClassType.INTERFACE, true);
-    Class innerClass = new Class("X", false);
-    Method meth = new Method("get");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 6, 8, 110, 132));
-    innerClass.setParentClass(clazz);
-    meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 15, 180, 268));
-    assertIterableEquals(expectedBlocks, blocks);
-    // without public
-    fileContent = """
+    JavaFile expected = jFile(
+        jClass(INTERFACE, "WithMain", true,
+            jClass("X",
+                jMethod("get",
+                    jBlock(METHOD, 6, 8, 110, 132)
+                )
+            ),
+            jMethod("main", true,
+                jBlock(METHOD, 11, 15, 180, 268)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void TestMainEntryPointImplicitPublic() {
+    String fileContent = """
         public interface InferredPublic {
           static void main(String[] args) {
             WithMain x = new X();
@@ -160,11 +169,13 @@ public class TestInterfaces {
             System.out.println(result);
           }
         }""";
-    blocks = getFoundBlocks(fileContent);
-    assertEquals(1, blocks.size());
-    clazz = new Class("InferredPublic", ClassType.INTERFACE, true);
-    meth = new Method("main", true);
-    Block expectedBlock = getBlock(METHOD, clazz, meth, 2, 6, 69, 157);
-    assertEquals(expectedBlock, blocks.get(0));
+    JavaFile expected = jFile(
+        jClass(INTERFACE, "InferredPublic", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 6, 69, 157)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }
