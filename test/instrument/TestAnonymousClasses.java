@@ -1,19 +1,16 @@
 package instrument;
 
-import model.Block;
 import model.Class;
-import model.ClassType;
-import model.Method;
+import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static instrument.Util.*;
-import static model.BlockType.*;
+import static instrument.ProgramBuilder.*;
+import static instrument.Util.baseTemplate;
+import static instrument.Util.parseJavaFile;
 import static model.BlockType.BLOCK;
+import static model.BlockType.METHOD;
+import static model.ClassType.ANONYMOUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestAnonymousClasses {
   @Test
@@ -47,30 +44,35 @@ public class TestAnonymousClasses {
           }
         }
          """);
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(7, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 4, 62, 71));
-    meth = new Method("firstJavaFile");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 31, 118, 715));
-    Class innerClass = new Class(null, ClassType.ANONYMOUS, false);
-    innerClass.setParentClass(clazz);
-    meth = new Method("accept");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 10, 13, 289, 361));
-    Class subInnerClass = new Class("X");
-    subInnerClass.setParentClass(innerClass);
-    meth = new Method("methodInX");
-    expectedBlocks.add(getBlock(METHOD, subInnerClass, meth, 16, 18, 408, 503));
-    meth = new Method("returnTrue");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 21, 24, 544, 590));
-    meth = new Method("firstJavaFile");
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 26, 28, 653, 685));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 28, 30, 692, 713));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 4, 62, 71)
+            ),
+            jMethod("firstJavaFile",
+                jBlock(METHOD, 5, 31, 118, 715),
+                jBlock(BLOCK, 26, 28, 653, 685),
+                jBlock(BLOCK, 28, 30, 692, 713)
+            ),
+            jClass(ANONYMOUS, null, false,
+                jMethod("accept",
+                    jBlock(METHOD, 10, 13, 289, 361)
+                ),
+                jClass("X",
+                    jMethod("methodInX",
+                        jBlock(METHOD, 16, 18, 408, 503)
+                    )
+                ),
+                jMethod("returnTrue",
+                    jBlock(METHOD, 21, 24, 544, 590)
+                )
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    Class innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
     assertEquals("Main$1", innerClass.getName());
-    assertEquals("Main$1$X", subInnerClass.getName());
+    assertEquals("Main$1$X", innerClass.innerClasses.get(0).getName());
   }
 
   @Test
@@ -90,21 +92,24 @@ public class TestAnonymousClasses {
           return arrayList;
         }
         """);
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(4, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 4, 62, 71));
-    meth = new Method("getSortedIntegers");
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 5, 17, 140, 380));
-    Class innerClass = new Class(null, ClassType.ANONYMOUS, false);
-    innerClass.setParentClass(clazz);
-    meth = new Method("compare");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 8, 14, 261, 352));
-    expectedBlocks.add(getBlock(BLOCK, innerClass, meth, 9, 11, 288, 314));
-    assertIterableEquals(expectedBlocks, blocks);
-    assertEquals("Main$1", innerClass.getName());
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 4, 62, 71)
+            ),
+            jMethod("getSortedIntegers",
+                jBlock(METHOD, 5, 17, 140, 380)
+            ),
+            jClass(ANONYMOUS, null, false,
+                jMethod("compare",
+                    jBlock(METHOD, 8, 14, 261, 352),
+                    jBlock(BLOCK, 9, 11, 288, 314)
+                )
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    assertEquals("Main$1", expected.topLevelClasses.get(0).innerClasses.get(0).getName());
   }
 
   @Test
@@ -117,18 +122,20 @@ public class TestAnonymousClasses {
           }
         };
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 158));
-    Class innerClass = new Class(null, ClassType.ANONYMOUS, false);
-    innerClass.setParentClass(clazz);
-    meth = new Method("hashCode");
-    expectedBlocks.add(getBlock(METHOD, innerClass, meth, 5, 7, 117, 150));
-    assertIterableEquals(expectedBlocks, blocks);
-    assertEquals("Main$1", innerClass.getName());
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 10, 62, 158)
+            ),
+            jClass(ANONYMOUS, null, false,
+                jMethod("hashCode",
+                    jBlock(METHOD, 5, 7, 117, 150)
+                )
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    assertEquals("Main$1", expected.topLevelClasses.get(0).innerClasses.get(0).getName());
   }
 
 }

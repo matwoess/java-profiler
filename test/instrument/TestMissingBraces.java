@@ -1,18 +1,12 @@
 package instrument;
 
+import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import model.Block;
-import model.Method;
-import model.Class;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import static instrument.ProgramBuilder.*;
+import static instrument.Util.baseTemplate;
+import static instrument.Util.parseJavaFile;
 import static model.BlockType.*;
-import static instrument.Util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestMissingBraces {
   @Test
@@ -20,14 +14,15 @@ public class TestMissingBraces {
     String fileContent = String.format(baseTemplate, """
         if (true == false)return;
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 5, 62, 97));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 3, 3, 85, 92));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 5, 62, 97),
+                jBlock(SS_BLOCK, 3, 3, 85, 92)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -36,15 +31,16 @@ public class TestMissingBraces {
         if (true == false) break;
         else continue;
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 6, 62, 112));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 3, 3, 85, 92));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 4, 97, 107));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 6, 62, 112),
+                jBlock(SS_BLOCK, 3, 3, 85, 92),
+                jBlock(SS_BLOCK, 4, 4, 97, 107)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -54,16 +50,17 @@ public class TestMissingBraces {
         else if (true == true) return;
         else continue;
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(4, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 143));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 3, 3, 85, 92));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 4, 115, 123));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 5, 5, 128, 138));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 7, 62, 143),
+                jBlock(SS_BLOCK, 3, 3, 85, 92),
+                jBlock(SS_BLOCK, 4, 4, 115, 123),
+                jBlock(SS_BLOCK, 5, 5, 128, 138)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -82,19 +79,20 @@ public class TestMissingBraces {
         }
         System.out.println(x);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(7, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 16, 62, 269));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 5, 94, 104));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 8, 127, 139));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 9, 9, 144, 189));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 11, 13, 204, 241));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 12, 12, 219, 227));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 12, 12, 232, 239));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 16, 62, 269),
+                jBlock(SS_BLOCK, 4, 5, 94, 104),
+                jBlock(BLOCK, 6, 8, 127, 139),
+                jBlock(SS_BLOCK, 9, 9, 144, 189),
+                jBlock(BLOCK, 11, 13, 204, 241),
+                jBlock(SS_BLOCK, 12, 12, 219, 227),
+                jBlock(SS_BLOCK, 12, 12, 232, 239)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -107,17 +105,18 @@ public class TestMissingBraces {
           else
             x=1;
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(5, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 147));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 8, 91, 142));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 8, 103, 142));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 5, 6, 114, 126));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 7, 8, 133, 142));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 10, 62, 147),
+                jBlock(SS_BLOCK, 4, 8, 91, 142),
+                jBlock(SS_BLOCK, 4, 8, 103, 142),
+                jBlock(SS_BLOCK, 5, 6, 114, 126),
+                jBlock(SS_BLOCK, 7, 8, 133, 142)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -129,15 +128,16 @@ public class TestMissingBraces {
           x+=1;
         while (x<10);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 9, 62, 129));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 4, 80, 86));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 5, 6, 102, 110));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 9, 62, 129),
+                jBlock(SS_BLOCK, 4, 4, 80, 86),
+                jBlock(SS_BLOCK, 5, 6, 102, 110)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -148,15 +148,16 @@ public class TestMissingBraces {
           array[i] = i;
         for (int val : array) System.out.println(val);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 188));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 5, 120, 136));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 6, 6, 158, 183));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 8, 62, 188),
+                jBlock(SS_BLOCK, 4, 5, 120, 136),
+                jBlock(SS_BLOCK, 6, 6, 158, 183)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -177,19 +178,20 @@ public class TestMissingBraces {
           default: break;
         }
          """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(7, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 18, 62, 228));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 8, 102, 129));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 9, 9, 139, 139));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 9, 9, 147, 147));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 10, 12, 157, 182));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 13, 14, 192, 203));
-    expectedBlocks.add(getBlock(SWITCH_CASE, clazz, meth, 15, 15, 214, 221));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 18, 62, 228),
+                jBlock(BLOCK, 5, 8, 102, 129),
+                jBlock(SWITCH_CASE, 9, 9, 139, 139),
+                jBlock(SWITCH_CASE, 9, 9, 147, 147),
+                jBlock(SWITCH_CASE, 10, 12, 157, 182),
+                jBlock(SWITCH_CASE, 13, 14, 192, 203),
+                jBlock(SWITCH_CASE, 15, 15, 214, 221)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -202,16 +204,17 @@ public class TestMissingBraces {
            else
              break outer;
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(5, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 10, 62, 165));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 8, 97, 160));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 4, 8, 109, 160));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 5, 6, 121, 134));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 7, 8, 142, 160));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 10, 62, 165),
+                jBlock(SS_BLOCK, 4, 8, 97, 160),
+                jBlock(SS_BLOCK, 4, 8, 109, 160),
+                jBlock(SS_BLOCK, 5, 6, 121, 134),
+                jBlock(SS_BLOCK, 7, 8, 142, 160)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

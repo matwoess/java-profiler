@@ -1,18 +1,12 @@
 package instrument;
 
-import model.Block;
-import model.Class;
-import model.Method;
+import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
+import static instrument.ProgramBuilder.*;
+import static instrument.Util.baseTemplate;
+import static instrument.Util.parseJavaFile;
 import static model.BlockType.*;
-import static instrument.Util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestLambdaExpressions {
   @Test
@@ -22,14 +16,15 @@ public class TestLambdaExpressions {
           System.out.println(ch);
         });
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 131));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 5, 96, 124));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 7, 62, 131),
+                jBlock(BLOCK, 3, 5, 96, 124)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -39,14 +34,15 @@ public class TestLambdaExpressions {
         int result = doubleFn.apply(5);
         System.out.println(result);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 197));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 3, 115, 131));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 7, 62, 197),
+                jBlock(BLOCK, 3, 3, 115, 131)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -57,14 +53,15 @@ public class TestLambdaExpressions {
         };
         System.out.println(getHello.get());
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 8, 62, 164));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 3, 5, 102, 122));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 8, 62, 164),
+                jBlock(BLOCK, 3, 5, 102, 122)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -74,17 +71,15 @@ public class TestLambdaExpressions {
         double result = divideBy3.apply(7);
         System.out.println(result);
         """, "");
-    Function<Integer, Double> divideBy3 = num -> num / 3.0;
-    double result = divideBy3.apply(7);
-    System.out.println(result);
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 191));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 3, 3, 111, 122));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 7, 62, 191),
+                jBlock(SS_LAMBDA, 3, 3, 111, 122)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -94,14 +89,15 @@ public class TestLambdaExpressions {
         double result = addTogether.apply(7f, 5.6f);
         System.out.println(result);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(2, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 7, 62, 209));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 3, 3, 122, 131));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 7, 62, 209),
+                jBlock(SS_LAMBDA, 3, 3, 122, 131)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -113,15 +109,16 @@ public class TestLambdaExpressions {
         int result = parseIntIf.apply("234", isNotBlank);
         System.out.println(result);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(3, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 9, 62, 336));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 4, 4, 145, 190));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 5, 5, 237, 253));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 9, 62, 336),
+                jBlock(SS_LAMBDA, 4, 4, 145, 190),
+                jBlock(SS_LAMBDA, 5, 5, 237, 253)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -135,18 +132,19 @@ public class TestLambdaExpressions {
             .reduce((acc, x) -> ((acc) + (x)))
             .ifPresent(possibleResult -> System.out.println("\\nRes: " + possibleResult));
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(6, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 11, 62, 345));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 5, 5, 144, 149));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 6, 6, 164, 193));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 7, 7, 210, 219));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 8, 8, 243, 258));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, meth, 9, 9, 291, 339));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 11, 62, 345),
+                jBlock(SS_LAMBDA, 5, 5, 144, 149),
+                jBlock(SS_LAMBDA, 6, 6, 164, 193),
+                jBlock(SS_LAMBDA, 7, 7, 210, 219),
+                jBlock(SS_LAMBDA, 8, 8, 243, 258),
+                jBlock(SS_LAMBDA, 9, 9, 291, 339)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -168,16 +166,17 @@ public class TestLambdaExpressions {
           }
         }
         """;
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(4, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("LambdaMembers", true);
-    expectedBlocks.add(getBlock(BLOCK, clazz, null, 2, 4, 68, 106));
-    expectedBlocks.add(getBlock(BLOCK, clazz, null, 5, 7, 163, 187));
-    expectedBlocks.add(getBlock(BLOCK, clazz, null, 8, 10, 237, 268));
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 11, 14, 312, 400));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("LambdaMembers", true,
+            jBlock(BLOCK, 2, 4, 68, 106),
+            jBlock(BLOCK, 5, 7, 163, 187),
+            jBlock(BLOCK, 8, 10, 237, 268),
+            jMethod("main", true,
+                jBlock(METHOD, 11, 14, 312, 400)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -197,18 +196,19 @@ public class TestLambdaExpressions {
           }
         }
         """;
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(7, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("LambdaMembers", true);
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 2, 2, 58, 88));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 3, 3, 142, 151));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 4, 5, 198, 225));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 6, 6, 275, 282));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 7, 7, 344, 351));
-    expectedBlocks.add(getBlock(SS_LAMBDA, clazz, null, 7, 7, 363, 371));
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 9, 12, 426, 527));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("LambdaMembers", true,
+            jBlock(SS_LAMBDA, 2, 2, 58, 88),
+            jBlock(SS_LAMBDA, 3, 3, 142, 151),
+            jBlock(SS_LAMBDA, 4, 5, 198, 225),
+            jBlock(SS_LAMBDA, 6, 6, 275, 282),
+            jBlock(SS_LAMBDA, 7, 7, 344, 351),
+            jBlock(SS_LAMBDA, 7, 7, 363, 371),
+            jMethod("main", true,
+                jBlock(METHOD, 9, 12, 426, 527)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

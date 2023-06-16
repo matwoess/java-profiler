@@ -1,17 +1,12 @@
 package instrument;
 
-import model.Block;
-import model.Class;
-import model.Method;
+import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static instrument.ProgramBuilder.*;
+import static instrument.Util.baseTemplate;
+import static instrument.Util.parseJavaFile;
 import static model.BlockType.*;
-import static instrument.Util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestSwitches {
 
@@ -35,18 +30,19 @@ public class TestSwitches {
           default: { break; }
         }
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(6, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 20, 62, 239));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 8, 102, 129));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 9, 141, 142));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 13, 154, 183));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 14, 16, 195, 210));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 17, 17, 223, 232));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 20, 62, 239),
+                jBlock(BLOCK, 5, 8, 102, 129),
+                jBlock(BLOCK, 9, 9, 141, 142),
+                jBlock(BLOCK, 10, 13, 154, 183),
+                jBlock(BLOCK, 14, 16, 195, 210),
+                jBlock(BLOCK, 17, 17, 223, 232)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -66,18 +62,19 @@ public class TestSwitches {
           default -> throw new RuntimeException("should never happen");
         }
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(6, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 17, 62, 384));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 9, 127, 225));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 6, 8, 174, 221));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 10, 10, 249, 283));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 11, 13, 298, 313));
-    expectedBlocks.add(getBlock(SS_BLOCK, clazz, meth, 14, 14, 326, 377));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 17, 62, 384),
+                jBlock(BLOCK, 5, 9, 127, 225),
+                jBlock(BLOCK, 6, 8, 174, 221),
+                jBlock(SS_BLOCK, 10, 10, 249, 283),
+                jBlock(BLOCK, 11, 13, 298, 313),
+                jBlock(SS_BLOCK, 14, 14, 326, 377)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -100,18 +97,19 @@ public class TestSwitches {
         };
         System.out.println("result=" + result);
         """, "");
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(6, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("Main", true);
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 2, 20, 62, 361));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 5, 7, 137, 154));
-    expectedBlocks.add(getBlock(SS_SWITCH_EXPR_ARROW_CASE, clazz, meth, 8, 8, 166, 169));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 9, 16, 184, 313));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 10, 13, 212, 280));
-    expectedBlocks.add(getBlock(BLOCK, clazz, meth, 13, 15, 287, 309));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true,
+                jBlock(METHOD, 2, 20, 62, 361),
+                jBlock(BLOCK, 5, 7, 137, 154),
+                jBlock(SS_SWITCH_EXPR_ARROW_CASE, 8, 8, 166, 169),
+                jBlock(BLOCK, 9, 16, 184, 313),
+                jBlock(BLOCK, 10, 13, 212, 280),
+                jBlock(BLOCK, 13, 15, 287, 309)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -131,16 +129,17 @@ public class TestSwitches {
           }
         }
         """;
-    List<Block> blocks = getFoundBlocks(fileContent);
-    assertEquals(4, blocks.size());
-    List<Block> expectedBlocks = new ArrayList<>();
-    Class clazz = new Class("ClassLevelSwitch", true);
-    expectedBlocks.add(getBlock(SS_SWITCH_EXPR_ARROW_CASE, clazz, null, 3, 3, 105, 108));
-    expectedBlocks.add(getBlock(SS_SWITCH_EXPR_ARROW_CASE, clazz, null, 4, 4, 125, 128));
-    expectedBlocks.add(getBlock(BLOCK, clazz, null, 5, 7, 145, 166));
-    Method meth = new Method("main", true);
-    expectedBlocks.add(getBlock(METHOD, clazz, meth, 10, 12, 215, 254));
-    assertIterableEquals(expectedBlocks, blocks);
+    JavaFile expected = jFile(
+        jClass("ClassLevelSwitch", true,
+            jBlock(SS_SWITCH_EXPR_ARROW_CASE, 3, 3, 105, 108),
+            jBlock(SS_SWITCH_EXPR_ARROW_CASE, 4, 4, 125, 128),
+            jBlock(BLOCK, 5, 7, 145, 166),
+            jMethod("main", true,
+                jBlock(METHOD, 10, 12, 215, 254)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 }
