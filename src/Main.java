@@ -9,44 +9,36 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static java.lang.System.exit;
 import static misc.Util.assertJavaSourceFile;
 
 public class Main {
   static boolean syncCounters = false;
 
   public static void main(String[] args) {
-    if (args.length == 0 || args[0].equals("-h") || args[0].equals("--help")) {
+    if (args.length == 0) {
+      invalidUsage();
+    }
+    if (args[0].equals("-h") || args[0].equals("--help")) {
       printUsage();
       return;
     }
     if (args[0].equals("-s") || args[0].equals("--synchronized")) {
       syncCounters = true;
       args = Arrays.copyOfRange(args, 1, args.length);
-      if (args.length == 0 || args[0].equals("-h") || args[0].equals("--help")) {
-        printUsage();
-        return;
-      }
+      if (args.length == 0) invalidUsage();
     }
     switch (args[0]) {
       case "-i", "--instrument-only" -> {
-        if (args.length != 2) {
-          printUsage();
-          return;
-        }
+        if (args.length != 2) invalidUsage();
         instrumentOnly(args[1]);
       }
       case "-r", "--generate-report" -> {
-        if (args.length != 1) {
-          printUsage();
-          return;
-        }
+        if (args.length != 1) invalidUsage();
         generateReportOnly();
       }
       case "-d", "--sources-directory" -> {
-        if (args.length < 3) {
-          printUsage();
-          return;
-        }
+        if (args.length < 3) invalidUsage();
         Path instrumentDir = Path.of(args[1]);
         Path mainFile = Path.of(args[2]);
         String[] programArgs = Arrays.copyOfRange(args, 2, args.length);
@@ -146,5 +138,10 @@ public class Main {
         Main file:    the path to the main java file; after instrumentation it will be compiled and run
         Arguments:    will be passed to the main java class if given
         """);
+  }
+
+  static void invalidUsage() {
+    printUsage();
+    exit(1);
   }
 }
