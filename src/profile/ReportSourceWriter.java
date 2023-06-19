@@ -123,13 +123,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       if (b.beg <= lineNr && lineNr <= b.end) {
         String blockTag = "b" + i;
         String hits = Integer.toString(b.hits);
-        String coverageStatus;
-        if (b.blockType.isNotYetSupported()) {
-          coverageStatus = "u";
-          hits = "?";
-        } else {
-          coverageStatus = b.hits > 0 ? "c" : "nc";
-        }
+        String coverageStatus = b.hits > 0 ? "c" : "nc";
         builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, blockTag, hits));
         builder.append(" ");
       }
@@ -142,18 +136,10 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     int hits = block.hits;
     String title;
     String coverageClass;
-    if (block.blockType.isNotYetSupported()) { // currently not supported
-      coverageClass = "u";
-      title = String.format("%s&#10;&#10;%s",
-          description,
-          "This type of block is currently not supported by the instrumenter."
-      );
-    } else {
-      coverageClass = hits > 0 ? "c" : "nc";
-      String coverageStatus = hits > 0 ? "covered" : "not covered";
-      // &#10; == <br/> == newLine
-      title = String.format("%s&#10;&#10;Hits: %d (%s)", description, hits, coverageStatus);
-    }
+    coverageClass = hits > 0 ? "c" : "nc";
+    String coverageStatus = hits > 0 ? "covered" : "not covered";
+    // &#10; == <br/> == newLine
+    title = String.format("%s&#10;&#10;Hits: %d (%s)", description, hits, coverageStatus);
     String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
     return String.format("<span class=\"%s %s\" title=\"%s\">", coverageClass, classes, title);
   }

@@ -11,6 +11,7 @@ public class Block implements Serializable, Component {
   public int begPos;
   public int endPos;
   public BlockType blockType;
+  public boolean startsWithThrow = false;
 
   public int incInsertPosition;
   transient public int hits;

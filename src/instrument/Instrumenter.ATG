@@ -148,7 +148,7 @@ ArrowExpression<boolean inSwitch, boolean inAssignment> =
 	.
 SSArrowBody<boolean inSwitch, boolean inAssignment> =
  																		(. state.checkSingleStatement(inAssignment, inSwitch, true); .)
-				(ANY | ParExpr | string | char | ident)
+				(ANY | ParExpr | string | char | ident | "throw" (. state.registerThrow(); .))
 				{ANY | ParExpr}
 				(")" | ";")									(. state.leaveSingleStatement(); .)
 				.

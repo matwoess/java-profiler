@@ -74,17 +74,21 @@ public class Instrumenter {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(javaFile.beginOfImports, "import auxiliary.__Counter;"));
     for (Block block : javaFile.foundBlocks) {
-      if (block.blockType.isNotYetSupported()) {
-        blockCounter++;
-        continue;
-      }
       // insert order is important, in case of same CodeInsert char positions
-      if (block.blockType.hasNoBraces()) {
+      if (block.blockType.hasNoBraces() && block.blockType != BlockType.SS_LAMBDA) {
         assert block.blockType != BlockType.METHOD;
         inserts.add(new CodeInsert(block.begPos, "{"));
       }
-      inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc(%d);", blockCounter++)));
-      if (block.blockType.hasNoBraces()) {
+      if (block.blockType == BlockType.SS_LAMBDA) {
+        inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.incLambda(%d, () -> ", blockCounter++)));
+        inserts.add(new CodeInsert(block.endPos, ")"));
+      } else {
+        inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc(%d);", blockCounter++)));
+      }
+      if (block.blockType == BlockType.SS_SWITCH_EXPR_ARROW_CASE && !block.startsWithThrow) {
+        inserts.add(new CodeInsert(block.getIncInsertPos(), "yield "));
+      }
+      if (block.blockType.hasNoBraces() && block.blockType != BlockType.SS_LAMBDA) {
         inserts.add(new CodeInsert(block.endPos, "}"));
       }
     }

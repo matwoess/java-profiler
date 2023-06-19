@@ -38,6 +38,10 @@ public class ParserState {
     curBlock.incInsertPosition = parser.t.charPos + parser.t.val.length();
   }
 
+  void registerThrow() {
+    curBlock.startsWithThrow = true;
+  }
+
   void enterClass() {
     enterClass(false);
   }
@@ -132,7 +136,10 @@ public class ParserState {
 
   void leaveBlock(boolean isMethod) {
     curBlock.end = parser.t.line;
-    curBlock.endPos = parser.t.charPos + parser.t.val.length();
+    curBlock.endPos = parser.t.charPos;
+    if (curBlock.blockType != BlockType.SS_LAMBDA) {
+      curBlock.endPos += parser.t.val.length();
+    }
     if (blockStack.empty()) {
       curBlock = null;
     } else {

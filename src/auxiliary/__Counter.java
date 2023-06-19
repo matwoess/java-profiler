@@ -1,6 +1,7 @@
 package auxiliary;
 
 import java.io.*;
+import java.util.function.Supplier;
 
 public class __Counter {
   static {
@@ -32,5 +33,15 @@ public class __Counter {
     } catch (IOException | NumberFormatException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static void incLambda(int n, Runnable method) {
+    __Counter.inc(n);
+    method.run();
+  }
+
+  public static <T> T incLambda(int n, Supplier<T> function) {
+    __Counter.inc(n);
+    return function.get();
   }
 }
