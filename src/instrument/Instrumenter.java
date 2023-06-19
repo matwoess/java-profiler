@@ -12,11 +12,17 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Instrumenter {
+  boolean syncCounters;
   JavaFile[] javaFiles;
   int blockCounter;
+  String incRefAdd = "";
 
-  public Instrumenter(JavaFile... javaFiles) {
+  public Instrumenter(boolean syncCounters, JavaFile... javaFiles) {
     assert javaFiles.length > 0;
+    this.syncCounters = syncCounters;
+    if (syncCounters) {
+      incRefAdd = "Sync";
+    }
     this.javaFiles = javaFiles;
   }
 
@@ -80,10 +86,10 @@ public class Instrumenter {
         inserts.add(new CodeInsert(block.begPos, "{"));
       }
       if (block.blockType == BlockType.SS_LAMBDA) {
-        inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.incLambda(%d, () -> ", blockCounter++)));
+        inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.incLambda%s(%d, () -> ", incRefAdd, blockCounter++)));
         inserts.add(new CodeInsert(block.endPos, ")"));
       } else {
-        inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc(%d);", blockCounter++)));
+        inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc%s(%d);", incRefAdd, blockCounter++)));
       }
       if (block.blockType == BlockType.SS_SWITCH_EXPR_ARROW_CASE && !block.startsWithThrow) {
         inserts.add(new CodeInsert(block.getIncInsertPos(), "yield "));

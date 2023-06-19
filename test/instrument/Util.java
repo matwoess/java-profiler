@@ -36,7 +36,7 @@ public class Util {
   public static Instrumenter analyzeStringContent(String content) {
     Path file = createTempFileWithContent(content);
     JavaFile javaFile = new JavaFile(file, file.getParent());
-    Instrumenter instrumenter = new Instrumenter(javaFile);
+    Instrumenter instrumenter = new Instrumenter(false, javaFile);
     instrumenter.analyzeFiles();
     return instrumenter;
   }

@@ -12,11 +12,20 @@ import java.util.stream.Stream;
 import static misc.Util.assertJavaSourceFile;
 
 public class Main {
+  static boolean syncCounters = false;
 
   public static void main(String[] args) {
     if (args.length == 0 || args[0].equals("-h") || args[0].equals("--help")) {
       printUsage();
       return;
+    }
+    if (args[0].equals("-s") || args[0].equals("--synchronized")) {
+      syncCounters = true;
+      args = Arrays.copyOfRange(args, 1, args.length);
+      if (args.length == 0 || args[0].equals("-h") || args[0].equals("--help")) {
+        printUsage();
+        return;
+      }
     }
     switch (args[0]) {
       case "-i", "--instrument-only" -> {
@@ -70,7 +79,7 @@ public class Main {
   private static void instrumentSingleFile(Path file) {
     assertJavaSourceFile(file);
     JavaFile mainJavaFile = new JavaFile(file);
-    Instrumenter instrumenter = new Instrumenter(mainJavaFile);
+    Instrumenter instrumenter = new Instrumenter(syncCounters, mainJavaFile);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
@@ -78,7 +87,7 @@ public class Main {
 
   private static void instrumentFolder(Path folder) {
     JavaFile[] javaFiles = getJavaFilesInFolder(folder, null);
-    Instrumenter instrumenter = new Instrumenter(javaFiles);
+    Instrumenter instrumenter = new Instrumenter(syncCounters, javaFiles);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
@@ -87,7 +96,7 @@ public class Main {
   private static void instrumentFolderCompileAndRun(Path instrumentDir, Path mainFile, String[] programArgs) {
     JavaFile mainJavaFile = new JavaFile(mainFile, instrumentDir);
     JavaFile[] additionalJavaFiles = getJavaFilesInFolder(instrumentDir, mainFile);
-    Instrumenter instrumenter = new Instrumenter(Util.prependToArray(additionalJavaFiles, mainJavaFile));
+    Instrumenter instrumenter = new Instrumenter(syncCounters, Util.prependToArray(additionalJavaFiles, mainJavaFile));
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
@@ -101,7 +110,7 @@ public class Main {
   private static void instrumentCompileAndRun(Path mainFile, String[] programArgs) {
     assertJavaSourceFile(mainFile);
     JavaFile mainJavaFile = new JavaFile(mainFile);
-    Instrumenter instrumenter = new Instrumenter(mainJavaFile);
+    Instrumenter instrumenter = new Instrumenter(syncCounters, mainJavaFile);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
@@ -126,9 +135,11 @@ public class Main {
 
   static void printUsage() {
     System.out.println("""
-        Usage: <main class> [option] [<main-file>] [arguments]
+        Usage: <main class> [sync] [option] [<main-file>] [arguments]
+        Sync:
+           -s, --synchronized               instrument using synchronized counters
         Options:
-          -h, --help                        Display this message and quit
+          -h, --help                        display this message and quit
           -d, --sources-directory <dir>     directory containing java files to additionally instrument
           -i, --instrument-only <file|dir>  only instrument a single file or directory of java files
           -r, --generate-report             only generate a report from metadata and counts

@@ -11,11 +11,14 @@ public class __Counter {
 
   private static int[] blockCounts;
 
-  public static synchronized void inc(int n) {
+  public static void inc(int n) {
+    blockCounts[n]++;
+  }
+  synchronized public static void incSync(int n) {
     blockCounts[n]++;
   }
 
-  public static synchronized void init(String fileName) {
+  public static void init(String fileName) {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
       int nBlocks = ois.readInt(); // number of blocks is the first value of the metadata file
       blockCounts = new int[nBlocks];
@@ -24,7 +27,7 @@ public class __Counter {
     }
   }
 
-  public static synchronized void save(String fileName) {
+  public static void save(String fileName) {
     try (DataOutputStream dis = new DataOutputStream(new FileOutputStream(fileName))) {
       dis.writeInt(blockCounts.length);
       for (int blockCount : blockCounts) {
@@ -41,6 +44,16 @@ public class __Counter {
   }
 
   public static <T> T incLambda(int n, Supplier<T> function) {
+    __Counter.inc(n);
+    return function.get();
+  }
+
+  synchronized public static void incLambdaSync(int n, Runnable method) {
+    __Counter.inc(n);
+    method.run();
+  }
+
+  synchronized public static <T> T incLambdaSync(int n, Supplier<T> function) {
     __Counter.inc(n);
     return function.get();
   }
