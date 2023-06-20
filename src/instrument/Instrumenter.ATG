@@ -136,7 +136,7 @@ SwitchCase<boolean inAssignment> =
 	("case" | "default") {ANY}
 	(ArrowExpression<true, inAssignment>
 		| ":"											(. state.checkSingleStatement(false, true, false); .)
-		{Statement}								(. state.leaveSingleStatement(); .)
+			{Statement}							(. state.leaveSingleStatement(); .)
 	)
 	.
 ParExpr = "(" {ParExpr | ANY} ")".
