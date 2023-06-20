@@ -16,13 +16,13 @@ public class TestSwitches {
         int x = 1;
         switch (x) {
           case 1: {
-            i += 3;
+            x += 3;
             break;
           }
           case 2: {}
           case 3: {
-           i *= 2;
-           i = i - 1;
+           x *= 2;
+           x = x - 1;
           }
           case 4: {
             break;
@@ -38,6 +38,48 @@ public class TestSwitches {
                 jBlock(BLOCK, 10, 13, 154, 183),
                 jBlock(BLOCK, 14, 16, 195, 210),
                 jBlock(BLOCK, 17, 17, 223, 232)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void TestCommaSeparatedCases() {
+    String fileContent = String.format(baseTemplate, """
+        int x = 1;
+        switch (x) {
+          case 1, 2, 3: {
+            x += 3;
+            break;
+          }
+          case 4, 5: {
+            x *= 2;
+            x = x - 1;
+          }
+          default: { break; }
+        }
+        """, "");
+    int x = 1;
+    switch (x) {
+      case 1, 2, 3: {
+        x += 3;
+        break;
+      }
+      case 4, 5: {
+        x *= 2;
+        x = x - 1;
+      }
+      default: {
+        break;
+      }
+    }
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true, 2, 16, 62, 210,
+                jBlock(BLOCK, 5, 8, 108, 135),
+                jBlock(BLOCK, 9, 12, 150, 181),
+                jBlock(BLOCK, 13, 13, 194, 203)
             )
         )
     );

@@ -1,7 +1,8 @@
 public class Switches {
   static int globalInt = switch ("switch".hashCode()) {
     case 12345 -> 5;
-    case 6789 -> 6;
+    case 6789, 6660 -> 6;
+    case Integer.MAX_VALUE -> 8;
     default -> {
       yield 8;
     }
@@ -14,15 +15,15 @@ public class Switches {
       case 'a':
         System.out.println("is 'a'");
         break;
-      case 'c':
-        System.out.println("is 'c");
+      case 'c', 'D':
+        System.out.println("is 'c', 'D'");
         break;
       case 'B': {
         System.out.println("is 'B'");
         break;
       }
-      default:
-        System.out.println("is other char.");
+      case 'e', default:
+        System.out.println("is 'e' or other char.");
         break;
     }
 
@@ -32,7 +33,7 @@ public class Switches {
           System.out.println("as expected");
         }
       }
-      case "other value" -> System.out.println("unexpected");
+      case "x", "other value" -> System.out.println("unexpected");
       case "" -> {
         break;
       }
