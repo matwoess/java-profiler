@@ -17,7 +17,7 @@ public class Block implements Serializable, Component {
   transient public int hits;
 
   public String toString() {
-    return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s",
+    return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s%s",
         clazz.name,
         method != null ? ("." + method.name) : "",
         beg,
@@ -26,7 +26,8 @@ public class Block implements Serializable, Component {
         end != 0 ? end : "?",
         endPos != 0 ? endPos : "?",
         blockType.toString(),
-        method == null ? " [class-level]" : ""
+        method == null ? " [class-level]" : "",
+        startsWithThrow ? " [throw]" : ""
     );
   }
 
@@ -39,6 +40,7 @@ public class Block implements Serializable, Component {
     if (end != block.end) return false;
     if (begPos != block.begPos) return false;
     if (endPos != block.endPos) return false;
+    if (startsWithThrow != block.startsWithThrow) return false;
     if (incInsertPosition != block.incInsertPosition) return false;
     if (!clazz.equals(block.clazz)) return false;
     if (!Objects.equals(method, block.method)) return false;
@@ -54,6 +56,7 @@ public class Block implements Serializable, Component {
     result = 31 * result + begPos;
     result = 31 * result + endPos;
     result = 31 * result + blockType.hashCode();
+    result = 31 * result + (startsWithThrow ? 1 : 0);
     result = 31 * result + incInsertPosition;
     return result;
   }

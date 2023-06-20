@@ -140,6 +140,7 @@ public class ParserState {
     if (curBlock.blockType != BlockType.SS_LAMBDA) {
       curBlock.endPos += parser.t.val.length();
     }
+    System.out.printf("left %s\n", curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
@@ -148,8 +149,6 @@ public class ParserState {
     if (isMethod) {
       System.out.println("left method: " + curMeth.name);
       curMeth = null;
-    } else {
-      System.out.printf("left %s\n", curBlock);
     }
   }
 
