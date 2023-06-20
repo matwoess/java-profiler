@@ -57,35 +57,5 @@ public class Switches {
       }
     };
     System.out.println("result=" + result);
-    printObject(result);
-    System.out.println(formatObject(result));
-  }
-
-  public static void printObject(Object o) {
-    switch (o) {
-      case String s && s.length() < 10  && s.startsWith("//"):
-        System.out.printf("A short comment: %s", s);
-        break;
-      case Integer i, null:
-        System.out.println("It was some int or null");
-      break;
-      case Float f: {
-        System.out.printf("a float with value: %f", f);
-        break;
-      }
-      case default:
-        System.out.println("Null or some other object");
-    };
-  }
-
-  public static String formatObject(Object o) {
-    return switch (o) {
-      case String s && s.length() < 10  && s.startsWith("//")-> String.format("A short comment: %s", s);
-      case Integer i -> "It was some int";
-      case Float f -> {
-        yield String.format("a float with value: %f", f);
-      }
-      case null, default -> "Null or some other object";
-    };
   }
 }
