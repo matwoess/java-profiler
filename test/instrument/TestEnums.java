@@ -78,9 +78,7 @@ public class TestEnums {
         }""";
     JavaFile expected = jFile(
         jClass(ENUM, "Enum", false,
-            jMethod("lowercase",
-                jBlock(METHOD, 4, 6, 90, 132)
-            )
+            jMethod("lowercase", false, 4, 6, 90, 132)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -133,8 +131,7 @@ public class TestEnums {
         }""";
     JavaFile expected = jFile(
         jClass(ENUM, "WithMain", true,
-            jMethod("main", true,
-                jBlock(METHOD, 5, 13, 80, 222),
+            jMethod("main", true, 5, 13, 80, 222,
                 jBlock(SWITCH_CASE, 8, 9, 133, 158),
                 jBlock(SWITCH_CASE, 10, 11, 173, 212)
             )
@@ -169,14 +166,10 @@ public class TestEnums {
     JavaFile expected = jFile(
         jClass(ENUM, "WithSubClassAndInterface", false,
             jClass("ClassInEnum",
-                jMethod("printName",
-                    jBlock(METHOD, 5, 7, 169, 213)
-                )
+                jMethod("printName", false, 5, 7, 169, 213)
             ),
             jClass(INTERFACE, "InterfaceInEnum", false,
-                jMethod("lowercase",
-                    jBlock(METHOD, 11, 13, 317, 362)
-                )
+                jMethod("lowercase", false, 11, 13, 317, 362)
             ),
             jMethod("callMethods", false, 16, 19, 404, 499)
         )

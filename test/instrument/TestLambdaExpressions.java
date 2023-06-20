@@ -18,8 +18,7 @@ public class TestLambdaExpressions {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 7, 62, 131),
+            jMethod("main", true, 2, 7, 62, 131,
                 jBlock(BLOCK, 3, 5, 96, 124)
             )
         )
@@ -36,8 +35,7 @@ public class TestLambdaExpressions {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 7, 62, 197),
+            jMethod("main", true, 2, 7, 62, 197,
                 jBlock(BLOCK, 3, 3, 115, 131)
             )
         )
@@ -55,8 +53,7 @@ public class TestLambdaExpressions {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 8, 62, 164),
+            jMethod("main", true, 2, 8, 62, 164,
                 jBlock(BLOCK, 3, 5, 102, 122)
             )
         )
@@ -73,8 +70,7 @@ public class TestLambdaExpressions {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 7, 62, 191),
+            jMethod("main", true, 2, 7, 62, 191,
                 jBlock(SS_LAMBDA, 3, 3, 111, 122)
             )
         )
@@ -91,8 +87,7 @@ public class TestLambdaExpressions {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 7, 62, 209),
+            jMethod("main", true, 2, 7, 62, 209,
                 jBlock(SS_LAMBDA, 3, 3, 122, 131)
             )
         )
@@ -111,8 +106,7 @@ public class TestLambdaExpressions {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 9, 62, 336),
+            jMethod("main", true, 2, 9, 62, 336,
                 jBlock(SS_LAMBDA, 4, 4, 145, 190),
                 jBlock(SS_LAMBDA, 5, 5, 237, 253)
             )
@@ -134,8 +128,7 @@ public class TestLambdaExpressions {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 11, 62, 345),
+            jMethod("main", true, 2, 11, 62, 345,
                 jBlock(SS_LAMBDA, 5, 5, 144, 149),
                 jBlock(SS_LAMBDA, 6, 6, 164, 193),
                 jBlock(SS_LAMBDA, 7, 7, 210, 219),
@@ -171,9 +164,7 @@ public class TestLambdaExpressions {
             jBlock(BLOCK, 2, 4, 68, 106),
             jBlock(BLOCK, 5, 7, 163, 187),
             jBlock(BLOCK, 8, 10, 237, 268),
-            jMethod("main", true,
-                jBlock(METHOD, 11, 14, 312, 400)
-            )
+            jMethod("main", true, 11, 14, 312, 400)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));

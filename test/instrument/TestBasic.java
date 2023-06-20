@@ -1,19 +1,15 @@
 package instrument;
 
-import model.Block;
-import model.JavaFile;
-import model.Method;
 import model.Class;
+import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static instrument.ProgramBuilder.*;
-import static model.BlockType.*;
-import static instrument.Util.*;
+import static instrument.Util.baseTemplate;
+import static instrument.Util.parseJavaFile;
+import static model.BlockType.BLOCK;
+import static model.BlockType.STATIC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestBasic {
   @Test
@@ -57,9 +53,7 @@ public class TestBasic {
         jClass("Empty",
             jMethod("meth", false, 5, 6, 122, 126),
             jClass("InEmpty",
-                jMethod("innerMeth",
-                    jBlock(METHOD, 8, 9, 167, 173)
-                )
+                jMethod("innerMeth", false, 8, 9, 167, 173)
             )
         )
     );
@@ -213,12 +207,8 @@ public class TestBasic {
     JavaFile expected = jFile(
         jClass("TryWithResource", true,
             jClass("MyClosable",
-                jMethod("open",
-                    jBlock(METHOD, 3, 5, 108, 163)
-                ),
-                jMethod("close",
-                    jBlock(METHOD, 7, 9, 207, 262)
-                )
+                jMethod("open", false, 3, 5, 108, 163),
+                jMethod("close", false, 7, 9, 207, 262)
             ),
             jMethod("main", true, 12, 18, 310, 459,
                 jBlock(BLOCK, 13, 15, 361, 390),

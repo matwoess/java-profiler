@@ -27,9 +27,7 @@ public class TestClasses {
         }""";
     JavaFile expected = jFile(
         jClass("Pet",
-            jMethod("toString",
-                jBlock(METHOD, 6, 11, 139, 234)
-            )
+            jMethod("toString", false, 6, 11, 139, 234)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -71,8 +69,7 @@ public class TestClasses {
     JavaFile expected = jFile(
         jClass("Classes", true,
             jBlock(STATIC, 4, 6, 50, 65),
-            jMethod("main", true,
-                jBlock(METHOD, 8, 21, 109, 471),
+            jMethod("main", true, 8, 21, 109, 471,
                 jBlock(BLOCK, 12, 20, 234, 467),
                 jBlock(BLOCK, 14, 16, 285, 352),
                 jBlock(BLOCK, 16, 18, 359, 427)
@@ -116,21 +113,13 @@ public class TestClasses {
         }""";
     JavaFile expected = jFile(
         jClass("InnerClasses", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 9, 70, 275)
-            ),
+            jMethod("main", true, 2, 9, 70, 275),
             jClass("Inner",
-                jMethod("level1",
-                    jBlock(METHOD, 11, 13, 318, 362)
-                ),
+                jMethod("level1", false, 11, 13, 318, 362),
                 jClass("Sub",
-                    jMethod("level2",
-                        jBlock(METHOD, 15, 17, 407, 455)
-                    ),
+                    jMethod("level2", false, 15, 17, 407, 455),
                     jClass("SubSub",
-                        jMethod("level3",
-                            jBlock(METHOD, 19, 21, 507, 559)
-                        )
+                        jMethod("level3", false, 19, 21, 507, 559)
                     )
                 )
             )

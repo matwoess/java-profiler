@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import static instrument.ProgramBuilder.*;
 import static instrument.Util.parseJavaFile;
-import static model.BlockType.METHOD;
 import static model.ClassType.CLASS;
 import static model.ClassType.INTERFACE;
 
@@ -39,9 +38,7 @@ public class TestInterfaces {
         }""";
     JavaFile expected = jFile(
         jClass(INTERFACE, "InitBlocks", false,
-            jMethod("doNothing",
-                jBlock(METHOD, 9, 9, 275, 276)
-            )
+            jMethod("doNothing", false, 9, 9, 275, 276)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -64,15 +61,9 @@ public class TestInterfaces {
         }""";
     JavaFile expected = jFile(
         jClass(INTERFACE, "DefaultStatic", false,
-            jMethod("getName",
-                jBlock(METHOD, 3, 5, 67, 91)
-            ),
-            jMethod("getAge",
-                jBlock(METHOD, 6, 8, 133, 160)
-            ),
-            jMethod("printInfo",
-                jBlock(METHOD, 9, 11, 212, 266)
-            )
+            jMethod("getName", false, 3, 5, 67, 91),
+            jMethod("getAge", false, 6, 8, 133, 160),
+            jMethod("printInfo", false, 9, 11, 212, 266)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -106,19 +97,13 @@ public class TestInterfaces {
     JavaFile expected = jFile(
         jClass(INTERFACE, "Interfaces", false,
             jClass(INTERFACE, "SubInterface", false,
-                jMethod("get",
-                    jBlock(METHOD, 6, 8, 174, 225)
-                ),
+                jMethod("get", false, 6, 8, 174, 225),
                 jClass(CLASS, "SubClass", false,
-                    jMethod("getXPlus1",
-                        jBlock(METHOD, 11, 13, 278, 308)
-                    )
+                    jMethod("getXPlus1", false, 11, 13, 278, 308)
                 )
             ),
             jClass("X",
-                jMethod("callGet",
-                    jBlock(METHOD, 18, 20, 376, 395)
-                )
+                jMethod("callGet", false, 18, 20, 376, 395)
             )
         )
     );
@@ -147,13 +132,9 @@ public class TestInterfaces {
     JavaFile expected = jFile(
         jClass(INTERFACE, "WithMain", true,
             jClass("X",
-                jMethod("get",
-                    jBlock(METHOD, 6, 8, 110, 132)
-                )
+                jMethod("get", false, 6, 8, 110, 132)
             ),
-            jMethod("main", true,
-                jBlock(METHOD, 11, 15, 180, 268)
-            )
+            jMethod("main", true, 11, 15, 180, 268)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));

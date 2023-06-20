@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import static instrument.ProgramBuilder.*;
 import static instrument.Util.parseJavaFile;
-import static model.BlockType.METHOD;
 
 public class TestAnnotations {
   @Test
@@ -20,9 +19,7 @@ public class TestAnnotations {
         """;
     JavaFile expected = jFile(
         jClass("Annotations", true,
-            jMethod("main", true,
-                jBlock(METHOD, 4, 5, 112, 116)
-            )
+            jMethod("main", true, 4, 5, 112, 116)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -40,9 +37,7 @@ public class TestAnnotations {
         """;
     JavaFile expected = jFile(
         jClass("Annotations", true,
-            jMethod("main", true,
-                jBlock(METHOD, 4, 5, 128, 132)
-            )
+            jMethod("main", true, 4, 5, 128, 132)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -58,9 +53,7 @@ public class TestAnnotations {
         """;
     JavaFile expected = jFile(
         jClass("Annotations", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 3, 95, 99)
-            )
+            jMethod("main", true, 2, 3, 95, 99)
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));

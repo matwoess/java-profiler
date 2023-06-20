@@ -32,8 +32,7 @@ public class TestSwitches {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 20, 62, 239),
+            jMethod("main", true, 2, 20, 62, 239,
                 jBlock(BLOCK, 5, 8, 102, 129),
                 jBlock(BLOCK, 9, 9, 141, 142),
                 jBlock(BLOCK, 10, 13, 154, 183),
@@ -64,8 +63,7 @@ public class TestSwitches {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 17, 62, 384),
+            jMethod("main", true, 2, 17, 62, 384,
                 jBlock(BLOCK, 5, 9, 127, 225),
                 jBlock(BLOCK, 6, 8, 174, 221),
                 jBlock(SS_BLOCK, 10, 10, 249, 283),
@@ -99,8 +97,7 @@ public class TestSwitches {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true,
-                jBlock(METHOD, 2, 20, 62, 361),
+            jMethod("main", true, 2, 20, 62, 361,
                 jBlock(BLOCK, 5, 7, 137, 154),
                 jBlock(SS_SWITCH_EXPR_ARROW_CASE, 8, 8, 166, 169),
                 jBlock(BLOCK, 9, 16, 184, 313),
