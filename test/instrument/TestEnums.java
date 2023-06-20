@@ -176,4 +176,42 @@ public class TestEnums {
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+  @Test
+  public void TestEnumWithInnerEnum_WithAndWithoutSemicolon() {
+    String fileContent = """
+        public enum WithInnerEnum {
+          A,B,C;
+           
+          enum InnerEnum {
+            D,E;
+          }
+           
+          public static void printValues() {
+            for (InnerEnum val : InnerEnum.values()) {
+              System.out.println(val);
+            }
+            for (WithInnerEnum val : WithInnerEnum.values()) {
+              System.out.println(val);
+            }
+          }
+        }""";
+    JavaFile expected = jFile(
+        jClass(ENUM, "WithInnerEnum", false,
+            jClass(ENUM, "InnerEnum", false),
+            jMethod("printValues", false, 8, 15, 107, 287,
+                jBlock(BLOCK, 9, 11, 154, 191),
+                jBlock(BLOCK, 12, 14, 246, 283)
+            )
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    fileContent = fileContent.replace("D,E;", "D,E");
+    expected.foundBlocks.forEach(block -> {
+      block.begPos--;
+      block.incInsertPosition--;
+      block.endPos--;
+    });
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }

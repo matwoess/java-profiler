@@ -79,7 +79,7 @@ Enum =
 	"enum"										(. state.enterClass(); .)
 	ident {ANY} "{"
 	{[","] ident [ParExpr]}
-	([";" ClassBody] // class body can follow only after a ";"
+	(";" ClassBody						// class body can follow only after a ";"
 		| "}") 									(. state.leaveClass(); .)
 	.
 ClassBody =

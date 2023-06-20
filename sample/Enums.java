@@ -9,6 +9,10 @@ enum Empty {
 enum Skill {
   SINGING, PLAY_INSTRUMENT, ORGANIZING;
 
+  enum InnerEnum {
+    D,E
+  }
+
   public String lowercase() {
     return this.name().toLowerCase();
   }
