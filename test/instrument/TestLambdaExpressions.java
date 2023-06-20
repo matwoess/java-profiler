@@ -71,7 +71,7 @@ public class TestLambdaExpressions {
     JavaFile expected = jFile(
         jClass("Main", true,
             jMethod("main", true, 2, 7, 62, 191,
-                jBlock(SS_LAMBDA, 3, 3, 111, 122)
+                jBlock(SS_LAMBDA, 3, 3, 111, 121)
             )
         )
     );
@@ -88,7 +88,7 @@ public class TestLambdaExpressions {
     JavaFile expected = jFile(
         jClass("Main", true,
             jMethod("main", true, 2, 7, 62, 209,
-                jBlock(SS_LAMBDA, 3, 3, 122, 131)
+                jBlock(SS_LAMBDA, 3, 3, 122, 130)
             )
         )
     );
@@ -107,8 +107,8 @@ public class TestLambdaExpressions {
     JavaFile expected = jFile(
         jClass("Main", true,
             jMethod("main", true, 2, 9, 62, 336,
-                jBlock(SS_LAMBDA, 4, 4, 145, 190),
-                jBlock(SS_LAMBDA, 5, 5, 237, 253)
+                jBlock(SS_LAMBDA, 4, 4, 145, 189),
+                jBlock(SS_LAMBDA, 5, 5, 237, 252)
             )
         )
     );
@@ -129,11 +129,11 @@ public class TestLambdaExpressions {
     JavaFile expected = jFile(
         jClass("Main", true,
             jMethod("main", true, 2, 11, 62, 345,
-                jBlock(SS_LAMBDA, 5, 5, 144, 149),
-                jBlock(SS_LAMBDA, 6, 6, 164, 193),
-                jBlock(SS_LAMBDA, 7, 7, 210, 219),
-                jBlock(SS_LAMBDA, 8, 8, 243, 258),
-                jBlock(SS_LAMBDA, 9, 9, 291, 339)
+                jBlock(SS_LAMBDA, 5, 5, 144, 148),
+                jBlock(SS_LAMBDA, 6, 6, 164, 192),
+                jBlock(SS_LAMBDA, 7, 7, 210, 218),
+                jBlock(SS_LAMBDA, 8, 8, 243, 257),
+                jBlock(SS_LAMBDA, 9, 9, 291, 338)
             )
         )
     );
@@ -189,12 +189,12 @@ public class TestLambdaExpressions {
         """;
     JavaFile expected = jFile(
         jClass("LambdaMembers", true,
-            jBlock(SS_LAMBDA, 2, 2, 58, 88),
-            jBlock(SS_LAMBDA, 3, 3, 142, 151),
-            jBlock(SS_LAMBDA, 4, 5, 198, 225),
-            jBlock(SS_LAMBDA, 6, 6, 275, 282),
-            jBlock(SS_LAMBDA, 7, 7, 344, 351),
-            jBlock(SS_LAMBDA, 7, 7, 363, 371),
+            jBlock(SS_LAMBDA, 2, 2, 58, 87),
+            jBlock(SS_LAMBDA, 3, 3, 142, 150),
+            jBlock(SS_LAMBDA, 4, 5, 198, 224),
+            jBlock(SS_LAMBDA, 6, 6, 275, 281),
+            jBlock(SS_LAMBDA, 7, 7, 344, 350),
+            jBlock(SS_LAMBDA, 7, 7, 363, 370),
             jMethod("main", true, 9, 12, 426, 527)
         )
     );
