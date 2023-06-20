@@ -1,4 +1,8 @@
 public class Switches {
+  enum StatusCode {
+    OK, UNAUTHORIZED, FORBIDDEN, NOTFOUND
+  }
+  
   static int globalInt = switch ("switch".hashCode()) {
     case 12345 -> 5;
     case 6789, 6660 -> 6;
@@ -57,5 +61,16 @@ public class Switches {
       }
     };
     System.out.println("result=" + result);
+    System.out.println(getStatusCodeDescription(StatusCode.FORBIDDEN));
+  }
+
+  public static String getStatusCodeDescription(StatusCode code) {
+    return switch(code) {
+      case OK -> "everything went great";
+      case NOTFOUND, FORBIDDEN -> "cannot access";
+      case UNAUTHORIZED -> {
+        yield "did you forget to enter your password?";
+      }
+    };
   }
 }

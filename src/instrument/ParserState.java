@@ -228,6 +228,6 @@ public class ParserState {
   }
 
   boolean isAssignment() {
-    return parser.t.kind == _equals;
+    return parser.t.kind == _equals || parser.t.kind == _return;
   }
 }

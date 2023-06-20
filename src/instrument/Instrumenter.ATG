@@ -53,7 +53,8 @@ TOKENS
 	main       = "main".
 	equals     = "=".
 	new        = "new".
-	this        = "this".
+	this       = "this".
+	return     = "return".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -107,7 +108,8 @@ Statement =
  		| "do" BlockOrSingleStatement "while" ParExpr ";"
 		| "for" ParExpr BlockOrSingleStatement
 		| "try" [ParExpr] Block<false> {"catch" ParExpr Block<false>} ["finally" Block<false>]
-		| ("break" | "return" | "continue") {ANY} ";"
+		| ("break" | "continue") {ANY} ";"
+		| "return" (SwitchStatement | {ANY}) ";"
 		| IF(state.isLabel()) ident colon
 		| Annotation
 		| "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
