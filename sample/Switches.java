@@ -15,14 +15,14 @@ public class Switches {
       case 'a':
         System.out.println("is 'a'");
         break;
-      case 'c', 'D':
-        System.out.println("is 'c', 'D'");
+      case 'c', 'D',  'e':
+        System.out.println("is 'c', 'D' or 'e'");
         break;
       case 'B': {
         System.out.println("is 'B'");
         break;
       }
-      case 'e', default:
+      default:
         System.out.println("is 'e' or other char.");
         break;
     }
