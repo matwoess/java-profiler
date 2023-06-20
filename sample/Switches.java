@@ -80,14 +80,10 @@ public class Switches {
 
   public static String formatObject(Object o) {
     return switch (o) {
-      case String s && s.length() < 10  && s.startsWith("//") -> {
-        yield "A short comment: " + s;
-      }
-      case Integer i -> {
-        yield "It was some int";
-      }
+      case String s && s.length() < 10  && s.startsWith("//")-> String.format("A short comment: %s", s);
+      case Integer i -> "It was some int";
       case Float f -> {
-        yield "a float with value: %f" + f;
+        yield String.format("a float with value: %f", f);
       }
       case null, default -> "Null or some other object";
     };
