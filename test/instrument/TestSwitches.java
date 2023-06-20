@@ -114,6 +114,7 @@ public class TestSwitches {
             )
         )
     );
+    expected.foundBlocks.get(expected.foundBlocks.size() - 1).startsWithThrow = true;
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
