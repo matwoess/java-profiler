@@ -7,6 +7,7 @@ import static instrument.ProgramBuilder.*;
 import static instrument.Util.baseTemplate;
 import static instrument.Util.parseJavaFile;
 import static model.BlockType.*;
+import static model.ClassType.ENUM;
 
 public class TestSwitches {
 
@@ -60,20 +61,6 @@ public class TestSwitches {
           default: { break; }
         }
         """, "");
-    int x = 1;
-    switch (x) {
-      case 1, 2, 3: {
-        x += 3;
-        break;
-      }
-      case 4, 5: {
-        x *= 2;
-        x = x - 1;
-      }
-      default: {
-        break;
-      }
-    }
     JavaFile expected = jFile(
         jClass("Main", true,
             jMethod("main", true, 2, 16, 62, 210,
@@ -175,6 +162,41 @@ public class TestSwitches {
             jBlock(SS_SWITCH_EXPR_ARROW_CASE, 4, 4, 125, 128),
             jBlock(BLOCK, 5, 7, 145, 166),
             jMethod("main", true, 10, 12, 215, 254)
+        )
+    );
+    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+
+  @Test
+  public void TestSwitchExpressionAsReturn() {
+    String fileContent = String.format(baseTemplate, """
+        System.out.println(StatusCode.getStatusCodeDescription(StatusCode.FORBIDDEN));
+        System.out.println(StatusCode.getStatusCodeDescription(StatusCode.UNAUTHORIZED));
+        """, """
+        static enum StatusCode {
+          OK, UNAUTHORIZED, FORBIDDEN, NOTFOUND;
+          public static String getStatusCodeDescription(StatusCode code) {
+            return switch(code) {
+              case OK -> "everything went great";
+              case NOTFOUND, FORBIDDEN -> "cannot access";
+              case UNAUTHORIZED -> {
+                yield "did you forget to enter your password?";
+              }
+            };
+          }
+        }
+        """);
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true, 2, 6, 62, 232),
+            jClass(ENUM, "StatusCode", false,
+                jMethod("getStatusCodeDescription", false, 9, 17, 368, 591,
+                    jBlock(SS_SWITCH_EXPR_ARROW_CASE, 11, 11, 411, 436),
+                    jBlock(SS_SWITCH_EXPR_ARROW_CASE, 12, 12, 470, 487),
+                    jBlock(BLOCK, 13, 15, 516, 580)
+                )
+            )
         )
     );
     Util.assertResultEquals(expected, parseJavaFile(fileContent));
