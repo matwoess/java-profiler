@@ -1,25 +1,55 @@
+import misc.IO;
 import misc.Util;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestMain {
   Path samplesFolder = Path.of("sample");
   Path simpleExampleFile = samplesFolder.resolve("Simple.java");
 
   @Test
-  public void TestShowUsage() {
+  public void TestShowUsage_NoError() {
     Main.main(new String[]{"-h"});
     Main.main(new String[]{"--help"});
-    Main.main(new String[]{"--instrument-only", "filePathString", "additionalArg"});
   }
 
   @Test
-  public void TestInstrumentNoFileOrFolder() {
-    Main.main(new String[]{"-i"});
-    Main.main(new String[]{"--instrument-only"});
+  public void TestInstrumentOnly_MissingArgument() {
+    String[] args1 = new String[]{"-i"};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    String[] args2 = new String[]{"--instrument-only"};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+  }
+
+  @Test
+  public void TestInstrumentOnly_TooManyArguments() {
+    String[] args1 = new String[]{"-i", "filePathString", "additionalArg"};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    String[] args2 = new String[]{"--instrument-only", "filePathString", "additionalArg"};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+  }
+
+  @Test
+  public void TestInstrumentAndProfile_Missing2ndArgument() {
+    String[] args1 = new String[]{"-d", samplesFolder.toString()};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    String[] args2 = new String[]{"--sources-directory", samplesFolder.toString()};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+  }
+
+  @Test
+  public void TestCreateReportOnly_UnexpectedArgument() {
+    String[] args1 = new String[]{"-r", samplesFolder.toString()};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    String[] args2 = new String[]{"--generate-report", samplesFolder.toString()};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
   }
 
   @Test
@@ -41,27 +71,26 @@ public class TestMain {
   }
 
   @Test
-  public void TestInstrumentAFolderAndProfileNoFile_MissingArgument() {
-    Main.main(new String[]{"-d", samplesFolder.toString()});
-    Main.main(new String[]{"--sources-directory", samplesFolder.toString()});
+  public void TestInstrumentManualCompileThenCreateReportOnly() throws IOException, InterruptedException {
+    Main.main(new String[]{"-i", samplesFolder.toString()});
+    ProcessBuilder builder = new ProcessBuilder()
+        .inheritIO()
+        .directory(IO.instrumentDir.toFile())
+        .command("javac", simpleExampleFile.getFileName().toString());
+    assertEquals(0, builder.start().waitFor());
+    Main.main(new String[]{"-r"});
   }
 
   @Test
-  public void TestInstrumentAndProfileAllSamplesIndividually() {
+  public void TestInstrumentAndProfileEachSampleIndividually() {
     File[] sampleFiles = samplesFolder.toFile().listFiles();
     if (sampleFiles == null) {
       throw new RuntimeException("no sample files found");
     }
     Stream.of(sampleFiles)
         .filter(file -> Util.isJavaFile(file.toPath()))
-        .forEach(jFile -> {
-              String[] args = new String[]{
-                  "-d",
-                  samplesFolder.toString(),
-                  jFile.toString(),
-              };
-              Main.main(args);
-            }
+        .forEach(jFile ->
+            Main.main(new String[]{"-d", samplesFolder.toString(), jFile.toString()})
         );
   }
 }

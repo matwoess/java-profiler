@@ -1,6 +1,6 @@
-import model.JavaFile;
 import instrument.Instrumenter;
 import misc.Util;
+import model.JavaFile;
 import profile.Profiler;
 
 import java.io.IOException;
@@ -9,13 +9,12 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static java.lang.System.exit;
 import static misc.Util.assertJavaSourceFile;
 
 public class Main {
   static boolean syncCounters = false;
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IllegalArgumentException {
     if (args.length == 0) {
       invalidUsage();
     }
@@ -140,8 +139,8 @@ public class Main {
         """);
   }
 
-  static void invalidUsage() {
+  static void invalidUsage() throws IllegalArgumentException {
     printUsage();
-    exit(1);
+    throw new IllegalArgumentException("invalid arguments");
   }
 }
