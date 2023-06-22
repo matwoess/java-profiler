@@ -3,6 +3,7 @@ package misc;
 import model.JavaFile;
 
 import java.io.*;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -81,6 +82,9 @@ public class IO {
         Files.delete(link);
       }
       Files.createSymbolicLink(link, target);
+    } catch (FileSystemException e) {
+      System.out.println(e.getMessage());
+      System.out.println("Unable to create report symlink. Not supported or allowed by file system.");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
