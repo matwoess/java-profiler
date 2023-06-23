@@ -1,6 +1,6 @@
 import java.nio.file.Path;
 
-public class Util {
+public class TestUtil {
   static void instrumentAndProfile(Path mainFile) {
     String[] args = new String[]{mainFile.toString()};
     Main.main(args);
