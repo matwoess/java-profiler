@@ -6,6 +6,8 @@ import java.io.*;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -65,6 +67,22 @@ public class IO {
   public static void copyJavaScriptFiles() {
     String highlighter = "highlighter.js";
     copyResource("/js/" + highlighter, reportDir.resolve(highlighter));
+  }
+
+  public static void clearInstrumentDirIfExists() {
+    if (Files.exists(instrumentDir)) {
+      try (Stream<Path> walk = Files.walk(instrumentDir)) {
+        walk.sorted(Comparator.reverseOrder()).forEach(file -> {
+          try {
+            Files.delete(file);
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 
   @SuppressWarnings("UnusedReturnValue")
