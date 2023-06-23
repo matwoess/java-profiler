@@ -33,8 +33,7 @@ public class Profiler {
     try {
       int exitCode = builder.start().waitFor();
       if (exitCode != 0) {
-        System.out.println("Error compiling instrumented files.");
-        exit(exitCode);
+        throw new RuntimeException("Error compiling instrumented file: " + mainFile);
       }
     } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);

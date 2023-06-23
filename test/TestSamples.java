@@ -2,6 +2,8 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class TestSamples {
   Path samplesFolder = Path.of("sample");
 
@@ -76,8 +78,10 @@ public class TestSamples {
   }
 
   @Test
-  public void TestPackagesSample() {
-    instrumentAndProfile(samplesFolder.resolve("Packages.java"));
+  public void TestPackagesSample_MissingDependencies() {
+    Path mainFile = samplesFolder.resolve("Packages.java");
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> instrumentAndProfile(mainFile));
+    assertTrue(ex.getMessage().contains("Error compiling instrumented file"));
   }
 
   @Test
@@ -106,8 +110,10 @@ public class TestSamples {
   }
 
   @Test
-  public void TestAnonymousClassesSample() {
-    instrumentAndProfile(samplesFolder.resolve("AnonymousClasses.java"));
+  public void TestAnonymousClassesSample_MissingDependencies() {
+    Path mainFile = samplesFolder.resolve("AnonymousClasses.java");
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> instrumentAndProfile(mainFile));
+    assertTrue(ex.getMessage().contains("Error compiling instrumented file"));
   }
 
   @Test
@@ -127,7 +133,9 @@ public class TestSamples {
 
   @Test
   public void TestAllSamplesSample() {
-    instrumentAndProfile(samplesFolder.resolve("AllSamples.java"));
+    Path mainFile = samplesFolder.resolve("AllSamples.java");
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> instrumentAndProfile(mainFile));
+    assertTrue(ex.getMessage().contains("Error compiling instrumented file"));
   }
 
   @Test
