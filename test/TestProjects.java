@@ -2,7 +2,6 @@ import misc.IO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,17 +17,15 @@ public class TestProjects {
   }
 
   @Test
-  public void TestCocoR() throws IOException, InterruptedException {
+  public void TestCocoR() {
     Path cocoRoot = projectsRoot.resolve("CocoR").resolve("src");
     Path cocoAtg = cocoRoot.resolve("Coco.atg");
     Util.instrumentFolder(cocoRoot);
-    int compileResult = new ProcessBuilder().inheritIO().directory(IO.instrumentDir.toFile()).command(
-        "javac -source 7 -target 7 -d . Trace.java Scanner.java Tab.java DFA.java ParserGen.java Parser.java Coco.java".split(" ")
-    ).start().waitFor();
+    String[] command = "javac -source 7 -target 7 -d . Trace.java Scanner.java Tab.java DFA.java ParserGen.java Parser.java Coco.java".split(" ");
+    int compileResult = misc.Util.runCommand(IO.instrumentDir, command);
     assertEquals(0, compileResult);
-    int runResult = new ProcessBuilder().inheritIO().directory(IO.instrumentDir.toFile()).command(
-        "java", "Coco/Coco", IO.instrumentDir.relativize(cocoAtg).toString()
-    ).start().waitFor();
+    command = new String[]{"java", "Coco/Coco", IO.instrumentDir.relativize(cocoAtg).toString()};
+    int runResult = misc.Util.runCommand(IO.instrumentDir, command);
     assertEquals(0, runResult);
     Util.generateReport();
   }

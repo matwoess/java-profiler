@@ -2,10 +2,7 @@ import misc.IO;
 import misc.Util;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -71,13 +68,10 @@ public class TestMain {
   }
 
   @Test
-  public void TestInstrumentManualCompileThenCreateReportOnly() throws IOException, InterruptedException {
+  public void TestInstrumentManualCompileThenCreateReportOnly() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
-    ProcessBuilder builder = new ProcessBuilder()
-        .inheritIO()
-        .directory(IO.instrumentDir.toFile())
-        .command("javac", simpleExampleFile.getFileName().toString());
-    assertEquals(0, builder.start().waitFor());
+    int exitCode = Util.runCommand(IO.instrumentDir, "javac", simpleExampleFile.getFileName().toString());
+    assertEquals(0, exitCode);
     Main.main(new String[]{"-r"});
   }
 }
