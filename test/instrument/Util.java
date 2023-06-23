@@ -24,7 +24,7 @@ public class Util {
 
   private static Path createTempFileWithContent(String content) {
     try {
-      List<String> fileContent = Arrays.asList(content.split("\n"));
+      List<String> fileContent = Arrays.asList(content.split(misc.Util.getOS().lineSeparator()));
       Path tempFile = Files.createTempFile(null, null);
       Files.write(tempFile, fileContent);
       return tempFile;

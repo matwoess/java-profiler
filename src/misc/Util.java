@@ -1,12 +1,7 @@
 package misc;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Util {
   @SafeVarargs
@@ -24,6 +19,36 @@ public class Util {
     if (!Util.isJavaFile(filePath)) {
       throw new RuntimeException(String.format("'%s' is not a java source file!", filePath));
     }
+  }
+
+  public enum OS {
+    WINDOWS, LINUX, MAC, SOLARIS;
+
+    public String lineSeparator() {
+      if (this == WINDOWS) {
+        return "\r\n";
+      } else {
+        return "\n";
+      }
+    }
+  }
+
+  private static OS os = null;
+
+  public static OS getOS() {
+    if (os == null) {
+      String osName = System.getProperty("os.name").toLowerCase();
+      if (osName.contains("win")) {
+        os = OS.WINDOWS;
+      } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
+        os = OS.LINUX;
+      } else if (osName.contains("mac")) {
+        os = OS.MAC;
+      } else if (osName.contains("sunos")) {
+        os = OS.SOLARIS;
+      }
+    }
+    return os;
   }
 
 }
