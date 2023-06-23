@@ -1,5 +1,6 @@
 package misc;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 
@@ -18,6 +19,18 @@ public class Util {
   public static void assertJavaSourceFile(Path filePath) {
     if (!Util.isJavaFile(filePath)) {
       throw new RuntimeException(String.format("'%s' is not a java source file!", filePath));
+    }
+  }
+
+  public static int runCommand(Path cwd, String... command) {
+    ProcessBuilder builder = new ProcessBuilder()
+        .inheritIO()
+        .directory(cwd.toFile())
+        .command(command);
+    try {
+      return builder.start().waitFor();
+    } catch (IOException | InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 

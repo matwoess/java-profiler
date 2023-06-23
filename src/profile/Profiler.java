@@ -23,36 +23,21 @@ public class Profiler {
   }
 
   public void compileInstrumented() {
-    Path mainFile = mainJavaFile.instrumentedFile;
-    ProcessBuilder builder = new ProcessBuilder()
-        .inheritIO()
-        .directory(IO.instrumentDir.toFile())
-        .command("javac", mainFile.getFileName().toString());
-    try {
-      int exitCode = builder.start().waitFor();
-      if (exitCode != 0) {
-        throw new RuntimeException("Error compiling instrumented file: " + mainFile);
-      }
-    } catch (IOException | InterruptedException e) {
-      throw new RuntimeException(e);
+    Path mainFile = IO.instrumentDir.relativize(mainJavaFile.instrumentedFile);
+    int exitCode = Util.runCommand(IO.instrumentDir, "javac", mainFile.toString());
+    if (exitCode != 0) {
+      throw new RuntimeException("Error compiling instrumented file: " + mainFile);
     }
   }
 
   public void profile(String[] programArgs) {
-    Path mainFile = mainJavaFile.instrumentedFile;
-    String fileName = mainFile.getFileName().toString();
-    String classFileName = fileName.substring(0, fileName.lastIndexOf("."));
-    ProcessBuilder builder = new ProcessBuilder()
-        .inheritIO()
-        .directory(IO.instrumentDir.toFile())
-        .command(Util.prependToArray(programArgs, "java", classFileName));
-    try {
-      int exitCode = builder.start().waitFor();
-      if (exitCode != 0) {
-        throw new RuntimeException("Error executing compiled class: " + classFileName);
-      }
-    } catch (IOException | InterruptedException e) {
-      throw new RuntimeException(e);
+    Path mainFile = IO.instrumentDir.relativize(mainJavaFile.instrumentedFile);
+    String filePath = mainFile.toString();
+    String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
+    String[] command = Util.prependToArray(programArgs, "java", classFilePath);
+    int exitCode = Util.runCommand(IO.instrumentDir, command);
+    if (exitCode != 0) {
+      throw new RuntimeException("Error executing compiled class: " + classFilePath);
     }
   }
 
