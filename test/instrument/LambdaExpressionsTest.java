@@ -3,12 +3,12 @@ package instrument;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import static instrument.ProgramBuilder.*;
-import static instrument.Util.baseTemplate;
-import static instrument.Util.parseJavaFile;
+import static instrument.TestProgramBuilder.*;
+import static instrument.TestInstrumentUtils.baseTemplate;
+import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.BlockType.*;
 
-public class TestLambdaExpressions {
+public class LambdaExpressionsTest {
   @Test
   public void TestSimpleForEach() {
     String fileContent = String.format(baseTemplate, """
@@ -23,7 +23,7 @@ public class TestLambdaExpressions {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -40,7 +40,7 @@ public class TestLambdaExpressions {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -58,7 +58,7 @@ public class TestLambdaExpressions {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -75,7 +75,7 @@ public class TestLambdaExpressions {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -92,7 +92,7 @@ public class TestLambdaExpressions {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -112,7 +112,7 @@ public class TestLambdaExpressions {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -137,7 +137,7 @@ public class TestLambdaExpressions {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -167,7 +167,7 @@ public class TestLambdaExpressions {
             jMethod("main", true, 11, 14, 312, 400)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -198,6 +198,6 @@ public class TestLambdaExpressions {
             jMethod("main", true, 9, 12, 426, 527)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

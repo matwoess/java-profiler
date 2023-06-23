@@ -3,12 +3,12 @@ package instrument;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import static instrument.ProgramBuilder.*;
-import static instrument.Util.baseTemplate;
-import static instrument.Util.parseJavaFile;
+import static instrument.TestProgramBuilder.*;
+import static instrument.TestInstrumentUtils.baseTemplate;
+import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.BlockType.*;
 
-public class TestMissingBraces {
+public class MissingBracesTest {
   @Test
   public void TestIf() {
     String fileContent = String.format(baseTemplate, """
@@ -21,7 +21,7 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -38,7 +38,7 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -57,7 +57,7 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -88,7 +88,7 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -111,7 +111,7 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -131,7 +131,7 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -150,7 +150,7 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -183,7 +183,7 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -206,6 +206,6 @@ public class TestMissingBraces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

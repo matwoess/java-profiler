@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class ProgramBuilder {
+public class TestProgramBuilder {
 
   public static JavaFile jFile(model.Class... classes) {
     JavaFile javaFile = new JavaFile(Path.of("."));

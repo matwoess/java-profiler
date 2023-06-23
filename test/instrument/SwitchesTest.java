@@ -3,13 +3,13 @@ package instrument;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import static instrument.ProgramBuilder.*;
-import static instrument.Util.baseTemplate;
-import static instrument.Util.parseJavaFile;
+import static instrument.TestProgramBuilder.*;
+import static instrument.TestInstrumentUtils.baseTemplate;
+import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.BlockType.*;
 import static model.ClassType.ENUM;
 
-public class TestSwitches {
+public class SwitchesTest {
 
   @Test
   public void TestSwitch() {
@@ -42,7 +42,7 @@ public class TestSwitches {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -70,7 +70,7 @@ public class TestSwitches {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -102,7 +102,7 @@ public class TestSwitches {
         )
     );
     expected.foundBlocks.get(expected.foundBlocks.size() - 1).startsWithThrow = true;
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -136,7 +136,7 @@ public class TestSwitches {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -164,7 +164,7 @@ public class TestSwitches {
             jMethod("main", true, 10, 12, 215, 254)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 
@@ -199,7 +199,7 @@ public class TestSwitches {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 }

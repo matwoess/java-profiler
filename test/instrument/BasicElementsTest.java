@@ -4,14 +4,14 @@ import model.Class;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import static instrument.ProgramBuilder.*;
-import static instrument.Util.baseTemplate;
-import static instrument.Util.parseJavaFile;
+import static instrument.TestProgramBuilder.*;
+import static instrument.TestInstrumentUtils.baseTemplate;
+import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.BlockType.BLOCK;
 import static model.BlockType.STATIC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestBasic {
+public class BasicElementsTest {
   @Test
   public void TestEmptyProgram() {
     String fileContent = """
@@ -20,7 +20,7 @@ public class TestBasic {
     JavaFile expected = jFile(
         jClass("Empty")
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -31,7 +31,7 @@ public class TestBasic {
         class Empty {
         }""";
     JavaFile expected = jFile("<default>", 0, jClass("Empty"));
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -57,7 +57,7 @@ public class TestBasic {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
     Class tlClass = expected.topLevelClasses.get(0);
     Class innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
     assertEquals("name.Of._the_.pkg.Empty", tlClass.getFullName());
@@ -80,7 +80,7 @@ public class TestBasic {
             jMethod("main", true, 2, 4, 68, 112)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -99,7 +99,7 @@ public class TestBasic {
             jBlock(STATIC, 4, 6, 49, 64)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -127,7 +127,7 @@ public class TestBasic {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -150,7 +150,7 @@ public class TestBasic {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 
@@ -179,7 +179,7 @@ public class TestBasic {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -216,7 +216,7 @@ public class TestBasic {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -246,7 +246,7 @@ public class TestBasic {
             jMethod("getTempString", false, 18, 20, 625, 680)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -260,7 +260,7 @@ public class TestBasic {
             jMethod("main", true, 2, 6, 62, 117)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -281,7 +281,7 @@ public class TestBasic {
             jMethod("main", true, 2, 13, 62, 300)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -295,7 +295,7 @@ public class TestBasic {
             jMethod("main", true, 2, 6, 62, 161)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -313,7 +313,7 @@ public class TestBasic {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -334,7 +334,7 @@ public class TestBasic {
             jMethod("doNothing", false, 9, 9, 150, 151)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -351,7 +351,7 @@ public class TestBasic {
             jMethod("main", true, 2, 9, 62, 227)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -380,7 +380,7 @@ public class TestBasic {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -406,6 +406,6 @@ public class TestBasic {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

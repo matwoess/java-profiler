@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TestMain {
+public class MainTest {
   Path samplesFolder = Path.of("sample");
   Path simpleExampleFile = samplesFolder.resolve("Simple.java");
 

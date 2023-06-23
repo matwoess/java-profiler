@@ -3,13 +3,13 @@ package instrument;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import static instrument.ProgramBuilder.*;
-import static instrument.Util.parseJavaFile;
+import static instrument.TestProgramBuilder.*;
+import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.BlockType.*;
 import static model.ClassType.ENUM;
 import static model.ClassType.INTERFACE;
 
-public class TestEnums {
+public class EnumsTest {
   @Test
   public void TestEmptyEnum() {
     String fileContent = """
@@ -18,7 +18,7 @@ public class TestEnums {
     JavaFile expected = jFile(
         jClass(ENUM, "Empty", false)
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -31,7 +31,7 @@ public class TestEnums {
     JavaFile expected = jFile(
         jClass(ENUM, "Adjective", false)
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -43,7 +43,7 @@ public class TestEnums {
     JavaFile expected = jFile(
         jClass(ENUM, "AB", false)
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 
@@ -62,7 +62,7 @@ public class TestEnums {
             jBlock(STATIC, 4, 6, 59, 82)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
 
@@ -81,7 +81,7 @@ public class TestEnums {
             jMethod("lowercase", false, 4, 6, 90, 132)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -109,7 +109,7 @@ public class TestEnums {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -137,7 +137,7 @@ public class TestEnums {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -174,7 +174,7 @@ public class TestEnums {
             jMethod("callMethods", false, 16, 19, 404, 499)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -205,13 +205,13 @@ public class TestEnums {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
     fileContent = fileContent.replace("D,E;", "D,E");
     expected.foundBlocks.forEach(block -> {
       block.begPos--;
       block.incInsertPosition--;
       block.endPos--;
     });
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }

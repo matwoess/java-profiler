@@ -4,15 +4,14 @@ import model.Class;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import static instrument.ProgramBuilder.*;
-import static instrument.Util.baseTemplate;
-import static instrument.Util.parseJavaFile;
+import static instrument.TestProgramBuilder.*;
+import static instrument.TestInstrumentUtils.baseTemplate;
+import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.BlockType.BLOCK;
-import static model.BlockType.METHOD;
 import static model.ClassType.ANONYMOUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestAnonymousClasses {
+public class AnonymousClassesTest {
   @Test
   public void TestAsArgumentInClassLevelMethod() {
     String fileContent = String.format(baseTemplate, "", """
@@ -60,7 +59,7 @@ public class TestAnonymousClasses {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
     Class innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
     assertEquals("Main$1", innerClass.getName());
     assertEquals("Main$1$X", innerClass.innerClasses.get(0).getName());
@@ -94,7 +93,7 @@ public class TestAnonymousClasses {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
     assertEquals("Main$1", expected.topLevelClasses.get(0).innerClasses.get(0).getName());
   }
 
@@ -116,7 +115,7 @@ public class TestAnonymousClasses {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
     assertEquals("Main$1", expected.topLevelClasses.get(0).innerClasses.get(0).getName());
   }
 

@@ -3,12 +3,12 @@ package instrument;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import static instrument.ProgramBuilder.*;
-import static instrument.Util.parseJavaFile;
+import static instrument.TestProgramBuilder.*;
+import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.ClassType.CLASS;
 import static model.ClassType.INTERFACE;
 
-public class TestInterfaces {
+public class InterfacesTest {
   @Test
   public void TestAbstractMethodsNoBlock() {
     String fileContent = """
@@ -20,7 +20,7 @@ public class TestInterfaces {
     JavaFile expected = jFile(
         jClass(INTERFACE, "AbstractMethods", false)
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -41,7 +41,7 @@ public class TestInterfaces {
             jMethod("doNothing", false, 9, 9, 275, 276)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -66,7 +66,7 @@ public class TestInterfaces {
             jMethod("printInfo", false, 9, 11, 212, 266)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -107,7 +107,7 @@ public class TestInterfaces {
             )
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -137,7 +137,7 @@ public class TestInterfaces {
             jMethod("main", true, 11, 15, 180, 268)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
   @Test
@@ -155,6 +155,6 @@ public class TestInterfaces {
             jMethod("main", true, 2, 6, 69, 157)
         )
     );
-    Util.assertResultEquals(expected, parseJavaFile(fileContent));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }
