@@ -1,4 +1,5 @@
 import misc.IO;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -8,6 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestProjects {
   private static final Path projectsRoot = Path.of("projects");
+
+  @BeforeAll
+  public static void assertProjectsRootExists() {
+    if (!projectsRoot.toFile().exists()) {
+      throw new RuntimeException("folder " + projectsRoot + " does not exists");
+    }
+  }
 
   @Test
   public void TestCocoR() throws IOException, InterruptedException {
