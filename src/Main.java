@@ -85,6 +85,7 @@ public class Main {
   }
 
   private static void instrumentFolderCompileAndRun(Path instrumentDir, Path mainFile, String[] programArgs) {
+    assertJavaSourceFile(mainFile);
     JavaFile mainJavaFile = new JavaFile(mainFile, instrumentDir);
     JavaFile[] additionalJavaFiles = getJavaFilesInFolder(instrumentDir, mainFile);
     Instrumenter instrumenter = new Instrumenter(syncCounters, Util.prependToArray(additionalJavaFiles, mainJavaFile));
