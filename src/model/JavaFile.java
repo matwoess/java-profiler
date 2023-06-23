@@ -22,7 +22,7 @@ public class JavaFile implements Serializable {
 
   public JavaFile(Path sourceFile) {
     this.sourceFile = sourceFile;
-    this.instrumentedFile = IO.instrumentDir.resolve(sourceFile);
+    this.instrumentedFile = IO.instrumentDir.resolve(sourceFile.getFileName());
   }
 
   @Serial
