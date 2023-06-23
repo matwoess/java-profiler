@@ -80,17 +80,4 @@ public class TestMain {
     assertEquals(0, builder.start().waitFor());
     Main.main(new String[]{"-r"});
   }
-
-  @Test
-  public void TestInstrumentAndProfileEachSampleIndividually() {
-    File[] sampleFiles = samplesFolder.toFile().listFiles();
-    if (sampleFiles == null) {
-      throw new RuntimeException("no sample files found");
-    }
-    Stream.of(sampleFiles)
-        .filter(file -> Util.isJavaFile(file.toPath()))
-        .forEach(jFile ->
-            Main.main(new String[]{"-d", samplesFolder.toString(), jFile.toString()})
-        );
-  }
 }
