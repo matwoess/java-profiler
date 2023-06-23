@@ -142,4 +142,12 @@ public class TestSamples {
   public void TestAllSamplesSample_Folder() {
     instrumentFolderAndProfile(samplesFolder, "AllSamples.java");
   }
+  
+  
+  @Test
+  public void TestHelperSample_NoMainClass() {
+    Path mainFile = samplesFolder.resolve("helper").resolve("Helper.java");
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> instrumentAndProfile(mainFile));
+    assertEquals("Error executing compiled class: Helper", ex.getMessage());
+  }
 }

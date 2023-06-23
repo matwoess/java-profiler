@@ -13,8 +13,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.PrimitiveIterator;
 
-import static java.lang.System.exit;
-
 public class Profiler {
   JavaFile mainJavaFile;
   JavaFile[] additionalJavaFiles;
@@ -51,8 +49,7 @@ public class Profiler {
     try {
       int exitCode = builder.start().waitFor();
       if (exitCode != 0) {
-        System.out.println("Error executing compiled classes.");
-        exit(exitCode);
+        throw new RuntimeException("Error executing compiled class: " + classFileName);
       }
     } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
