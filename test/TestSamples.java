@@ -7,147 +7,137 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestSamples {
   Path samplesFolder = Path.of("sample");
 
-  private void instrumentAndProfile(Path mainFile) {
-    String[] args = new String[]{mainFile.toString()};
-    Main.main(args);
-  }
-
-  private void instrumentFolderAndProfile(Path sourcesDir, String mainFile) {
-    String[] args = new String[]{"-d", sourcesDir.toString(), sourcesDir.resolve(mainFile).toString()};
-    Main.main(args);
-  }
-
   @Test
   public void TestSimpleSample() {
-    instrumentAndProfile(samplesFolder.resolve("Simple.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("Simple.java"));
   }
 
   @Test
   public void TestSimpleSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "Simple.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "Simple.java");
   }
 
   @Test
   public void TestBasicElementsSample() {
-    instrumentAndProfile(samplesFolder.resolve("BasicElements.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("BasicElements.java"));
   }
 
   @Test
   public void TestBasicElementsSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "BasicElements.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "BasicElements.java");
   }
 
   @Test
   public void TestClassesSample() {
-    instrumentAndProfile(samplesFolder.resolve("Classes.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("Classes.java"));
   }
 
   @Test
   public void TestClassesSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "Classes.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "Classes.java");
   }
 
   @Test
   public void TestInterfacesSample() {
-    instrumentAndProfile(samplesFolder.resolve("Interfaces.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("Interfaces.java"));
   }
 
   @Test
   public void TestInterfacesSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "Interfaces.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "Interfaces.java");
   }
 
   @Test
   public void TestEnumsSample() {
-    instrumentAndProfile(samplesFolder.resolve("Enums.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("Enums.java"));
   }
 
   @Test
   public void TestEnumsSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "Enums.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "Enums.java");
   }
 
   @Test
   public void TestMissingBracesSample() {
-    instrumentAndProfile(samplesFolder.resolve("MissingBraces.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("MissingBraces.java"));
   }
 
   @Test
   public void TestMissingBracesSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "MissingBraces.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "MissingBraces.java");
   }
 
   @Test
   public void TestPackagesSample_MissingDependencies() {
     Path mainFile = samplesFolder.resolve("Packages.java");
-    RuntimeException ex = assertThrows(RuntimeException.class, () -> instrumentAndProfile(mainFile));
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> TestUtil.instrumentAndProfile(mainFile));
     assertTrue(ex.getMessage().contains("Error compiling instrumented file"));
   }
 
   @Test
   public void TestPackagesSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "Packages.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "Packages.java");
   }
 
   @Test
   public void TestSwitchesSample() {
-    instrumentAndProfile(samplesFolder.resolve("Switches.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("Switches.java"));
   }
 
   @Test
   public void TestSwitchesSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "Switches.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "Switches.java");
   }
 
   @Test
   public void TestLambdasSample() {
-    instrumentAndProfile(samplesFolder.resolve("Lambdas.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("Lambdas.java"));
   }
 
   @Test
   public void TestLambdasSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "Lambdas.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "Lambdas.java");
   }
 
   @Test
   public void TestAnonymousClassesSample_MissingDependencies() {
     Path mainFile = samplesFolder.resolve("AnonymousClasses.java");
-    RuntimeException ex = assertThrows(RuntimeException.class, () -> instrumentAndProfile(mainFile));
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> TestUtil.instrumentAndProfile(mainFile));
     assertTrue(ex.getMessage().contains("Error compiling instrumented file"));
   }
 
   @Test
   public void TestAnonymousClassesSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "AnonymousClasses.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "AnonymousClasses.java");
   }
 
   @Test
   public void TestAnnotationsSample() {
-    instrumentAndProfile(samplesFolder.resolve("Annotations.java"));
+    TestUtil.instrumentAndProfile(samplesFolder.resolve("Annotations.java"));
   }
 
   @Test
   public void TestAnnotationsSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "Annotations.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "Annotations.java");
   }
 
   @Test
   public void TestAllSamplesSample() {
     Path mainFile = samplesFolder.resolve("AllSamples.java");
-    RuntimeException ex = assertThrows(RuntimeException.class, () -> instrumentAndProfile(mainFile));
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> TestUtil.instrumentAndProfile(mainFile));
     assertTrue(ex.getMessage().contains("Error compiling instrumented file"));
   }
 
   @Test
   public void TestAllSamplesSample_Folder() {
-    instrumentFolderAndProfile(samplesFolder, "AllSamples.java");
+    TestUtil.instrumentFolderAndProfile(samplesFolder, "AllSamples.java");
   }
   
   
   @Test
   public void TestHelperSample_NoMainClass() {
     Path mainFile = samplesFolder.resolve("helper").resolve("Helper.java");
-    RuntimeException ex = assertThrows(RuntimeException.class, () -> instrumentAndProfile(mainFile));
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> TestUtil.instrumentAndProfile(mainFile));
     assertEquals("Error executing compiled class: Helper", ex.getMessage());
   }
 }
