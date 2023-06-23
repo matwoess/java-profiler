@@ -17,7 +17,7 @@ public class ProjectsTest {
   }
 
   @Test
-  public void TestCocoR() {
+  public void testCocoR() {
     Path sourcesRoot = projectsRoot.resolve("CocoR").resolve("src");
     Path cocoAtg = sourcesRoot.resolve("Coco.atg");
     TestUtils.instrumentFolder(sourcesRoot);
@@ -31,7 +31,13 @@ public class ProjectsTest {
   }
 
   @Test
-  public void TestZip4J() {
+  public void testZip4J() {
+    Path sourcesRoot = projectsRoot.resolve(Path.of("zip4j", "src", "main", "java"));
+    TestUtils.instrumentFolderAndProfile(sourcesRoot, "Main.java");
+  }
+
+  @Test
+  public void testJacoco_Instrument() {
     Path sourcesRoot = projectsRoot.resolve(Path.of("zip4j", "src", "main", "java"));
     TestUtils.instrumentFolderAndProfile(sourcesRoot, "Main.java");
   }

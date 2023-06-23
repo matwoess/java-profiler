@@ -8,7 +8,7 @@ import static instrument.TestInstrumentUtils.parseJavaFile;
 
 public class AnnotationsTest {
   @Test
-  public void TestClassAnnotations() {
+  public void testClassAnnotations() {
     String fileContent = """
         @SuppressWarnings("unchecked")
         @Deprecated
@@ -26,7 +26,7 @@ public class AnnotationsTest {
   }
 
   @Test
-  public void TestMethodAnnotations() {
+  public void testMethodAnnotations() {
     String fileContent = """
         public class Annotations {
           @Deprecated
@@ -44,7 +44,7 @@ public class AnnotationsTest {
   }
 
   @Test
-  public void TestArgumentAnnotations() {
+  public void testArgumentAnnotations() {
     String fileContent = """
         public class Annotations {
           public static void main(@SuppressWarnings("null") String[] args) {
@@ -60,7 +60,7 @@ public class AnnotationsTest {
   }
 
   @Test
-  public void TestStatementAnnotations() {
+  public void testStatementAnnotations() {
     String fileContent = """
         public class Annotations {
           public static void main(String[] args) {

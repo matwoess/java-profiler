@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClassesTest {
   @Test
-  public void TestAbstractClass() {
+  public void testAbstractClass() {
     String fileContent = """
         abstract class Pet {
           String name;
@@ -34,7 +34,7 @@ public class ClassesTest {
   }
 
   @Test
-  public void TestInnerClassAndStaticBlocks() {
+  public void testInnerClassAndStaticBlocks() {
     String fileContent = """
         public class Classes {
           static int i;
@@ -84,7 +84,7 @@ public class ClassesTest {
 
 
   @Test
-  public void TestDeepInnerClasses() {
+  public void testDeepInnerClasses() {
     String fileContent = """
         public class InnerClasses {
           public static void main(String[] args) {
@@ -129,7 +129,7 @@ public class ClassesTest {
   }
 
   @Test
-  public void TestClassWithInheritanceAndConstructors() {
+  public void testClassWithInheritanceAndConstructors() {
     String fileContent = """
         abstract class Pet {
           String name;
@@ -180,7 +180,7 @@ public class ClassesTest {
   }
 
   @Test
-  public void TestMembersWithInitBlocks() {
+  public void testMembersWithInitBlocks() {
     String fileContent = """
         class InitBlocks {
           int[] ints = new int[]{0, 1, 3};
@@ -201,7 +201,7 @@ public class ClassesTest {
   }
 
   @Test
-  public void TestMembersWithImplicitInitializers() {
+  public void testMembersWithImplicitInitializers() {
     String fileContent = """
         class ImplicitInitBlocks {
           static String[] strings = {"String1", "String2"};
@@ -220,7 +220,7 @@ public class ClassesTest {
   }
 
   @Test
-  public void TestSubClassWithFollowingMethod() {
+  public void testSubClassWithFollowingMethod() {
     // testing that the classStack works
     String fileContent = """
         class A {
@@ -263,7 +263,7 @@ public class ClassesTest {
   }
 
   @Test
-  public void TestMethodsWithThrowsDeclarations() {
+  public void testMethodsWithThrowsDeclarations() {
     // testing that the classStack works
     String fileContent = """
         abstract class ThrowClass {
@@ -288,7 +288,7 @@ public class ClassesTest {
   }
 
   @Test
-  public void TestInheritedClassWithSuperCallAndThisCall() {
+  public void testInheritedClassWithSuperCallAndThisCall() {
     String fileContent = """
         class Dog {
           String name;

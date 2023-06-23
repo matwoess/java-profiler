@@ -11,7 +11,7 @@ import static model.ClassType.INTERFACE;
 
 public class EnumsTest {
   @Test
-  public void TestEmptyEnum() {
+  public void testEmptyEnum() {
     String fileContent = """
         enum Empty {
         }""";
@@ -22,7 +22,7 @@ public class EnumsTest {
   }
 
   @Test
-  public void TestSimpleEnumWithoutMembers() {
+  public void testSimpleEnumWithoutMembers() {
     String fileContent = """
         enum Adjective {
           LOW, MEDIUM, HIGH,
@@ -35,7 +35,7 @@ public class EnumsTest {
   }
 
   @Test
-  public void TestEnumWithTrailingSemicolon() {
+  public void testEnumWithTrailingSemicolon() {
     String fileContent = """
         enum AB {
           A, B;
@@ -48,7 +48,7 @@ public class EnumsTest {
 
 
   @Test
-  public void TestStaticBlock() {
+  public void testStaticBlock() {
     String fileContent = """
         enum AB {
           A, B;
@@ -67,7 +67,7 @@ public class EnumsTest {
 
 
   @Test
-  public void TestMemberFunction() {
+  public void testMemberFunction() {
     String fileContent = """
         enum Enum {
           VALUE1, VAL_2 ;
@@ -85,7 +85,7 @@ public class EnumsTest {
   }
 
   @Test
-  public void TestEnumWithConstructorAndArguments() {
+  public void testEnumWithConstructorAndArguments() {
     String fileContent = """
         public enum WithConstructor {
           PRIMARY(1, "OK", 1.5f),
@@ -113,7 +113,7 @@ public class EnumsTest {
   }
 
   @Test
-  public void TestEnumMainFunctionAndSwitch() {
+  public void testEnumMainFunctionAndSwitch() {
     String fileContent = """
         public enum WithMain {
           A,
@@ -141,7 +141,7 @@ public class EnumsTest {
   }
 
   @Test
-  public void TestEnumWithSubClassAndSubInterface() {
+  public void testEnumWithSubClassAndSubInterface() {
     String fileContent = """
         public enum WithSubClassAndInterface {
           A,B,C;
@@ -178,7 +178,7 @@ public class EnumsTest {
   }
 
   @Test
-  public void TestEnumWithInnerEnum_WithAndWithoutSemicolon() {
+  public void testEnumWithInnerEnum_WithAndWithoutSemicolon() {
     String fileContent = """
         public enum WithInnerEnum {
           A,B,C;

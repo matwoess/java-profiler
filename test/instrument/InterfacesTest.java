@@ -10,7 +10,7 @@ import static model.ClassType.INTERFACE;
 
 public class InterfacesTest {
   @Test
-  public void TestAbstractMethodsNoBlock() {
+  public void testAbstractMethodsNoBlock() {
     String fileContent = """
         interface AbstractMethods {
           String getName();
@@ -24,7 +24,7 @@ public class InterfacesTest {
   }
 
   @Test
-  public void TestMembersWithInitBlocks() {
+  public void testMembersWithInitBlocks() {
     String fileContent = """
         interface InitBlocks {
           int[] ints = new int[]{0, 1, 3};
@@ -45,7 +45,7 @@ public class InterfacesTest {
   }
 
   @Test
-  public void TestDefaultAndStaticMethodsWithBlock() {
+  public void testDefaultAndStaticMethodsWithBlock() {
     String fileContent = """
         interface DefaultStatic {
           int x = 0;
@@ -70,7 +70,7 @@ public class InterfacesTest {
   }
 
   @Test
-  public void TestSubInterfacesAndClasses() {
+  public void testSubInterfacesAndClasses() {
     String fileContent = """
         public interface Interfaces extends Serializable {
           int x = 0;
@@ -111,7 +111,7 @@ public class InterfacesTest {
   }
 
   @Test
-  public void TestMainEntryPointPublic() {
+  public void testMainEntryPointPublic() {
     String fileContent = """
         public interface WithMain {
           int get();
@@ -141,7 +141,7 @@ public class InterfacesTest {
   }
 
   @Test
-  public void TestMainEntryPointImplicitPublic() {
+  public void testMainEntryPointImplicitPublic() {
     String fileContent = """
         public interface InferredPublic {
           static void main(String[] args) {

@@ -12,7 +12,7 @@ import static model.ClassType.ENUM;
 public class SwitchesTest {
 
   @Test
-  public void TestSwitch() {
+  public void testSwitch() {
     String fileContent = String.format(baseTemplate, """
         int x = 1;
         switch (x) {
@@ -46,7 +46,7 @@ public class SwitchesTest {
   }
 
   @Test
-  public void TestCommaSeparatedCases() {
+  public void testCommaSeparatedCases() {
     String fileContent = String.format(baseTemplate, """
         int x = 1;
         switch (x) {
@@ -74,7 +74,7 @@ public class SwitchesTest {
   }
 
   @Test
-  public void TestNewSwitch() {
+  public void testNewSwitch() {
     String fileContent = String.format(baseTemplate, """
         String value = "aBcDe";
         switch (value) {
@@ -106,7 +106,7 @@ public class SwitchesTest {
   }
 
   @Test
-  public void TestSwitchExpression() {
+  public void testSwitchExpression() {
     String fileContent = String.format(baseTemplate, """
         int dependingOn = 5;
         int result = switch (dependingOn) {
@@ -140,7 +140,7 @@ public class SwitchesTest {
   }
 
   @Test
-  public void TestClassLevelSwitchExpression() {
+  public void testClassLevelSwitchExpression() {
     String fileContent = """
         public class ClassLevelSwitch {
           static int globalInt = switch ("switch".hashCode()) {
@@ -169,7 +169,7 @@ public class SwitchesTest {
 
 
   @Test
-  public void TestSwitchExpressionAsReturn() {
+  public void testSwitchExpressionAsReturn() {
     String fileContent = String.format(baseTemplate, """
         System.out.println(StatusCode.getStatusCodeDescription(StatusCode.FORBIDDEN));
         System.out.println(StatusCode.getStatusCodeDescription(StatusCode.UNAUTHORIZED));

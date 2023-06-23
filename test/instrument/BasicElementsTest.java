@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BasicElementsTest {
   @Test
-  public void TestEmptyProgram() {
+  public void testEmptyProgram() {
     String fileContent = """
         class Empty {
         }""";
@@ -24,7 +24,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestBeginOfImportsAndPackageName_NoPackage() {
+  public void testBeginOfImportsAndPackageName_NoPackage() {
     String fileContent = """
         import static java.lang.System.exit;
         import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestBeginOfImportsAndPackageName() {
+  public void testBeginOfImportsAndPackageName() {
     String fileContent = """
         package name.Of._the_.pkg ;
         import static java.lang.System.exit;
@@ -67,7 +67,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestHelloWorld() {
+  public void testHelloWorld() {
     String fileContent = """
         public class HelloWorld {
           public static void main(String[] args) {
@@ -84,7 +84,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestStaticBlock() {
+  public void testStaticBlock() {
     String fileContent = """
         public class Static {
           static int x;
@@ -103,7 +103,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestForLoopWithIfs() {
+  public void testForLoopWithIfs() {
     String fileContent = String.format(baseTemplate, """
         String output = "finished";
         int x = 0;
@@ -131,7 +131,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestWhileAndDoWhileLoop() {
+  public void testWhileAndDoWhileLoop() {
     String fileContent = String.format(baseTemplate, """
         int x = 100;
         while (x > 0) {
@@ -155,7 +155,7 @@ public class BasicElementsTest {
 
 
   @Test
-  public void TestTryCatchFinally() {
+  public void testTryCatchFinally() {
     String fileContent = String.format(baseTemplate, """
         int x = 50;
         try {
@@ -183,7 +183,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestTryWithResourceStatement() {
+  public void testTryWithResourceStatement() {
     String fileContent = """
         public class TryWithResource {
           static class MyClosable implements AutoCloseable {
@@ -220,7 +220,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestComments() {
+  public void testComments() {
     String fileContent = String.format(baseTemplate, """
         // Testing comments
         /* begin comment /* no nested multi-line comments
@@ -250,7 +250,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestStatementBeginningWithStringLiteral() {
+  public void testStatementBeginningWithStringLiteral() {
     String fileContent = String.format(baseTemplate, """
         // ignoring result
         "Some string.".split(" ");
@@ -264,7 +264,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestEscapedCharLiterals() {
+  public void testEscapedCharLiterals() {
     String fileContent = String.format(baseTemplate, """
         // ignoring result
         char c = '\\"'; c = '\\'';
@@ -285,7 +285,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestStringLiteralWithEscapedCharacters() {
+  public void testStringLiteralWithEscapedCharacters() {
     String fileContent = String.format(baseTemplate, """
         String s = "''''\\"\\"\\"\\r\\n\\t\\"\\f\\b\\s_asdf";
         s = "\\u42FA_\\uuuADA1_\\1_\\155adsf\\6_\\43_Text";
@@ -299,7 +299,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestMethodWithDoubleBackslashInString() {
+  public void testMethodWithDoubleBackslashInString() {
     String fileContent = String.format(baseTemplate, """
         boolean b = "Text\\\\".endsWith("\\\\");
         if (b) {
@@ -317,7 +317,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestTernaryOperatorInReturn() {
+  public void testTernaryOperatorInReturn() {
     String fileContent = String.format(baseTemplate, """
         if (false) {
           return 0;
@@ -338,7 +338,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestTernaryOperator() {
+  public void testTernaryOperator() {
     String fileContent = String.format(baseTemplate, """
         int number = 6;
         String msg = (number % 2 == 0)
@@ -355,7 +355,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestLabels() {
+  public void testLabels() {
     String fileContent = String.format(baseTemplate, """
         int x = 1;
         outer:
@@ -384,7 +384,7 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void TestIncrementAndDecrement() {
+  public void testIncrementAndDecrement() {
     String fileContent = String.format(baseTemplate, """
         int x = 1;
         while (true) {

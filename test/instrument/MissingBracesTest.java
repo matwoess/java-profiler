@@ -10,7 +10,7 @@ import static model.BlockType.*;
 
 public class MissingBracesTest {
   @Test
-  public void TestIf() {
+  public void testIf() {
     String fileContent = String.format(baseTemplate, """
         if (true == false)return;
         """, "");
@@ -25,7 +25,7 @@ public class MissingBracesTest {
   }
 
   @Test
-  public void TestIfElse() {
+  public void testIfElse() {
     String fileContent = String.format(baseTemplate, """
         if (true == false) break;
         else continue;
@@ -42,7 +42,7 @@ public class MissingBracesTest {
   }
 
   @Test
-  public void TestIfElseifElse() {
+  public void testIfElseifElse() {
     String fileContent = String.format(baseTemplate, """
         if (true == false) break;
         else if (true == true) return;
@@ -61,7 +61,7 @@ public class MissingBracesTest {
   }
 
   @Test
-  public void TestMixedIfs() {
+  public void testMixedIfs() {
     String fileContent = String.format(baseTemplate, """
         int x = 50;
         if (x % 2 == 0)
@@ -92,7 +92,7 @@ public class MissingBracesTest {
   }
 
   @Test
-  public void TestDoubleWhileAndIfElse() {
+  public void testDoubleWhileAndIfElse() {
     String fileContent = String.format(baseTemplate, """
         int x = 0;
         while (false) while(true)
@@ -115,7 +115,7 @@ public class MissingBracesTest {
   }
 
   @Test
-  public void TestDoWhile() {
+  public void testDoWhile() {
     String fileContent = String.format(baseTemplate, """
         int x = 0;
         do x+=1; while (x<5);
@@ -135,7 +135,7 @@ public class MissingBracesTest {
   }
 
   @Test
-  public void TestForAndForEach() {
+  public void testForAndForEach() {
     String fileContent = String.format(baseTemplate, """
         int[] array = new int[5];
         for (int i = 0; i < 5; i++)
@@ -154,7 +154,7 @@ public class MissingBracesTest {
   }
 
   @Test
-  public void TestSwitch() {
+  public void testSwitch() {
     String fileContent = String.format(baseTemplate, """
         int x = 1;
         switch (x) {
@@ -187,7 +187,7 @@ public class MissingBracesTest {
   }
 
   @Test
-  public void TestLabels() {
+  public void testLabels() {
     String fileContent = String.format(baseTemplate, """
         int x = 1;
         outer: while (true) while(true)

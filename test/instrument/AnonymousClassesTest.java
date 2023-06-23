@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AnonymousClassesTest {
   @Test
-  public void TestAsArgumentInClassLevelMethod() {
+  public void testAsArgumentInClassLevelMethod() {
     String fileContent = String.format(baseTemplate, "", """
         static File firstJavaFile(Path directory) {
           File[] allJavaFiles = directory.toFile().listFiles(new FilenameFilter() {
@@ -66,7 +66,7 @@ public class AnonymousClassesTest {
   }
 
   @Test
-  public void TestAs2ndArgumentInClassLevelMethodWithGenericType() {
+  public void testAs2ndArgumentInClassLevelMethodWithGenericType() {
     String fileContent = String.format(baseTemplate, "", """
         static List<Integer> getSortedIntegers(List<Integer> arrayList) {
           Collections.sort(arrayList, new Comparator<Integer>() {
@@ -98,7 +98,7 @@ public class AnonymousClassesTest {
   }
 
   @Test
-  public void TestAsStatementStartInMethod() {
+  public void testAsStatementStartInMethod() {
     String fileContent = String.format(baseTemplate, """
         new Main() {
           @Override

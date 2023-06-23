@@ -12,13 +12,13 @@ public class MainTest {
   Path simpleExampleFile = samplesFolder.resolve("Simple.java");
 
   @Test
-  public void TestShowUsage_NoError() {
+  public void testShowUsage_NoError() {
     Main.main(new String[]{"-h"});
     Main.main(new String[]{"--help"});
   }
 
   @Test
-  public void TestInstrumentOnly_MissingArgument() {
+  public void testInstrumentOnly_MissingArgument() {
     String[] args1 = new String[]{"-i"};
     assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
     String[] args2 = new String[]{"--instrument-only"};
@@ -26,7 +26,7 @@ public class MainTest {
   }
 
   @Test
-  public void TestInstrumentOnly_TooManyArguments() {
+  public void testInstrumentOnly_TooManyArguments() {
     String[] args1 = new String[]{"-i", "filePathString", "additionalArg"};
     assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
     String[] args2 = new String[]{"--instrument-only", "filePathString", "additionalArg"};
@@ -34,7 +34,7 @@ public class MainTest {
   }
 
   @Test
-  public void TestInstrumentAndProfile_Missing2ndArgument() {
+  public void testInstrumentAndProfile_Missing2ndArgument() {
     String[] args1 = new String[]{"-d", samplesFolder.toString()};
     assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
     String[] args2 = new String[]{"--sources-directory", samplesFolder.toString()};
@@ -42,7 +42,7 @@ public class MainTest {
   }
 
   @Test
-  public void TestCreateReportOnly_UnexpectedArgument() {
+  public void testCreateReportOnly_UnexpectedArgument() {
     String[] args1 = new String[]{"-r", samplesFolder.toString()};
     assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
     String[] args2 = new String[]{"--generate-report", samplesFolder.toString()};
@@ -50,25 +50,25 @@ public class MainTest {
   }
 
   @Test
-  public void TestInstrumentOneFile() {
+  public void testInstrumentOneFile() {
     Main.main(new String[]{"-i", simpleExampleFile.toString()});
     Main.main(new String[]{"--instrument-only", simpleExampleFile.toString()});
   }
 
   @Test
-  public void TestInstrumentAFolder() {
+  public void testInstrumentAFolder() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
     Main.main(new String[]{"--instrument-only", samplesFolder.toString()});
   }
 
   @Test
-  public void TestInstrumentAFolderAndProfileAFile() {
+  public void testInstrumentAFolderAndProfileAFile() {
     Main.main(new String[]{"-d", samplesFolder.toString(), simpleExampleFile.toString()});
     Main.main(new String[]{"--sources-directory", samplesFolder.toString(), simpleExampleFile.toString()});
   }
 
   @Test
-  public void TestInstrumentManualCompileThenCreateReportOnly() {
+  public void testInstrumentManualCompileThenCreateReportOnly() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
     int exitCode = Util.runCommand(IO.instrumentDir, "javac", simpleExampleFile.getFileName().toString());
     assertEquals(0, exitCode);

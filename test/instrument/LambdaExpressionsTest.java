@@ -10,7 +10,7 @@ import static model.BlockType.*;
 
 public class LambdaExpressionsTest {
   @Test
-  public void TestSimpleForEach() {
+  public void testSimpleForEach() {
     String fileContent = String.format(baseTemplate, """
         "xyz".chars().forEach(ch -> {
           System.out.println(ch);
@@ -27,7 +27,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  public void TestAnonymousFunction() {
+  public void testAnonymousFunction() {
     String fileContent = String.format(baseTemplate, """
         Function<Integer, Integer> doubleFn = (num) -> { return num*2; };
         int result = doubleFn.apply(5);
@@ -44,7 +44,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  public void TestAnonymousSupplier() {
+  public void testAnonymousSupplier() {
     String fileContent = String.format(baseTemplate, """
         Supplier<String> getHello = () -> {
           return "Hello";
@@ -62,7 +62,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  public void TestLambdaStatementWithMissingBraces() {
+  public void testLambdaStatementWithMissingBraces() {
     String fileContent = String.format(baseTemplate, """
         Function<Integer, Double> divideBy3 = num -> num / 3.0;
         double result = divideBy3.apply(7);
@@ -79,7 +79,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  public void TestLambdaWithParameterListAndBracesAroundStatement() {
+  public void testLambdaWithParameterListAndBracesAroundStatement() {
     String fileContent = String.format(baseTemplate, """
         BiFunction<Float, Float, Float> addTogether = (x, y) -> (x + y);
         double result = addTogether.apply(7f, 5.6f);
@@ -96,7 +96,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  public void TestMoreComplexLambdasWithoutBlocks() {
+  public void testMoreComplexLambdasWithoutBlocks() {
     String fileContent = String.format(baseTemplate, """
         BiFunction<String, Predicate<String>, Integer> parseIntIf
             = (num, pred) -> pred.test(num) ? Integer.parseInt(num) : -1;
@@ -116,7 +116,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  public void TestChainedStreamsWithLambdasAsParameter() {
+  public void testChainedStreamsWithLambdasAsParameter() {
     String fileContent = String.format(baseTemplate, """
         int[] array = new int[]{1, 2, 3, 4, 5, 6};
         Arrays.stream(array)
@@ -141,7 +141,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  public void TestClassLevelLambdaMembers() {
+  public void testClassLevelLambdaMembers() {
     String fileContent = """
         private class LambdaMembers {
           static Runnable printHello = () -> {
@@ -171,7 +171,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  public void TestClassLevelSingleStatementLambdas() {
+  public void testClassLevelSingleStatementLambdas() {
     String fileContent = """
         class LambdaMembers {
           static Runnable printHello = () -> System.out.println("Hello!");
