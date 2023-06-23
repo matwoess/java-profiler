@@ -4,9 +4,9 @@ import model.Class;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
-import static instrument.TestProgramBuilder.*;
 import static instrument.TestInstrumentUtils.baseTemplate;
 import static instrument.TestInstrumentUtils.parseJavaFile;
+import static instrument.TestProgramBuilder.*;
 import static model.BlockType.BLOCK;
 import static model.BlockType.STATIC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -404,6 +404,29 @@ public class BasicElementsTest {
                 jBlock(BLOCK, 5, 9, 108, 141),
                 jBlock(BLOCK, 9, 11, 148, 163)
             )
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testGenericVariableInstantiation() {
+    String fileContent = """
+        class GenericInstantiation {
+          private Map<String, Set<Integer>> map = new HashMap<String, Set<Integer>>();
+          void fill() {
+            map = new HashMap<String, Set<Integer>>()};
+            map.put("Hello", Set.of(1, 2, 3));
+            map.get("Hello");
+          }
+          public static void main(String[] args) {
+            new GenericInstantiation().fill();
+          }
+        }""";
+    JavaFile expected = jFile(
+        jClass("GenericInstantiation", true,
+            jMethod("fill", false, 3, 7, 123, 236),
+            jMethod("main", true, 8, 10, 279, 322)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
