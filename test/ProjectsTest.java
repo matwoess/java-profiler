@@ -31,14 +31,14 @@ public class ProjectsTest {
   }
 
   @Test
-  public void testZip4J() {
+  public void testZip4j() {
     Path sourcesRoot = projectsRoot.resolve(Path.of("zip4j", "src", "main", "java"));
     TestUtils.instrumentFolderAndProfile(sourcesRoot, "Main.java");
   }
 
   @Test
-  public void testJacoco_Instrument() {
-    Path sourcesRoot = projectsRoot.resolve(Path.of("zip4j", "src", "main", "java"));
-    TestUtils.instrumentFolderAndProfile(sourcesRoot, "Main.java");
+  public void testJaCoCo_instrument() {
+    Path sourcesRoot = projectsRoot.resolve("jacoco");
+    TestUtils.instrumentFolder(sourcesRoot);
   }
 }
