@@ -37,6 +37,7 @@ TOKENS
 			| noQuote
 		)} quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
+	classRef   = ".class".
 	class      = "class".
 	interface  = "interface".
 	enum       = "enum".
@@ -157,7 +158,7 @@ SSArrowBody<boolean inSwitch, boolean inAssignment> =
 Instantiation = "new" ident {["."] ident}
 		(BracketExpr [BraceExpr] // array initializer
 			| [AngleBracketExpr] ParExpr ["{" (. state.enterClass(true); .) ClassBody (. state.leaveClass();.)]
-		) ";"
+		)
 		.
 Block<boolean isMethod> = 					(. state.enterBlock(isMethod); .)
 				"{" {Statement} "}"					(. state.leaveBlock(isMethod); .)
