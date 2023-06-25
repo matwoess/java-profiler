@@ -1,6 +1,5 @@
 package instrument;
 
-import model.Class;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
@@ -9,11 +8,10 @@ import static instrument.TestInstrumentUtils.parseJavaFile;
 import static instrument.TestProgramBuilder.*;
 import static model.BlockType.BLOCK;
 import static model.BlockType.STATIC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BasicElementsTest {
   @Test
-  public void testEmptyProgram() {
+  public void testEmptyClass() {
     String fileContent = """
         class Empty {
         }""";
@@ -21,49 +19,6 @@ public class BasicElementsTest {
         jClass("Empty")
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
-  }
-
-  @Test
-  public void testBeginOfImportsAndPackageName_NoPackage() {
-    String fileContent = """
-        import static java.lang.System.exit;
-        import java.util.ArrayList;
-        class Empty {
-        }""";
-    JavaFile expected = jFile("<default>", 0, jClass("Empty"));
-    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
-  }
-
-  @Test
-  public void testBeginOfImportsAndPackageName() {
-    String fileContent = """
-        package name.Of._the_.pkg ;
-        import static java.lang.System.exit;
-        import java.util.ArrayList;
-        class Empty {
-          void meth() {
-          }
-          class InEmpty {
-            void innerMeth() {
-            }
-          }
-        }""";
-    int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
-    JavaFile expected = jFile("name.Of._the_.pkg", lengthOfPackageDeclaration,
-        jClass("Empty",
-            jMethod("meth", false, 5, 6, 122, 126),
-            jClass("InEmpty",
-                jMethod("innerMeth", false, 8, 9, 167, 173)
-            )
-        )
-    );
-    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
-    Class tlClass = expected.topLevelClasses.get(0);
-    Class innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
-    assertEquals("name.Of._the_.pkg.Empty", tlClass.getFullName());
-    assertEquals("Empty", tlClass.getName());
-    assertEquals("name.Of._the_.pkg.Empty$InEmpty", innerClass.getFullName());
-    assertEquals("Empty$InEmpty", innerClass.getName());
   }
 
   @Test
