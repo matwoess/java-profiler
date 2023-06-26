@@ -56,6 +56,7 @@ TOKENS
 	new        = "new".
 	this       = "this".
 	return     = "return".
+	yield      = "yield".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -110,7 +111,7 @@ Statement =
 		| "for" ParExpr BlockOrSingleStatement
 		| "try" [ParExpr] Block<false> {"catch" ParExpr Block<false>} ["finally" Block<false>]
 		| ("break" | "continue") {ANY} ";"
-		| "return" (SwitchStatement | {ANY}) ";"
+		| ("return" | "yield") (SwitchStatement | {ANY}) ";"
 		| IF(state.isLabel()) ident colon
 		| Annotation
 		| "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
