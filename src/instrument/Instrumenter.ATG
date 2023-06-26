@@ -118,16 +118,18 @@ Statement =
 		| IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
 		| ("++" | "--") ["("] ident [")"] ";"
 		| "throw" ["new"] ident [ParExpr] ";" // TODO: investigate if needed
-		| (ParExpr | Instantiation | ident | string | this)
-				{string | char
-					| ArrowExpression<false, false>
-					| SwitchStatement
-					| Instantiation
-					| ANY
-				} ";"
+		| GenericStatement
 		| Block<false>
 		| ";"
 		.
+GenericStatement =
+	(ident | string | ParExpr | Instantiation)
+		{string | char
+			| ArrowExpression<false, false>
+			| SwitchStatement
+			| Instantiation
+			| ANY
+		} ";".
 BlockOrSingleStatement =
 		Block<false>
 		| (. state.checkSingleStatement(false, false, false); .) Statement (. state.leaveSingleStatement(); .)
