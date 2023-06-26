@@ -123,7 +123,7 @@ Statement =
 		| ";"
 		.
 GenericStatement =
-	(ident | string | ParExpr | Instantiation)
+	(ident | string | this | ParExpr | Instantiation)
 		{string | char
 			| ArrowExpression<false, false>
 			| SwitchStatement
