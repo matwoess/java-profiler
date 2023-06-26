@@ -40,7 +40,7 @@ public class Main {
         if (args.length < 3) invalidUsage();
         Path instrumentDir = Path.of(args[1]);
         Path mainFile = Path.of(args[2]);
-        String[] programArgs = Arrays.copyOfRange(args, 2, args.length);
+        String[] programArgs = Arrays.copyOfRange(args, 3, args.length);
         instrumentFolderCompileAndRun(instrumentDir, mainFile, programArgs);
       }
       default -> {

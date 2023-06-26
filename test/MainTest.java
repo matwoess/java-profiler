@@ -10,11 +10,32 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MainTest {
   Path samplesFolder = Path.of("sample");
   Path simpleExampleFile = samplesFolder.resolve("Simple.java");
+  Path fibonacciExampleFile = samplesFolder.resolve("Fibonacci.java");
 
   @Test
   public void testShowUsage_NoError() {
     Main.main(new String[]{"-h"});
     Main.main(new String[]{"--help"});
+  }
+
+  @Test
+  public void testInstrumentAndProfileOneFile() {
+    Main.main(new String[]{simpleExampleFile.toString()});
+  }
+
+  @Test
+  public void testInstrumentFolderAndProfileOneFile() {
+    Main.main(new String[]{"-d", samplesFolder.toString(), simpleExampleFile.toString()});
+  }
+
+  @Test
+  public void testInstrumentAndProfileWithArgument() {
+    Main.main(new String[]{fibonacciExampleFile.toString(), "10"});
+  }
+
+  @Test
+  public void testInstrumentFolderAndProfileWithArgument() {
+    Main.main(new String[]{"-d", samplesFolder.toString(), fibonacciExampleFile.toString(), "20"});
   }
 
   @Test
