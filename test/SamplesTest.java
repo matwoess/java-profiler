@@ -140,4 +140,14 @@ public class SamplesTest {
     RuntimeException ex = assertThrows(RuntimeException.class, () -> TestUtils.instrumentAndProfile(mainFile));
     assertEquals("Error executing compiled class: Helper", ex.getMessage());
   }
+
+  @Test
+  public void testNestedBlockTypesSample() {
+    TestUtils.instrumentAndProfile(samplesFolder.resolve("NestedBlockTypes.java"));
+  }
+
+  @Test
+  public void testNestedBlockTypesSample_Folder() {
+    TestUtils.instrumentFolderAndProfile(samplesFolder, "NestedBlockTypes.java");
+  }
 }
