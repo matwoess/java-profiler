@@ -99,4 +99,67 @@ public class TestProgramBuilder {
     b.incInsertPosition += incInsertPosOffset;
     return b;
   }
+
+  /* DSL-generation methods */
+  
+  public static String getBuilderCode(JavaFile javaFile) {
+    StringBuilder builder = new StringBuilder();
+    getBuilderCode(javaFile, builder);
+    return builder.toString();
+  }
+
+  public static void getBuilderCode(JavaFile javaFile, StringBuilder builder) {
+    builder.append("JavaFile expected = jFile(\"<default>\", ").append(javaFile.beginOfImports);
+    for (Class clazz : javaFile.topLevelClasses) {
+      getBuilderCode(clazz, builder);
+    }
+    builder.append("\n);");
+  }
+
+  public static void getBuilderCode(Class clazz, StringBuilder builder) {
+    builder.append("\n, jClass(").append('"').append(clazz.name).append('"');
+    if (clazz.isMain) {
+      builder.append(", true");
+    }
+    if (clazz.innerClasses.size() + clazz.classBlocks.size() + clazz.methods.size() == 0) {
+      builder.append(")");
+      return;
+    }
+    for (Block classBlock : clazz.classBlocks) {
+      getBuilderCode(classBlock, builder);
+    }
+    for (Class innerClass : clazz.innerClasses) {
+      getBuilderCode(innerClass, builder);
+    }
+    for (Method method : clazz.methods) {
+      getBuilderCode(method, builder);
+    }
+    builder.append("\n)");
+  }
+
+  public static void getBuilderCode(Method method, StringBuilder builder) {
+    builder.append("\n, jMethod(").append('"').append(method.name).append('"');
+    if (method.isMain) {
+      builder.append(", true");
+    }
+    if (method.blocks.size() == 0) {
+      builder.append(")");
+      return;
+    }
+    //builder.append(",").append(method.isMain);
+    for (Block block : method.blocks) {
+      getBuilderCode(block, builder);
+    }
+    builder.append("\n)");
+  }
+
+  public static void getBuilderCode(Block block, StringBuilder builder) {
+    builder.append("\n, jBlock(");
+    int begPos = block.blockType.hasNoBraces() ? block.begPos : block.begPos + 1;
+    builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg, block.end, begPos, block.endPos));
+    if (block.incInsertPosition != 0 && block.incInsertPosition != begPos) {
+      builder.append(", ").append(block.incInsertPosition - begPos);
+    }
+    builder.append(")");
+  }
 }
