@@ -13,5 +13,7 @@ public class AllSamples {
     Switches.main(args);
     Lambdas.main(args);
     AnonymousClasses.main(args);
+    NestedBlockTypes.main(args);
+    Fibonacci.main(new String[]{"10"});
   }
 }
