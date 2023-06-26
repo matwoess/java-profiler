@@ -1,13 +1,14 @@
 package instrument;
 
-import model.*;
 import model.Class;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 import static instrument.Parser.*;
+import static instrument.ParserState.Logger.log;
 
 public class ParserState {
   Parser parser;
@@ -75,11 +76,11 @@ public class ParserState {
     if (classStack.isEmpty()) {
       topLevelClasses.add(curClass);
     }
-    System.out.printf("entering class <%s>\n", curClass);
+    log("entering class <%s>", curClass);
   }
 
   void leaveClass() {
-    System.out.printf("left class <%s>\n", curClass);
+    log("left class <%s>", curClass);
     if (curClass.classType == ClassType.ANONYMOUS && !methodStack.empty()) {
       curMeth = methodStack.pop();
     }
@@ -94,14 +95,14 @@ public class ParserState {
     assert curClass != null;
     curMeth = new Method(parser.t.val);
     curClass.methods.add(curMeth);
-    System.out.println("found method declaration of: " + curMeth.name);
+    log("found method declaration of: " + curMeth.name);
   }
 
   void enterMainMethod() {
     enterMethod();
     curMeth.isMain = true;
     curClass.isMain = true;
-    System.out.println("method is main entry point.");
+    log("method is main entry point.");
   }
 
   void enterBlock(boolean isMethod) {  // no missing braces
@@ -112,6 +113,7 @@ public class ParserState {
     assert curClass != null;
     if (curBlock != null) {
       blockStack.push(curBlock);
+      Logger.indent += 2;
     }
     curBlock = new Block();
     curBlock.clazz = curClass;
@@ -131,7 +133,7 @@ public class ParserState {
     } else {
       curClass.classBlocks.add(curBlock);
     }
-    System.out.printf("entering %s\n", curBlock);
+    log("entering %s", curBlock);
   }
 
   void leaveBlock(boolean isMethod) {
@@ -140,21 +142,22 @@ public class ParserState {
     if (curBlock.blockType != BlockType.SS_LAMBDA) {
       curBlock.endPos += parser.t.val.length();
     }
-    System.out.printf("left %s\n", curBlock);
+    log("left %s", curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
+      Logger.indent -= 2;
     }
     if (isMethod) {
-      System.out.println("left method: " + curMeth.name);
+      log("left method: " + curMeth.name);
       curMeth = null;
     }
   }
 
   void checkSingleStatement(boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
     if (parser.t.kind == _else && parser.la.kind == _if) {
-      System.out.println("else if found. no block.");
+      log("else if found. no block.");
       return;
     }
     if (parser.la.kind != _lbrace) {
@@ -229,5 +232,19 @@ public class ParserState {
 
   boolean isAssignment() {
     return parser.t.kind == _equals || parser.t.kind == _return || parser.t.kind == _yield;
+  }
+
+  static class Logger {
+    static boolean verbose = true;
+    public static int indent = 2;
+
+    public static void log(String logMessage) {
+      if (!verbose) return;
+      System.out.printf("%" + indent + "s%s%n", "", logMessage);
+    }
+
+    public static void log(String formatString, Object... values) {
+      log(String.format(formatString, values));
+    }
   }
 }
