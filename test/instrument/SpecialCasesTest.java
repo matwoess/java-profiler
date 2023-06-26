@@ -36,7 +36,14 @@ public class SpecialCasesTest {
           }
         }""";
     int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
-    JavaFile expected = jFile("name.Of._the_.pkg", lengthOfPackageDeclaration, jClass("Empty", jMethod("meth", false, 5, 6, 122, 126), jClass("InEmpty", jMethod("innerMeth", false, 8, 9, 167, 173))));
+    JavaFile expected = jFile("name.Of._the_.pkg", lengthOfPackageDeclaration,
+        jClass("Empty",
+            jMethod("meth", false, 5, 6, 122, 126),
+            jClass("InEmpty",
+                jMethod("innerMeth", false, 8, 9, 167, 173)
+            )
+        )
+    );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
     Class tlClass = expected.topLevelClasses.get(0);
     Class innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
