@@ -98,11 +98,15 @@ ClassBody =
 .
 MainMethod =
 		[public] static void main	(. state.enterMainMethod(); .)
-		ParExpr ["throws" {ANY}] Block<true>
+		ParExpr {ANY} Block<true>
 		.
 StaticBlock =	static Block<false>.
-MethodDecl  = ident 					(. state.enterMethod(); .)
-						ParExpr ["throws" {ANY}] (";" (. state.leaveMethod(); .) | Block<true>).
+MethodDecl =
+		ident 											(. state.enterMethod(); .)
+		ParExpr {ANY} (";"					(. state.leaveMethod(); .)
+			| Block<true>
+			)
+		.
 Statement =
 		if ParExpr BlockOrSingleStatement [else BlockOrSingleStatement]
 		| SwitchStatement
