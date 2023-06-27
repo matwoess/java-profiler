@@ -108,12 +108,51 @@ public class SwitchesTest {
   @Test
   public void testSwitchExpression() {
     String fileContent = String.format(baseTemplate, """
-        int dependingOn = 5;
+        for (int i = 0; i < 11; i++) {
+          int result = switch (i) {
+            case 5: {
+              yield 2;
+            }
+            case 1: case 2: yield 5;
+            case 11: case 12: throw new RuntimeException();
+            default: {
+              if (i < 10) {
+                System.out.println("none of the above");
+                yield 0;
+              } else {
+                yield -1;
+              }
+            }
+          };
+          System.out.println("result=" + result);
+        }""", "");
+    JavaFile expected = jFile(
+        jClass("Main", true,
+            jMethod("main", true, 2, 21, 62, 442
+                , jBlock(BLOCK, 3, 20, 97, 438)
+                , jBlock(BLOCK, 5, 7, 139, 160)
+                , jBlock(SWITCH_CASE, 8, 8, 172, 172)
+                , jBlock(SWITCH_CASE, 8, 8, 180, 189)
+                , jBlock(SWITCH_CASE, 9, 9, 202, 202)
+                , jBlock(SWITCH_CASE, 9, 9, 211, 241)
+                , jBlock(BLOCK, 10, 17, 256, 389)
+                , jBlock(BLOCK, 11, 14, 276, 350)
+                , jBlock(BLOCK, 14, 16, 357, 383)
+            )
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testSwitchExpression_ArrowCases() {
+    String fileContent = String.format(baseTemplate, """
+        int dependingOn = 7;
         int result = switch (dependingOn) {
           case 5 -> {
             yield 2;
           }
-          case 1 -> 5;
+          case 1, 2 -> 5;
           default -> {
             if (dependingOn < 10) {
               System.out.println("none of the above");
@@ -127,12 +166,12 @@ public class SwitchesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main", true,
-            jMethod("main", true, 2, 20, 62, 361,
-                jBlock(BLOCK, 5, 7, 137, 154),
-                jBlock(SS_SWITCH_EXPR_ARROW_CASE, 8, 8, 166, 169),
-                jBlock(BLOCK, 9, 16, 184, 313),
-                jBlock(BLOCK, 10, 13, 212, 280),
-                jBlock(BLOCK, 13, 15, 287, 309)
+            jMethod("main", true, 2, 20, 62, 364
+                , jBlock(BLOCK, 5, 7, 137, 154)
+                , jBlock(SS_SWITCH_EXPR_ARROW_CASE, 8, 8, 169, 172)
+                , jBlock(BLOCK, 9, 16, 187, 316)
+                , jBlock(BLOCK, 10, 13, 215, 283)
+                , jBlock(BLOCK, 13, 15, 290, 312)
             )
         )
     );

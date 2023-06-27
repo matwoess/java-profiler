@@ -45,12 +45,29 @@ public class Switches {
     }
 
     int dependingOn = 5;
-    int result = switch (dependingOn) {
+    int result1 = switch (dependingOn) {
+      case 5: {
+        yield 2;
+      }
+      case 1: yield 5;
+      case 2: throw new RuntimeException();
+      default: {
+        if (dependingOn < 10) {
+          System.out.println("none of the above");
+          yield 0;
+        } else {
+          yield -1;
+        }
+      }
+    };
+
+    dependingOn = 7;
+    int result2 = switch (dependingOn) {
       case 5 -> {
         yield 2;
       }
       case 1 -> 5;
-      case 2 -> throw new RuntimeException();
+      case 2, 3 -> throw new RuntimeException();
       default -> {
         if (dependingOn < 10) {
           System.out.println("none of the above");
@@ -60,7 +77,8 @@ public class Switches {
         }
       }
     };
-    System.out.println("result=" + result);
+    System.out.println("result1=" + result1);
+    System.out.println("result2=" + result2);
     System.out.println(getStatusCodeDescription(StatusCode.FORBIDDEN));
   }
 
