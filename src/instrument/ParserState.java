@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Stack;
 
 import static instrument.Parser.*;
-import static instrument.ParserState.Logger.log;
 
 public class ParserState {
   Parser parser;
+  Logger logger;
 
   int beginOfImports = 0;
   String packageName;
@@ -27,6 +27,7 @@ public class ParserState {
 
   public ParserState(Parser p) {
     parser = p;
+    logger = new Logger(p);
   }
 
   void setPackageName(List<String> packageName) {
@@ -76,11 +77,11 @@ public class ParserState {
     if (classStack.isEmpty()) {
       topLevelClasses.add(curClass);
     }
-    log("entering class <%s>", curClass);
+    logger.enter(curClass);
   }
 
   void leaveClass() {
-    log("left class <%s>", curClass);
+    logger.leave(curClass);
     if (curClass.classType == ClassType.ANONYMOUS && !methodStack.empty()) {
       curMeth = methodStack.pop();
     }
@@ -95,14 +96,20 @@ public class ParserState {
     assert curClass != null;
     curMeth = new Method(parser.t.val);
     curClass.methods.add(curMeth);
-    log("found method declaration of: " + curMeth.name);
+    logger.enter(curMeth);
   }
 
   void enterMainMethod() {
     enterMethod();
     curMeth.isMain = true;
     curClass.isMain = true;
-    log("method is main entry point.");
+    logger.log("method is main entry point.");
+  }
+
+  void leaveMethod() {
+    assert curMeth != null;
+    logger.leave(curMeth);
+    curMeth = null;
   }
 
   void enterBlock(boolean isMethod) {  // no missing braces
@@ -113,7 +120,6 @@ public class ParserState {
     assert curClass != null;
     if (curBlock != null) {
       blockStack.push(curBlock);
-      Logger.indent += 2;
     }
     curBlock = new Block();
     curBlock.clazz = curClass;
@@ -133,7 +139,7 @@ public class ParserState {
     } else {
       curClass.classBlocks.add(curBlock);
     }
-    log("entering %s", curBlock);
+    logger.enter(curBlock);
   }
 
   void leaveBlock(boolean isMethod) {
@@ -142,22 +148,20 @@ public class ParserState {
     if (curBlock.blockType != BlockType.SS_LAMBDA) {
       curBlock.endPos += parser.t.val.length();
     }
-    log("left %s", curBlock);
+    logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
-      Logger.indent -= 2;
     }
     if (isMethod) {
-      log("left method: " + curMeth.name);
-      curMeth = null;
+      leaveMethod();
     }
   }
 
   void checkSingleStatement(boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
     if (parser.t.kind == _else && parser.la.kind == _if) {
-      log("else if found. no block.");
+      logger.log("else if found. no block.");
       return;
     }
     if (parser.la.kind != _lbrace) {
@@ -235,16 +239,44 @@ public class ParserState {
   }
 
   static class Logger {
-    static boolean verbose = true;
-    public static int indent = 2;
+    public static final String GREEN = "\u001B[32m";
+    public static final String RED = "\u001B[31m";
+    public static final String BRIGHT = "\u001B[97m";
+    public static final String RESET = "\u001B[0m";
 
-    public static void log(String logMessage) {
-      if (!verbose) return;
-      System.out.printf("%" + indent + "s%s%n", "", logMessage);
+    Parser parser;
+    static boolean verbose = true;
+    public static int indent = 1;
+
+    public Logger(Parser p) {
+      parser = p;
     }
 
-    public static void log(String formatString, Object... values) {
+    public void log(String logMessage) {
+      if (!verbose) return;
+      System.out.printf("%s%3d:%s%-" + indent + "s%s%n", BRIGHT, parser.t.line, RESET, "", logMessage);
+    }
+
+    public void log(String formatString, Object... values) {
       log(String.format(formatString, values));
+    }
+
+    void enter(Component comp) {
+      log(describe(comp, false) + GREEN + " -->" + RESET);
+      indent += 2;
+    }
+
+    void leave(Component comp) {
+      indent -= 2;
+      log(describe(comp, true) + RED + " <--" + RESET);
+    }
+
+    private String describe(Component comp, boolean leave) {
+      if (comp instanceof Class clazz) return "class <" + clazz.getFullName() + ">";
+      if (comp instanceof Method meth) return meth + "()";
+      if (comp instanceof Block block)
+        return String.format("%s [%d]", block.blockType, leave ? block.endPos : block.begPos);
+      throw new RuntimeException("unknown component type");
     }
   }
 }

@@ -36,9 +36,8 @@ public class Instrumenter {
     System.out.println("Reading File: \"" + javaFile.sourceFile + "\"");
     Parser parser = new Parser(new Scanner(javaFile.sourceFile.toString()));
     parser.Parse();
-    System.out.println();
     int errors = parser.errors.count;
-    System.out.println("Errors found: " + errors);
+    System.out.printf("Errors found: %d\n\n", errors);
     if (errors > 0) {
       throw new RuntimeException("Abort due to parse errors.");
     }

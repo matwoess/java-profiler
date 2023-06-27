@@ -102,7 +102,7 @@ MainMethod =
 		.
 StaticBlock =	static Block<false>.
 MethodDecl  = ident 					(. state.enterMethod(); .)
-						ParExpr ["throws" {ANY}] (";" | Block<true>).
+						ParExpr ["throws" {ANY}] (";" (. state.leaveMethod(); .) | Block<true>).
 Statement =
 		if ParExpr BlockOrSingleStatement [else BlockOrSingleStatement]
 		| SwitchStatement
