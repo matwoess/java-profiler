@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,21 +31,21 @@ class NestedBlockTypes {
         switch (charVal) {
           case 1:
             System.out.println(1);
-          case 2:
+          case '2':
             x.chars().map(ch -> {
               return switch (ch) {
-                case 0 -> {
+                case '0' -> {
                   yield 0;
                 }
-                case 1 -> 1 + 5;
-                case 2 -> x.chars().map(c -> c + 1).filter(c -> {
+                case '1' -> 1 + 5;
+                case '2' -> x.chars().map(c -> c + 1).filter(c -> {
                   return c < 10;
                 }).sum();
-                case 3 -> {
+                case '3' -> {
                   if (ch == 3) yield 3;
                   else yield -1;
                 }
-                case 4 -> {
+                case '4' -> {
                   yield switch (ch) {
                     default -> ch;
                   };
@@ -52,8 +53,8 @@ class NestedBlockTypes {
                 default -> -1;
               };
             }).forEach(i -> System.out.println(i));
-          case 3:
-            List<Integer> numbers = List.of(1, 2, 3, 4);
+          case '3':
+            List<Integer> numbers = Arrays.asList(0, 1, 2, 3, 4);
             numbers.sort(new Comparator<Integer>() {
               @Override
               public int compare(Integer i1, Integer i2) {
