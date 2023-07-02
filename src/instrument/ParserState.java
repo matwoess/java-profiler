@@ -275,7 +275,7 @@ public class ParserState {
       if (comp instanceof Method meth) return meth + "()";
       if (comp instanceof Block block)
         return String.format("%s [%d]", block.blockType, leave ? block.endPos : block.begPos);
-      throw new RuntimeException("unknown component type");
+      throw new RuntimeException("unknown component type: " + comp.getClass());
     }
   }
 }
