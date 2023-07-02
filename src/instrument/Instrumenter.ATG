@@ -65,7 +65,7 @@ IGNORE tab + cr + lf
 
 PRODUCTIONS
 
-Instrumenter = [PackageDecl] { Annotation | Class | Enum | ANY }.
+Instrumenter = [PackageDecl] { Annotation | Class<false> | Enum<false> | ANY }.
 PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
 		ident 							(. packageName.add(t.val); .)
 		{'.' ident 					(. packageName.add(t.val); .)
@@ -73,20 +73,20 @@ PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
 		";" 								(. state.setPackageName(packageName); .)
 		.
 Annotation = "@" ident [ParExpr].
-Class =
-		("class" | "interface")	(. state.enterClass(); .)
+Class<boolean local> =
+		("class" | "interface")	(. state.enterClass(false, local); .)
 		ident {ANY} "{"
 		ClassBody								(. state.leaveClass(); .)
 	.
-Enum =
-	"enum"										(. state.enterClass(); .)
+Enum<boolean local> =
+	"enum"										(. state.enterClass(false, local); .)
 	ident {ANY} "{"
 	{[","] ident [ParExpr]}
 	(";" ClassBody						// class body can follow only after a ";"
 		| "}") 									(. state.leaveClass(); .)
 	.
 ClassBody =
-	{ Enum | Class
+	{ Enum<false> | Class<false>
 		| "=" (BraceExpr | {ANY} Statement)
 		| IF(state.isEntryPoint()) MainMethod
 		| IF(state.identAndLPar()) MethodDecl
@@ -122,6 +122,8 @@ Statement =
 		| IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
 		| ("++" | "--") ["("] ident [")"] ";"
 		| "throw" ["new"] ident [ParExpr] ";" // TODO: investigate if needed
+		| Class<true>
+		| Enum<true>
 		| GenericStatement
 		| Block<false>
 		| ";"
@@ -164,7 +166,7 @@ SSArrowBody<boolean inSwitch, boolean inAssignment> =
 				.
 Instantiation = "new" ident {["."] ident}
 		(BracketExpr [BraceExpr] // array initializer
-			| [AngleBracketExpr] ParExpr ["{" (. state.enterClass(true); .) ClassBody (. state.leaveClass();.)]
+			| [AngleBracketExpr] ParExpr ["{" (. state.enterClass(true, false); .) ClassBody (. state.leaveClass();.)]
 		)
 		.
 Block<boolean isMethod> = 					(. state.enterBlock(isMethod); .)

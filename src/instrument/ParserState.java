@@ -44,11 +44,8 @@ public class ParserState {
     curBlock.startsWithThrow = true;
   }
 
-  void enterClass() {
-    enterClass(false);
-  }
 
-  void enterClass(boolean anonymous) {
+  void enterClass(boolean anonymous, boolean local) {
     if (curClass != null) {
       classStack.push(curClass);
     }
@@ -66,6 +63,8 @@ public class ParserState {
     }
     if (anonymous) {
       curClass.classType = ClassType.ANONYMOUS;
+    } else if (local) {
+      curClass.classType = ClassType.LOCAL;
     } else {
       curClass.classType = switch (parser.t.kind) {
         case _class -> ClassType.CLASS;
@@ -82,7 +81,7 @@ public class ParserState {
 
   void leaveClass() {
     logger.leave(curClass);
-    if (curClass.classType == ClassType.ANONYMOUS && !methodStack.empty()) {
+    if (!methodStack.empty() && (curClass.classType == ClassType.ANONYMOUS || curClass.classType == ClassType.LOCAL)) {
       curMeth = methodStack.pop();
     }
     if (classStack.empty()) {

@@ -150,4 +150,14 @@ public class SamplesTest {
   public void testNestedBlockTypesSample_Folder() {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "NestedBlockTypes.java");
   }
+
+  @Test
+  public void testLocalClassesSample() {
+    TestUtils.instrumentAndProfile(samplesFolder.resolve("LocalClasses.java"));
+  }
+
+  @Test
+  public void testLocalClassesSample_Folder() {
+    TestUtils.instrumentFolderAndProfile(samplesFolder, "LocalClasses.java");
+  }
 }

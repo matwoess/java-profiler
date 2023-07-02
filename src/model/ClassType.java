@@ -1,5 +1,5 @@
 package model;
 
 public enum ClassType {
-  CLASS, INTERFACE, ENUM, ANONYMOUS
+  CLASS, INTERFACE, ENUM, ANONYMOUS, LOCAL
 }
