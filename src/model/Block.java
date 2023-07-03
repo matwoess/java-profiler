@@ -16,6 +16,28 @@ public class Block implements Serializable, Component {
   public int incInsertPosition;
   transient public int hits;
 
+  public Block(BlockType type) {
+    blockType = type;
+  }
+
+  public void setParentMethod(Method method) {
+    assert this.method == null;
+    if (method != null) {
+      this.method = method;
+      method.blocks.add(this);
+    }
+  }
+
+  public void setParentClass(Class clazz) {
+    assert this.clazz == null;
+    this.clazz = clazz;
+    if (method == null) {
+      clazz.classBlocks.add(this);
+    } else {
+      method.blocks.add(this);
+    }
+  }
+
   public String toString() {
     return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s%s",
         clazz.name,

@@ -42,8 +42,7 @@ public class TestProgramBuilder {
         method.setParentClass(clazz);
         method.blocks.forEach(block -> block.clazz = clazz);
       } else if (child instanceof Block classLevelBlock) {
-        clazz.classBlocks.add(classLevelBlock);
-        classLevelBlock.clazz = clazz;
+        classLevelBlock.setParentClass(clazz);
       } else {
         throw new RuntimeException("invalid child of class");
       }
@@ -60,8 +59,7 @@ public class TestProgramBuilder {
   public static Method jMethod(String name, Block... blocks) {
     Method method = new Method(name);
     for (Block block : blocks) {
-      block.method = method;
-      method.blocks.add(block);
+      block.setParentMethod(method);
     }
     return method;
   }
@@ -72,8 +70,7 @@ public class TestProgramBuilder {
   }
 
   public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
-    Block b = new Block();
-    b.blockType = type;
+    Block b = new Block(type);
     b.beg = beg;
     b.end = end;
     if (b.blockType.hasNoBraces()) {

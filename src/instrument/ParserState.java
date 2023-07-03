@@ -106,9 +106,9 @@ public class ParserState {
     if (curBlock != null) {
       blockStack.push(curBlock);
     }
-    curBlock = new Block();
-    curBlock.clazz = curClass;
-    curBlock.method = curMeth;
+    curBlock = new Block(blockType);
+    curBlock.setParentMethod(curMeth);
+    curBlock.setParentClass(curClass);
     if (blockType.hasNoBraces()) {
       curBlock.beg = parser.t.line;
       curBlock.begPos = parser.t.charPos + parser.t.val.length();
@@ -117,20 +117,14 @@ public class ParserState {
       curBlock.begPos = parser.la.charPos;
       curBlock.incInsertPosition = parser.la.charPos + parser.la.val.length();
     }
-    curBlock.blockType = blockType;
     allBlocks.add(curBlock);
-    if (curMeth != null) {
-      curMeth.blocks.add(curBlock);
-    } else {
-      curClass.classBlocks.add(curBlock);
-    }
     logger.enter(curBlock);
   }
 
   void leaveBlock(boolean isMethod) {
     curBlock.end = parser.t.line;
     curBlock.endPos = parser.t.charPos;
-    if (curBlock.blockType != BlockType.SS_LAMBDA) {
+    if (curBlock.blockType != BlockType.SS_LAMBDA) { // exclude ")" or ";" in lambda blocks
       curBlock.endPos += parser.t.val.length();
     }
     logger.leave(curBlock);
