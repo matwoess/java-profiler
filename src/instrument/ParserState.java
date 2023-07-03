@@ -65,13 +65,6 @@ public class ParserState {
       curClass.classType = ClassType.ANONYMOUS;
     } else if (local) {
       curClass.classType = ClassType.LOCAL;
-    } else {
-      curClass.classType = switch (parser.t.kind) {
-        case _class -> ClassType.CLASS;
-        case _interface -> ClassType.INTERFACE;
-        case _enum -> ClassType.ENUM;
-        default -> throw new RuntimeException(String.format("unknown class type '%s' discovered.\n", parser.t));
-      };
     }
     if (classStack.isEmpty()) {
       topLevelClasses.add(curClass);
@@ -200,7 +193,6 @@ public class ParserState {
   }
 
   boolean staticAndLBrace() {
-    if (curClass.classType == ClassType.INTERFACE) return false;  // interface cannot have static block
     return parser.la.kind == _static && parser.scanner.Peek().kind == _lbrace;
   }
 
