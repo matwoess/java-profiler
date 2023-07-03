@@ -18,8 +18,8 @@ public class AnnotationsTest {
         }
         """;
     JavaFile expected = jFile(
-        jClass("Annotations", true,
-            jMethod("main", true, 4, 5, 112, 116)
+        jClass("Annotations",
+            jMethod("main", 4, 5, 112, 116)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -36,8 +36,8 @@ public class AnnotationsTest {
         }
         """;
     JavaFile expected = jFile(
-        jClass("Annotations", true,
-            jMethod("main", true, 4, 5, 128, 132)
+        jClass("Annotations",
+            jMethod("main", 4, 5, 128, 132)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -52,8 +52,8 @@ public class AnnotationsTest {
         }
         """;
     JavaFile expected = jFile(
-        jClass("Annotations", true,
-            jMethod("main", true, 2, 3, 95, 99)
+        jClass("Annotations",
+            jMethod("main", 2, 3, 95, 99)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -72,8 +72,8 @@ public class AnnotationsTest {
         }
         """;
     JavaFile expected = jFile(
-        jClass("Annotations", true,
-            jMethod("main", true, 2, 7, 69, 206)
+        jClass("Annotations",
+            jMethod("main", 2, 7, 69, 206)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

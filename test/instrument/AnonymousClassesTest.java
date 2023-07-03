@@ -44,18 +44,18 @@ public class AnonymousClassesTest {
         }
          """);
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 4, 62, 71),
-            jMethod("firstJavaFile", false, 5, 31, 118, 715,
+        jClass("Main",
+            jMethod("main", 2, 4, 62, 71),
+            jMethod("firstJavaFile", 5, 31, 118, 715,
                 jBlock(BLOCK, 26, 28, 653, 685),
                 jBlock(BLOCK, 28, 30, 692, 713)
             ),
-            jClass(ANONYMOUS, null, false,
-                jMethod("accept", false, 10, 13, 289, 361),
+            jClass(ANONYMOUS, null,
+                jMethod("accept", 10, 13, 289, 361),
                 jClass("X",
-                    jMethod("methodInX", false, 16, 18, 408, 503)
+                    jMethod("methodInX", 16, 18, 408, 503)
                 ),
-                jMethod("returnTrue", false, 21, 24, 544, 590)
+                jMethod("returnTrue", 21, 24, 544, 590)
             )
         )
     );
@@ -83,11 +83,11 @@ public class AnonymousClassesTest {
         }
         """);
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 4, 62, 71),
-            jMethod("getSortedIntegers", false, 5, 17, 140, 380),
-            jClass(ANONYMOUS, null, false,
-                jMethod("compare", false, 8, 14, 261, 352,
+        jClass("Main",
+            jMethod("main", 2, 4, 62, 71),
+            jMethod("getSortedIntegers", 5, 17, 140, 380),
+            jClass(ANONYMOUS, null,
+                jMethod("compare", 8, 14, 261, 352,
                     jBlock(BLOCK, 9, 11, 288, 314)
                 )
             )
@@ -108,10 +108,10 @@ public class AnonymousClassesTest {
         };
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 10, 62, 158),
-            jClass(ANONYMOUS, null, false,
-                jMethod("hashCode", false, 5, 7, 117, 150)
+        jClass("Main",
+            jMethod("main", 2, 10, 62, 158),
+            jClass(ANONYMOUS, null,
+                jMethod("hashCode", 5, 7, 117, 150)
             )
         )
     );

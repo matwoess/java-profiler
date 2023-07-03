@@ -31,8 +31,8 @@ public class BasicElementsTest {
         }
         """;
     JavaFile expected = jFile(
-        jClass("HelloWorld", true,
-            jMethod("main", true, 2, 4, 68, 112)
+        jClass("HelloWorld",
+            jMethod("main", 2, 4, 68, 112)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -74,8 +74,8 @@ public class BasicElementsTest {
         System.out.println(output);
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 16, 62, 244,
+        jClass("Main",
+            jMethod("main", 2, 16, 62, 244,
                 jBlock(BLOCK, 5, 13, 136, 211),
                 jBlock(BLOCK, 7, 9, 165, 178),
                 jBlock(BLOCK, 10, 12, 194, 209)
@@ -98,8 +98,8 @@ public class BasicElementsTest {
         System.out.println("x=" + x);
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 12, 62, 188,
+        jClass("Main",
+            jMethod("main", 2, 12, 62, 188,
                 jBlock(BLOCK, 4, 9, 95, 153),
                 jBlock(BLOCK, 6, 8, 113, 129)
             )
@@ -125,8 +125,8 @@ public class BasicElementsTest {
         System.out.println("x=" + x);
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 15, 62, 336,
+        jClass("Main",
+            jMethod("main", 2, 15, 62, 336,
                 jBlock(BLOCK, 4, 6, 84, 99),
                 jBlock(BLOCK, 6, 8, 132, 185),
                 jBlock(BLOCK, 8, 10, 215, 279),
@@ -160,12 +160,12 @@ public class BasicElementsTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass("TryWithResource", true,
+        jClass("TryWithResource",
             jClass("MyClosable",
-                jMethod("open", false, 3, 5, 108, 163),
-                jMethod("close", false, 7, 9, 207, 262)
+                jMethod("open", 3, 5, 108, 163),
+                jMethod("close", 7, 9, 207, 262)
             ),
-            jMethod("main", true, 12, 18, 310, 459,
+            jMethod("main", 12, 18, 310, 459,
                 jBlock(BLOCK, 13, 15, 361, 390),
                 jBlock(BLOCK, 15, 17, 412, 455)
             )
@@ -196,9 +196,9 @@ public class BasicElementsTest {
         }
          """);
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 10, 62, 284),
-            jMethod("getTempString", false, 18, 20, 625, 680)
+        jClass("Main",
+            jMethod("main", 2, 10, 62, 284),
+            jMethod("getTempString", 18, 20, 625, 680)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -211,8 +211,8 @@ public class BasicElementsTest {
         "Some string.".split(" ");
          """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 6, 62, 117)
+        jClass("Main",
+            jMethod("main", 2, 6, 62, 117)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -232,8 +232,8 @@ public class BasicElementsTest {
         c = '\\064'; c = '\\377';
          """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 13, 62, 300)
+        jClass("Main",
+            jMethod("main", 2, 13, 62, 300)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -246,8 +246,8 @@ public class BasicElementsTest {
         s = "\\u42FA_\\uuuADA1_\\1_\\155adsf\\6_\\43_Text";
          """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 6, 62, 161)
+        jClass("Main",
+            jMethod("main", 2, 6, 62, 161)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -262,8 +262,8 @@ public class BasicElementsTest {
         }
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 8, 62, 161,
+        jClass("Main",
+            jMethod("main", 2, 8, 62, 161,
                 jBlock(BLOCK, 4, 6, 112, 156)
             )
         )
@@ -282,11 +282,11 @@ public class BasicElementsTest {
         public void doNothing() {}
         """);
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 8, 62, 121,
+        jClass("Main",
+            jMethod("main", 2, 8, 62, 121,
                 jBlock(BLOCK, 3, 5, 79, 93)
             ),
-            jMethod("doNothing", false, 9, 9, 150, 151)
+            jMethod("doNothing", 9, 9, 150, 151)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -302,8 +302,8 @@ public class BasicElementsTest {
         System.out.println(msg.contains("2") ? "2 appears" : "");
          """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 9, 62, 227)
+        jClass("Main",
+            jMethod("main", 2, 9, 62, 227)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -326,8 +326,8 @@ public class BasicElementsTest {
         }
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 16, 62, 220,
+        jClass("Main",
+            jMethod("main", 2, 16, 62, 220,
                 jBlock(BLOCK, 5, 14, 99, 215),
                 jBlock(BLOCK, 6, 13, 123, 213),
                 jBlock(BLOCK, 7, 10, 141, 177),
@@ -353,8 +353,8 @@ public class BasicElementsTest {
         }
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 14, 62, 170,
+        jClass("Main",
+            jMethod("main", 2, 14, 62, 170,
                 jBlock(BLOCK, 4, 12, 92, 165),
                 jBlock(BLOCK, 5, 9, 108, 141),
                 jBlock(BLOCK, 9, 11, 148, 163)
@@ -379,9 +379,9 @@ public class BasicElementsTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass("GenericInstantiation", true,
-            jMethod("fill", false, 3, 7, 123, 236),
-            jMethod("main", true, 8, 10, 279, 322)
+        jClass("GenericInstantiation",
+            jMethod("fill", 3, 7, 123, 236),
+            jMethod("main", 8, 10, 279, 322)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

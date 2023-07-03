@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import static instrument.TestProgramBuilder.*;
 import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.ClassType.CLASS;
-import static model.ClassType.INTERFACE;
 
 public class InterfacesTest {
   @Test
@@ -18,7 +17,7 @@ public class InterfacesTest {
           abstract void printInfo(String userName, int age);
         }""";
     JavaFile expected = jFile(
-        jClass(INTERFACE, "AbstractMethods", false)
+        jClass("AbstractMethods")
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
@@ -37,8 +36,8 @@ public class InterfacesTest {
           default void doNothing() {}
         }""";
     JavaFile expected = jFile(
-        jClass(INTERFACE, "InitBlocks", false,
-            jMethod("doNothing", false, 9, 9, 275, 276)
+        jClass("InitBlocks",
+            jMethod("doNothing", 9, 9, 275, 276)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -60,10 +59,10 @@ public class InterfacesTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(INTERFACE, "DefaultStatic", false,
-            jMethod("getName", false, 3, 5, 67, 91),
-            jMethod("getAge", false, 6, 8, 133, 160),
-            jMethod("printInfo", false, 9, 11, 212, 266)
+        jClass("DefaultStatic",
+            jMethod("getName", 3, 5, 67, 91),
+            jMethod("getAge", 6, 8, 133, 160),
+            jMethod("printInfo", 9, 11, 212, 266)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -95,15 +94,15 @@ public class InterfacesTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(INTERFACE, "Interfaces", false,
-            jClass(INTERFACE, "SubInterface", false,
-                jMethod("get", false, 6, 8, 174, 225),
-                jClass(CLASS, "SubClass", false,
-                    jMethod("getXPlus1", false, 11, 13, 278, 308)
+        jClass("Interfaces",
+            jClass("SubInterface",
+                jMethod("get", 6, 8, 174, 225),
+                jClass(CLASS, "SubClass",
+                    jMethod("getXPlus1", 11, 13, 278, 308)
                 )
             ),
             jClass("X",
-                jMethod("callGet", false, 18, 20, 376, 395)
+                jMethod("callGet", 18, 20, 376, 395)
             )
         )
     );
@@ -130,11 +129,11 @@ public class InterfacesTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(INTERFACE, "WithMain", true,
+        jClass("WithMain",
             jClass("X",
-                jMethod("get", false, 6, 8, 110, 132)
+                jMethod("get", 6, 8, 110, 132)
             ),
-            jMethod("main", true, 11, 15, 180, 268)
+            jMethod("main", 11, 15, 180, 268)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -151,8 +150,8 @@ public class InterfacesTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(INTERFACE, "InferredPublic", true,
-            jMethod("main", true, 2, 6, 69, 157)
+        jClass("InferredPublic",
+            jMethod("main", 2, 6, 69, 157)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

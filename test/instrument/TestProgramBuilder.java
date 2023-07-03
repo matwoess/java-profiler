@@ -33,13 +33,13 @@ public class TestProgramBuilder {
     return javaFile;
   }
 
-  public static Class jClass(String name, boolean isMain, Component... classChildren) {
-    Class clazz = new Class(name, isMain);
+  public static Class jClass(String name, Component... classChildren) {
+    Class clazz = new Class(name);
     for (Component child : classChildren) {
       if (child instanceof Class innerClass) {
         innerClass.setParentClass(clazz);
       } else if (child instanceof Method method) {
-        clazz.methods.add(method);
+        method.setParentClass(clazz);
         method.blocks.forEach(block -> block.clazz = clazz);
       } else if (child instanceof Block classLevelBlock) {
         clazz.classBlocks.add(classLevelBlock);
@@ -51,18 +51,14 @@ public class TestProgramBuilder {
     return clazz;
   }
 
-  public static Class jClass(String name, Component... classChildren) {
-    return jClass(name, false, classChildren);
-  }
-
-  public static Class jClass(ClassType classType, String name, boolean isMain, Component... classChildren) {
-    Class clazz = jClass(name, isMain, classChildren);
+  public static Class jClass(ClassType classType, String name, Component... classChildren) {
+    Class clazz = jClass(name, classChildren);
     clazz.classType = classType;
     return clazz;
   }
 
-  public static Method jMethod(String name, boolean isMain, Block... blocks) {
-    Method method = new Method(name, isMain);
+  public static Method jMethod(String name, Block... blocks) {
+    Method method = new Method(name);
     for (Block block : blocks) {
       block.method = method;
       method.blocks.add(block);
@@ -70,13 +66,9 @@ public class TestProgramBuilder {
     return method;
   }
 
-  public static Method jMethod(String name, Block... blocks) {
-    return jMethod(name, false, blocks);
-  }
-
-  public static Method jMethod(String name, boolean isMain, int beg, int end, int begPos, int endPos, Block... blocks) {
+  public static Method jMethod(String name, int beg, int end, int begPos, int endPos, Block... blocks) {
     Block methodBlock = jBlock(BlockType.METHOD, beg, end, begPos, endPos);
-    return jMethod(name, isMain, misc.Util.prependToArray(blocks, methodBlock));
+    return jMethod(name, misc.Util.prependToArray(blocks, methodBlock));
   }
 
   public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
@@ -118,9 +110,6 @@ public class TestProgramBuilder {
 
   public static void getBuilderCode(Class clazz, StringBuilder builder) {
     builder.append("\n, jClass(").append('"').append(clazz.name).append('"');
-    if (clazz.isMain) {
-      builder.append(", true");
-    }
     if (clazz.innerClasses.size() + clazz.classBlocks.size() + clazz.methods.size() == 0) {
       builder.append(")");
       return;
@@ -139,14 +128,10 @@ public class TestProgramBuilder {
 
   public static void getBuilderCode(Method method, StringBuilder builder) {
     builder.append("\n, jMethod(").append('"').append(method.name).append('"');
-    if (method.isMain) {
-      builder.append(", true");
-    }
     if (method.blocks.size() == 0) {
       builder.append(")");
       return;
     }
-    //builder.append(",").append(method.isMain);
     for (Block block : method.blocks) {
       getBuilderCode(block, builder);
     }

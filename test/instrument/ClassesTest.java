@@ -27,7 +27,7 @@ public class ClassesTest {
         }""";
     JavaFile expected = jFile(
         jClass("Pet",
-            jMethod("toString", false, 6, 11, 139, 234)
+            jMethod("toString", 6, 11, 139, 234)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -67,9 +67,9 @@ public class ClassesTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass("Classes", true,
+        jClass("Classes",
             jBlock(STATIC, 4, 6, 50, 65),
-            jMethod("main", true, 8, 21, 109, 471,
+            jMethod("main", 8, 21, 109, 471,
                 jBlock(BLOCK, 12, 20, 234, 467),
                 jBlock(BLOCK, 14, 16, 285, 352),
                 jBlock(BLOCK, 16, 18, 359, 427)
@@ -112,14 +112,14 @@ public class ClassesTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass("InnerClasses", true,
-            jMethod("main", true, 2, 9, 70, 275),
+        jClass("InnerClasses",
+            jMethod("main", 2, 9, 70, 275),
             jClass("Inner",
-                jMethod("level1", false, 11, 13, 318, 362),
+                jMethod("level1", 11, 13, 318, 362),
                 jClass("Sub",
-                    jMethod("level2", false, 15, 17, 407, 455),
+                    jMethod("level2", 15, 17, 407, 455),
                     jClass("SubSub",
-                        jMethod("level3", false, 19, 21, 507, 559)
+                        jMethod("level3", 19, 21, 507, 559)
                     )
                 )
             )
@@ -161,19 +161,19 @@ public class ClassesTest {
         }""";
     JavaFile expected = jFile(
         jClass("Pet",
-            jMethod("toString", false, 6, 11, 139, 234)
+            jMethod("toString", 6, 11, 139, 234)
         ),
         jClass("Dog",
             jMethod("Dog",
                 jBlock(CONSTRUCTOR, 15, 18, 298, 344)
             ),
-            jMethod("speak", false, 19, 19, 373, 391)
+            jMethod("speak", 19, 19, 373, 391)
         ),
         jClass("Cat",
             jMethod("Cat",
                 jBlock(CONSTRUCTOR, 23, 26, 455, 501)
             ),
-            jMethod("speak", false, 27, 27, 530, 548)
+            jMethod("speak", 27, 27, 530, 548)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -194,7 +194,7 @@ public class ClassesTest {
         }""";
     JavaFile expected = jFile(
         jClass("InitBlocks",
-            jMethod("doNothing", false, 9, 9, 263, 264)
+            jMethod("doNothing", 9, 9, 263, 264)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -213,7 +213,7 @@ public class ClassesTest {
         }""";
     JavaFile expected = jFile(
         jClass("ImplicitInitBlocks",
-            jMethod("doNothing", false, 7, 7, 177, 178)
+            jMethod("doNothing", 7, 7, 177, 178)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -239,16 +239,16 @@ public class ClassesTest {
     JavaFile expected = jFile(
         jClass("A",
             jClass("B",
-                jMethod("classBMeth", false, 3, 3, 45, 46)
+                jMethod("classBMeth", 3, 3, 45, 46)
             ),
-            jMethod("classAMeth1", false, 5, 5, 73, 74),
+            jMethod("classAMeth1", 5, 5, 73, 74),
             jClass("C",
                 jClass("D",
-                    jMethod("classDMeth", false, 8, 8, 126, 127)
+                    jMethod("classDMeth", 8, 8, 126, 127)
                 ),
-                jMethod("classCMeth", false, 10, 10, 157, 158)
+                jMethod("classCMeth", 10, 10, 157, 158)
             ),
-            jMethod("classAMeth2", false, 12, 12, 185, 186)
+            jMethod("classAMeth2", 12, 12, 185, 186)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -279,9 +279,9 @@ public class ClassesTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass("ThrowClass", true,
-            jMethod("errorCode", false, 4, 6, 168, 194),
-            jMethod("main", true, 8, 11, 262, 347)
+        jClass("ThrowClass",
+            jMethod("errorCode", 4, 6, 168, 194),
+            jMethod("main", 8, 11, 262, 347)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -326,7 +326,7 @@ public class ClassesTest {
             jMethod("Dog",
                 jBlock(CONSTRUCTOR, 4, 7, 74, 120)
             ),
-            jMethod("speak", false, 8, 10, 139, 162)
+            jMethod("speak", 8, 10, 139, 162)
         ),
         jClass("SmallDog",
             jMethod("SmallDog",
@@ -335,7 +335,7 @@ public class ClassesTest {
             jMethod("SmallDog",
                 jBlock(CONSTRUCTOR, 19, 22, 376, 422, "\n    this(name, age);".length())
             ),
-            jMethod("speak", false, 24, 30, 453, 544,
+            jMethod("speak", 24, 30, 453, 544,
                 jBlock(BLOCK, 25, 27, 472, 499),
                 jBlock(BLOCK, 27, 29, 506, 540)
             )

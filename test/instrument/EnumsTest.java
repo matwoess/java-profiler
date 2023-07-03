@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import static instrument.TestProgramBuilder.*;
 import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.BlockType.*;
-import static model.ClassType.ENUM;
-import static model.ClassType.INTERFACE;
 
 public class EnumsTest {
   @Test
@@ -16,7 +14,7 @@ public class EnumsTest {
         enum Empty {
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "Empty", false)
+        jClass("Empty")
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
@@ -29,7 +27,7 @@ public class EnumsTest {
           WEAK, STRONG, GREAT
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "Adjective", false)
+        jClass("Adjective")
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
@@ -41,7 +39,7 @@ public class EnumsTest {
           A, B;
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "AB", false)
+        jClass("AB")
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
@@ -58,7 +56,7 @@ public class EnumsTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "AB", false,
+        jClass("AB",
             jBlock(STATIC, 4, 6, 59, 82)
         )
     );
@@ -77,8 +75,8 @@ public class EnumsTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "Enum", false,
-            jMethod("lowercase", false, 4, 6, 90, 132)
+        jClass("Enum",
+            jMethod("lowercase", 4, 6, 90, 132)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -103,7 +101,7 @@ public class EnumsTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "WithConstructor", false,
+        jClass("WithConstructor",
             jMethod("WithConstructor",
                 jBlock(CONSTRUCTOR, 10, 14, 276, 359)
             )
@@ -130,8 +128,8 @@ public class EnumsTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "WithMain", true,
-            jMethod("main", true, 5, 13, 80, 222,
+        jClass("WithMain",
+            jMethod("main", 5, 13, 80, 222,
                 jBlock(SWITCH_CASE, 8, 9, 133, 158),
                 jBlock(SWITCH_CASE, 10, 11, 173, 212)
             )
@@ -164,14 +162,14 @@ public class EnumsTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "WithSubClassAndInterface", false,
+        jClass("WithSubClassAndInterface",
             jClass("ClassInEnum",
-                jMethod("printName", false, 5, 7, 169, 213)
+                jMethod("printName", 5, 7, 169, 213)
             ),
-            jClass(INTERFACE, "InterfaceInEnum", false,
-                jMethod("lowercase", false, 11, 13, 317, 362)
+            jClass("InterfaceInEnum",
+                jMethod("lowercase", 11, 13, 317, 362)
             ),
-            jMethod("callMethods", false, 16, 19, 404, 499)
+            jMethod("callMethods", 16, 19, 404, 499)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -197,9 +195,9 @@ public class EnumsTest {
           }
         }""";
     JavaFile expected = jFile(
-        jClass(ENUM, "WithInnerEnum", false,
-            jClass(ENUM, "InnerEnum", false),
-            jMethod("printValues", false, 8, 15, 107, 287,
+        jClass("WithInnerEnum",
+            jClass("InnerEnum"),
+            jMethod("printValues", 8, 15, 107, 287,
                 jBlock(BLOCK, 9, 11, 154, 191),
                 jBlock(BLOCK, 12, 14, 246, 283)
             )

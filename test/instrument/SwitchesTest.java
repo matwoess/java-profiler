@@ -7,7 +7,6 @@ import static instrument.TestProgramBuilder.*;
 import static instrument.TestInstrumentUtils.baseTemplate;
 import static instrument.TestInstrumentUtils.parseJavaFile;
 import static model.BlockType.*;
-import static model.ClassType.ENUM;
 
 public class SwitchesTest {
 
@@ -32,8 +31,8 @@ public class SwitchesTest {
         }
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 20, 62, 239,
+        jClass("Main",
+            jMethod("main", 2, 20, 62, 239,
                 jBlock(BLOCK, 5, 8, 102, 129),
                 jBlock(BLOCK, 9, 9, 141, 142),
                 jBlock(BLOCK, 10, 13, 154, 183),
@@ -62,8 +61,8 @@ public class SwitchesTest {
         }
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 16, 62, 210,
+        jClass("Main",
+            jMethod("main", 2, 16, 62, 210,
                 jBlock(BLOCK, 5, 8, 108, 135),
                 jBlock(BLOCK, 9, 12, 150, 181),
                 jBlock(BLOCK, 13, 13, 194, 203)
@@ -91,8 +90,8 @@ public class SwitchesTest {
         }
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 17, 62, 384,
+        jClass("Main",
+            jMethod("main", 2, 17, 62, 384,
                 jBlock(BLOCK, 5, 9, 127, 225),
                 jBlock(BLOCK, 6, 8, 174, 221),
                 jBlock(SS_BLOCK, 10, 10, 249, 283),
@@ -127,8 +126,8 @@ public class SwitchesTest {
           System.out.println("result=" + result);
         }""", "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 21, 62, 442
+        jClass("Main",
+            jMethod("main", 2, 21, 62, 442
                 , jBlock(BLOCK, 3, 20, 97, 438)
                 , jBlock(BLOCK, 5, 7, 139, 160)
                 , jBlock(SWITCH_CASE, 8, 8, 172, 172)
@@ -165,8 +164,8 @@ public class SwitchesTest {
         System.out.println("result=" + result);
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 20, 62, 364
+        jClass("Main",
+            jMethod("main", 2, 20, 62, 364
                 , jBlock(BLOCK, 5, 7, 137, 154)
                 , jBlock(SS_SWITCH_EXPR_ARROW_CASE, 8, 8, 169, 172)
                 , jBlock(BLOCK, 9, 16, 187, 316)
@@ -196,11 +195,11 @@ public class SwitchesTest {
         }
         """;
     JavaFile expected = jFile(
-        jClass("ClassLevelSwitch", true,
+        jClass("ClassLevelSwitch",
             jBlock(SS_SWITCH_EXPR_ARROW_CASE, 3, 3, 105, 108),
             jBlock(SS_SWITCH_EXPR_ARROW_CASE, 4, 4, 125, 128),
             jBlock(BLOCK, 5, 7, 145, 166),
-            jMethod("main", true, 10, 12, 215, 254)
+            jMethod("main", 10, 12, 215, 254)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -227,10 +226,10 @@ public class SwitchesTest {
         }
         """);
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 6, 62, 232),
-            jClass(ENUM, "StatusCode", false,
-                jMethod("getStatusCodeDescription", false, 9, 17, 368, 591,
+        jClass("Main",
+            jMethod("main", 2, 6, 62, 232),
+            jClass("StatusCode",
+                jMethod("getStatusCodeDescription", 9, 17, 368, 591,
                     jBlock(SS_SWITCH_EXPR_ARROW_CASE, 11, 11, 411, 436),
                     jBlock(SS_SWITCH_EXPR_ARROW_CASE, 12, 12, 470, 487),
                     jBlock(BLOCK, 13, 15, 516, 580)

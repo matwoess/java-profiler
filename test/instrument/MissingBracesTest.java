@@ -15,8 +15,8 @@ public class MissingBracesTest {
         if (true == false)return;
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 5, 62, 97,
+        jClass("Main",
+            jMethod("main", 2, 5, 62, 97,
                 jBlock(SS_BLOCK, 3, 3, 85, 92)
             )
         )
@@ -31,8 +31,8 @@ public class MissingBracesTest {
         else continue;
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 6, 62, 112,
+        jClass("Main",
+            jMethod("main", 2, 6, 62, 112,
                 jBlock(SS_BLOCK, 3, 3, 85, 92),
                 jBlock(SS_BLOCK, 4, 4, 97, 107)
             )
@@ -49,8 +49,8 @@ public class MissingBracesTest {
         else continue;
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 7, 62, 143,
+        jClass("Main",
+            jMethod("main", 2, 7, 62, 143,
                 jBlock(SS_BLOCK, 3, 3, 85, 92),
                 jBlock(SS_BLOCK, 4, 4, 115, 123),
                 jBlock(SS_BLOCK, 5, 5, 128, 138)
@@ -77,8 +77,8 @@ public class MissingBracesTest {
         System.out.println(x);
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 16, 62, 269,
+        jClass("Main",
+            jMethod("main", 2, 16, 62, 269,
                 jBlock(SS_BLOCK, 4, 5, 94, 104),
                 jBlock(BLOCK, 6, 8, 127, 139),
                 jBlock(SS_BLOCK, 9, 9, 144, 189),
@@ -102,8 +102,8 @@ public class MissingBracesTest {
             x=1;
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 10, 62, 147,
+        jClass("Main",
+            jMethod("main", 2, 10, 62, 147,
                 jBlock(SS_BLOCK, 4, 8, 91, 142),
                 jBlock(SS_BLOCK, 4, 8, 103, 142),
                 jBlock(SS_BLOCK, 5, 6, 114, 126),
@@ -124,8 +124,8 @@ public class MissingBracesTest {
         while (x<10);
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 9, 62, 129,
+        jClass("Main",
+            jMethod("main", 2, 9, 62, 129,
                 jBlock(SS_BLOCK, 4, 4, 80, 86),
                 jBlock(SS_BLOCK, 5, 6, 102, 110)
             )
@@ -143,8 +143,8 @@ public class MissingBracesTest {
         for (int val : array) System.out.println(val);
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 8, 62, 188,
+        jClass("Main",
+            jMethod("main", 2, 8, 62, 188,
                 jBlock(SS_BLOCK, 4, 5, 120, 136),
                 jBlock(SS_BLOCK, 6, 6, 158, 183)
             )
@@ -172,8 +172,8 @@ public class MissingBracesTest {
         }
          """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 18, 62, 228,
+        jClass("Main",
+            jMethod("main", 2, 18, 62, 228,
                 jBlock(BLOCK, 5, 8, 102, 129),
                 jBlock(SWITCH_CASE, 9, 9, 139, 139),
                 jBlock(SWITCH_CASE, 9, 9, 147, 147),
@@ -197,8 +197,8 @@ public class MissingBracesTest {
              break outer;
         """, "");
     JavaFile expected = jFile(
-        jClass("Main", true,
-            jMethod("main", true, 2, 10, 62, 165,
+        jClass("Main",
+            jMethod("main", 2, 10, 62, 165,
                 jBlock(SS_BLOCK, 4, 8, 97, 160),
                 jBlock(SS_BLOCK, 4, 8, 109, 160),
                 jBlock(SS_BLOCK, 5, 6, 121, 134),

@@ -39,9 +39,9 @@ public class SpecialCasesTest {
     int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
     JavaFile expected = jFile("name.Of._the_.pkg", lengthOfPackageDeclaration,
         jClass("Empty",
-            jMethod("meth", false, 5, 6, 122, 126),
+            jMethod("meth", 5, 6, 122, 126),
             jClass("InEmpty",
-                jMethod("innerMeth", false, 8, 9, 167, 173)
+                jMethod("innerMeth", 8, 9, 167, 173)
             )
         )
     );
@@ -147,14 +147,14 @@ public class SpecialCasesTest {
                 , jBlock(BLOCK, 18, 20, 297, 334)
                 , jBlock(SS_BLOCK, 20, 20, 339, 368)
             )
-            , jClass(ANONYMOUS, null, false
-                , jMethod("compare", false, 56, 65, 1457, 1706
+            , jClass(ANONYMOUS, null,
+                jMethod("compare", 56, 65, 1457, 1706
                     , jBlock(SS_SWITCH_EXPR_ARROW_CASE, 58, 58, 1523, 1526)
                     , jBlock(BLOCK, 59, 61, 1557, 1607)
                     , jBlock(SS_SWITCH_EXPR_ARROW_CASE, 62, 62, 1636, 1645)
                 )
             )
-            , jMethod("method", false, 23, 75, 398, 1921
+            , jMethod("method", 23, 75, 398, 1921
                 , jBlock(BLOCK, 25, 71, 443, 1876)
                 , jBlock(SS_BLOCK, 26, 70, 489, 1870)
                 , jBlock(SWITCH_CASE, 28, 29, 534, 569)
