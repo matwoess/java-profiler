@@ -94,15 +94,8 @@ public class ParserState {
   void enterMethod() {
     assert curClass != null;
     curMeth = new Method(parser.t.val);
-    curClass.methods.add(curMeth);
+    curMeth.setParentClass(curClass);
     logger.enter(curMeth);
-  }
-
-  void enterMainMethod() {
-    enterMethod();
-    curMeth.isMain = true;
-    curClass.isMain = true;
-    logger.log("method is main entry point.");
   }
 
   void leaveMethod() {
@@ -217,20 +210,6 @@ public class ParserState {
 
   boolean thisAndLPar() {
     return parser.la.kind == _this && parser.scanner.Peek().kind == _lpar;
-  }
-
-  boolean isEntryPoint() {
-    if (curClass.classType == ClassType.INTERFACE) {
-      // the "public" can be omitted in interfaces (implied)
-      return parser.la.kind == _static
-          && parser.scanner.Peek().kind == _void
-          && parser.scanner.Peek().kind == _main;
-    } else {
-      return parser.la.kind == _public
-          && parser.scanner.Peek().kind == _static
-          && parser.scanner.Peek().kind == _void
-          && parser.scanner.Peek().kind == _main;
-    }
   }
 
   boolean isAssignment() {

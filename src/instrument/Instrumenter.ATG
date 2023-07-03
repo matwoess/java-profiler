@@ -49,9 +49,6 @@ TOKENS
 	static     = "static".
 	if         = "if".
 	else       = "else".
-	public     = "public".
-	void       = "void".
-	main       = "main".
 	equals     = "=".
 	new        = "new".
 	this       = "this".
@@ -88,7 +85,6 @@ Enum<boolean local> =
 ClassBody =
 	{ Enum<false> | Class<false>
 		| "=" (BraceExpr | {ANY} Statement)
-		| IF(state.isEntryPoint()) MainMethod
 		| IF(state.identAndLPar()) MethodDecl
 		| IF(state.staticAndLBrace()) StaticBlock
 		| Annotation
@@ -96,10 +92,6 @@ ClassBody =
 	}
 	"}"
 .
-MainMethod =
-		[public] static void main	(. state.enterMainMethod(); .)
-		ParExpr {ANY} Block<true>
-		.
 StaticBlock =	static Block<false>.
 MethodDecl =
 		ident 											(. state.enterMethod(); .)

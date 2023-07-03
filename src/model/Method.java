@@ -6,16 +6,16 @@ import java.util.List;
 
 public class Method implements Serializable, Component {
   public String name;
-  public boolean isMain;
+  public Class parentClass;
   public List<Block> blocks = new ArrayList<>();
 
   public Method(String name) {
     this.name = name;
   }
 
-  public Method(String name, boolean isMain) {
-    this.name = name;
-    this.isMain = isMain;
+  public void setParentClass(Class parentClass) {
+    this.parentClass = parentClass;
+    parentClass.methods.add(this);
   }
 
   public boolean isAbstract() {
@@ -33,19 +33,22 @@ public class Method implements Serializable, Component {
     return name;
   }
 
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
+
     Method method = (Method) o;
-    if (isMain != method.isMain) return false;
-    return name.equals(method.name);
+
+    if (!name.equals(method.name)) return false;
+    return parentClass.equals(method.parentClass);
   }
 
   @Override
   public int hashCode() {
     int result = name.hashCode();
-    result = 31 * result + (isMain ? 1 : 0);
+    result = 31 * result + parentClass.hashCode();
     return result;
   }
 }
