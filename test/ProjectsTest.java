@@ -41,4 +41,10 @@ public class ProjectsTest {
     Path sourcesRoot = projectsRoot.resolve("jacoco");
     TestUtils.instrumentFolder(sourcesRoot);
   }
+
+  @Test
+  public void testDaCapoBench_instrument() {
+    Path sourcesRoot = projectsRoot.resolve("dacapobench");
+    TestUtils.instrumentFolder(sourcesRoot);
+  }
 }
