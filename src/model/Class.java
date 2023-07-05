@@ -65,7 +65,7 @@ public class Class implements Serializable, Component {
   public int getAggregatedMethodBlockCounts() {
     return getMethodsRecursive().stream()
         .flatMap(method -> method.blocks.stream())
-        .filter(b -> b.blockType == BlockType.METHOD)
+        .filter(b -> b.blockType == BlockType.METHOD || b.blockType == BlockType.CONSTRUCTOR)
         .mapToInt(b -> b.hits)
         .sum();
   }
