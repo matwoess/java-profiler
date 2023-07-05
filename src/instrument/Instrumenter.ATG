@@ -139,7 +139,7 @@ SwitchStatement = 						(. boolean inAssignment = state.isAssignment(); .)
 SwitchCase<boolean inAssignment> =
 	("case" | "default") {ANY}
 	(ArrowExpression<true, inAssignment>
-		| ":"											(. state.checkSingleStatement(false, true, false); .)
+		| ":" {"case" {ANY} ":"}	(. state.checkSingleStatement(false, true, false); .)
 			{Statement}							(. state.leaveSingleStatement(); .)
 	)
 	.

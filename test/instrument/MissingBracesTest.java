@@ -175,8 +175,6 @@ public class MissingBracesTest {
         jClass("Main",
             jMethod("main", 2, 18, 62, 228,
                 jBlock(BLOCK, 5, 8, 102, 129),
-                jBlock(SWITCH_CASE, 9, 9, 139, 139),
-                jBlock(SWITCH_CASE, 9, 9, 147, 147),
                 jBlock(SWITCH_CASE, 10, 12, 157, 182),
                 jBlock(SWITCH_CASE, 13, 14, 192, 203),
                 jBlock(SWITCH_CASE, 15, 15, 214, 221)
