@@ -41,6 +41,7 @@ public class Instrumenter {
     if (errors > 0) {
       throw new RuntimeException("Abort due to parse errors.");
     }
+    javaFile.packageName = parser.state.packageName;
     javaFile.beginOfImports = parser.state.beginOfImports;
     javaFile.foundBlocks = parser.state.allBlocks;
     javaFile.topLevelClasses = parser.state.topLevelClasses;
