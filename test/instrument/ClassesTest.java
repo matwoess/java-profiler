@@ -164,15 +164,11 @@ public class ClassesTest {
             jMethod("toString", 6, 11, 139, 234)
         ),
         jClass("Dog",
-            jMethod("Dog",
-                jBlock(CONSTRUCTOR, 15, 18, 298, 344)
-            ),
+            jConstructor("Dog", 15, 18, 298, 344),
             jMethod("speak", 19, 19, 373, 391)
         ),
         jClass("Cat",
-            jMethod("Cat",
-                jBlock(CONSTRUCTOR, 23, 26, 455, 501)
-            ),
+            jConstructor("Cat",23, 26, 455, 501),
             jMethod("speak", 27, 27, 530, 548)
         )
     );

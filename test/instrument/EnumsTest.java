@@ -102,9 +102,7 @@ public class EnumsTest {
         }""";
     JavaFile expected = jFile(
         jClass("WithConstructor",
-            jMethod("WithConstructor",
-                jBlock(CONSTRUCTOR, 10, 14, 276, 359)
-            )
+            jConstructor("WithConstructor", 10, 14, 276, 359)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

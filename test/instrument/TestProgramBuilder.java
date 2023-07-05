@@ -69,6 +69,11 @@ public class TestProgramBuilder {
     return jMethod(name, misc.Util.prependToArray(blocks, methodBlock));
   }
 
+  public static Method jConstructor(String name, int beg, int end, int begPos, int endPos, Block... blocks) {
+    Block methodBlock = jBlock(BlockType.CONSTRUCTOR, beg, end, begPos, endPos);
+    return jMethod(name, misc.Util.prependToArray(blocks, methodBlock));
+  }
+
   public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block(type);
     b.beg = beg;
@@ -98,7 +103,10 @@ public class TestProgramBuilder {
   }
 
   public static void getBuilderCode(JavaFile javaFile, StringBuilder builder) {
-    builder.append("JavaFile expected = jFile(\"<default>\", ").append(javaFile.beginOfImports);
+    builder.append("JavaFile expected = jFile(");
+    if (javaFile.beginOfImports != 0 || javaFile.packageName != null) {
+      builder.append(javaFile.packageName).append(", ").append(javaFile.beginOfImports);
+    }
     for (Class clazz : javaFile.topLevelClasses) {
       getBuilderCode(clazz, builder);
     }
