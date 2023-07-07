@@ -54,5 +54,7 @@ public class BasicElements {
       System.out.println("leaving try-catch-finally");
     }
     "Hello World".chars().sum();
+    assert x == 1;
+    assert "Hello".chars().asDoubleStream().map(d -> d + 2).sum() > 0 : "is 0 or less";
   }
 }

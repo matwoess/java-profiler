@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import static instrument.TestInstrumentUtils.baseTemplate;
 import static instrument.TestInstrumentUtils.parseJavaFile;
 import static instrument.TestProgramBuilder.*;
-import static model.BlockType.BLOCK;
-import static model.BlockType.STATIC;
+import static model.BlockType.*;
 
 public class BasicElementsTest {
   @Test
@@ -382,6 +381,24 @@ public class BasicElementsTest {
         jClass("GenericInstantiation",
             jMethod("fill", 3, 7, 123, 236),
             jMethod("main", 8, 10, 279, 322)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testAssertStatement() {
+    String fileContent = baseTemplate.formatted("""
+        int x = 1;
+        assert x == 1;
+        int sum = "Hello".chars().map(ch -> ch + 2).sum();
+        assert sum > 0 : "sum is: " + sum;
+        """, "");
+    JavaFile expected = jFile(
+        jClass("Main"
+            , jMethod("main",2, 8, 62, 183
+                , jBlock(SS_LAMBDA, 5, 5, 128, 135)
+            )
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
