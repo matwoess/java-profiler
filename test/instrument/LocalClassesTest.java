@@ -95,11 +95,11 @@ public class LocalClassesTest {
         , jClass("Main"
             , jClass(ANONYMOUS, "1"
                 , jClass(LOCAL, "CompHelper"
-                    , jMethod("comp",7, 9, 250, 300)
+                    , jMethod("comp", 7, 9, 250, 300)
                 )
                 , jMethod("compare", 5, 14, 188, 409)
             )
-            , jMethod("main",2, 18, 62, 460)
+            , jMethod("main", 2, 18, 62, 460)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
