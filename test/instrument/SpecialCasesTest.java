@@ -4,10 +4,13 @@ import model.Class;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static instrument.TestInstrumentUtils.parseJavaFile;
 import static instrument.TestProgramBuilder.*;
 import static model.BlockType.*;
 import static model.ClassType.ANONYMOUS;
+import static model.ClassType.LOCAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpecialCasesTest {
@@ -181,4 +184,83 @@ public class SpecialCasesTest {
     System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+
+  @Test
+  public void testNamingWithInnerAndLocalClasses() {
+    String fileContent = """
+        package mixed.pkg;
+        
+        class MixedClasses {
+          public class Inner {
+          }
+            
+          public static void main(String[] args) {
+            Runnable r1 = new Runnable() {
+              @Override
+              public void run() {
+              }
+            };
+            class Local1 {
+            }
+            Runnable r2 = new Runnable() {
+              @Override
+              public void run() {
+                class Local2 {
+                }
+              }
+            };
+            interface Local3 {
+            }
+          }
+            
+          private Runnable r3 = new Runnable() {
+            @Override
+            public void run() {
+            }
+          };
+        }""";
+    JavaFile expected = jFile("mixed.pkg", 18,
+        jClass("MixedClasses",
+            jClass("Inner"),
+            jClass(ANONYMOUS, null,
+                jMethod("run", 10, 11, 188, 196)
+            ),
+            jClass(LOCAL, "Local1"),
+            jClass(ANONYMOUS, null,
+                jClass(LOCAL, "Local2"),
+                jMethod("run", 17, 20, 305, 346)
+            ),
+            jClass(LOCAL, "Local3"),
+            jClass(ANONYMOUS, null,
+                jMethod("run", 28, 29, 466, 472)
+            ),
+            jMethod("main", 7, 24, 111, 386)
+        )
+    );
+    JavaFile actual = parseJavaFile(fileContent);
+    TestInstrumentUtils.assertResultEquals(expected, actual);
+    List<Class> innerClasses = expected.topLevelClasses.get(0).innerClasses;
+    assertEquals("MixedClasses$Inner", innerClasses.get(0).getName());
+    assertEquals("mixed.pkg.MixedClasses$Inner", innerClasses.get(0).getFullName());
+    assertEquals("1", innerClasses.get(1).name);
+    assertEquals("MixedClasses$1", innerClasses.get(1).getName());
+    assertEquals("mixed.pkg.MixedClasses$1", innerClasses.get(1).getFullName());
+    assertEquals("Local1", innerClasses.get(2).name);
+    assertEquals("MixedClasses$Local1", innerClasses.get(2).getName());
+    assertEquals("mixed.pkg.MixedClasses$Local1", innerClasses.get(2).getFullName());
+    assertEquals("2", innerClasses.get(3).name);
+    assertEquals("MixedClasses$2", innerClasses.get(3).getName());
+    assertEquals("mixed.pkg.MixedClasses$2", innerClasses.get(3).getFullName());
+    assertEquals("Local2", innerClasses.get(3).innerClasses.get(0).name);
+    assertEquals("MixedClasses$2$Local2", innerClasses.get(3).innerClasses.get(0).getName());
+    assertEquals("mixed.pkg.MixedClasses$2$Local2", innerClasses.get(3).innerClasses.get(0).getFullName());
+    assertEquals("Local3", innerClasses.get(4).name);
+    assertEquals("MixedClasses$Local3", innerClasses.get(4).getName());
+    assertEquals("mixed.pkg.MixedClasses$Local3", innerClasses.get(4).getFullName());
+    assertEquals("3", innerClasses.get(5).name);
+    assertEquals("MixedClasses$3", innerClasses.get(5).getName());
+    assertEquals("mixed.pkg.MixedClasses$3", innerClasses.get(5).getFullName());
+  }
+
 }

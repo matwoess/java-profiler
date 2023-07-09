@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static model.ClassType.*;
+
 public class Class implements Serializable, Component {
   public String name;
-  public ClassType classType = ClassType.CLASS;
+  public ClassType classType = CLASS;
   public String packageName;
   public Class parentClass;
   public List<Class> innerClasses = new ArrayList<>();
@@ -24,11 +26,12 @@ public class Class implements Serializable, Component {
   }
 
   public void setParentClass(Class parentClass) {
+    if (name == null) {
+      long nextAnonymousClass = parentClass.innerClasses.stream().filter(c -> c.classType == ANONYMOUS).count() + 1;
+      this.name = String.valueOf(nextAnonymousClass);
+    }
     this.parentClass = parentClass;
     parentClass.innerClasses.add(this);
-    if (name == null) {
-      this.name = String.valueOf(parentClass.innerClasses.size());
-    }
   }
 
   public String getName() {
