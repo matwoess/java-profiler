@@ -139,5 +139,6 @@ public class MainTest {
     assertTrue(instrumentedContent.contains("incLambdaSync("));
     assertFalse(instrumentedContent.contains("inc("));
     assertFalse(instrumentedContent.contains("incLambda("));
+    Main.main(new String[]{"-s", lambdaExampleFile.toString()});
   }
 }
