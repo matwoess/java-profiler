@@ -25,10 +25,10 @@ public class LocalClassesTest {
         }
         """, "");
     JavaFile expected = jFile(
-        jClass("Main"
-            , jClass("StatusCode")
-            , jMethod("main", 2, 11, 62, 262
-                , jBlock(BLOCK, 7, 9, 214, 257)
+        jClass("Main",
+            jClass(LOCAL, "StatusCode"),
+            jMethod("main", 2, 11, 62, 262,
+                jBlock(BLOCK, 7, 9, 214, 257)
             )
         )
     );
@@ -55,18 +55,18 @@ public class LocalClassesTest {
         }
         if (true) return;
         """, "");
-    JavaFile expected = jFile("<default>", 0
-        , jClass("Main"
-            , jClass(LOCAL, "IGreeter"
-                , jMethod("greet", 5, 7, 140, 188)
-                , jMethod("greetPerson")
-            )
-            , jClass(ANONYMOUS, null
-                , jMethod("greetPerson", 12, 14, 326, 394)
-            )
-            , jMethod("main", 2, 20, 62, 463
-                , jBlock(BLOCK, 3, 17, 90, 440)
-                , jBlock(SS_BLOCK, 18, 18, 450, 458)
+    JavaFile expected = jFile(
+        jClass("Main",
+            jClass(LOCAL, "IGreeter",
+                jMethod("greet", 5, 7, 140, 188),
+                jMethod("greetPerson")
+            ),
+            jClass(ANONYMOUS, null,
+                jMethod("greetPerson", 12, 14, 326, 394)
+            ),
+            jMethod("main", 2, 20, 62, 463,
+                jBlock(BLOCK, 3, 17, 90, 440),
+                jBlock(SS_BLOCK, 18, 18, 450, 458)
             )
         )
     );
@@ -91,15 +91,15 @@ public class LocalClassesTest {
         };
         lengthComparator.compare("word", "12345");
         """, "");
-    JavaFile expected = jFile("<default>", 0
-        , jClass("Main"
-            , jClass(ANONYMOUS, "1"
-                , jClass(LOCAL, "CompHelper"
-                    , jMethod("comp", 7, 9, 250, 300)
-                )
-                , jMethod("compare", 5, 14, 188, 409)
-            )
-            , jMethod("main", 2, 18, 62, 460)
+    JavaFile expected = jFile(
+        jClass("Main",
+            jClass(ANONYMOUS, null,
+                jClass(LOCAL, "CompHelper",
+                    jMethod("comp", 7, 9, 250, 300)
+                ),
+                jMethod("compare", 5, 14, 188, 409)
+            ),
+            jMethod("main", 2, 18, 62, 460)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

@@ -395,9 +395,9 @@ public class BasicElementsTest {
         assert sum > 0 : "sum is: " + sum;
         """, "");
     JavaFile expected = jFile(
-        jClass("Main"
-            , jMethod("main",2, 8, 62, 183
-                , jBlock(SS_LAMBDA, 5, 5, 128, 135)
+        jClass("Main",
+            jMethod("main", 2, 8, 62, 183,
+                jBlock(SS_LAMBDA, 5, 5, 128, 135)
             )
         )
     );

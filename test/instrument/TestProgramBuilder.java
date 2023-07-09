@@ -6,6 +6,7 @@ import model.Class;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class TestProgramBuilder {
 
@@ -15,21 +16,17 @@ public class TestProgramBuilder {
     javaFile.foundBlocks = new ArrayList<>();
     for (model.Class clazz : classes) {
       javaFile.topLevelClasses.add(clazz);
-      javaFile.foundBlocks.addAll(clazz.getMethodsRecursive().stream()
-          .flatMap(method -> method.blocks.stream())
-          .toList());
-      javaFile.foundBlocks.addAll(clazz.innerClasses.stream().flatMap(ic -> ic.classBlocks.stream()).toList());
-      javaFile.foundBlocks.addAll(clazz.classBlocks);
-      javaFile.foundBlocks.sort(Comparator.comparingInt(b -> b.begPos));
+      javaFile.foundBlocks.addAll(clazz.getBlocksRecursive());
     }
+    javaFile.foundBlocks.sort(Comparator.comparingInt(b -> b.begPos));
     return javaFile;
   }
 
   public static JavaFile jFile(String packageName, int beginOfImports, model.Class... classes) {
     JavaFile javaFile = jFile(classes);
+    javaFile.packageName = packageName;
     javaFile.beginOfImports = beginOfImports;
-    javaFile.topLevelClasses.forEach(clazz -> clazz.packageName = packageName);
-    javaFile.topLevelClasses.stream().flatMap(tlc -> tlc.innerClasses.stream()).forEach(clazz -> clazz.packageName = packageName);
+    javaFile.getClassesRecursive().forEach(clazz -> clazz.packageName = packageName);
     return javaFile;
   }
 
@@ -70,8 +67,8 @@ public class TestProgramBuilder {
   }
 
   public static Method jConstructor(String name, int beg, int end, int begPos, int endPos, Block... blocks) {
-    Block methodBlock = jBlock(BlockType.CONSTRUCTOR, beg, end, begPos, endPos);
-    return jMethod(name, misc.Util.prependToArray(blocks, methodBlock));
+    Block constructorBlock = jBlock(BlockType.CONSTRUCTOR, beg, end, begPos, endPos);
+    return jMethod(name, misc.Util.prependToArray(blocks, constructorBlock));
   }
 
   public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
@@ -95,7 +92,7 @@ public class TestProgramBuilder {
   }
 
   /* DSL-generation methods */
-  
+
   public static String getBuilderCode(JavaFile javaFile) {
     StringBuilder builder = new StringBuilder();
     getBuilderCode(javaFile, builder);
@@ -104,9 +101,7 @@ public class TestProgramBuilder {
 
   public static void getBuilderCode(JavaFile javaFile, StringBuilder builder) {
     builder.append("JavaFile expected = jFile(");
-    if (javaFile.beginOfImports != 0 || javaFile.packageName != null) {
-      builder.append(javaFile.packageName).append(", ").append(javaFile.beginOfImports);
-    }
+    builder.append(javaFile.packageName).append(", ").append(javaFile.beginOfImports);
     for (Class clazz : javaFile.topLevelClasses) {
       getBuilderCode(clazz, builder);
     }
@@ -114,7 +109,15 @@ public class TestProgramBuilder {
   }
 
   public static void getBuilderCode(Class clazz, StringBuilder builder) {
-    builder.append("\n, jClass(").append('"').append(clazz.name).append('"');
+    builder.append(",\n jClass(");
+    if (clazz.classType != ClassType.CLASS) {
+      builder.append(clazz.classType.name()).append(", ");
+    }
+    if (clazz.classType == ClassType.ANONYMOUS) {
+      builder.append("null");
+    } else {
+      builder.append('"').append(clazz.name).append('"');
+    }
     if (clazz.innerClasses.size() + clazz.classBlocks.size() + clazz.methods.size() == 0) {
       builder.append(")");
       return;
@@ -132,19 +135,33 @@ public class TestProgramBuilder {
   }
 
   public static void getBuilderCode(Method method, StringBuilder builder) {
-    builder.append("\n, jMethod(").append('"').append(method.name).append('"');
-    if (method.blocks.size() == 0) {
+    builder.append(",\n ");
+    if (!method.isAbstract() && method.getMethodBlock().blockType == BlockType.CONSTRUCTOR) {
+      builder.append("jConstructor(");
+    } else {
+      builder.append("jMethod(");
+    }
+    builder.append('"').append(method.name).append('"');
+    if (method.isAbstract()) {
       builder.append(")");
       return;
     }
-    for (Block block : method.blocks) {
+    Block methBlock = method.getMethodBlock();
+    builder.append(String.format(", %d, %d, %d, %d", methBlock.beg, methBlock.end, methBlock.begPos + 1, methBlock.endPos));
+    List<Block> blocks = method.blocks;
+    if (blocks.size() == 1) {
+      builder.append(")");
+      return;
+    }
+    for (int i = 1; i < blocks.size(); i++) { // skip method block
+      Block block = blocks.get(i);
       getBuilderCode(block, builder);
     }
     builder.append("\n)");
   }
 
   public static void getBuilderCode(Block block, StringBuilder builder) {
-    builder.append("\n, jBlock(");
+    builder.append(",\n jBlock(");
     int begPos = block.blockType.hasNoBraces() ? block.begPos : block.begPos + 1;
     builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg, block.end, begPos, block.endPos));
     if (block.incInsertPosition != 0 && block.incInsertPosition != begPos) {

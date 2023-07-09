@@ -127,14 +127,14 @@ public class SwitchesTest {
         }""", "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 21, 62, 442
-                , jBlock(BLOCK, 3, 20, 97, 438)
-                , jBlock(BLOCK, 5, 7, 139, 160)
-                , jBlock(SWITCH_CASE, 8, 8, 180, 189)
-                , jBlock(SWITCH_CASE, 9, 9, 211, 241)
-                , jBlock(BLOCK, 10, 17, 256, 389)
-                , jBlock(BLOCK, 11, 14, 276, 350)
-                , jBlock(BLOCK, 14, 16, 357, 383)
+            jMethod("main", 2, 21, 62, 442,
+                jBlock(BLOCK, 3, 20, 97, 438),
+                jBlock(BLOCK, 5, 7, 139, 160),
+                jBlock(SWITCH_CASE, 8, 8, 180, 189),
+                jBlock(SWITCH_CASE, 9, 9, 211, 241),
+                jBlock(BLOCK, 10, 17, 256, 389),
+                jBlock(BLOCK, 11, 14, 276, 350),
+                jBlock(BLOCK, 14, 16, 357, 383)
             )
         )
     );
@@ -163,12 +163,12 @@ public class SwitchesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 20, 62, 364
-                , jBlock(BLOCK, 5, 7, 137, 154)
-                , jBlock(SS_SWITCH_EXPR_ARROW_CASE, 8, 8, 169, 172)
-                , jBlock(BLOCK, 9, 16, 187, 316)
-                , jBlock(BLOCK, 10, 13, 215, 283)
-                , jBlock(BLOCK, 13, 15, 290, 312)
+            jMethod("main", 2, 20, 62, 364,
+                jBlock(BLOCK, 5, 7, 137, 154),
+                jBlock(SS_SWITCH_EXPR_ARROW_CASE, 8, 8, 169, 172),
+                jBlock(BLOCK, 9, 16, 187, 316),
+                jBlock(BLOCK, 10, 13, 215, 283),
+                jBlock(BLOCK, 13, 15, 290, 312)
             )
         )
     );
