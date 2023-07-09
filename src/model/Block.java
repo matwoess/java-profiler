@@ -33,8 +33,6 @@ public class Block implements Serializable, Component {
     this.clazz = clazz;
     if (method == null) {
       clazz.classBlocks.add(this);
-    } else {
-      method.blocks.add(this);
     }
   }
 

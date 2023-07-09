@@ -14,6 +14,7 @@ public class Method implements Serializable, Component {
   }
 
   public void setParentClass(Class parentClass) {
+    assert this.parentClass == null;
     this.parentClass = parentClass;
     parentClass.methods.add(this);
   }
