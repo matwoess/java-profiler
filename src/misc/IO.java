@@ -69,9 +69,9 @@ public class IO {
     copyResource("/js/" + highlighter, reportDir.resolve(highlighter));
   }
 
-  public static void clearInstrumentDirIfExists() {
-    if (Files.exists(instrumentDir)) {
-      try (Stream<Path> walk = Files.walk(instrumentDir)) {
+  public static void clearDirectoryIfExists(Path directory) {
+    if (Files.exists(directory)) {
+      try (Stream<Path> walk = Files.walk(directory)) {
         walk.sorted(Comparator.reverseOrder()).forEach(file -> {
           try {
             Files.delete(file);

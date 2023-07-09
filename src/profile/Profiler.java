@@ -49,6 +49,7 @@ public class Profiler {
       allJavaFiles = IO.importMetadata().javaFiles();
     }
     addHitCountToJavaFileBlocks(allJavaFiles);
+    IO.clearDirectoryIfExists(IO.reportDir);
     new ReportClassIndexWriter(allJavaFiles).write();
     for (JavaFile jFile : allJavaFiles) {
       new ReportSourceWriter(jFile).write();
