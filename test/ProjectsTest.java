@@ -22,10 +22,10 @@ public class ProjectsTest {
     Path cocoAtg = sourcesRoot.resolve("Coco.atg");
     TestUtils.instrumentFolder(sourcesRoot);
     String[] command = "javac -source 7 -target 7 -d . Trace.java Scanner.java Tab.java DFA.java ParserGen.java Parser.java Coco.java".split(" ");
-    int compileResult = misc.Util.runCommand(IO.instrumentDir, command);
+    int compileResult = misc.Util.runCommand(IO.getInstrumentDir(), command);
     assertEquals(0, compileResult);
-    command = new String[]{"java", "Coco/Coco", IO.instrumentDir.relativize(cocoAtg).toString()};
-    int runResult = misc.Util.runCommand(IO.instrumentDir, command);
+    command = new String[]{"java", "Coco/Coco", IO.getInstrumentDir().relativize(cocoAtg).toString()};
+    int runResult = misc.Util.runCommand(IO.getInstrumentDir(), command);
     assertEquals(0, runResult);
     TestUtils.generateReport();
   }

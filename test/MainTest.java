@@ -2,6 +2,7 @@ import misc.IO;
 import misc.Util;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -98,18 +99,20 @@ public class MainTest {
   @Test
   public void testInstrumentManualCompileThenCreateReportOnly() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
-    int exitCode = Util.runCommand(IO.instrumentDir, "javac", simpleExampleFile.getFileName().toString());
+    int exitCode = Util.runCommand(IO.getInstrumentDir(), "javac", simpleExampleFile.getFileName().toString());
     assertEquals(0, exitCode);
     Main.main(new String[]{"-r"});
   }
 
   @Test
   public void testReportOnly_MissingMetadataOrCounts() {
-    if (IO.resultsFile.toFile().exists()) {
-      IO.resultsFile.toFile().delete();
+    File metadataFile = IO.getMetadataPath().toFile();
+    if (metadataFile.exists()) {
+      metadataFile.delete();
     }
-    if (IO.metadataFile.toFile().exists()) {
-      IO.metadataFile.toFile().delete();
+    File countsFile = IO.getCountsPath().toFile();
+    if (countsFile.exists()) {
+      countsFile.delete();
     }
     RuntimeException ex = assertThrows(RuntimeException.class, () -> Main.main(new String[]{"-r"}));
     assertTrue(ex.getMessage().contains("metadata.dat (No such file or directory)"));
@@ -127,11 +130,11 @@ public class MainTest {
   @Test
   public void testSynchronizedOption_Instrument() throws IOException {
     Main.main(new String[]{"-s", "-i", simpleExampleFile.toString()});
-    String instrumentedContent = Files.readString(IO.instrumentDir.resolve(simpleExampleFile.getFileName()));
+    String instrumentedContent = Files.readString(IO.getInstrumentDir().resolve(simpleExampleFile.getFileName()));
     assertTrue(instrumentedContent.contains("incSync("));
     assertFalse(instrumentedContent.contains("inc("));
     Main.main(new String[]{"--synchronized", "-i", lambdaExampleFile.toString()});
-    instrumentedContent = Files.readString(IO.instrumentDir.resolve(lambdaExampleFile.getFileName()));
+    instrumentedContent = Files.readString(IO.getInstrumentDir().resolve(lambdaExampleFile.getFileName()));
     assertTrue(instrumentedContent.contains("incSync("));
     assertTrue(instrumentedContent.contains("incLambdaSync("));
     assertFalse(instrumentedContent.contains("inc("));

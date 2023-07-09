@@ -56,7 +56,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .append("<th>Invocations</th>\n")
         .append("<th>Method</th>\n")
         .append("</tr>\n");
-    Path sourceFileHref = IO.reportDir.relativize(reportSourceFile);
+    Path sourceFileHref = IO.getReportDir().relativize(reportSourceFile);
     for (Method meth : sortedMethods) {
       Block methBlock = meth.getMethodBlock();
       String lineNrRef = sourceFileHref + "#" + methBlock.beg;

@@ -39,7 +39,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         }
         """;
     bodyScripts = new String[]{
-        IO.getReportSourceFilePath(javaFile).getParent().relativize(IO.reportHighlighter).toString()
+        IO.getReportSourceFilePath(javaFile).getParent().relativize(IO.getReportHighlighterPath()).toString()
     };
   }
 

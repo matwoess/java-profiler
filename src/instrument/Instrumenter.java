@@ -48,7 +48,7 @@ public class Instrumenter {
   }
 
   public void instrumentFiles() {
-    IO.clearDirectoryIfExists(IO.instrumentDir);
+    IO.clearDirectoryIfExists(IO.getInstrumentDir());
     blockCounter = 0;
     try {
       for (JavaFile javaFile : javaFiles) {

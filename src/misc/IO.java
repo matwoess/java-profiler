@@ -12,22 +12,48 @@ import java.util.stream.Stream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class IO {
-  public static final Path outputDir = Path.of("out", "profiler");
-  public static final Path instrumentDir = outputDir.resolve("instrumented");
-  public static final Path auxiliaryInstrumentDir = instrumentDir.resolve("auxiliary");
-  public static final Path metadataFile = outputDir.resolve("metadata.dat");
-  public static final Path resultsFile = outputDir.resolve("counts.dat");
-
-  public static final Path reportDir = outputDir.resolve("report");
-  public static final Path reportIndexFile = reportDir.resolve("index.html");
-  public static final Path reportHighlighter = reportDir.resolve("highlighter.js");
-  public static final Path reportIndexSymLink = Path.of(".", "report.html");
+  public static Path outputDir = Path.of("out", "profiler");
 
   public record Metadata(int blocksCount, JavaFile[] javaFiles) {
   }
 
+  public static Path getOutputDir() {
+    return outputDir;
+  }
+  public static Path getInstrumentDir() {
+    return getOutputDir().resolve("instrumented");
+  }
+
+  public static Path getAuxiliaryInstrumentDir() {
+    return getInstrumentDir().resolve("auxiliary");
+  }
+
+  public static Path getMetadataPath() {
+    return getOutputDir().resolve("metadata.dat");
+  }
+
+  public static Path getCountsPath() {
+    return getOutputDir().resolve("counts.dat");
+  }
+
+  public static Path getReportDir() {
+    return getOutputDir().resolve("report");
+  }
+
+  public static Path getReportIndexPath() {
+    return getReportDir().resolve("index.html");
+  }
+
+  public static Path getReportHighlighterPath() {
+    return getReportDir().resolve("highlighter.js");
+  }
+
+  public static Path getReportIndexSymLinkPath() {
+    return Path.of(".", "report.html");
+  }
+
   public static void exportMetadata(Metadata metadata) {
-    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(metadataFile.toFile()))) {
+    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(getMetadataPath().toFile()))) {
       oos.writeInt(metadata.blocksCount);
       oos.writeObject(metadata.javaFiles);
     } catch (IOException e) {
@@ -37,7 +63,7 @@ public class IO {
 
   public static Metadata importMetadata() {
     Metadata metadata;
-    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(metadataFile.toFile()))) {
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getMetadataPath().toFile()))) {
       int blocksCount = ois.readInt();
       JavaFile[] javaFiles = (JavaFile[]) ois.readObject();
       metadata = new Metadata(blocksCount, javaFiles);
@@ -61,12 +87,12 @@ public class IO {
 
   public static void copyAuxiliaryFiles() {
     String counterClass = "__Counter.class";
-    copyResource("/auxiliary/" + counterClass, auxiliaryInstrumentDir.resolve(Path.of(counterClass)));
+    copyResource("/auxiliary/" + counterClass, getAuxiliaryInstrumentDir().resolve(Path.of(counterClass)));
   }
 
   public static void copyJavaScriptFiles() {
     String highlighter = "highlighter.js";
-    copyResource("/js/" + highlighter, reportDir.resolve(highlighter));
+    copyResource("/js/" + highlighter, getReportDir().resolve(highlighter));
   }
 
   public static void clearDirectoryIfExists(Path directory) {
@@ -109,11 +135,11 @@ public class IO {
   }
 
   public static Path getReportMethodIndexPath(model.Class clazz) {
-    return IO.reportDir.resolve("index_" + clazz.name + ".html");
+    return IO.getReportDir().resolve("index_" + clazz.name + ".html");
   }
 
   public static Path getReportSourceFilePath(JavaFile javaFile) {
-    Path reportFilePath = IO.reportDir.resolve(javaFile.sourceFile);
+    Path reportFilePath = IO.getReportDir().resolve(javaFile.sourceFile);
     return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 }

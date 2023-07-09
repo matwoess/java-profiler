@@ -23,19 +23,19 @@ public class Profiler {
   }
 
   public void compileInstrumented() {
-    Path mainFile = IO.instrumentDir.relativize(mainJavaFile.instrumentedFile);
-    int exitCode = Util.runCommand(IO.instrumentDir, "javac", mainFile.toString());
+    Path mainFile = IO.getInstrumentDir().relativize(mainJavaFile.instrumentedFile);
+    int exitCode = Util.runCommand(IO.getInstrumentDir(), "javac", mainFile.toString());
     if (exitCode != 0) {
       throw new RuntimeException("Error compiling instrumented file: " + mainFile);
     }
   }
 
   public void profile(String[] programArgs) {
-    Path mainFile = IO.instrumentDir.relativize(mainJavaFile.instrumentedFile);
+    Path mainFile = IO.getInstrumentDir().relativize(mainJavaFile.instrumentedFile);
     String filePath = mainFile.toString();
     String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
     String[] command = Util.prependToArray(programArgs, "java", classFilePath);
-    int exitCode = Util.runCommand(IO.instrumentDir, command);
+    int exitCode = Util.runCommand(IO.getInstrumentDir(), command);
     if (exitCode != 0) {
       throw new RuntimeException("Error executing compiled class: " + classFilePath);
     }
@@ -49,7 +49,7 @@ public class Profiler {
       allJavaFiles = IO.importMetadata().javaFiles();
     }
     addHitCountToJavaFileBlocks(allJavaFiles);
-    IO.clearDirectoryIfExists(IO.reportDir);
+    IO.clearDirectoryIfExists(IO.getReportDir());
     new ReportClassIndexWriter(allJavaFiles).write();
     for (JavaFile jFile : allJavaFiles) {
       new ReportSourceWriter(jFile).write();
@@ -62,7 +62,7 @@ public class Profiler {
 
   private static void addHitCountToJavaFileBlocks(JavaFile[] allJavaFiles) {
     int[] counts;
-    try (DataInputStream dis = new DataInputStream(new FileInputStream(IO.resultsFile.toString()))) {
+    try (DataInputStream dis = new DataInputStream(new FileInputStream(IO.getCountsPath().toString()))) {
       int nCounts = dis.readInt();
       counts = new int[nCounts];
       for (int i = 0; i < nCounts; i++) {
@@ -86,6 +86,6 @@ public class Profiler {
   }
 
   public void createSymLinkForReport() {
-    IO.createSymbolicLink(IO.reportIndexSymLink, IO.reportIndexFile);
+    IO.createSymbolicLink(IO.getReportIndexSymLinkPath(), IO.getReportIndexPath());
   }
 }

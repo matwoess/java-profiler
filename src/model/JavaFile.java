@@ -19,12 +19,12 @@ public class JavaFile implements Serializable {
   public JavaFile(Path sourceFile, Path sourcesRoot) {
     this.sourceFile = sourceFile;
     Path relativePathToSources = sourcesRoot.relativize(sourceFile);
-    this.instrumentedFile = IO.instrumentDir.resolve(relativePathToSources);
+    this.instrumentedFile = IO.getInstrumentDir().resolve(relativePathToSources);
   }
 
   public JavaFile(Path sourceFile) {
     this.sourceFile = sourceFile;
-    this.instrumentedFile = IO.instrumentDir.resolve(sourceFile.getFileName());
+    this.instrumentedFile = IO.getInstrumentDir().resolve(sourceFile.getFileName());
   }
 
   public List<Class> getClassesRecursive() {
