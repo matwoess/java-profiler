@@ -128,7 +128,7 @@ public class MainTest {
   }
 
   @Test
-  public void testSynchronizedOption_Instrument() throws IOException {
+  public void testSynchronizedOption_Instrument_Execute() throws IOException {
     Main.main(new String[]{"-s", "-i", simpleExampleFile.toString()});
     String instrumentedContent = Files.readString(IO.getInstrumentDir().resolve(simpleExampleFile.getFileName()));
     assertTrue(instrumentedContent.contains("incSync("));
