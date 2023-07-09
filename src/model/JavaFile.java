@@ -5,6 +5,7 @@ import misc.IO;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JavaFile implements Serializable {
@@ -24,6 +25,14 @@ public class JavaFile implements Serializable {
   public JavaFile(Path sourceFile) {
     this.sourceFile = sourceFile;
     this.instrumentedFile = IO.instrumentDir.resolve(sourceFile.getFileName());
+  }
+
+  public List<Class> getClassesRecursive() {
+    List<Class> allClasses = new ArrayList<>(topLevelClasses);
+    for (Class clazz : topLevelClasses) {
+      allClasses.addAll(clazz.getClassesRecursive());
+    }
+    return allClasses;
   }
 
   @Serial

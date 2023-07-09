@@ -52,6 +52,14 @@ public class Class implements Serializable, Component {
     return this.getName();
   }
 
+  public List<Class> getClassesRecursive() {
+    List<Class> allClasses = new ArrayList<>(innerClasses);
+    for (Class clazz : innerClasses) {
+      allClasses.addAll(clazz.getClassesRecursive());
+    }
+    return allClasses;
+  }
+
   public List<Method> getMethodsRecursive() {
     List<Method> allMethods = new ArrayList<>(methods);
     if (innerClasses.size() > 0) {
@@ -68,6 +76,15 @@ public class Class implements Serializable, Component {
         .filter(b -> b.blockType == BlockType.METHOD || b.blockType == BlockType.CONSTRUCTOR)
         .mapToInt(b -> b.hits)
         .sum();
+  }
+
+  public List<Block> getBlocksRecursive() {
+    List<Block> allBlocks = new ArrayList<>(classBlocks);
+    allBlocks.addAll(methods.stream().flatMap(method -> method.blocks.stream()).toList());
+    for (Class clazz : innerClasses) {
+      allBlocks.addAll(clazz.getBlocksRecursive());
+    }
+    return allBlocks;
   }
 
   @Override
