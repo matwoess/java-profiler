@@ -2,10 +2,12 @@ import misc.IO;
 import misc.Util;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MainTest {
   Path samplesFolder = Path.of("sample");
@@ -94,5 +96,20 @@ public class MainTest {
     int exitCode = Util.runCommand(IO.instrumentDir, "javac", simpleExampleFile.getFileName().toString());
     assertEquals(0, exitCode);
     Main.main(new String[]{"-r"});
+  }
+
+  @Test
+  public void testReportOnly_MissingMetadataOrCounts() {
+    if (IO.resultsFile.toFile().exists()) {
+      IO.resultsFile.toFile().delete();
+    }
+    if (IO.metadataFile.toFile().exists()) {
+      IO.metadataFile.toFile().delete();
+    }
+    RuntimeException ex = assertThrows(RuntimeException.class, () -> Main.main(new String[]{"-r"}));
+    assertTrue(ex.getMessage().contains("metadata.dat (No such file or directory)"));
+    Main.main(new String[]{"-i", simpleExampleFile.toString()});
+    ex = assertThrows(RuntimeException.class, () -> Main.main(new String[]{"-r"}));
+    assertTrue(ex.getMessage().contains("counts.dat (No such file or directory)"));
   }
 }
