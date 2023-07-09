@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Class implements Serializable, Component {
   public String name;
   public ClassType classType = ClassType.CLASS;
-  public String packageName = "<default>";
+  public String packageName;
   public Class parentClass;
   public List<Class> innerClasses = new ArrayList<>();
   public List<Method> methods = new ArrayList<>();
@@ -40,7 +40,7 @@ public class Class implements Serializable, Component {
   }
 
   public String getFullName() {
-    if (packageName.equals("<default>")) {
+    if (packageName == null) {
       return getName();
     } else {
       return packageName + "." + getName();
@@ -94,7 +94,7 @@ public class Class implements Serializable, Component {
     Class aClass = (Class) o;
     if (!Objects.equals(name, aClass.name)) return false;
     if (classType != aClass.classType) return false;
-    if (!packageName.equals(aClass.packageName)) return false;
+    if (!Objects.equals(packageName, aClass.packageName)) return false;
     return Objects.equals(parentClass, aClass.parentClass);
   }
 
@@ -102,7 +102,7 @@ public class Class implements Serializable, Component {
   public int hashCode() {
     int result = name != null ? name.hashCode() : 0;
     result = 31 * result + classType.hashCode();
-    result = 31 * result + packageName.hashCode();
+    result = 31 * result + (packageName != null ? packageName.hashCode() : 0);
     result = 31 * result + (parentClass != null ? parentClass.hashCode() : 0);
     return result;
   }

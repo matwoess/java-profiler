@@ -18,7 +18,7 @@ public class SpecialCasesTest {
         import java.util.ArrayList;
         class Empty {
         }""";
-    JavaFile expected = jFile("<default>", 0, jClass("Empty"));
+    JavaFile expected = jFile(null, 0, jClass("Empty"));
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
@@ -134,7 +134,7 @@ public class SpecialCasesTest {
           }
         }
         """;
-    JavaFile expected = jFile("<default>", 0,
+    JavaFile expected = jFile(null, 0,
         jClass("BlockTypeClass",
             jBlock(STATIC, 4, 14, 50, 237),
             jBlock(SS_BLOCK, 5, 10, 70, 168),
