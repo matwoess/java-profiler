@@ -2,7 +2,6 @@ import misc.IO;
 import misc.Util;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,12 +11,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MainTest {
   Path samplesFolder = Path.of("sample");
   Path simpleExampleFile = samplesFolder.resolve("Simple.java");
+  Path lambdaExampleFile = samplesFolder.resolve("Lambdas.java");
   Path fibonacciExampleFile = samplesFolder.resolve("Fibonacci.java");
 
   @Test
   public void testShowUsage_NoError() {
     Main.main(new String[]{"-h"});
     Main.main(new String[]{"--help"});
+  }
+
+  @Test
+  public void testNoArguments() {
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[0]));
   }
 
   @Test
@@ -111,5 +116,25 @@ public class MainTest {
     Main.main(new String[]{"-i", simpleExampleFile.toString()});
     ex = assertThrows(RuntimeException.class, () -> Main.main(new String[]{"-r"}));
     assertTrue(ex.getMessage().contains("counts.dat (No such file or directory)"));
+  }
+
+  @Test
+  public void testSynchronizedOption_NoMoreArguments() {
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"-s"}));
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"--synchronized"}));
+  }
+
+  @Test
+  public void testSynchronizedOption_Instrument() throws IOException {
+    Main.main(new String[]{"-s", "-i", simpleExampleFile.toString()});
+    String instrumentedContent = Files.readString(IO.instrumentDir.resolve(simpleExampleFile.getFileName()));
+    assertTrue(instrumentedContent.contains("incSync("));
+    assertFalse(instrumentedContent.contains("inc("));
+    Main.main(new String[]{"--synchronized", "-i", lambdaExampleFile.toString()});
+    instrumentedContent = Files.readString(IO.instrumentDir.resolve(lambdaExampleFile.getFileName()));
+    assertTrue(instrumentedContent.contains("incSync("));
+    assertTrue(instrumentedContent.contains("incLambdaSync("));
+    assertFalse(instrumentedContent.contains("inc("));
+    assertFalse(instrumentedContent.contains("incLambda("));
   }
 }
