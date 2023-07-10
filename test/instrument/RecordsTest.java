@@ -67,7 +67,6 @@ public class RecordsTest {
             )
         )
     );
-    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
