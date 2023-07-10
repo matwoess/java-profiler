@@ -160,4 +160,14 @@ public class SamplesTest {
   public void testLocalClassesSample_Folder() {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "LocalClasses.java");
   }
+
+  @Test
+  public void testRecordsSample() {
+    TestUtils.instrumentAndProfile(samplesFolder.resolve("Records.java"));
+  }
+
+  @Test
+  public void testRecordsSample_Folder() {
+    TestUtils.instrumentFolderAndProfile(samplesFolder, "Records.java");
+  }
 }

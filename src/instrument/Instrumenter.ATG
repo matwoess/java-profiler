@@ -71,7 +71,7 @@ PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
 		.
 Annotation = "@" ident [ParExpr].
 Class<boolean local> =
-		("class" | "interface")	(. state.enterClass(false, local); .)
+		("class" | "interface" | "record")	(. state.enterClass(false, local); .)
 		ident {ANY} "{"
 		ClassBody								(. state.leaveClass(); .)
 	.
