@@ -37,23 +37,8 @@ TOKENS
 			| noQuote
 		)} quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
-	classRef   = ".class".
-	class      = "class".
-	interface  = "interface".
-	enum       = "enum".
-	lpar       = '('.
-	rpar       = ')'.
-	lbrac      = '['.
-	lbrace     = '{'.
-	colon      = ':'.
-	static     = "static".
-	if         = "if".
-	else       = "else".
-	equals     = "=".
-	new        = "new".
-	this       = "this".
-	return     = "return".
-	yield      = "yield".
+	classRef = ".class".  // exclude from being interpreted as new class definition
+	this     = "this".
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -93,7 +78,7 @@ ClassBody =
 	}
 	"}"
 .
-StaticBlock =	static Block<false>.
+StaticBlock =	"static" Block<false>.
 MethodDecl =
 		ident 							(. state.enterMethod(); .)
 		{ANY} (";"					(. state.leaveMethod(); .)
@@ -101,7 +86,7 @@ MethodDecl =
 			)
 		.
 Statement =
-		if ParExpr BlockOrSingleStatement [else BlockOrSingleStatement]
+		"if" ParExpr BlockOrSingleStatement ["else" BlockOrSingleStatement]
 		| SwitchStatement
 		| "while" ParExpr BlockOrSingleStatement
  		| "do" BlockOrSingleStatement "while" ParExpr ";"
@@ -109,7 +94,7 @@ Statement =
 		| "try" [ParExpr] Block<false> {"catch" ParExpr Block<false>} ["finally" Block<false>]
 		| ("break" | "continue") {ANY} ";"
 		| ("return" | "yield") (SwitchStatement | {ANY}) ";"
-		| IF(state.isLabel()) ident colon
+		| IF(state.isLabel()) ident ":"
 		| Annotation
 		| "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
 		| IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)

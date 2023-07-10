@@ -139,11 +139,11 @@ public class ParserState {
   }
 
   void checkSingleStatement(boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
-    if (parser.t.kind == _else && parser.la.kind == _if) {
+    if (parser.t.val.equals("else") && parser.la.val.equals("if")) {
       logger.log("else if found. no block.");
       return;
     }
-    if (parser.la.kind != _lbrace) {
+    if (!parser.la.val.equals("{")) {
       enterBlock(getBlockTypeByContext(true, isAssignment, isSwitch, isArrowExpr));
     }
   }
@@ -166,7 +166,7 @@ public class ParserState {
   }
 
   BlockType getBlockTypeByContext(boolean missingBraces, boolean inAssignment, boolean inSwitch, boolean inArrowExpr) {
-    if (curMeth == null && parser.t.kind == _static && parser.la.kind == _lbrace) {
+    if (curMeth == null && parser.t.val.equals("static") && parser.la.val.equals("{")) {
       return BlockType.STATIC;
     }
     if (!missingBraces) {
@@ -184,29 +184,29 @@ public class ParserState {
 
   boolean identAndLPar() {
     parser.scanner.ResetPeek();
-    return parser.la.kind == _ident && parser.scanner.Peek().kind == _lpar;
+    return parser.la.kind == _ident && parser.scanner.Peek().val.equals("(");
   }
 
   boolean classNameAndLBrace() {
     parser.scanner.ResetPeek();
-    return parser.la.val.equals(curClass.name) && parser.scanner.Peek().kind == _lbrace;
+    return parser.la.val.equals(curClass.name) && parser.scanner.Peek().val.equals("{");
   }
 
   boolean staticAndLBrace() {
     parser.scanner.ResetPeek();
-    return parser.la.kind == _static && parser.scanner.Peek().kind == _lbrace;
+    return parser.la.val.equals("static") && parser.scanner.Peek().val.equals("{");
   }
 
   boolean isLabel() {
-    return parser.la.kind == _ident && parser.scanner.Peek().kind == _colon;
+    return parser.la.kind == _ident && parser.scanner.Peek().val.equals(":");
   }
 
   boolean thisAndLPar() {
-    return parser.la.kind == _this && parser.scanner.Peek().kind == _lpar;
+    return parser.la.val.equals("this") && parser.scanner.Peek().val.equals("(");
   }
 
   boolean isAssignment() {
-    return parser.t.kind == _equals || parser.t.kind == _return || parser.t.kind == _yield;
+    return parser.t.val.equals("=") || parser.t.val.equals("return") || parser.t.val.equals("yield");
   }
 
   static class Logger {
