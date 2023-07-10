@@ -142,11 +142,10 @@ SSArrowBody<boolean inSwitch, boolean inAssignment> =
 				{ANY | ParExpr}
 				(")" | ";")									(. state.leaveSingleStatement(); .)
 				.
-Instantiation = "new" ident {["."] ident}
-		(BracketExpr [BraceExpr] // array initializer
-			| [AngleBracketExpr] ParExpr ["{" (. state.enterClass(true, false); .) ClassBody (. state.leaveClass();.)]
-		)
-		.
+Instantiation = "new" ident {["."] ident} (ArrayInitRest | ClassInitRest).
+ArrayInitRest = BracketExpr [BraceExpr].
+ClassInitRest = [AngleBracketExpr] ParExpr [ClassExtension].
+ClassExtension = "{" (. state.enterClass(true, false); .) ClassBody (. state.leaveClass();.).
 Block<boolean isMethod> = 					(. state.enterBlock(isMethod); .)
 				"{" {Statement} "}"					(. state.leaveBlock(isMethod); .)
 			.
