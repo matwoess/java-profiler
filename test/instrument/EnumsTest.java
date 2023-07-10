@@ -277,9 +277,10 @@ public class EnumsTest {
         jClass("EnumWithInnerAbstractEnum",
             jClass("WithAbstractMethods",
                 jMethod("description", 12, 14, 303, 341),
-                jMethod("printDescription", 17, 19, 405, 461),
-                jMethod("description", 23, 25, 526, 555),
-                jMethod("printDescription", 28, 30, 604, 684),
+                jBlock(STATIC, 16, 18, 376, 399),
+                jMethod("printDescription", 21, 23, 448, 515),
+                jMethod("description", 27, 29, 580, 609),
+                jMethod("printDescription", 32, 34, 658, 738),
                 jMethod("description"),
                 jMethod("printDescription")
             ),
