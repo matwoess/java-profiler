@@ -47,14 +47,15 @@ IGNORE tab + cr + lf
 
 PRODUCTIONS
 
-Instrumenter = [PackageDecl] { Annotation | Class<false> | Enum<false> | ANY }.
+Instrumenter = [PackageDecl] { AnnotationType | Annotation | Class<false> | Enum<false> | ANY }.
 PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
 		ident 							(. packageName.add(t.val); .)
 		{'.' ident 					(. packageName.add(t.val); .)
 		}
 		";" 								(. state.setPackageName(packageName); .)
 		.
-Annotation = "@" ident [ParExpr].
+AnnotationType = "@interface" ident BraceExpr.
+Annotation = "@" ident {"." ident} [ParExpr].
 Class<boolean local> =
 		("class" | "interface" | "record")	(. state.enterClass(false, local); .)
 		ident {ANY} "{"
@@ -73,7 +74,7 @@ ClassBody =
 		| IF(state.identAndLPar()) MethodDecl
 		| IF(state.classNameAndLBrace()) MethodDecl  // compact record constructor
 		| IF(state.staticAndLBrace()) StaticBlock
-		| Annotation
+		| AnnotationType | Annotation
 		| ANY
 	}
 	"}"

@@ -78,4 +78,69 @@ public class AnnotationsTest {
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+  @Test
+  public void testSimpleOuterAnnotationType() {
+    String fileContent = """
+        @interface VersionID {
+          long id();
+        }
+        
+        @SuppressWarnings({"unused"})
+        @VersionID(id = 5123L)
+        public class Annotations {
+          public static void main(String[] args) {
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("Annotations",
+            jMethod("main", 8, 9, 161, 165)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testComplexInnerAnnotationTypeWithDefaultsAndQualifiedName() {
+    String fileContent = """
+        package complexAnnotations;
+        import java.lang.annotation.Retention;
+        import java.lang.annotation.RetentionPolicy;
+        
+        public class Annotations {
+          
+          private static class RuntimeRetentionPolicy {
+            @Documented
+            @Retention(RetentionPolicy.RUNTIME)
+            @interface AuthorMetadata {
+              String author();
+              String date();
+              int revision() default 1;
+              String[] comments() default {"no comment"};
+            }
+          }
+          @Override
+          @SuppressWarnings({"unused", "unchecked"})
+          @RuntimeRetentionPolicy.AuthorMetadata(
+              author = "Myself",
+              date = "01.03.2020",
+              comments = {"Important!", "Is documented\\n"}
+          )
+          public boolean equals(@SuppressWarnings("null") Object obj) {
+            return super.equals(obj);
+          }
+          public static void main(String[] args) {
+          }
+        }
+        """;
+    JavaFile expected = jFile("complexAnnotations", 27,
+        jClass("Annotations",
+            jClass("RuntimeRetentionPolicy"),
+            jMethod("equals", 24, 26, 682, 716),
+            jMethod("main", 27, 28, 759, 763)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }
