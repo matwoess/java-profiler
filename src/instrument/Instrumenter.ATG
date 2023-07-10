@@ -86,6 +86,7 @@ ClassBody =
 	{ Enum<false> | Class<false>
 		| "=" (BraceExpr | {ANY} Statement)
 		| IF(state.identAndLPar()) MethodDecl
+		| IF(state.classNameAndLBrace()) MethodDecl  // compact record constructor
 		| IF(state.staticAndLBrace()) StaticBlock
 		| Annotation
 		| ANY
@@ -94,8 +95,8 @@ ClassBody =
 .
 StaticBlock =	static Block<false>.
 MethodDecl =
-		ident 											(. state.enterMethod(); .)
-		ParExpr {ANY} (";"					(. state.leaveMethod(); .)
+		ident 							(. state.enterMethod(); .)
+		{ANY} (";"					(. state.leaveMethod(); .)
 			| Block<true>
 			)
 		.

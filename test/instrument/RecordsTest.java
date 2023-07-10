@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static instrument.TestInstrumentUtils.parseJavaFile;
 import static instrument.TestProgramBuilder.*;
-import static model.BlockType.BLOCK;
-import static model.BlockType.STATIC;
+import static model.BlockType.*;
 
 public class RecordsTest {
   @Test
@@ -44,7 +43,7 @@ public class RecordsTest {
   }
 
   @Test
-  void testRecordWithCanonicalConstructorInCompactForm() {
+  void testRecordWithCanonicalConstructorsAndCompactForm() {
     String fileContent = """
         record LenWidth(double length, double width) {
           LenWidth {
@@ -52,11 +51,20 @@ public class RecordsTest {
               throw new IllegalArgumentException(String.format("Invalid dimensions: %f, %f", length, width));
             }
           }
+          LenWidth(String lenStr, String widthStr) {
+            this(Double.parseDouble(lenStr), Double.parseDouble(widthStr));
+          }
         }
         """;
-    JavaFile expected = jFile(
-        jClass("LenWidth"
-            // TODO: not yet supported
+    int thisCallOffset = "\n    this(Double.parseDouble(lenStr), Double.parseDouble(widthStr));".length();
+    JavaFile expected = jFile(null, 0,
+        jClass("LenWidth",
+            jConstructor("LenWidth", 2, 6, 59, 206,
+                jBlock(BLOCK, 3, 5, 94, 202)
+            ),
+            jMethod("LenWidth",
+                jBlock(CONSTRUCTOR, 7, 9, 251, 323, thisCallOffset)
+            )
         )
     );
     System.out.println(getBuilderCode(parseJavaFile(fileContent)));

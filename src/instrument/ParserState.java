@@ -183,10 +183,17 @@ public class ParserState {
   }
 
   boolean identAndLPar() {
+    parser.scanner.ResetPeek();
     return parser.la.kind == _ident && parser.scanner.Peek().kind == _lpar;
   }
 
+  boolean classNameAndLBrace() {
+    parser.scanner.ResetPeek();
+    return parser.la.val.equals(curClass.name) && parser.scanner.Peek().kind == _lbrace;
+  }
+
   boolean staticAndLBrace() {
+    parser.scanner.ResetPeek();
     return parser.la.kind == _static && parser.scanner.Peek().kind == _lbrace;
   }
 
