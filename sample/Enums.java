@@ -85,5 +85,52 @@ public enum Enums {
     e.printSummary();
     ClassInEnum.printSkillLowerCase(e);
     callMethods();
+    System.out.println(WithAbstractMethods.Value1.description());
+    WithAbstractMethods.Value2.printDescription();
   }
+}
+
+enum WithTrailingComma {
+  A,B,
+}
+
+enum WithTrailingCommaAndSemicolon {
+  A,B,;
+}
+enum WithTrailingCommaSemicolonAndFunction {
+  A,B,;
+  void print1() {
+    System.out.println("1");
+  }
+}
+
+enum WithAbstractMethods {
+  Value1() {
+    @Override
+    String description() {
+      return "The value 1";
+    }
+    static int x;
+    static {
+      x = 5;
+    }
+
+    @Override
+    void printDescription() {
+      System.out.println(x + ", " + this.description());
+    }
+  },
+  Value2 {
+    @Override
+    String description() {
+      return null;
+    }
+
+    @Override
+    void printDescription() {
+      System.out.println("the description is:" + this.description());
+    }
+  };
+  abstract String description();
+  abstract void printDescription();
 }

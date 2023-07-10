@@ -64,7 +64,7 @@ Class<boolean local> =
 Enum<boolean local> =
 	"enum"										(. state.enterClass(false, local); .)
 	ident {ANY} "{"
-	{[","] ident [ParExpr]}
+	{ident [ParExpr] ["{" ClassBody] [","]}
 	(";" ClassBody						// class body can follow only after a ";"
 		| "}") 									(. state.leaveClass(); .)
 	.

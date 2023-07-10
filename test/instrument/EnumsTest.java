@@ -44,6 +44,26 @@ public class EnumsTest {
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
+  @Test
+  public void testEnumWithTrailingComma() {
+    String fileContent = """
+        enum AB {
+          A, B,
+        }""";
+    JavaFile expected = jFile(jClass("AB"));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testEnumWithTrailingCommaAndSemicolon() {
+    String fileContent = """
+        enum AB {
+          A, B,;
+        }""";
+    JavaFile expected = jFile(jClass("AB"));
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
 
   @Test
   public void testStaticBlock() {
@@ -68,7 +88,7 @@ public class EnumsTest {
   public void testMemberFunction() {
     String fileContent = """
         enum Enum {
-          VALUE1, VAL_2 ;
+          VALUE1, VAL_2, ;
           public static final long ID;
           public String lowercase() {
             return this.name().toLowerCase();
@@ -76,7 +96,7 @@ public class EnumsTest {
         }""";
     JavaFile expected = jFile(
         jClass("Enum",
-            jMethod("lowercase", 4, 6, 90, 132)
+            jMethod("lowercase", 4, 6, 91, 133)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -208,6 +228,64 @@ public class EnumsTest {
       block.incInsertPosition--;
       block.endPos--;
     });
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testEnumWithAbstractMethodsAndImplementationsPerValue() {
+    String fileContent = """
+        public enum EnumWithInnerAbstractEnum {
+          A,B,C;
+          
+          public static void main(String[] args) {
+            System.out.println(WithAbstractMethods.Value1.description());
+            WithAbstractMethods.Value2.printDescription();
+          }
+            
+          enum WithAbstractMethods {
+            Value1() {
+              @Override
+              String description() {
+                return "The value 1";
+              }
+              static int x;
+              static {
+                x = 5;
+              }
+          
+              @Override
+              void printDescription() {
+                System.out.println(x + ", " + this.description());
+              }
+            },
+            Value2 {
+              @Override
+              String description() {
+                return null;
+              }
+             
+              @Override
+              void printDescription() {
+                System.out.println("the description is:" + this.description());
+              }
+            };
+            abstract String description();
+            abstract void printDescription();
+          }
+        }""";
+    JavaFile expected = jFile(
+        jClass("EnumWithInnerAbstractEnum",
+            jClass("WithAbstractMethods",
+                jMethod("description", 12, 14, 303, 341),
+                jMethod("printDescription", 17, 19, 405, 461),
+                jMethod("description", 23, 25, 526, 555),
+                jMethod("printDescription", 28, 30, 604, 684),
+                jMethod("description"),
+                jMethod("printDescription")
+            ),
+            jMethod("main", 4, 7, 92, 213)
+        )
+    );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 }
