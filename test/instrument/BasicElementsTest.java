@@ -403,4 +403,31 @@ public class BasicElementsTest {
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+  @Test
+  public void testThrowWithClassCastAndInstanceOf() {
+    String fileContent = baseTemplate.formatted("""
+        try {
+          int i = 5 / 0;
+        } catch (Exception ex) {
+          if (ex instanceof ArithmeticException) {
+            throw (ArithmeticException) ex;
+          } else if (ex instanceof ClassCastException classEx) {
+            throw classEx;
+          }
+          throw new RuntimeException("Other exception: " + ex.getMessage());
+        }
+        """, "");
+    JavaFile expected = jFile(
+        jClass("Main",
+            jMethod("main", 2, 14, 62, 349,
+                jBlock(BLOCK, 3, 5, 72, 91),
+                jBlock(BLOCK, 5, 12, 114, 344),
+                jBlock(BLOCK, 6, 8, 157, 197),
+                jBlock(BLOCK, 8, 10, 250, 273)
+            )
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }

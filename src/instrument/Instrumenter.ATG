@@ -100,7 +100,6 @@ Statement =
 		| "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
 		| IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
 		| ("++" | "--") ["("] ident [")"] ";"
-		| "throw" ["new"] ident [ParExpr] ";" // TODO: investigate if needed
 		| Class<true>
 		| Enum<true>
 		| GenericStatement
@@ -108,7 +107,7 @@ Statement =
 		| ";"
 		.
 GenericStatement =
-	(ident | string | this | ParExpr | Instantiation)
+	(ident | string | this | "throw" | ParExpr | Instantiation)
 		{string | char
 			| ArrowExpression<false, false>
 			| SwitchStatement
