@@ -108,16 +108,21 @@ public class Main {
 
   static void printUsage() {
     System.out.println("""
-        Usage: <main class> [sync] [option] [<main-file>] [arguments]
-        Sync:
-           -s, --synchronized               instrument using synchronized counters
+        Usage: profiler [options] <main file> [program args]
+        Or   : profiler [options] <run mode>
         Options:
           -h, --help                        display this message and quit
+          -s, --synchronized                instrument using synchronized counters increments
+          -v, --verbose                     output verbose info about instrumentation of each file
           -d, --sources-directory <dir>     directory containing java files to additionally instrument
-          -i, --instrument-only <file|dir>  only instrument a single file or directory of java files
-          -r, --generate-report             only generate a report from metadata and counts
-        Main file:    the path to the main java file; after instrumentation it will be compiled and run
-        Arguments:    will be passed to the main java class if given
+        Run mode (exclusive):
+          -i, --instrument-only <file|dir>  only instrument a single file or directory of java files and exit
+          -r, --generate-report             only generate the report from existing metadata and counts
+        Main file:
+          The path to the main java file. After instrumentation *it* will be compiled and and executed.
+          (Must not be specified for the generate-report run mode)
+        Program args:
+          Will be passed to the main java class if given
         """);
   }
 
