@@ -54,31 +54,16 @@ public class Main {
     if (reportOnly) {
       if (args.length > 0) invalidUsage();
       generateReportOnly();
-    }
-    else if (instrumentOnly) {
+    } else if (instrumentOnly) {
       if (args.length != 1) invalidUsage();
       Path target = Path.of(args[0]);
       instrumentOnly(target, syncCounters, verboseOutput);
-    }
-    else {
+    } else {
       if (args.length == 0) invalidUsage();
       Path mainFile = Path.of(args[0]);
       assertJavaSourceFile(mainFile);
       String[] programArgs = Arrays.copyOfRange(args, 1, args.length);
-      if (sourcesDir != null) {
-        instrumentFolderCompileAndRun(sourcesDir, mainFile, programArgs, syncCounters, verboseOutput);
-      } else {
-        instrumentCompileAndRun(mainFile, programArgs, syncCounters, verboseOutput);
-      }
-    }
-  }
-
-  private static void instrumentOnly(Path targetPath, boolean sync, boolean verbose) {
-    boolean targetIsFile = targetPath.toFile().isFile();
-    if (targetIsFile) {
-      instrumentSingleFile(targetPath, sync, verbose);
-    } else {
-      instrumentFolder(targetPath, sync, verbose);
+      instrumentCompileAndRun(sourcesDir, mainFile, programArgs, syncCounters, verboseOutput);
     }
   }
 
@@ -88,27 +73,28 @@ public class Main {
     profiler.createSymLinkForReport();
   }
 
-  private static void instrumentSingleFile(Path file, boolean sync, boolean verbose) {
-    assertJavaSourceFile(file);
-    JavaFile mainJavaFile = new JavaFile(file);
-    Instrumenter instrumenter = new Instrumenter(sync, verbose, mainJavaFile);
-    instrumenter.analyzeFiles();
-    instrumenter.instrumentFiles();
-    instrumenter.exportMetadata();
-  }
-
-  private static void instrumentFolder(Path folder, boolean sync, boolean verbose) {
-    JavaFile[] javaFiles = getJavaFilesInFolder(folder, null);
+  private static void instrumentOnly(Path target, boolean sync, boolean verbose) {
+    JavaFile[] javaFiles;
+    if (target.toFile().isFile()) {
+      javaFiles = new JavaFile[]{new JavaFile(target)};
+    } else {
+      javaFiles = Util.getJavaFilesInFolder(target, null);
+    }
     Instrumenter instrumenter = new Instrumenter(sync, verbose, javaFiles);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
   }
 
-  private static void instrumentFolderCompileAndRun(Path instrumentDir, Path mainFile, String[] programArgs, boolean sync, boolean verbose) {
-    assertJavaSourceFile(mainFile);
-    JavaFile mainJavaFile = new JavaFile(mainFile, instrumentDir);
-    JavaFile[] additionalJavaFiles = getJavaFilesInFolder(instrumentDir, mainFile);
+  private static void instrumentCompileAndRun(Path sourcesDir, Path mainFile, String[] programArgs, boolean sync, boolean verbose) {
+    JavaFile mainJavaFile;
+    JavaFile[] additionalJavaFiles = new JavaFile[0];
+    if (sourcesDir != null) {
+      mainJavaFile = new JavaFile(mainFile, sourcesDir);
+      additionalJavaFiles = Util.getJavaFilesInFolder(sourcesDir, mainFile);
+    } else {
+      mainJavaFile = new JavaFile(mainFile);
+    }
     Instrumenter instrumenter = new Instrumenter(sync, verbose, Util.prependToArray(additionalJavaFiles, mainJavaFile));
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
@@ -118,32 +104,6 @@ public class Main {
     profiler.profile(programArgs);
     profiler.generateReport();
     profiler.createSymLinkForReport();
-  }
-
-  private static void instrumentCompileAndRun(Path mainFile, String[] programArgs, boolean sync, boolean verbose) {
-    assertJavaSourceFile(mainFile);
-    JavaFile mainJavaFile = new JavaFile(mainFile);
-    Instrumenter instrumenter = new Instrumenter(sync, verbose, mainJavaFile);
-    instrumenter.analyzeFiles();
-    instrumenter.instrumentFiles();
-    instrumenter.exportMetadata();
-    Profiler profiler = new Profiler(mainJavaFile);
-    profiler.compileInstrumented();
-    profiler.profile(programArgs);
-    profiler.generateReport();
-    profiler.createSymLinkForReport();
-  }
-
-  private static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path mainFile) {
-    try (Stream<Path> walk = Files.walk(sourcesFolder)) {
-      return walk
-          .filter(path -> Files.isRegularFile(path) && !path.equals(mainFile) && Util.isJavaFile(path))
-          .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
-          .toArray(JavaFile[]::new);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
   }
 
   static void printUsage() {
