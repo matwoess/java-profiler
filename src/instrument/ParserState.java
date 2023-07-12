@@ -12,6 +12,7 @@ import static instrument.Parser.*;
 public class ParserState {
   Parser parser;
   Logger logger;
+  boolean verbose = false;
 
   int beginOfImports = 0;
   String packageName;
@@ -209,14 +210,13 @@ public class ParserState {
     return parser.t.val.equals("=") || parser.t.val.equals("return") || parser.t.val.equals("yield");
   }
 
-  static class Logger {
+  public class Logger {
     public static final String GREEN = "\u001B[32m";
     public static final String RED = "\u001B[31m";
     public static final String BRIGHT = "\u001B[97m";
     public static final String RESET = "\u001B[0m";
 
     Parser parser;
-    static boolean verbose = true;
     public static int indent = 1;
 
     public Logger(Parser p) {

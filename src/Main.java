@@ -1,4 +1,5 @@
 import instrument.Instrumenter;
+import misc.IO;
 import misc.Util;
 import model.JavaFile;
 import profile.Profiler;
@@ -12,52 +13,72 @@ import java.util.stream.Stream;
 import static misc.Util.assertJavaSourceFile;
 
 public class Main {
-  static boolean syncCounters = false;
-
   public static void main(String[] args) throws IllegalArgumentException {
     if (args.length == 0) {
       invalidUsage();
     }
-    if (args[0].equals("-h") || args[0].equals("--help")) {
-      printUsage();
-      return;
+    boolean instrumentOnly = false, reportOnly = false, syncCounters = false, verboseOutput = false;
+    Path sourcesDir = null;
+    int i = 0;
+    for (; i < args.length; i++) {
+      if (!args[i].startsWith("-")) {
+        break;
+      }
+      switch (args[i]) {
+        case "-h", "--help" -> {
+          printUsage();
+          return;
+        }
+        case "-s", "--synchronized" -> syncCounters = true;
+        case "-v", "--verbose" -> verboseOutput = true;
+        case "-i", "--instrument-only" -> instrumentOnly = true;
+        case "-r", "--generate-report" -> reportOnly = true;
+        case "-o", "--out-directory" -> {
+          if (i + 1 >= args.length) invalidUsage();
+          IO.outputDir = Path.of(args[++i]);
+          assert IO.outputDir.toFile().isDirectory() : "not a directory: " + sourcesDir;
+        }
+        case "-d", "--sources-directory" -> {
+          if (i + 1 >= args.length) invalidUsage();
+          sourcesDir = Path.of(args[++i]);
+          assert sourcesDir.toFile().isDirectory() : "not a directory: " + sourcesDir;
+        }
+        default -> {
+          System.out.println("unknown option: " + args[i]);
+          invalidUsage();
+        }
+      }
     }
-    if (args[0].equals("-s") || args[0].equals("--synchronized")) {
-      syncCounters = true;
-      args = Arrays.copyOfRange(args, 1, args.length);
+    args = Arrays.copyOfRange(args, i, args.length);
+    if (instrumentOnly && reportOnly) invalidUsage();
+    if (reportOnly) {
+      if (args.length > 0) invalidUsage();
+      generateReportOnly();
+    }
+    else if (instrumentOnly) {
+      if (args.length != 1) invalidUsage();
+      Path target = Path.of(args[0]);
+      instrumentOnly(target, syncCounters, verboseOutput);
+    }
+    else {
       if (args.length == 0) invalidUsage();
-    }
-    switch (args[0]) {
-      case "-i", "--instrument-only" -> {
-        if (args.length != 2) invalidUsage();
-        instrumentOnly(args[1]);
-      }
-      case "-r", "--generate-report" -> {
-        if (args.length != 1) invalidUsage();
-        generateReportOnly();
-      }
-      case "-d", "--sources-directory" -> {
-        if (args.length < 3) invalidUsage();
-        Path instrumentDir = Path.of(args[1]);
-        Path mainFile = Path.of(args[2]);
-        String[] programArgs = Arrays.copyOfRange(args, 3, args.length);
-        instrumentFolderCompileAndRun(instrumentDir, mainFile, programArgs);
-      }
-      default -> {
-        String[] programArgs = Arrays.copyOfRange(args, 1, args.length);
-        Path mainFile = Path.of(args[0]);
-        instrumentCompileAndRun(mainFile, programArgs);
+      Path mainFile = Path.of(args[0]);
+      assertJavaSourceFile(mainFile);
+      String[] programArgs = Arrays.copyOfRange(args, 1, args.length);
+      if (sourcesDir != null) {
+        instrumentFolderCompileAndRun(sourcesDir, mainFile, programArgs, syncCounters, verboseOutput);
+      } else {
+        instrumentCompileAndRun(mainFile, programArgs, syncCounters, verboseOutput);
       }
     }
   }
 
-  private static void instrumentOnly(String target) {
-    Path targetPath = Path.of(target);
+  private static void instrumentOnly(Path targetPath, boolean sync, boolean verbose) {
     boolean targetIsFile = targetPath.toFile().isFile();
     if (targetIsFile) {
-      instrumentSingleFile(targetPath);
+      instrumentSingleFile(targetPath, sync, verbose);
     } else {
-      instrumentFolder(targetPath);
+      instrumentFolder(targetPath, sync, verbose);
     }
   }
 
@@ -67,28 +88,28 @@ public class Main {
     profiler.createSymLinkForReport();
   }
 
-  private static void instrumentSingleFile(Path file) {
+  private static void instrumentSingleFile(Path file, boolean sync, boolean verbose) {
     assertJavaSourceFile(file);
     JavaFile mainJavaFile = new JavaFile(file);
-    Instrumenter instrumenter = new Instrumenter(syncCounters, mainJavaFile);
+    Instrumenter instrumenter = new Instrumenter(sync, verbose, mainJavaFile);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
   }
 
-  private static void instrumentFolder(Path folder) {
+  private static void instrumentFolder(Path folder, boolean sync, boolean verbose) {
     JavaFile[] javaFiles = getJavaFilesInFolder(folder, null);
-    Instrumenter instrumenter = new Instrumenter(syncCounters, javaFiles);
+    Instrumenter instrumenter = new Instrumenter(sync, verbose, javaFiles);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
   }
 
-  private static void instrumentFolderCompileAndRun(Path instrumentDir, Path mainFile, String[] programArgs) {
+  private static void instrumentFolderCompileAndRun(Path instrumentDir, Path mainFile, String[] programArgs, boolean sync, boolean verbose) {
     assertJavaSourceFile(mainFile);
     JavaFile mainJavaFile = new JavaFile(mainFile, instrumentDir);
     JavaFile[] additionalJavaFiles = getJavaFilesInFolder(instrumentDir, mainFile);
-    Instrumenter instrumenter = new Instrumenter(syncCounters, Util.prependToArray(additionalJavaFiles, mainJavaFile));
+    Instrumenter instrumenter = new Instrumenter(sync, verbose, Util.prependToArray(additionalJavaFiles, mainJavaFile));
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
@@ -99,10 +120,10 @@ public class Main {
     profiler.createSymLinkForReport();
   }
 
-  private static void instrumentCompileAndRun(Path mainFile, String[] programArgs) {
+  private static void instrumentCompileAndRun(Path mainFile, String[] programArgs, boolean sync, boolean verbose) {
     assertJavaSourceFile(mainFile);
     JavaFile mainJavaFile = new JavaFile(mainFile);
-    Instrumenter instrumenter = new Instrumenter(syncCounters, mainJavaFile);
+    Instrumenter instrumenter = new Instrumenter(sync, verbose, mainJavaFile);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();

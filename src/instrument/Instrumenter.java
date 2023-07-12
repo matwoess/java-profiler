@@ -12,17 +12,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Instrumenter {
-  boolean syncCounters;
   JavaFile[] javaFiles;
   int blockCounter;
-  String incRefAdd = "";
+  public String incRefAdd;
+  boolean verboseOutput;
 
-  public Instrumenter(boolean syncCounters, JavaFile... javaFiles) {
+  public Instrumenter(boolean syncCounters, boolean verboseOutput, JavaFile... javaFiles) {
     assert javaFiles.length > 0;
-    this.syncCounters = syncCounters;
-    if (syncCounters) {
-      incRefAdd = "Sync";
-    }
+    this.verboseOutput = verboseOutput;
+    incRefAdd = (syncCounters) ? "Sync" : "";
     this.javaFiles = javaFiles;
   }
 
@@ -35,6 +33,7 @@ public class Instrumenter {
   void analyze(JavaFile javaFile) {
     System.out.println("Reading File: \"" + javaFile.sourceFile + "\"");
     Parser parser = new Parser(new Scanner(javaFile.sourceFile.toString()));
+    parser.state.verbose = verboseOutput;
     parser.Parse();
     int errors = parser.errors.count;
     System.out.printf("Errors found: %d\n\n", errors);
