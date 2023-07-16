@@ -17,6 +17,7 @@ public class Main {
     if (args.length == 0) {
       invalidUsage();
     }
+    IO.outputDir = Path.of("out", "profiler");
     boolean instrumentOnly = false, reportOnly = false, syncCounters = false, verboseOutput = false;
     Path sourcesDir = null;
     int i = 0;
