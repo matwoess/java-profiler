@@ -52,6 +52,9 @@ public class Profiler {
     IO.clearDirectoryIfExists(IO.getReportDir());
     new ReportClassIndexWriter(allJavaFiles).write();
     for (JavaFile jFile : allJavaFiles) {
+      if (jFile.foundBlocks.isEmpty()) {
+        continue;
+      }
       new ReportSourceWriter(jFile).write();
       for (Class clazz : jFile.topLevelClasses) {
         new ReportMethodIndexWriter(clazz, jFile).write();
