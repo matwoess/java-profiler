@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class IO {
-  public static Path outputDir = Path.of("out", "profiler");
+  public static Path outputDir;
 
   public record Metadata(int blocksCount, JavaFile[] javaFiles) {
   }
