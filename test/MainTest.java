@@ -63,7 +63,7 @@ public class MainTest {
   }
 
   @Test
-  public void testInstrumentAndProfile_Missing2ndArgument() {
+  public void testInstrumentFolderAndProfile_MissingMainArgument() {
     String[] args1 = new String[]{"-d", samplesFolder.toString()};
     assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
     String[] args2 = new String[]{"--sources-directory", samplesFolder.toString()};
@@ -75,6 +75,14 @@ public class MainTest {
     String[] args1 = new String[]{"-r", samplesFolder.toString()};
     assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
     String[] args2 = new String[]{"--generate-report", samplesFolder.toString()};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+  }
+
+  @Test
+  public void testInstrumentOnlyAndReportOnly_BothExclusiveModes() {
+    String[] args1 = new String[]{"-r", "-i", samplesFolder.toString()};
+    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    String[] args2 = new String[]{"-v", "-s", "--generate-report", "--instrument-only", simpleExampleFile.toString()};
     assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
   }
 
@@ -91,7 +99,7 @@ public class MainTest {
   }
 
   @Test
-  public void testInstrumentAFolderAndProfileAFile() {
+  public void testInstrumentFolderAndProfileAFile() {
     Main.main(new String[]{"-d", samplesFolder.toString(), simpleExampleFile.toString()});
     Main.main(new String[]{"--sources-directory", samplesFolder.toString(), simpleExampleFile.toString()});
   }
@@ -128,17 +136,45 @@ public class MainTest {
   }
 
   @Test
-  public void testSynchronizedOption_Instrument_Execute() throws IOException {
+  public void testSynchronizedOption_Instrument() throws IOException {
     Main.main(new String[]{"-s", "-i", simpleExampleFile.toString()});
     String instrumentedContent = Files.readString(IO.getInstrumentDir().resolve(simpleExampleFile.getFileName()));
     assertTrue(instrumentedContent.contains("incSync("));
     assertFalse(instrumentedContent.contains("inc("));
-    Main.main(new String[]{"--synchronized", "-i", lambdaExampleFile.toString()});
+    Main.main(new String[]{"--synchronized", "--verbose", "-i", lambdaExampleFile.toString()});
     instrumentedContent = Files.readString(IO.getInstrumentDir().resolve(lambdaExampleFile.getFileName()));
     assertTrue(instrumentedContent.contains("incSync("));
     assertTrue(instrumentedContent.contains("incLambdaSync("));
     assertFalse(instrumentedContent.contains("inc("));
     assertFalse(instrumentedContent.contains("incLambda("));
+  }
+
+  @Test
+  public void testSynchronizedCompileAndExecute() {
     Main.main(new String[]{"-s", lambdaExampleFile.toString()});
+    Main.main(new String[]{"-s", "-d", samplesFolder.toString(), lambdaExampleFile.toString()});
+  }
+
+  @Test
+  public void testVerbose_MissingArguments() {
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"-s"}));
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"--synchronized"}));
+  }
+
+  @Test
+  public void testVerbose_CompileAndExecute() {
+    Main.main(new String[]{"-v", lambdaExampleFile.toString()});
+    Main.main(new String[]{"-v", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
+  }
+
+  @Test
+  public void testCustomOutDir_CompileAndExecute() throws IOException {
+    Path tempDir = Files.createTempDirectory(null);
+    Main.main(new String[]{"-o", tempDir.toString(), lambdaExampleFile.toString()});
+    Main.main(new String[]{"--verbose", "--out-directory", tempDir.toString(), "-s", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
+    assertTrue(tempDir.resolve(IO.getMetadataPath().getFileName()).toFile().exists());
+    assertTrue(tempDir.resolve(IO.getCountsPath().getFileName()).toFile().exists());
+    assertTrue(tempDir.resolve(IO.getReportDir().getFileName()).resolve("index_Simple.html").toFile().exists());
+    assertTrue(tempDir.resolve(IO.getReportDir().getFileName()).resolve(samplesFolder.getFileName()).resolve("Simple.html").toFile().exists());
   }
 }
