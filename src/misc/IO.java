@@ -7,6 +7,7 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -18,7 +19,7 @@ public class IO {
   }
 
   public static Path getOutputDir() {
-    return outputDir;
+    return Objects.requireNonNullElseGet(outputDir, () -> Path.of("out", "profiler"));
   }
   public static Path getInstrumentDir() {
     return getOutputDir().resolve("instrumented");
