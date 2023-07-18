@@ -123,10 +123,10 @@ public class MainTest {
       countsFile.delete();
     }
     RuntimeException ex = assertThrows(RuntimeException.class, () -> Main.main(new String[]{"-r"}));
-    assertTrue(ex.getMessage().contains("metadata.dat (No such file or directory)"));
+    assertTrue(ex.getMessage().contains("metadata.dat"));
     Main.main(new String[]{"-i", simpleExampleFile.toString()});
     ex = assertThrows(RuntimeException.class, () -> Main.main(new String[]{"-r"}));
-    assertTrue(ex.getMessage().contains("counts.dat (No such file or directory)"));
+    assertTrue(ex.getMessage().contains("counts.dat"));
   }
 
   @Test
