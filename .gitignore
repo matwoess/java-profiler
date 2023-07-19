@@ -42,10 +42,5 @@ bin/
 .DS_Store
 
 ### Custom ###
-java-profiler.iml
 lib/
-/src/instrument/Parser.java
-/src/instrument/Parser.java.old
-/src/instrument/Scanner.java
-/src/instrument/Scanner.java.old
 /projects/

@@ -40,3 +40,9 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Custom ###
+/src/main/java/instrument/Parser.java
+/src/main/java/instrument/Parser.java.old
+/src/main/java/instrument/Scanner.java
+/src/main/java/instrument/Scanner.java.old
