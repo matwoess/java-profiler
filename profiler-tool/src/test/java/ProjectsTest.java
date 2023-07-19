@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProjectsTest {
-  private static final Path projectsRoot = Path.of("projects");
+  private static final Path projectsRoot = Path.of("..", "projects");
 
   @BeforeAll
   public static void assertProjectsRootExists() {

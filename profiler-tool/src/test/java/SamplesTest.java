@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SamplesTest {
-  Path samplesFolder = Path.of("sample");
+   Path samplesFolder = Path.of("..", "sample");
 
   @Test
   public void testSimpleSample() {
@@ -132,8 +132,8 @@ public class SamplesTest {
   public void testAllSamplesSample_Folder() {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "AllSamples.java");
   }
-  
-  
+
+
   @Test
   public void testHelperSample_NoMainClass() {
     Path mainFile = samplesFolder.resolve("helper").resolve("Helper.java");

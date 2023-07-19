@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MainTest {
-  Path samplesFolder = Path.of("sample");
+  Path samplesFolder = Path.of("..", "sample");
   Path simpleExampleFile = samplesFolder.resolve("Simple.java");
   Path lambdaExampleFile = samplesFolder.resolve("Lambdas.java");
   Path fibonacciExampleFile = samplesFolder.resolve("Fibonacci.java");
