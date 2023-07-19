@@ -44,3 +44,6 @@ bin/
 ### Custom ###
 lib/
 /projects/
+/.idea/
+presentations
+todo.md
