@@ -1,17 +1,15 @@
 plugins {
-    id("java")
+    java
+    application
+    id("org.openjfx.javafxplugin") version "0.0.13"
 }
 
 version = "1.0-SNAPSHOT"
 
 repositories {
-    mavenLocal()
+    mavenCentral()
 }
 
-dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-}
-
-tasks.test {
-    useJUnitPlatform()
+javafx {
+    modules = listOf("javafx.controls", "javafx.fxml")
 }
