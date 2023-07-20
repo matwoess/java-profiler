@@ -23,7 +23,7 @@ public class Profiler {
   }
 
   public void compileInstrumented() {
-    Path mainFile = IO.getInstrumentDir().relativize(mainJavaFile.instrumentedFile);
+    Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile));
     int exitCode = Util.runCommand(IO.getInstrumentDir(), "javac", mainFile.toString());
     if (exitCode != 0) {
       throw new RuntimeException("Error compiling instrumented file: " + mainFile);
@@ -31,7 +31,7 @@ public class Profiler {
   }
 
   public void profile(String[] programArgs) {
-    Path mainFile = IO.getInstrumentDir().relativize(mainJavaFile.instrumentedFile);
+    Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile));
     String filePath = mainFile.toString();
     String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
     String[] command = Util.prependToArray(programArgs, "java", classFilePath);

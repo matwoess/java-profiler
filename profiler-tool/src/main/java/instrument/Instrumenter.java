@@ -7,6 +7,7 @@ import model.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -72,8 +73,9 @@ public class Instrumenter {
       builder.append(codeInsert.code());
     }
     builder.append(fileContent.substring(prevIdx));
-    IO.createDirectoriesIfNotExists(javaFile.instrumentedFile);
-    Files.writeString(javaFile.instrumentedFile, builder.toString());
+    Path instrumentedFilePath = IO.getInstrumentedFilePath(javaFile);
+    IO.createDirectoriesIfNotExists(instrumentedFilePath);
+    Files.writeString(instrumentedFilePath, builder.toString());
   }
 
   List<CodeInsert> getCodeInserts(JavaFile javaFile) {

@@ -174,7 +174,9 @@ public class MainTest {
     Main.main(new String[]{"--verbose", "--out-directory", tempDir.toString(), "-s", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
     assertTrue(tempDir.resolve(IO.getMetadataPath().getFileName()).toFile().exists());
     assertTrue(tempDir.resolve(IO.getCountsPath().getFileName()).toFile().exists());
-    assertTrue(tempDir.resolve(IO.getReportDir().getFileName()).resolve("index_Simple.html").toFile().exists());
-    assertTrue(tempDir.resolve(IO.getReportDir().getFileName()).resolve(samplesFolder.getFileName()).resolve("Simple.html").toFile().exists());
+    Path tmpReportDir = tempDir.resolve(IO.getReportDir().getFileName());
+    assertTrue(tmpReportDir.resolve("index_Simple.html").toFile().exists());
+    assertTrue(tmpReportDir.resolve("source").resolve("Simple.html").toFile().exists());
+    assertTrue(tmpReportDir.resolve("source").resolve(Path.of("at", "jku", "test", "DeepPackage.html")).toFile().exists());
   }
 }

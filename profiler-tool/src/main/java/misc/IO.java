@@ -13,16 +13,22 @@ import java.util.stream.Stream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class IO {
+  public static final Path DEFAULT_OUT_DIR = Path.of("out", "profiler");
   public static Path outputDir;
 
   public record Metadata(int blocksCount, JavaFile[] javaFiles) {
   }
 
   public static Path getOutputDir() {
-    return Objects.requireNonNullElseGet(outputDir, () -> Path.of("out", "profiler"));
+    return Objects.requireNonNullElse(outputDir, DEFAULT_OUT_DIR);
   }
+
   public static Path getInstrumentDir() {
     return getOutputDir().resolve("instrumented");
+  }
+
+  public static Path getInstrumentedFilePath(JavaFile javaFile) {
+    return getInstrumentDir().resolve(javaFile.relativePath);
   }
 
   public static Path getAuxiliaryInstrumentDir() {
@@ -51,6 +57,15 @@ public class IO {
 
   public static Path getReportIndexSymLinkPath() {
     return Path.of(".", "report.html");
+  }
+
+  public static Path getReportMethodIndexPath(model.Class clazz) {
+    return IO.getReportDir().resolve("index_" + clazz.name + ".html");
+  }
+
+  public static Path getReportSourceFilePath(JavaFile javaFile) {
+    Path reportFilePath = IO.getReportDir().resolve("source").resolve(javaFile.relativePath);
+    return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 
   public static void exportMetadata(Metadata metadata) {
@@ -135,12 +150,4 @@ public class IO {
     }
   }
 
-  public static Path getReportMethodIndexPath(model.Class clazz) {
-    return IO.getReportDir().resolve("index_" + clazz.name + ".html");
-  }
-
-  public static Path getReportSourceFilePath(JavaFile javaFile) {
-    Path reportFilePath = IO.getReportDir().resolve(javaFile.sourceFile);
-    return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
-  }
 }

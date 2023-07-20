@@ -1,7 +1,5 @@
 package model;
 
-import misc.IO;
-
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,17 +12,16 @@ public class JavaFile implements Serializable {
   public List<Class> topLevelClasses;
   public List<Block> foundBlocks;
   public transient Path sourceFile;
-  public transient Path instrumentedFile;
+  public transient Path relativePath;
 
   public JavaFile(Path sourceFile, Path sourcesRoot) {
     this.sourceFile = sourceFile;
-    Path relativePathToSources = sourcesRoot.relativize(sourceFile);
-    this.instrumentedFile = IO.getInstrumentDir().resolve(relativePathToSources);
+    this.relativePath = sourcesRoot.relativize(sourceFile);
   }
 
   public JavaFile(Path sourceFile) {
     this.sourceFile = sourceFile;
-    this.instrumentedFile = IO.getInstrumentDir().resolve(sourceFile.getFileName());
+    this.relativePath = sourceFile.getFileName();
   }
 
   public List<Class> getClassesRecursive() {
@@ -39,13 +36,13 @@ public class JavaFile implements Serializable {
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.defaultWriteObject();
     oos.writeUTF(sourceFile.toString());
-    oos.writeUTF(instrumentedFile.toString());
+    oos.writeUTF(relativePath.toString());
   }
 
   @Serial
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
     sourceFile = Paths.get(ois.readUTF());
-    instrumentedFile = Paths.get(ois.readUTF());
+    relativePath = Paths.get(ois.readUTF());
   }
 }

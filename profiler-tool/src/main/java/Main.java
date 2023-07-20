@@ -4,12 +4,10 @@ import misc.Util;
 import model.JavaFile;
 import profile.Profiler;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.stream.Stream;
 
+import static misc.IO.DEFAULT_OUT_DIR;
 import static misc.Util.assertJavaSourceFile;
 
 public class Main {
@@ -17,7 +15,7 @@ public class Main {
     if (args.length == 0) {
       invalidUsage();
     }
-    IO.outputDir = Path.of("out", "profiler");
+    IO.outputDir = DEFAULT_OUT_DIR;
     boolean instrumentOnly = false, reportOnly = false, syncCounters = false, verboseOutput = false;
     Path sourcesDir = null;
     int i = 0;
