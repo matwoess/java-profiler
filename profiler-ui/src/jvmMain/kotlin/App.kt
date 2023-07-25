@@ -41,7 +41,8 @@ fun App() {
     AppTheme(state.getDarkMode()) {
         Scaffold(
             topBar = { Header(toggleFn = { state.setDarkMode(!state.getDarkMode()) }) },
-            content = { Body(state) }
+            content = { Body(state) },
+            modifier = Modifier.height(1000.dp)
         )
     }
 }
