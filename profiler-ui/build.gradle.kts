@@ -1,8 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    kotlin("multiplatform")
-    id("org.jetbrains.compose")
+    kotlin("multiplatform") version "1.8.20"
+    id("org.jetbrains.compose") version "1.4.1"
 }
 
 version = "1.0-SNAPSHOT"
@@ -15,7 +15,7 @@ repositories {
 
 kotlin {
     jvm {
-        jvmToolchain(17)
+        jvmToolchain(11)
         withJava()
     }
     sourceSets {

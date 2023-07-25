@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -27,7 +26,7 @@ fun main() = application {
         //icon = painterResource("profiler.svg"),
         state = WindowState(
             position = WindowPosition.Aligned(Alignment.Center),
-            size = DpSize(width = 700.dp, height = Dp.Unspecified)
+            size = DpSize(width = 700.dp, height = 1000.dp)
         ),
     ) {
         App()
@@ -39,11 +38,12 @@ fun main() = application {
 fun App() {
     val state = remember { AppState }
     AppTheme(state.getDarkMode()) {
-        Scaffold(
-            topBar = { Header(toggleFn = { state.setDarkMode(!state.getDarkMode()) }) },
-            content = { Body(state) },
-            modifier = Modifier.height(1000.dp)
-        )
+        Surface(modifier = Modifier.fillMaxSize()) {
+            Column {
+                Header(toggleFn = { state.setDarkMode(!state.getDarkMode()) })
+                Body(state)
+            }
+        }
     }
 }
 
@@ -74,12 +74,16 @@ fun Body(state: AppState) {
     Column(modifier = Modifier.padding(all = 24.dp)) {
         RunMode(state)
         PathSelector("Main file:", state.getMainFile(), state::setMainFile)
-        ProgramArgs(state)
-        PathSelector("Sources dir:", state.getSourcesDir(), state::setSourcesDir)
+        if (state.getRunMode() == RunMode.Default) {
+            ProgramArgs(state)
+            PathSelector("Sources dir:", state.getSourcesDir(), state::setSourcesDir)
+        }
         PathSelector("Output dir:", state.getOutputDir(), state::setOutputDir)
         Box(modifier = Modifier.height(24.dp))
         Row {
-            Option("Synchronized counters", state.getSyncCounters(), state::setSyncCounters)
+            if (state.getRunMode() != RunMode.ReportOnly) {
+                Option("Synchronized counters", state.getSyncCounters(), state::setSyncCounters)
+            }
             Option("Verbose output", state.getVerboseOutput(), state::setVerboseOutput)
             Box(modifier = Modifier.weight(1f))
             RunButton(state)
@@ -134,7 +138,7 @@ fun PathSelector(title: String, value: String, onChange: (String) -> Unit) {
                 onClick = {},
                 Modifier.align(Alignment.CenterVertically)
             ) {
-                Text("...")
+                Text("Select")
             }
         }
     }
