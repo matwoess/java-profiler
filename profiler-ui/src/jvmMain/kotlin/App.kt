@@ -39,10 +39,10 @@ fun main() = application {
 fun App() {
     val state = remember { AppState }
     AppTheme(state.getDarkMode()) {
-        Column {
-            Header(toggleFn = { state.setDarkMode(!state.getDarkMode()) })
-            Body(state)
-        }
+        Scaffold(
+            topBar = { Header(toggleFn = { state.setDarkMode(!state.getDarkMode()) }) },
+            content = { Body(state) }
+        )
     }
 }
 
