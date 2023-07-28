@@ -13,11 +13,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.application
-
+import androidx.compose.ui.window.*
+import javax.swing.JFileChooser
+import javax.swing.JFrame
 
 fun main() = application {
     Window(
@@ -73,12 +71,12 @@ fun Header(toggleFn: () -> Unit) {
 fun Body(state: AppState) {
     Column(modifier = Modifier.padding(all = 24.dp)) {
         RunMode(state)
-        PathSelector("Main file:", state.getMainFile(), state::setMainFile)
+        PathSelector("Main file:", state.getMainFile(), state::setMainFile, listOf("java"))
         if (state.getRunMode() == RunMode.Default) {
             ProgramArgs(state)
-            PathSelector("Sources dir:", state.getSourcesDir(), state::setSourcesDir)
+            PathSelector("Sources dir:", state.getSourcesDir(), state::setSourcesDir, listOf())
         }
-        PathSelector("Output dir:", state.getOutputDir(), state::setOutputDir)
+        PathSelector("Output dir:", state.getOutputDir(), state::setOutputDir, listOf())
         Box(modifier = Modifier.height(24.dp))
         Row {
             if (state.getRunMode() != RunMode.ReportOnly) {
@@ -100,7 +98,7 @@ fun RunMode(state: AppState) {
         style = MaterialTheme.typography.h5
     )
     Column(modifier = Modifier.selectableGroup()) {
-        RunMode.values().forEach { mode ->
+        RunMode.entries.forEach { mode ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,7 +123,7 @@ fun RunMode(state: AppState) {
 }
 
 @Composable
-fun PathSelector(title: String, value: String, onChange: (String) -> Unit) {
+fun PathSelector(title: String, value: String, onChange: (String) -> Unit, fileExtensions: List<String>) {
     Column(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
         Text(text = title)
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -135,13 +133,19 @@ fun PathSelector(title: String, value: String, onChange: (String) -> Unit) {
                 modifier = Modifier.weight(1f).padding(end = 8.dp)
             )
             Button(
-                onClick = {},
+                onClick = { openFileDialog(fileExtensions) },
                 Modifier.align(Alignment.CenterVertically)
             ) {
                 Text("Select")
             }
         }
     }
+}
+
+fun openFileDialog(fileExtensions: List<String>) {
+    val frame = JFrame()
+    var fc = JFileChooser()
+    fc.showOpenDialog(frame)
 }
 
 @Composable
