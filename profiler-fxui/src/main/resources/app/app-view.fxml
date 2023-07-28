@@ -49,16 +49,16 @@
             <HBox.margin>
                <Insets right="8.0" />
             </HBox.margin></TextField>
-         <Button mnemonicParsing="false" text="Select" />
+         <Button fx:id="btnSourcesDir" mnemonicParsing="false" text="Select" />
       </children>
    </HBox>
    <HBox prefHeight="0.0" prefWidth="Infinity">
       <children>
-         <TextField fx:id="txtOutDir" prefHeight="26.0" prefWidth="294.0" promptText="Output directory" HBox.hgrow="ALWAYS">
+         <TextField fx:id="txtOutputDir" prefHeight="26.0" prefWidth="294.0" promptText="Output directory" HBox.hgrow="ALWAYS">
             <HBox.margin>
                <Insets right="8.0" />
             </HBox.margin></TextField>
-         <Button mnemonicParsing="false" text="Select" />
+         <Button fx:id="btnOutputDir" mnemonicParsing="false" text="Select" />
       </children>
    </HBox>
    <HBox>
