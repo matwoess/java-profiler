@@ -10,6 +10,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation("io.github.mkpaz:atlantafx-base:2.0.1")
+}
+
 javafx {
     modules = listOf("javafx.controls", "javafx.fxml")
 }
