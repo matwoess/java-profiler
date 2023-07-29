@@ -71,9 +71,9 @@ public class Controller {
   public void chooseDirectory(TextField pathField) {
     DirectoryChooser dirChooser = new DirectoryChooser();
     dirChooser.setTitle("Choose Directory");
-    File file = dirChooser.showDialog(pathField.getScene().getWindow());
-    if (file != null) {
-      pathField.setText(file.toString());
+    File dir = dirChooser.showDialog(pathField.getScene().getWindow());
+    if (dir != null) {
+      pathField.setText(dir.toString());
     }
   }
 
