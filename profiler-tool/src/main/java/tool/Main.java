@@ -119,7 +119,7 @@ public class Main {
         Run mode (exclusive):
           -i, --instrument-only <file|dir>  only instrument a single file or directory of java files and exit
           -r, --generate-report             only generate the report from existing metadata and counts
-        tool.Main file:
+        Main file:
           The path to the main java file. After instrumentation *it* will be compiled and and executed.
           (Must not be specified for the generate-report run mode)
         Program args:
