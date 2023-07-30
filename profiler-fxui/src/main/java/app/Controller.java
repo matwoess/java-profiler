@@ -79,6 +79,8 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
+    String[] arguments = {"-h"};
+    tool.Main.main(arguments);
     txtAreaOutput.setText("Profiling now.\nHere's the output.");
   }
 }
