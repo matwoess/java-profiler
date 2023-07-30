@@ -1,3 +1,5 @@
+import tool.Main;
+
 import java.nio.file.Path;
 
 public class TestUtils {
