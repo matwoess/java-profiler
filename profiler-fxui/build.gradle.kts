@@ -1,7 +1,7 @@
 plugins {
     java
     application
-    id("org.openjfx.javafxplugin") version "0.0.13"
+    id("org.openjfx.javafxplugin") version "0.0.14"
 }
 
 version = "1.0-SNAPSHOT"
@@ -17,4 +17,9 @@ dependencies {
 
 javafx {
     modules = listOf("javafx.controls", "javafx.fxml")
+}
+
+application {
+    mainModule.set("app")
+    mainClass.set("app.App")
 }
