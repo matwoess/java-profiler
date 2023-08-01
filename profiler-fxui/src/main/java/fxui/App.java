@@ -1,4 +1,4 @@
-package app;
+package fxui;
 
 import atlantafx.base.theme.*;
 import javafx.application.Application;

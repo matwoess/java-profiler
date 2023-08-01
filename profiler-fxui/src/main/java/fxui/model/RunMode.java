@@ -1,4 +1,4 @@
-package app.model;
+package fxui.model;
 
 public enum RunMode {
   DEFAULT, INSTRUMENT_ONLY, REPORT_ONLY;

@@ -1,6 +1,6 @@
-package app;
+package fxui;
 
-import app.model.RunMode;
+import fxui.model.RunMode;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
