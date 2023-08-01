@@ -42,7 +42,7 @@ bin/
 .DS_Store
 
 ### Custom ###
-/src/main/java/instrument/Parser.java
-/src/main/java/instrument/Parser.java.old
-/src/main/java/instrument/Scanner.java
-/src/main/java/instrument/Scanner.java.old
+/src/main/java/tool/instrument/Parser.java
+/src/main/java/tool/instrument/Parser.java.old
+/src/main/java/tool/instrument/Scanner.java
+/src/main/java/tool/instrument/Scanner.java.old
