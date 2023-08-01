@@ -1,6 +1,7 @@
 package fxui;
 
 import fxui.model.RunMode;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -8,6 +9,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +50,7 @@ public class Controller {
   private TextArea txtAreaOutput;
 
   private final ToggleGroup toggleGroup = new ToggleGroup();
+  private PrintStream consoleOutput;
 
   @FXML
   private void initialize() {
@@ -68,6 +72,21 @@ public class Controller {
       btnMainFile.setOnAction(event -> chooseFile(txtMainFile));
       btnSourcesDir.setOnAction(event -> chooseDirectory(txtSourcesDir));
       btnOutputDir.setOnAction(event -> chooseDirectory(txtOutputDir));
+    }
+    {
+      consoleOutput = new PrintStream(new SystemOutputStream());
+      System.setOut(consoleOutput);
+      System.setErr(consoleOutput);
+    }
+  }
+
+  public class SystemOutputStream extends OutputStream {
+    public void appendText(String valueOf) {
+      Platform.runLater(() -> txtAreaOutput.appendText(valueOf));
+    }
+
+    public void write(int b) {
+      appendText(String.valueOf((char)b));
     }
   }
 

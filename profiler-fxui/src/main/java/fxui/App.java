@@ -15,7 +15,7 @@ public class App extends Application {
   public void start(Stage stage) throws Exception {
     Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
     FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load(), 600, 500);
+    Scene scene = new Scene(fxmlLoader.load(), 800, 600);
     stage.setTitle("Java Profiler");
     stage.setScene(scene);
     stage.show();
