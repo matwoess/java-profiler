@@ -21,6 +21,6 @@ javafx {
 }
 
 application {
-    mainModule.set("app")
-    mainClass.set("app.App")
+    mainModule.set("fxui")
+    mainClass.set("fxui.App")
 }
