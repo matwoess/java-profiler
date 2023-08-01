@@ -1,6 +1,6 @@
 package tool.instrument;
 
-import tool.misc.Util;
+import tool.common.Util;
 import tool.model.*;
 
 import java.io.IOException;

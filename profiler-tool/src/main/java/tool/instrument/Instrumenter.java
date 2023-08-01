@@ -1,7 +1,7 @@
 package tool.instrument;
 
-import tool.misc.CodeInsert;
-import tool.misc.IO;
+import tool.common.CodeInsert;
+import tool.common.IO;
 import tool.model.*;
 import tool.model.BlockType;
 import tool.model.JavaFile;

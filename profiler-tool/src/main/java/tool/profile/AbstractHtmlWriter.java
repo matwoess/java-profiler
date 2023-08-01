@@ -1,6 +1,6 @@
 package tool.profile;
 
-import tool.misc.IO;
+import tool.common.IO;
 
 import java.io.IOException;
 import java.nio.file.Files;

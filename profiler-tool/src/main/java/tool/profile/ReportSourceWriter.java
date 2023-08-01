@@ -1,7 +1,7 @@
 package tool.profile;
 
-import tool.misc.CodeInsert;
-import tool.misc.IO;
+import tool.common.CodeInsert;
+import tool.common.IO;
 import tool.model.Block;
 import tool.model.JavaFile;
 

@@ -1,16 +1,16 @@
 package tool;
 
 import tool.instrument.Instrumenter;
-import tool.misc.IO;
-import tool.misc.Util;
+import tool.common.IO;
+import tool.common.Util;
 import tool.model.JavaFile;
 import tool.profile.Profiler;
 
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import static tool.misc.IO.DEFAULT_OUT_DIR;
-import static tool.misc.Util.assertJavaSourceFile;
+import static tool.common.IO.DEFAULT_OUT_DIR;
+import static tool.common.Util.assertJavaSourceFile;
 
 public class Main {
   public static void main(String[] args) throws IllegalArgumentException {

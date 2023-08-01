@@ -1,7 +1,7 @@
 package tool.profile;
 
-import tool.misc.IO;
-import tool.misc.Util;
+import tool.common.IO;
+import tool.common.Util;
 import tool.model.Block;
 import tool.model.JClass;
 import tool.model.JavaFile;

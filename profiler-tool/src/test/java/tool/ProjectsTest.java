@@ -1,9 +1,9 @@
 package tool;
 
-import tool.misc.IO;
+import tool.common.IO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import tool.misc.Util;
+import tool.common.Util;
 
 import java.nio.file.Path;
 
