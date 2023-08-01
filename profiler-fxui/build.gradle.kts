@@ -4,6 +4,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.0.14"
 }
 
+group = "dev.matwoess"
 version = "1.0-SNAPSHOT"
 
 repositories {

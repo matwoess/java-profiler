@@ -2,6 +2,7 @@ plugins {
     id("java")
 }
 
+group = "dev.matwoess"
 version = "1.0-SNAPSHOT"
 
 repositories {
