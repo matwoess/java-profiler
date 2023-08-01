@@ -116,6 +116,8 @@ public class Main {
           -s, --synchronized                instrument using synchronized counters increments
           -v, --verbose                     output verbose info about instrumentation of each file
           -d, --sources-directory <dir>     directory containing java files to additionally instrument
+          -o, --out-directory <dir>         directory where the tool stores instrumented files, metadata and results
+                                            (default = "out/profiler")
         Run mode (exclusive):
           -i, --instrument-only <file|dir>  only instrument a single file or directory of java files and exit
           -r, --generate-report             only generate the report from existing metadata and counts
