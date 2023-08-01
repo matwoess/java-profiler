@@ -1,6 +1,6 @@
 package instrument;
 
-import model.Class;
+import model.JClass;
 import model.*;
 
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ public class ParserState {
   int beginOfImports = 0;
   String packageName;
 
-  List<Class> topLevelClasses = new ArrayList<>();
-  Stack<Class> classStack = new Stack<>();
+  List<JClass> topLevelClasses = new ArrayList<>();
+  Stack<JClass> classStack = new Stack<>();
   List<Block> allBlocks = new ArrayList<>();
   Stack<Block> blockStack = new Stack<>();
   Stack<Method> methodStack = new Stack<>();
-  Class curClass = null;
+  JClass curClass = null;
   Method curMeth = null;
   Block curBlock = null;
 
@@ -55,7 +55,7 @@ public class ParserState {
       curMeth = null;
     }
     String className = (anonymous) ? null : parser.la.val;
-    curClass = new Class(className);
+    curClass = new JClass(className);
     if (packageName != null) {
       curClass.packageName = packageName;
     }
@@ -243,7 +243,7 @@ public class ParserState {
     }
 
     private String describe(Component comp, boolean leave) {
-      if (comp instanceof Class clazz) return "class <" + clazz.getFullName() + ">";
+      if (comp instanceof JClass clazz) return "class <" + clazz.getFullName() + ">";
       if (comp instanceof Method meth) return meth + "()";
       if (comp instanceof Block block)
         return String.format("%s [%d]", block.blockType, leave ? block.endPos : block.begPos);

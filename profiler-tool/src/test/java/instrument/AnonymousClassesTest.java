@@ -1,6 +1,6 @@
 package instrument;
 
-import model.Class;
+import model.JClass;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +60,7 @@ public class AnonymousClassesTest {
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
-    Class innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
+    JClass innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
     assertEquals("Main$1", innerClass.getName());
     assertEquals("Main$1$X", innerClass.innerClasses.get(0).getName());
   }

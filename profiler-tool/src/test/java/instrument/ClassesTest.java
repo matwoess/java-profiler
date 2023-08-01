@@ -1,6 +1,6 @@
 package instrument;
 
-import model.Class;
+import model.JClass;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
@@ -248,10 +248,10 @@ public class ClassesTest {
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
-    Class tlClass = expected.topLevelClasses.get(0);
-    Class innerClass1 = tlClass.innerClasses.get(0);
-    Class innerClass2 = tlClass.innerClasses.get(1);
-    Class subInnerClass = innerClass2.innerClasses.get(0);
+    JClass tlClass = expected.topLevelClasses.get(0);
+    JClass innerClass1 = tlClass.innerClasses.get(0);
+    JClass innerClass2 = tlClass.innerClasses.get(1);
+    JClass subInnerClass = innerClass2.innerClasses.get(0);
     assertEquals("A", tlClass.getName());
     assertEquals("A$B", innerClass1.getName());
     assertEquals("A$C", innerClass2.getName());

@@ -9,7 +9,7 @@ import java.util.List;
 public class JavaFile implements Serializable {
   public int beginOfImports = 0;
   public String packageName;
-  public List<Class> topLevelClasses;
+  public List<JClass> topLevelClasses;
   public List<Block> foundBlocks;
   public transient Path sourceFile;
   public transient Path relativePath;
@@ -24,9 +24,9 @@ public class JavaFile implements Serializable {
     this.relativePath = sourceFile.getFileName();
   }
 
-  public List<Class> getClassesRecursive() {
-    List<Class> allClasses = new ArrayList<>(topLevelClasses);
-    for (Class clazz : topLevelClasses) {
+  public List<JClass> getClassesRecursive() {
+    List<JClass> allClasses = new ArrayList<>(topLevelClasses);
+    for (JClass clazz : topLevelClasses) {
       allClasses.addAll(clazz.getClassesRecursive());
     }
     return allClasses;

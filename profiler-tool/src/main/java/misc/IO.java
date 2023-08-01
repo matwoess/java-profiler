@@ -1,5 +1,6 @@
 package misc;
 
+import model.JClass;
 import model.JavaFile;
 
 import java.io.*;
@@ -59,7 +60,7 @@ public class IO {
     return Path.of(".", "report.html");
   }
 
-  public static Path getReportMethodIndexPath(model.Class clazz) {
+  public static Path getReportMethodIndexPath(JClass clazz) {
     return IO.getReportDir().resolve("index_" + clazz.name + ".html");
   }
 

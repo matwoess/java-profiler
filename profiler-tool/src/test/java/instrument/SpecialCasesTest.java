@@ -1,6 +1,6 @@
 package instrument;
 
-import model.Class;
+import model.JClass;
 import model.JavaFile;
 import org.junit.jupiter.api.Test;
 
@@ -49,8 +49,8 @@ public class SpecialCasesTest {
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
-    Class tlClass = expected.topLevelClasses.get(0);
-    Class innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
+    JClass tlClass = expected.topLevelClasses.get(0);
+    JClass innerClass = expected.topLevelClasses.get(0).innerClasses.get(0);
     assertEquals("name.Of._the_.pkg.Empty", tlClass.getFullName());
     assertEquals("Empty", tlClass.getName());
     assertEquals("name.Of._the_.pkg.Empty$InEmpty", innerClass.getFullName());
@@ -240,7 +240,7 @@ public class SpecialCasesTest {
     );
     JavaFile actual = parseJavaFile(fileContent);
     TestInstrumentUtils.assertResultEquals(expected, actual);
-    List<Class> innerClasses = expected.topLevelClasses.get(0).innerClasses;
+    List<JClass> innerClasses = expected.topLevelClasses.get(0).innerClasses;
     assertEquals("MixedClasses$Inner", innerClasses.get(0).getName());
     assertEquals("mixed.pkg.MixedClasses$Inner", innerClasses.get(0).getFullName());
     assertEquals("1", innerClasses.get(1).name);

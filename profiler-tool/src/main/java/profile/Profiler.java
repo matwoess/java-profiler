@@ -3,7 +3,7 @@ package profile;
 import misc.IO;
 import misc.Util;
 import model.Block;
-import model.Class;
+import model.JClass;
 import model.JavaFile;
 
 import java.io.DataInputStream;
@@ -56,7 +56,7 @@ public class Profiler {
         continue;
       }
       new ReportSourceWriter(jFile).write();
-      for (Class clazz : jFile.topLevelClasses) {
+      for (JClass clazz : jFile.topLevelClasses) {
         new ReportMethodIndexWriter(clazz, jFile).write();
       }
     }

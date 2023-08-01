@@ -1,7 +1,7 @@
 package instrument;
 
 import model.*;
-import model.Class;
+import model.JClass;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -10,11 +10,11 @@ import java.util.List;
 
 public class TestProgramBuilder {
 
-  public static JavaFile jFile(model.Class... classes) {
+  public static JavaFile jFile(JClass... classes) {
     JavaFile javaFile = new JavaFile(Path.of("."));
     javaFile.topLevelClasses = new ArrayList<>();
     javaFile.foundBlocks = new ArrayList<>();
-    for (model.Class clazz : classes) {
+    for (JClass clazz : classes) {
       javaFile.topLevelClasses.add(clazz);
       javaFile.foundBlocks.addAll(clazz.getBlocksRecursive());
     }
@@ -22,7 +22,7 @@ public class TestProgramBuilder {
     return javaFile;
   }
 
-  public static JavaFile jFile(String packageName, int beginOfImports, model.Class... classes) {
+  public static JavaFile jFile(String packageName, int beginOfImports, JClass... classes) {
     JavaFile javaFile = jFile(classes);
     javaFile.packageName = packageName;
     javaFile.beginOfImports = beginOfImports;
@@ -30,10 +30,10 @@ public class TestProgramBuilder {
     return javaFile;
   }
 
-  public static Class jClass(String name, Component... classChildren) {
-    Class clazz = new Class(name);
+  public static JClass jClass(String name, Component... classChildren) {
+    JClass clazz = new JClass(name);
     for (Component child : classChildren) {
-      if (child instanceof Class innerClass) {
+      if (child instanceof JClass innerClass) {
         innerClass.setParentClass(clazz);
       } else if (child instanceof Method method) {
         method.setParentClass(clazz);
@@ -47,8 +47,8 @@ public class TestProgramBuilder {
     return clazz;
   }
 
-  public static Class jClass(ClassType classType, String name, Component... classChildren) {
-    Class clazz = jClass(name, classChildren);
+  public static JClass jClass(ClassType classType, String name, Component... classChildren) {
+    JClass clazz = jClass(name, classChildren);
     clazz.classType = classType;
     return clazz;
   }
@@ -102,13 +102,13 @@ public class TestProgramBuilder {
   public static void getBuilderCode(JavaFile javaFile, StringBuilder builder) {
     builder.append("JavaFile expected = jFile(");
     builder.append(javaFile.packageName).append(", ").append(javaFile.beginOfImports);
-    for (Class clazz : javaFile.topLevelClasses) {
+    for (JClass clazz : javaFile.topLevelClasses) {
       getBuilderCode(clazz, builder);
     }
     builder.append("\n);");
   }
 
-  public static void getBuilderCode(Class clazz, StringBuilder builder) {
+  public static void getBuilderCode(JClass clazz, StringBuilder builder) {
     builder.append(",\n jClass(");
     if (clazz.classType != ClassType.CLASS) {
       builder.append(clazz.classType.name()).append(", ");
@@ -125,7 +125,7 @@ public class TestProgramBuilder {
     for (Block classBlock : clazz.classBlocks) {
       getBuilderCode(classBlock, builder);
     }
-    for (Class innerClass : clazz.innerClasses) {
+    for (JClass innerClass : clazz.innerClasses) {
       getBuilderCode(innerClass, builder);
     }
     for (Method method : clazz.methods) {

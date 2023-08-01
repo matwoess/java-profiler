@@ -6,14 +6,14 @@ import java.util.List;
 
 public class Method implements Serializable, Component {
   public String name;
-  public Class parentClass;
+  public JClass parentClass;
   public List<Block> blocks = new ArrayList<>();
 
   public Method(String name) {
     this.name = name;
   }
 
-  public void setParentClass(Class parentClass) {
+  public void setParentClass(JClass parentClass) {
     assert this.parentClass == null;
     this.parentClass = parentClass;
     parentClass.methods.add(this);

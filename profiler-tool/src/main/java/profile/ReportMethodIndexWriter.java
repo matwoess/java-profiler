@@ -2,7 +2,7 @@ package profile;
 
 import misc.IO;
 import model.Block;
-import model.Class;
+import model.JClass;
 import model.JavaFile;
 import model.Method;
 
@@ -11,10 +11,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ReportMethodIndexWriter extends AbstractHtmlWriter {
-  Class clazz;
+  JClass clazz;
   Path reportSourceFile;
 
-  public ReportMethodIndexWriter(Class clazz, JavaFile javaFile) {
+  public ReportMethodIndexWriter(JClass clazz, JavaFile javaFile) {
     this.clazz = clazz;
     this.reportSourceFile = IO.getReportSourceFilePath(javaFile);
     title = "Methods in " + clazz.getFullName();

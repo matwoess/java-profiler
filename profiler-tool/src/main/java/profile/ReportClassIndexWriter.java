@@ -1,7 +1,7 @@
 package profile;
 
 import misc.IO;
-import model.Class;
+import model.JClass;
 import model.JavaFile;
 
 import java.nio.file.Path;
@@ -42,16 +42,16 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
   }
 
   public void sortedClassTable() {
-    Map<Class, JavaFile> fileByClass = new HashMap<>();
+    Map<JClass, JavaFile> fileByClass = new HashMap<>();
     for (JavaFile jFile : allJavaFiles) {
-      for (Class clazz : jFile.topLevelClasses) {
+      for (JClass clazz : jFile.topLevelClasses) {
         fileByClass.put(clazz, jFile);
       }
     }
-    List<Class> sortedClasses = Arrays.stream(allJavaFiles)
+    List<JClass> sortedClasses = Arrays.stream(allJavaFiles)
         .flatMap(f -> f.topLevelClasses.stream())
         .filter(c -> c.getMethodsRecursive().stream().anyMatch(m -> !m.isAbstract()))
-        .sorted(Comparator.comparingInt(Class::getAggregatedMethodBlockCounts).reversed())
+        .sorted(Comparator.comparingInt(JClass::getAggregatedMethodBlockCounts).reversed())
         .toList();
     content.append("<table>\n")
         .append("<tr>\n")
@@ -59,7 +59,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         .append("<th>Class</th>\n")
         .append("<th>Source file</th>\n")
         .append("</tr>\n");
-    for (Class clazz : sortedClasses) {
+    for (JClass clazz : sortedClasses) {
       JavaFile javaFile = fileByClass.get(clazz);
       Path methIdxHref = IO.getReportMethodIndexPath(clazz).getFileName();
       Path sourceFileHref = IO.getReportDir().relativize(IO.getReportSourceFilePath(javaFile));

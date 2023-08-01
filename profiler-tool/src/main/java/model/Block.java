@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Block implements Serializable, Component {
-  public Class clazz;
+  public JClass clazz;
   public Method method;
   public int beg;
   public int end;
@@ -28,7 +28,7 @@ public class Block implements Serializable, Component {
     }
   }
 
-  public void setParentClass(Class clazz) {
+  public void setParentClass(JClass clazz) {
     assert this.clazz == null;
     this.clazz = clazz;
     if (method == null) {

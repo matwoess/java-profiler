@@ -7,25 +7,25 @@ import java.util.Objects;
 
 import static model.ClassType.*;
 
-public class Class implements Serializable, Component {
+public class JClass implements Serializable, Component {
   public String name;
   public ClassType classType = CLASS;
   public String packageName;
-  public Class parentClass;
-  public List<Class> innerClasses = new ArrayList<>();
+  public JClass parentClass;
+  public List<JClass> innerClasses = new ArrayList<>();
   public List<Method> methods = new ArrayList<>();
   public List<Block> classBlocks = new ArrayList<>();
 
-  public Class(String name) {
+  public JClass(String name) {
     this.name = name;
   }
 
-  public Class(String name, ClassType type) {
+  public JClass(String name, ClassType type) {
     this(name);
     this.classType = type;
   }
 
-  public void setParentClass(Class parentClass) {
+  public void setParentClass(JClass parentClass) {
     if (name == null) {
       long nextAnonymousClass = parentClass.innerClasses.stream().filter(c -> c.classType == ANONYMOUS).count() + 1;
       this.name = String.valueOf(nextAnonymousClass);
@@ -55,9 +55,9 @@ public class Class implements Serializable, Component {
     return this.getName();
   }
 
-  public List<Class> getClassesRecursive() {
-    List<Class> allClasses = new ArrayList<>(innerClasses);
-    for (Class clazz : innerClasses) {
+  public List<JClass> getClassesRecursive() {
+    List<JClass> allClasses = new ArrayList<>(innerClasses);
+    for (JClass clazz : innerClasses) {
       allClasses.addAll(clazz.getClassesRecursive());
     }
     return allClasses;
@@ -66,7 +66,7 @@ public class Class implements Serializable, Component {
   public List<Method> getMethodsRecursive() {
     List<Method> allMethods = new ArrayList<>(methods);
     if (innerClasses.size() > 0) {
-      for (Class clazz : innerClasses) {
+      for (JClass clazz : innerClasses) {
         allMethods.addAll(clazz.getMethodsRecursive());
       }
     }
@@ -84,7 +84,7 @@ public class Class implements Serializable, Component {
   public List<Block> getBlocksRecursive() {
     List<Block> allBlocks = new ArrayList<>(classBlocks);
     allBlocks.addAll(methods.stream().flatMap(method -> method.blocks.stream()).toList());
-    for (Class clazz : innerClasses) {
+    for (JClass clazz : innerClasses) {
       allBlocks.addAll(clazz.getBlocksRecursive());
     }
     return allBlocks;
@@ -94,7 +94,7 @@ public class Class implements Serializable, Component {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Class aClass = (Class) o;
+    JClass aClass = (JClass) o;
     if (!Objects.equals(name, aClass.name)) return false;
     if (classType != aClass.classType) return false;
     if (!Objects.equals(packageName, aClass.packageName)) return false;
