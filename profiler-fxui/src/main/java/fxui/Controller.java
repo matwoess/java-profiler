@@ -9,11 +9,14 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import java.awt.Desktop;
 
 public class Controller {
   @FXML
@@ -137,5 +140,24 @@ public class Controller {
       }
     }
     tool.Main.main(arguments.toArray(String[]::new));
+  }
+
+  @FXML
+  protected void onOpenReport() {
+    String outDirField = txtOutputDir.textProperty().get();
+    Path outDir;
+    if (outDirField.isBlank()) {
+      outDir = Path.of("out", "profiler");
+    } else {
+      outDir = Path.of(outDirField);
+    }
+    Path reportPath = outDir.resolve("report").resolve("index.html");
+    SwingUtilities.invokeLater(() -> {
+      try {
+        Desktop.getDesktop().open(reportPath.toFile());
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 }

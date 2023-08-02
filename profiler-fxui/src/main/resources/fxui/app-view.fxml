@@ -75,7 +75,11 @@
                   </HBox.margin></CheckBox>
             </children>
          </HBox>
-          <Button fx:id="btnRun" defaultButton="true" onAction="#onExecuteTool" text="Run tool" />
+          <Button fx:id="btnOpenReport" cancelButton="true" onAction="#onOpenReport" text="Open report">
+            <HBox.margin>
+               <Insets right="16.0" />
+            </HBox.margin></Button>
+         <Button fx:id="btnRun" defaultButton="true" layoutX="700.0" layoutY="10.0" onAction="#onExecuteTool" text="Run tool" />
       </children>
    </HBox>
    <VBox prefHeight="200.0">
