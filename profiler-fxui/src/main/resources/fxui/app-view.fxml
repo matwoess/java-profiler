@@ -5,90 +5,79 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" prefHeight="478.0" prefWidth="446.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxui.Controller">
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxui.Controller">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
-   <VBox prefHeight="100.0" prefWidth="200.0">
-      <children>
-         <Label text="Run mode:">
+    <VBox>
+        <Label text="Run mode:">
             <font>
-               <Font name="System Bold" size="15.0" />
-            </font></Label>
-         <RadioButton fx:id="rbDefaultMode" mnemonicParsing="false" selected="true" text="Instrument, compile, run, report">
+                <Font name="System Bold" size="16.0"/>
+            </font>
+        </Label>
+        <RadioButton fx:id="rbDefaultMode" selected="true" text="Instrument, compile, run, report">
             <font>
-               <Font size="14.0" />
-            </font></RadioButton>
-         <RadioButton fx:id="rbInstrumentOnly" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Instrument only">
+                <Font size="15.0"/>
+            </font>
+        </RadioButton>
+        <RadioButton fx:id="rbInstrumentOnly" text="Instrument only">
             <font>
-               <Font size="14.0" />
-            </font></RadioButton>
-         <RadioButton fx:id="rbReportOnly" layoutX="10.0" layoutY="28.0" mnemonicParsing="false" text="Generate report only">
+                <Font size="14.0"/>
+            </font>
+        </RadioButton>
+        <RadioButton fx:id="rbReportOnly" text="Generate report only">
             <font>
-               <Font size="14.0" />
-            </font></RadioButton>
-      </children>
-   </VBox>
-   <HBox fx:id="hbMainFile" prefHeight="0.0" prefWidth="Infinity">
-      <children>
-         <TextField fx:id="txtMainFile" prefHeight="26.0" prefWidth="296.0" promptText="Main java file" HBox.hgrow="ALWAYS">
+                <Font size="14.0"/>
+            </font>
+        </RadioButton>
+    </VBox>
+    <HBox fx:id="hbMainFile" prefWidth="Infinity">
+        <TextField fx:id="txtMainFile" promptText="Main java file" HBox.hgrow="ALWAYS">
             <HBox.margin>
-               <Insets right="8.0" />
-            </HBox.margin></TextField>
-         <Button fx:id="btnMainFile" mnemonicParsing="false" text="Select" />
-      </children>
-   </HBox>
-   <HBox fx:id="hbProgramArgs" layoutX="30.0" layoutY="30.0" prefHeight="0.0" prefWidth="200.0">
-      <children>
-         <TextField fx:id="txtProgramArgs" prefHeight="26.0" prefWidth="350.0" promptText="Program arguments" HBox.hgrow="ALWAYS" />
-      </children>
-   </HBox>
-   <HBox fx:id="hbSourcesDir" prefHeight="0.0" prefWidth="Infinity">
-      <children>
-         <TextField fx:id="txtSourcesDir" prefHeight="26.0" prefWidth="294.0" promptText="Sources directory" HBox.hgrow="ALWAYS">
+                <Insets right="8.0"/>
+            </HBox.margin>
+        </TextField>
+        <Button fx:id="btnMainFile" text="Select"/>
+    </HBox>
+    <HBox fx:id="hbProgramArgs">
+        <TextField fx:id="txtProgramArgs" promptText="Program arguments" HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <HBox fx:id="hbSourcesDir" prefWidth="Infinity">
+        <TextField fx:id="txtSourcesDir" promptText="Sources directory" HBox.hgrow="ALWAYS">
             <HBox.margin>
-               <Insets right="8.0" />
-            </HBox.margin></TextField>
-         <Button fx:id="btnSourcesDir" mnemonicParsing="false" text="Select" />
-      </children>
-   </HBox>
-   <HBox prefHeight="0.0" prefWidth="Infinity">
-      <children>
-         <TextField fx:id="txtOutputDir" prefHeight="26.0" prefWidth="294.0" promptText="Output directory" HBox.hgrow="ALWAYS">
+                <Insets right="8.0"/>
+            </HBox.margin>
+        </TextField>
+        <Button fx:id="btnSourcesDir" text="Select"/>
+    </HBox>
+    <HBox prefWidth="Infinity">
+        <TextField fx:id="txtOutputDir" promptText="Output directory" HBox.hgrow="ALWAYS">
             <HBox.margin>
-               <Insets right="8.0" />
-            </HBox.margin></TextField>
-         <Button fx:id="btnOutputDir" mnemonicParsing="false" text="Select" />
-      </children>
-   </HBox>
-   <HBox>
-      <children>
-         <HBox alignment="CENTER_LEFT" HBox.hgrow="SOMETIMES">
-            <children>
-               <CheckBox fx:id="cbVerboseOutput" mnemonicParsing="false" text="Verbose output">
-                  <HBox.margin>
-                     <Insets right="16.0" />
-                  </HBox.margin></CheckBox>
-               <CheckBox fx:id="cbSyncCounters" mnemonicParsing="false" text="Synchronized counters">
-                  <HBox.margin>
-                     <Insets />
-                  </HBox.margin></CheckBox>
-            </children>
-         </HBox>
-          <Button fx:id="btnOpenReport" cancelButton="true" onAction="#onOpenReport" text="Open report">
+                <Insets right="8.0"/>
+            </HBox.margin>
+        </TextField>
+        <Button fx:id="btnOutputDir" text="Select"/>
+    </HBox>
+    <HBox>
+        <HBox alignment="CENTER_LEFT" HBox.hgrow="SOMETIMES">
+            <CheckBox fx:id="cbVerboseOutput" text="Verbose output">
+                <HBox.margin>
+                    <Insets right="16.0"/>
+                </HBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
+        </HBox>
+        <Button onAction="#onOpenReport" text="Open report">
             <HBox.margin>
-               <Insets right="16.0" />
-            </HBox.margin></Button>
-         <Button fx:id="btnRun" defaultButton="true" layoutX="700.0" layoutY="10.0" onAction="#onExecuteTool" text="Run tool" />
-      </children>
-   </HBox>
-   <VBox prefHeight="200.0">
-      <children>
-         <ScrollPane fx:id="spOutput" style="-fx-background-color: #F3F9F322;" VBox.vgrow="ALWAYS">
-            <content>
-               <TextFlow fx:id="txtFlowOutput" />
-            </content>
-         </ScrollPane>
-      </children>
-   </VBox>
+                <Insets right="16.0"/>
+            </HBox.margin>
+        </Button>
+        <Button defaultButton="true" onAction="#onExecuteTool" text="Run tool"/>
+    </HBox>
+    <VBox prefHeight="200.0">
+        <ScrollPane style="-fx-background-color: #F3F9F322;" VBox.vgrow="ALWAYS">
+            <TextFlow fx:id="txtFlowOutput"/>
+        </ScrollPane>
+    </VBox>
 </VBox>
