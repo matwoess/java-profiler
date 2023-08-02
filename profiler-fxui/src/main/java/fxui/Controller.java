@@ -1,18 +1,15 @@
 package fxui;
 
 import fxui.model.RunMode;
-import javafx.application.Platform;
+import fxui.util.SystemOutputTextFlowWriter;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +47,7 @@ public class Controller {
   @FXML
   private CheckBox cbVerboseOutput;
   @FXML
-  private TextFlow txtAreaOutput;
+  private TextFlow txtFlowOutput;
 
   private final ToggleGroup toggleGroup = new ToggleGroup();
 
@@ -76,29 +73,9 @@ public class Controller {
       btnOutputDir.setOnAction(event -> chooseDirectory(txtOutputDir));
     }
     {
-      PrintStream consoleOutput = new PrintStream(new SystemOutputStream());
+      PrintStream consoleOutput = new PrintStream(new SystemOutputTextFlowWriter(txtFlowOutput));
       System.setOut(consoleOutput);
       System.setErr(consoleOutput);
-    }
-  }
-
-  public class SystemOutputStream extends OutputStream {
-    Font defaultFont = new Font("Consolas", 10);
-    StringBuilder curLine = new StringBuilder();
-
-    public void appendChar(char ch) {
-      curLine.append(ch);
-      if (ch == '\n') {
-        Text line = new Text(curLine.toString());
-        line.setFont(defaultFont);
-        curLine = new StringBuilder();
-        Platform.runLater(() -> txtAreaOutput.getChildren().add(line));
-      }
-    }
-
-    @Override
-    public void write(int b) {
-      appendChar((char)b);
     }
   }
 
@@ -122,7 +99,7 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    txtAreaOutput.getChildren().clear();
+    txtFlowOutput.getChildren().clear();
     RunMode runMode = (RunMode) toggleGroup.getSelectedToggle().getUserData();
     List<String> arguments = new ArrayList<>();
     String outDir = txtOutputDir.textProperty().get();

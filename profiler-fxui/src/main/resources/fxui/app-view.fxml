@@ -82,7 +82,7 @@
       <children>
          <ScrollPane fx:id="spOutput" style="-fx-background-color: #F3F9F322;" VBox.vgrow="ALWAYS">
             <content>
-               <TextFlow fx:id="txtAreaOutput" />
+               <TextFlow fx:id="txtFlowOutput" />
             </content>
          </ScrollPane>
       </children>
