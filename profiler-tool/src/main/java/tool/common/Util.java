@@ -3,6 +3,7 @@ package tool.common;
 import tool.model.JavaFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -42,8 +43,19 @@ public class Util {
         .inheritIO()
         .directory(cwd.toFile())
         .command(command);
+    builder.redirectOutput(ProcessBuilder.Redirect.PIPE);
     try {
-      return builder.start().waitFor();
+      Process process = builder.start();
+      String outputString;
+      String errorString;
+      try (InputStream processStdOut = process.getInputStream();
+           InputStream processStdErr = process.getErrorStream()) {
+        outputString = new String(processStdOut.readAllBytes());
+        errorString = new String(processStdErr.readAllBytes());
+        System.out.println(outputString);
+        System.err.println(errorString);
+      }
+      return process.waitFor();
     } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
