@@ -15,7 +15,7 @@ public class SystemOutputTextFlowWriter extends OutputStream {
   public SystemOutputTextFlowWriter(TextFlow textFlow) {
     this.textFlow = textFlow;
   }
-  Font defaultFont = new Font("Consolas", 10);
+  Font defaultFont = new Font("Consolas", 12);
   StringBuilder curLine = new StringBuilder();
 
   @Override
@@ -43,7 +43,7 @@ public class SystemOutputTextFlowWriter extends OutputStream {
     Color textColor = null;
     while (escapeSeqIdx != -1) {
       if (escapeSeqIdx != 0) {
-        segments.add(getTextSegment(lineStr.substring(0, escapeSeqIdx+1), textColor));
+        segments.add(getTextSegment(lineStr.substring(0, escapeSeqIdx), textColor));
       }
       lineStr = lineStr.substring(escapeSeqIdx+1);
       int effectEndIndex = lineStr.indexOf("m");
