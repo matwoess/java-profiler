@@ -1,5 +1,6 @@
 package fxui;
 
+import common.IO;
 import fxui.model.RunMode;
 import fxui.util.SystemOutputTextFlowWriter;
 import javafx.fxml.FXML;
@@ -146,14 +147,7 @@ public class Controller {
 
   @FXML
   protected void onOpenReport() {
-    String outDirField = txtOutputDir.textProperty().get();
-    Path outDir;
-    if (outDirField.isBlank()) {
-      outDir = Path.of("out", "profiler");
-    } else {
-      outDir = Path.of(outDirField);
-    }
-    Path reportPath = outDir.resolve("report").resolve("index.html");
+    Path reportPath = IO.getReportIndexPath();
     SwingUtilities.invokeLater(() -> {
       try {
         Desktop.getDesktop().open(reportPath.toFile());
