@@ -1,7 +1,6 @@
 package tool.profile;
 
-import tool.common.CodeInsert;
-import tool.common.IO;
+import tool.model.CodeInsert;
 import tool.model.Block;
 import tool.model.JavaFile;
 
@@ -13,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import common.IO;
 
 public class ReportSourceWriter extends AbstractHtmlWriter {
   JavaFile javaFile;
@@ -39,7 +40,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         }
         """;
     bodyScripts = new String[]{
-        IO.getReportSourceFilePath(javaFile).getParent().relativize(IO.getReportHighlighterPath()).toString()
+        IO.getReportSourceFilePath(javaFile.relativePath).getParent().relativize(IO.getReportHighlighterPath()).toString()
     };
   }
 
@@ -162,6 +163,6 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
 
   @Override
   public Path getFileOutputPath() {
-    return IO.getReportSourceFilePath(javaFile);
+    return IO.getReportSourceFilePath(javaFile.relativePath);
   }
 }

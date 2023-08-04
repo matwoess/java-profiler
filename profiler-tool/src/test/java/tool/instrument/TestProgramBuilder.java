@@ -1,6 +1,6 @@
 package tool.instrument;
 
-import tool.common.Util;
+import common.Util;
 import tool.model.*;
 import tool.model.JClass;
 

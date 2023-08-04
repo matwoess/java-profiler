@@ -1,7 +1,7 @@
 package tool.instrument;
 
-import tool.common.CodeInsert;
-import tool.common.IO;
+import tool.model.CodeInsert;
+import common.IO;
 import tool.model.*;
 import tool.model.BlockType;
 import tool.model.JavaFile;
@@ -75,7 +75,7 @@ public class Instrumenter {
       builder.append(codeInsert.code());
     }
     builder.append(fileContent.substring(prevIdx));
-    Path instrumentedFilePath = IO.getInstrumentedFilePath(javaFile);
+    Path instrumentedFilePath = IO.getInstrumentedFilePath(javaFile.relativePath);
     IO.createDirectoriesIfNotExists(instrumentedFilePath);
     Files.writeString(instrumentedFilePath, builder.toString());
   }
@@ -107,7 +107,7 @@ public class Instrumenter {
   }
 
   public void exportMetadata() {
-    IO.exportMetadata(new IO.Metadata(blockCounter, javaFiles));
+    new Metadata(blockCounter, javaFiles).exportMetadata();
   }
 
 }

@@ -1,7 +1,7 @@
 package tool;
 
-import tool.common.IO;
-import tool.common.Util;
+import common.IO;
+import common.Util;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

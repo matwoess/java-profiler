@@ -1,10 +1,11 @@
 package tool.profile;
 
-import tool.common.IO;
-import tool.common.Util;
+import common.IO;
+import common.Util;
 import tool.model.Block;
 import tool.model.JClass;
 import tool.model.JavaFile;
+import tool.model.Metadata;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -23,7 +24,7 @@ public class Profiler {
   }
 
   public void compileInstrumented() {
-    Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile));
+    Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile.relativePath));
     int exitCode = Util.runCommand(IO.getInstrumentDir(), "javac", mainFile.toString());
     if (exitCode != 0) {
       throw new RuntimeException("Error compiling instrumented file: " + mainFile);
@@ -31,7 +32,7 @@ public class Profiler {
   }
 
   public void profile(String[] programArgs) {
-    Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile));
+    Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile.relativePath));
     String filePath = mainFile.toString();
     String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
     String[] command = Util.prependToArray(programArgs, "java", classFilePath);
@@ -46,7 +47,7 @@ public class Profiler {
     if (mainJavaFile != null) {
       allJavaFiles = Util.prependToArray(additionalJavaFiles, mainJavaFile);
     } else {
-      allJavaFiles = IO.importMetadata().javaFiles();
+      allJavaFiles = Metadata.importMetadata().javaFiles();
     }
     addHitCountToJavaFileBlocks(allJavaFiles);
     IO.clearDirectoryIfExists(IO.getReportDir());

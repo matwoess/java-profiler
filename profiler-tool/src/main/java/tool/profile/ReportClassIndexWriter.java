@@ -1,6 +1,6 @@
 package tool.profile;
 
-import tool.common.IO;
+import common.IO;
 import tool.model.JClass;
 import tool.model.JavaFile;
 
@@ -61,8 +61,8 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         .append("</tr>\n");
     for (JClass clazz : sortedClasses) {
       JavaFile javaFile = fileByClass.get(clazz);
-      Path methIdxHref = IO.getReportMethodIndexPath(clazz).getFileName();
-      Path sourceFileHref = IO.getReportDir().relativize(IO.getReportSourceFilePath(javaFile));
+      Path methIdxHref = IO.getReportMethodIndexPath(clazz.name).getFileName();
+      Path sourceFileHref = IO.getReportDir().relativize(IO.getReportSourceFilePath(javaFile.relativePath));
       content.append("<tr>\n")
           .append("<td class=\"hits\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.getName()))

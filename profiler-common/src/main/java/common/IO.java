@@ -1,8 +1,5 @@
 package common;
 
-import tool.model.JClass;
-import tool.model.JavaFile;
-
 import java.io.*;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
@@ -17,9 +14,6 @@ public class IO {
   public static final Path DEFAULT_OUT_DIR = Path.of("out", "profiler");
   public static Path outputDir;
 
-  public record Metadata(int blocksCount, JavaFile[] javaFiles) {
-  }
-
   public static Path getOutputDir() {
     return Objects.requireNonNullElse(outputDir, DEFAULT_OUT_DIR);
   }
@@ -28,8 +22,8 @@ public class IO {
     return getOutputDir().resolve("instrumented");
   }
 
-  public static Path getInstrumentedFilePath(JavaFile javaFile) {
-    return getInstrumentDir().resolve(javaFile.relativePath);
+  public static Path getInstrumentedFilePath(Path relativePath) {
+    return getInstrumentDir().resolve(relativePath);
   }
 
   public static Path getAuxiliaryInstrumentDir() {
@@ -60,34 +54,13 @@ public class IO {
     return Path.of(".", "report.html");
   }
 
-  public static Path getReportMethodIndexPath(JClass clazz) {
-    return IO.getReportDir().resolve("index_" + clazz.name + ".html");
+  public static Path getReportMethodIndexPath(String clasName) {
+    return IO.getReportDir().resolve("index_" + clasName + ".html");
   }
 
-  public static Path getReportSourceFilePath(JavaFile javaFile) {
-    Path reportFilePath = IO.getReportDir().resolve("source").resolve(javaFile.relativePath);
+  public static Path getReportSourceFilePath(Path relativePath) {
+    Path reportFilePath = IO.getReportDir().resolve("source").resolve(relativePath);
     return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
-  }
-
-  public static void exportMetadata(Metadata metadata) {
-    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(getMetadataPath().toFile()))) {
-      oos.writeInt(metadata.blocksCount);
-      oos.writeObject(metadata.javaFiles);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  public static Metadata importMetadata() {
-    Metadata metadata;
-    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getMetadataPath().toFile()))) {
-      int blocksCount = ois.readInt();
-      JavaFile[] javaFiles = (JavaFile[]) ois.readObject();
-      metadata = new Metadata(blocksCount, javaFiles);
-    } catch (IOException | ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-    return metadata;
   }
 
   public static void copyResource(String resourceName, Path destination) {

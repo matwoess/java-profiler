@@ -1,16 +1,20 @@
 package tool;
 
 import tool.instrument.Instrumenter;
-import tool.common.IO;
-import tool.common.Util;
+import common.IO;
+import common.Util;
 import tool.model.JavaFile;
 import tool.profile.Profiler;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
-import static tool.common.IO.DEFAULT_OUT_DIR;
-import static tool.common.Util.assertJavaSourceFile;
+import static common.IO.DEFAULT_OUT_DIR;
+import static common.Util.assertJavaSourceFile;
+import static common.Util.isJavaFile;
 
 public class Main {
   public static void main(String[] args) throws IllegalArgumentException {
@@ -79,7 +83,7 @@ public class Main {
     if (target.toFile().isFile()) {
       javaFiles = new JavaFile[]{new JavaFile(target)};
     } else {
-      javaFiles = Util.getJavaFilesInFolder(target, null);
+      javaFiles = getJavaFilesInFolder(target, null);
     }
     Instrumenter instrumenter = new Instrumenter(sync, verbose, javaFiles);
     instrumenter.analyzeFiles();
@@ -92,7 +96,7 @@ public class Main {
     JavaFile[] additionalJavaFiles = new JavaFile[0];
     if (sourcesDir != null) {
       mainJavaFile = new JavaFile(mainFile, sourcesDir);
-      additionalJavaFiles = Util.getJavaFilesInFolder(sourcesDir, mainFile);
+      additionalJavaFiles = getJavaFilesInFolder(sourcesDir, mainFile);
     } else {
       mainJavaFile = new JavaFile(mainFile);
     }
@@ -105,6 +109,17 @@ public class Main {
     profiler.profile(programArgs);
     profiler.generateReport();
     profiler.createSymLinkForReport();
+  }
+
+  public static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path exceptFor) {
+    try (Stream<Path> walk = Files.walk(sourcesFolder)) {
+      return walk
+          .filter(path -> Files.isRegularFile(path) && !path.equals(exceptFor) && isJavaFile(path))
+          .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
+          .toArray(JavaFile[]::new);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   static void printUsage() {

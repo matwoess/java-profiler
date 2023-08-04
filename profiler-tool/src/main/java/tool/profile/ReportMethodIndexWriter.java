@@ -1,6 +1,6 @@
 package tool.profile;
 
-import tool.common.IO;
+import common.IO;
 import tool.model.Block;
 import tool.model.JClass;
 import tool.model.JavaFile;
@@ -16,7 +16,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
 
   public ReportMethodIndexWriter(JClass clazz, JavaFile javaFile) {
     this.clazz = clazz;
-    this.reportSourceFile = IO.getReportSourceFilePath(javaFile);
+    this.reportSourceFile = IO.getReportSourceFilePath(javaFile.relativePath);
     title = "Methods in " + clazz.getFullName();
     cssStyle = """
         body {
@@ -73,6 +73,6 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
 
   @Override
   public Path getFileOutputPath() {
-    return IO.getReportMethodIndexPath(clazz);
+    return IO.getReportMethodIndexPath(clazz.name);
   }
 }
