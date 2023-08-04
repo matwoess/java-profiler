@@ -1,0 +1,3 @@
+module common {
+  exports common;
+}

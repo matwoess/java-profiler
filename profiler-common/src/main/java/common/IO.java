@@ -1,4 +1,4 @@
-package tool.common;
+package common;
 
 import tool.model.JClass;
 import tool.model.JavaFile;
