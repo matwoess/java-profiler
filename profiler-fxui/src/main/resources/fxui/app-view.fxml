@@ -68,12 +68,12 @@
             </CheckBox>
             <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
         </HBox>
-        <Button onAction="#onOpenReport" text="Open report">
+        <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">
             <HBox.margin>
                 <Insets right="16.0"/>
             </HBox.margin>
         </Button>
-        <Button defaultButton="true" onAction="#onExecuteTool" text="Run tool"/>
+        <Button fx:id="btnRunTool" defaultButton="true" onAction="#onExecuteTool" text="Run tool"/>
     </HBox>
     <VBox prefHeight="200.0">
         <ScrollPane style="-fx-background-color: #F3F9F322;" VBox.vgrow="ALWAYS">

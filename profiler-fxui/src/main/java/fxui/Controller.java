@@ -1,8 +1,10 @@
 package fxui;
 
 import common.IO;
+import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.SystemOutputTextFlowWriter;
+import javafx.beans.binding.Binding;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -15,9 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import java.awt.Desktop;
 
@@ -53,7 +52,17 @@ public class Controller {
   @FXML
   private CheckBox cbVerboseOutput;
   @FXML
+  private Button btnOpenReport;
+  @FXML
+  private Button btnRunTool;
+  @FXML
   private TextFlow txtFlowOutput;
+
+  private final Parameters parameters;
+
+  public Controller() {
+    parameters = new Parameters();
+  }
 
   private final ToggleGroup toggleGroup = new ToggleGroup();
 
@@ -61,11 +70,17 @@ public class Controller {
   private void initialize() {
     {
       rbDefaultMode.setToggleGroup(toggleGroup);
-      rbDefaultMode.setUserData(RunMode.DEFAULT);
       rbInstrumentOnly.setToggleGroup(toggleGroup);
-      rbInstrumentOnly.setUserData(RunMode.INSTRUMENT_ONLY);
       rbReportOnly.setToggleGroup(toggleGroup);
-      rbReportOnly.setUserData(RunMode.REPORT_ONLY);
+      rbDefaultMode.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        if (newValue) parameters.runMode.set(RunMode.DEFAULT);
+      });
+      rbInstrumentOnly.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        if (newValue) parameters.runMode.set(RunMode.INSTRUMENT_ONLY);
+      });
+      rbReportOnly.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        if (newValue) parameters.runMode.set(RunMode.REPORT_ONLY);
+      });
     }
     {
       hbMainFile.visibleProperty().bind(rbReportOnly.selectedProperty().not());
@@ -77,6 +92,19 @@ public class Controller {
       btnMainFile.setOnAction(event -> chooseFile(txtMainFile));
       btnSourcesDir.setOnAction(event -> chooseDirectory(txtSourcesDir));
       btnOutputDir.setOnAction(event -> chooseDirectory(txtOutputDir));
+    }
+    {
+      txtMainFile.textProperty().bindBidirectional(parameters.mainFile);
+      txtProgramArgs.textProperty().bindBidirectional(parameters.programArgs);
+      txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir);
+      txtOutputDir.textProperty().bindBidirectional(parameters.outputDir);
+      btnOpenReport.disableProperty().bindBidirectional(parameters.invalidOutDirPath);
+      Binding<Boolean> anyPathInvalid = parameters.invalidMainFilePath
+          .or(parameters.invalidSourcesDirPath)
+          .or(parameters.invalidOutDirPath);
+      btnRunTool.disableProperty().bind(anyPathInvalid);
+      cbVerboseOutput.selectedProperty().bindBidirectional(parameters.verboseOutput);
+      cbSyncCounters.selectedProperty().bindBidirectional(parameters.syncCounters);
     }
     {
       PrintStream consoleOutput = new PrintStream(new SystemOutputTextFlowWriter(txtFlowOutput));
@@ -106,43 +134,7 @@ public class Controller {
   @FXML
   protected void onExecuteTool() {
     txtFlowOutput.getChildren().clear();
-    RunMode runMode = (RunMode) toggleGroup.getSelectedToggle().getUserData();
-    List<String> arguments = new ArrayList<>();
-    String outDir = txtOutputDir.textProperty().get();
-    if (!outDir.isBlank()) {
-      arguments.add("--out-directory");
-      arguments.add(outDir);
-    }
-    boolean verbose = cbVerboseOutput.selectedProperty().get();
-    if (verbose) {
-      arguments.add("--verbose");
-    }
-    boolean syncCounters = cbSyncCounters.selectedProperty().get();
-    if (syncCounters && runMode != RunMode.REPORT_ONLY) {
-      arguments.add("--sync-counters");
-    }
-    switch (runMode) {
-      case REPORT_ONLY -> {
-        arguments.add("--generate-report");
-      }
-      case INSTRUMENT_ONLY -> {
-        arguments.add("--instrument-only");
-        arguments.add(txtMainFile.textProperty().get());
-      }
-      case DEFAULT -> {
-        String sourcesDir = txtSourcesDir.textProperty().get();
-        if (!sourcesDir.isBlank()) {
-          arguments.add("--sources-directory");
-          arguments.add(sourcesDir);
-        }
-        arguments.add(txtMainFile.textProperty().get());
-        String programArgs = txtProgramArgs.textProperty().get();
-        if (!programArgs.isBlank()) {
-          arguments.addAll(Arrays.stream(programArgs.split(" ")).toList());
-        }
-      }
-    }
-    tool.Main.main(arguments.toArray(String[]::new));
+    tool.Main.main(parameters.getRunCommand());
   }
 
   @FXML
