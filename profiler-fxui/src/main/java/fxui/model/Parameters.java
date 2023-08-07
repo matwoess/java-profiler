@@ -40,13 +40,17 @@ public class Parameters implements Serializable {
       }
     });
     sourcesDir.addListener((observable, oldValue, newValue) -> {
-      if (!newValue.isBlank()) {
+      if (newValue.isBlank()) {
+        invalidSourcesDirPath.set(false);
+      } else {
         Path newPath = Path.of(newValue);
         invalidSourcesDirPath.set(!newPath.toFile().isDirectory());
       }
     });
     outputDir.addListener((observable, oldValue, newValue) -> {
-      if (!newValue.isBlank()) {
+      if (newValue.isBlank()) {
+        invalidOutDirPath.set(false);
+      } else {
         Path newPath = Path.of(newValue);
         IO.outputDir = newPath;
         invalidOutDirPath.set(!newPath.toFile().isDirectory());
