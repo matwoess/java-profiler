@@ -23,8 +23,9 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 
 public class Controller {
-  private static final Border invalidBorder = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
+  private static final Border invalidBorder = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT));
   private static final Border validBorder = new Border(new BorderStroke(Color.GREEN, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
+  private static final Border neutralBorder = null;
   @FXML
   private RadioButton rbDefaultMode;
   @FXML
@@ -133,12 +134,18 @@ public class Controller {
   }
 
   private void initBorderListeners() {
-    txtMainFile.textProperty().addListener((observable, oldValue, newValue)
-        -> txtMainFile.setBorder(parameters.invalidMainFilePath.get() ? invalidBorder : validBorder));
-    txtSourcesDir.textProperty().addListener((observable, oldValue, newValue)
-        -> txtMainFile.setBorder(parameters.invalidSourcesDirPath.get() ? invalidBorder : validBorder));
-    txtMainFile.textProperty().addListener((observable, oldValue, newValue)
-        -> txtMainFile.setBorder(parameters.invalidOutDirPath.get() ? invalidBorder : validBorder));
+    txtMainFile.textProperty().addListener((observable, oldValue, newValue) -> {
+      Border border = newValue.isBlank() ? neutralBorder : parameters.invalidMainFilePath.get() ? invalidBorder : validBorder;
+      txtMainFile.setBorder(border);
+    });
+    txtSourcesDir.textProperty().addListener((observable, oldValue, newValue) -> {
+      Border border = newValue.isBlank() ? neutralBorder : parameters.invalidSourcesDirPath.get() ? invalidBorder : validBorder;
+      txtSourcesDir.setBorder(border);
+    });
+    txtOutputDir.textProperty().addListener((observable, oldValue, newValue) ->{
+      Border border = newValue.isBlank() ? neutralBorder : parameters.invalidOutDirPath.get() ? invalidBorder : validBorder;
+      txtOutputDir.setBorder(border);
+    });
   }
 
   public void chooseFile(TextField pathField) {
