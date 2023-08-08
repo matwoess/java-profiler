@@ -26,24 +26,19 @@ public class Controller {
   private static final Border invalidBorder = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT));
   private static final Border validBorder = new Border(new BorderStroke(Color.GREEN, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
   private static final Border neutralBorder = null;
+
   @FXML
-  private RadioButton rbDefaultMode;
-  @FXML
-  private RadioButton rbInstrumentOnly;
-  @FXML
-  private RadioButton rbReportOnly;
-  @FXML
-  private HBox hbMainFile;
+  private VBox vbMainFile;
   @FXML
   private TextField txtMainFile;
   @FXML
   private Button btnMainFile;
   @FXML
-  private HBox hbProgramArgs;
+  private VBox vbProgramArgs;
   @FXML
   private TextField txtProgramArgs;
   @FXML
-  private HBox hbSourcesDir;
+  private VBox vbSourcesDir;
   @FXML
   private TextField txtSourcesDir;
   @FXML
@@ -62,6 +57,8 @@ public class Controller {
   private Button btnRunTool;
   @FXML
   private TextFlow txtFlowOutput;
+  @FXML
+  private ChoiceBox<RunMode> cbRunMode;
 
   private final Parameters parameters;
 
@@ -69,15 +66,13 @@ public class Controller {
     parameters = new Parameters();
   }
 
-  private final ToggleGroup toggleGroup = new ToggleGroup();
-
   @FXML
   private void initialize() {
     bindParameters();
     setOnClickActions();
     initConsoleOutput();
     initRunModeControl();
-    initRunModeVisibilities();
+    initDisabledPropertiesByMode();
     initButtonDisabledProperties();
     initBorderListeners();
   }
@@ -98,18 +93,8 @@ public class Controller {
   }
 
   private void initRunModeControl() {
-    rbDefaultMode.setToggleGroup(toggleGroup);
-    rbInstrumentOnly.setToggleGroup(toggleGroup);
-    rbReportOnly.setToggleGroup(toggleGroup);
-    rbDefaultMode.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) parameters.runMode.set(RunMode.DEFAULT);
-    });
-    rbInstrumentOnly.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) parameters.runMode.set(RunMode.INSTRUMENT_ONLY);
-    });
-    rbReportOnly.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) parameters.runMode.set(RunMode.REPORT_ONLY);
-    });
+    cbRunMode.getItems().setAll(RunMode.values());
+    cbRunMode.valueProperty().bindBidirectional(parameters.runMode);
   }
 
   private void initConsoleOutput() {
@@ -118,11 +103,11 @@ public class Controller {
     System.setErr(consoleOutput);
   }
 
-  private void initRunModeVisibilities() {
-    hbMainFile.visibleProperty().bind(rbReportOnly.selectedProperty().not());
-    hbProgramArgs.visibleProperty().bind(rbDefaultMode.selectedProperty());
-    hbSourcesDir.visibleProperty().bind(rbDefaultMode.selectedProperty());
-    cbSyncCounters.visibleProperty().bind(rbReportOnly.selectedProperty().not());
+  private void initDisabledPropertiesByMode() {
+    vbMainFile.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
+    vbProgramArgs.disableProperty().bind(parameters.runMode.isNotEqualTo(RunMode.DEFAULT));
+    vbSourcesDir.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
+    cbSyncCounters.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
   }
 
   private void initButtonDisabledProperties() {
