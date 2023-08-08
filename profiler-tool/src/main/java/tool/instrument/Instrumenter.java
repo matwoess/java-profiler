@@ -59,7 +59,7 @@ public class Instrumenter {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    IO.copyAuxiliaryFiles();
+    copyAuxiliaryFiles();
     System.out.println();
     System.out.println("Total block found: " + blockCounter);
   }

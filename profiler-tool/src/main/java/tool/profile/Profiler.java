@@ -61,7 +61,7 @@ public class Profiler {
         new ReportMethodIndexWriter(clazz, jFile).write();
       }
     }
-    IO.copyJavaScriptFiles();
+    copyJavaScriptFiles();
   }
 
   private static void addHitCountToJavaFileBlocks(JavaFile[] allJavaFiles) {
@@ -87,6 +87,10 @@ public class Profiler {
     if (allBlockCounts.hasNext()) {
       throw new RuntimeException("Too many block counts. Mismatching entry counts!");
     }
+  }
+
+  public static void copyJavaScriptFiles() {
+    IO.copyResource(Profiler.class, "highlighter.js", IO.getReportHighlighterPath());
   }
 
   public void createSymLinkForReport() {

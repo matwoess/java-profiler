@@ -26,8 +26,8 @@ public class IO {
     return getInstrumentDir().resolve(relativePath);
   }
 
-  public static Path getAuxiliaryInstrumentDir() {
-    return getInstrumentDir().resolve("auxiliary");
+  public static Path getAuxiliaryCounterClassPath() {
+    return getInstrumentDir().resolve("auxiliary").resolve("__Counter.class");
   }
 
   public static Path getMetadataPath() {
@@ -63,8 +63,8 @@ public class IO {
     return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 
-  public static void copyResource(String resourceName, Path destination) {
-    try (InputStream resource = Util.class.getResourceAsStream(resourceName);) {
+  public static <T> void copyResource(Class<T> resourceClass, String resourceName, Path destination) {
+    try (InputStream resource = resourceClass.getClassLoader().getResourceAsStream(resourceName)) {
       if (resource == null) {
         throw new RuntimeException("unable to locate resource: <" + resourceName + ">");
       }
@@ -73,16 +73,6 @@ public class IO {
     } catch (IOException | RuntimeException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public static void copyAuxiliaryFiles() {
-    String counterClass = "__Counter.class";
-    copyResource("/auxiliary/" + counterClass, getAuxiliaryInstrumentDir().resolve(Path.of(counterClass)));
-  }
-
-  public static void copyJavaScriptFiles() {
-    String highlighter = "highlighter.js";
-    copyResource("/js/" + highlighter, getReportDir().resolve(highlighter));
   }
 
   public static void clearDirectoryIfExists(Path directory) {
