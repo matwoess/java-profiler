@@ -75,6 +75,7 @@ public class Controller {
     initDisabledPropertiesByMode();
     initButtonDisabledProperties();
     initBorderListeners();
+    txtOutputDir.setPromptText(Path.of(".").resolve(IO.DEFAULT_OUT_DIR).toString());
   }
 
   private void bindParameters() {
