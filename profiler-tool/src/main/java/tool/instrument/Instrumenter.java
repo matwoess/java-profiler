@@ -59,7 +59,7 @@ public class Instrumenter {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    IO.copyAuxiliaryFiles();
+    copyAuxiliaryFiles();
     System.out.println();
     System.out.println("Total block found: " + blockCounter);
   }
@@ -110,4 +110,8 @@ public class Instrumenter {
     new Metadata(blockCounter, javaFiles).exportMetadata();
   }
 
+
+  public static void copyAuxiliaryFiles() {
+    IO.copyResource(Instrumenter.class, "auxiliary/__Counter.class", IO.getAuxiliaryCounterClassPath());
+  }
 }
