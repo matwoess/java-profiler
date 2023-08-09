@@ -4,33 +4,20 @@ import common.IO;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.SystemOutputTextFlowWriter;
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextFlow;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
 
 public class Controller {
-  private static final Border invalidBorder = new Border(new BorderStroke(Color.RED, BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT));
-  private static final Border validBorder = new Border(new BorderStroke(Color.GREEN, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT));
-  private static final Border neutralBorder = null;
 
   @FXML
   private VBox vbMainFile;
@@ -95,9 +82,9 @@ public class Controller {
   }
 
   private void setOnClickActions() {
-    btnMainFile.setOnAction(event -> chooseFile(txtMainFile));
-    btnSourcesDir.setOnAction(event -> chooseDirectory(txtSourcesDir));
-    btnOutputDir.setOnAction(event -> chooseDirectory(txtOutputDir));
+    btnMainFile.setOnAction(event -> PathUtils.chooseFile(txtMainFile));
+    btnSourcesDir.setOnAction(event -> PathUtils.chooseDirectory(txtSourcesDir));
+    btnOutputDir.setOnAction(event -> PathUtils.chooseDirectory(txtOutputDir));
   }
 
   private void initRunModeControl() {
@@ -131,38 +118,9 @@ public class Controller {
   }
 
   private void initBorderListeners() {
-    txtMainFile.borderProperty().bind(createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
-    txtSourcesDir.borderProperty().bind(createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
-    txtOutputDir.borderProperty().bind(createBorderBinding(parameters.outputDir, parameters.invalidOutDirPath));
-  }
-
-  public ObjectBinding<Border> createBorderBinding(StringProperty textProperty, BooleanProperty invalidityProperty) {
-    return Bindings.createObjectBinding(() -> {
-          if (textProperty.get().isBlank()) return neutralBorder;
-          if (invalidityProperty.get()) return invalidBorder;
-          else return validBorder;
-        },
-        textProperty,
-        invalidityProperty
-    );
-  }
-
-  public void chooseFile(TextField pathField) {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Choose File");
-    File file = fileChooser.showOpenDialog(pathField.getScene().getWindow());
-    if (file != null) {
-      pathField.setText(file.toString());
-    }
-  }
-
-  public void chooseDirectory(TextField pathField) {
-    DirectoryChooser dirChooser = new DirectoryChooser();
-    dirChooser.setTitle("Choose Directory");
-    File dir = dirChooser.showDialog(pathField.getScene().getWindow());
-    if (dir != null) {
-      pathField.setText(dir.toString());
-    }
+    txtMainFile.borderProperty().bind(BindingUtils.createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
+    txtSourcesDir.borderProperty().bind(BindingUtils.createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
+    txtOutputDir.borderProperty().bind(BindingUtils.createBorderBinding(parameters.outputDir, parameters.invalidOutDirPath));
   }
 
   @FXML
@@ -174,12 +132,6 @@ public class Controller {
   @FXML
   protected void onOpenReport() {
     Path reportPath = IO.getReportIndexPath();
-    SwingUtilities.invokeLater(() -> {
-      try {
-        Desktop.getDesktop().open(reportPath.toFile());
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    });
+    PathUtils.openWithDesktopApplication(reportPath);
   }
 }

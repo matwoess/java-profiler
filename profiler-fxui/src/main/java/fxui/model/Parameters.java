@@ -1,11 +1,9 @@
 package fxui.model;
 
-import common.Util;
-import javafx.beans.binding.Bindings;
+import fxui.BindingUtils;
 import javafx.beans.property.*;
 
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,21 +29,9 @@ public class Parameters implements Serializable {
   }
 
   public void initializeExtraProperties() {
-    invalidMainFilePath.bind(
-        mainFile.isNotEmpty().and(
-            Bindings.createBooleanBinding(() -> !Util.isJavaFile(Path.of(mainFile.get())), mainFile)
-        )
-    );
-    invalidSourcesDirPath.bind(
-        sourcesDir.isNotEmpty().and(
-            Bindings.createBooleanBinding(() -> !Path.of(sourcesDir.get()).toFile().isDirectory(), sourcesDir)
-        )
-    );
-    invalidOutDirPath.bind(
-        outputDir.isNotEmpty().and(
-            Bindings.createBooleanBinding(() -> !Path.of(outputDir.get()).toFile().isDirectory(), outputDir)
-        )
-    );
+    invalidMainFilePath.bind(mainFile.isNotEmpty().and(BindingUtils.createIsJavaFileBinding(mainFile).not()));
+    invalidSourcesDirPath.bind(sourcesDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(sourcesDir).not()));
+    invalidOutDirPath.bind(outputDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(outputDir).not()));
   }
 
   public String[] getRunCommand() {
