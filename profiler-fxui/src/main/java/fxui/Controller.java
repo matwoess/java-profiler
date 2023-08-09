@@ -4,10 +4,15 @@ import common.IO;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.SystemOutputTextFlowWriter;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -126,18 +131,20 @@ public class Controller {
   }
 
   private void initBorderListeners() {
-    txtMainFile.textProperty().addListener((observable, oldValue, newValue) -> {
-      Border border = newValue.isBlank() ? neutralBorder : parameters.invalidMainFilePath.get() ? invalidBorder : validBorder;
-      txtMainFile.setBorder(border);
-    });
-    txtSourcesDir.textProperty().addListener((observable, oldValue, newValue) -> {
-      Border border = newValue.isBlank() ? neutralBorder : parameters.invalidSourcesDirPath.get() ? invalidBorder : validBorder;
-      txtSourcesDir.setBorder(border);
-    });
-    txtOutputDir.textProperty().addListener((observable, oldValue, newValue) ->{
-      Border border = newValue.isBlank() ? neutralBorder : parameters.invalidOutDirPath.get() ? invalidBorder : validBorder;
-      txtOutputDir.setBorder(border);
-    });
+    txtMainFile.borderProperty().bind(createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
+    txtSourcesDir.borderProperty().bind(createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
+    txtOutputDir.borderProperty().bind(createBorderBinding(parameters.outputDir, parameters.invalidOutDirPath));
+  }
+
+  public ObjectBinding<Border> createBorderBinding(StringProperty textProperty, BooleanProperty invalidityProperty) {
+    return Bindings.createObjectBinding(() -> {
+          if (textProperty.get().isBlank()) return neutralBorder;
+          if (invalidityProperty.get()) return invalidBorder;
+          else return validBorder;
+        },
+        textProperty,
+        invalidityProperty
+    );
   }
 
   public void chooseFile(TextField pathField) {

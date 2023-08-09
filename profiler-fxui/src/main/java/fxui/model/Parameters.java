@@ -22,7 +22,7 @@ public class Parameters implements Serializable {
   public BooleanProperty syncCounters = new SimpleBooleanProperty(false);
   public BooleanProperty verboseOutput = new SimpleBooleanProperty(false);
 
-  public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(true);
+  public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
   public BooleanProperty invalidOutDirPath = new SimpleBooleanProperty(false);
   public BooleanProperty invalidSourcesDirPath = new SimpleBooleanProperty(false);
 
@@ -32,13 +32,19 @@ public class Parameters implements Serializable {
 
   public void initializeExtraProperties() {
     invalidMainFilePath.bind(
-        mainFile.isNotEmpty().and(Bindings.createBooleanBinding(() -> !Util.isJavaFile(Path.of(mainFile.get()))))
+        mainFile.isNotEmpty().and(
+            Bindings.createBooleanBinding(() -> !Util.isJavaFile(Path.of(mainFile.get())), mainFile)
+        )
     );
     invalidSourcesDirPath.bind(
-        sourcesDir.isNotEmpty().and(Bindings.createBooleanBinding(() -> !Path.of(sourcesDir.get()).toFile().isDirectory()))
+        sourcesDir.isNotEmpty().and(
+            Bindings.createBooleanBinding(() -> !Path.of(sourcesDir.get()).toFile().isDirectory(), sourcesDir)
+        )
     );
     invalidOutDirPath.bind(
-        outputDir.isNotEmpty().and(Bindings.createBooleanBinding(() -> !Path.of(outputDir.get()).toFile().isDirectory()))
+        outputDir.isNotEmpty().and(
+            Bindings.createBooleanBinding(() -> !Path.of(outputDir.get()).toFile().isDirectory(), outputDir)
+        )
     );
   }
 
