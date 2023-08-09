@@ -3,6 +3,8 @@ package fxui;
 import common.IO;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
+import fxui.util.BindingUtils;
+import fxui.util.SystemUtils;
 import fxui.util.SystemOutputTextFlowWriter;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -82,9 +84,9 @@ public class Controller {
   }
 
   private void setOnClickActions() {
-    btnMainFile.setOnAction(event -> PathUtils.chooseFile(txtMainFile));
-    btnSourcesDir.setOnAction(event -> PathUtils.chooseDirectory(txtSourcesDir));
-    btnOutputDir.setOnAction(event -> PathUtils.chooseDirectory(txtOutputDir));
+    btnMainFile.setOnAction(event -> SystemUtils.chooseFile(txtMainFile));
+    btnSourcesDir.setOnAction(event -> SystemUtils.chooseDirectory(txtSourcesDir));
+    btnOutputDir.setOnAction(event -> SystemUtils.chooseDirectory(txtOutputDir));
   }
 
   private void initRunModeControl() {
@@ -132,6 +134,6 @@ public class Controller {
   @FXML
   protected void onOpenReport() {
     Path reportPath = IO.getReportIndexPath();
-    PathUtils.openWithDesktopApplication(reportPath);
+    SystemUtils.openWithDesktopApplication(reportPath);
   }
 }

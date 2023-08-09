@@ -1,4 +1,4 @@
-package fxui;
+package fxui.util;
 
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class PathUtils {
+public class SystemUtils {
   public static void chooseFile(TextField pathField) {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Choose File");

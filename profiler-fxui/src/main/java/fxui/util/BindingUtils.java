@@ -1,4 +1,4 @@
-package fxui;
+package fxui.util;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;

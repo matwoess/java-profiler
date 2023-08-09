@@ -1,6 +1,6 @@
 package fxui.model;
 
-import fxui.BindingUtils;
+import fxui.util.BindingUtils;
 import javafx.beans.property.*;
 
 import java.io.Serializable;
