@@ -48,6 +48,8 @@ public class Controller {
   @FXML
   private Button btnOutputDir;
   @FXML
+  private HBox hbSyncCounters;
+  @FXML
   private CheckBox cbSyncCounters;
   @FXML
   private CheckBox cbVerboseOutput;
@@ -108,7 +110,7 @@ public class Controller {
     vbMainFile.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
     vbProgramArgs.disableProperty().bind(parameters.runMode.isNotEqualTo(RunMode.DEFAULT));
     vbSourcesDir.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
-    cbSyncCounters.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
+    hbSyncCounters.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
   }
 
   private void initButtonDisabledProperties() {

@@ -95,13 +95,15 @@
                     <Insets right="16.0"/>
                 </HBox.margin>
             </CheckBox>
-            <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
-            <Label text=" (?) " textFill="darkgoldenrod">
-                <tooltip>
-                    <Tooltip
-                            text="All inserted counters will be incremented synchronously. This ensures exact results in multi-threaded programs."/>
-                </tooltip>
-            </Label>
+            <HBox fx:id="hbSyncCounters" alignment="CENTER_LEFT">
+                <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
+                <Label text=" (?) " textFill="darkgoldenrod">
+                    <tooltip>
+                        <Tooltip
+                                text="All inserted counters will be incremented synchronously. This ensures exact results in multi-threaded programs."/>
+                    </tooltip>
+                </Label>
+            </HBox>
         </HBox>
         <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">
             <HBox.margin>
