@@ -1,7 +1,7 @@
 package fxui.model;
 
-import common.IO;
 import common.Util;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 
 import java.io.Serializable;
@@ -31,31 +31,15 @@ public class Parameters implements Serializable {
   }
 
   public void initializeExtraProperties() {
-    mainFile.addListener((observable, oldValue, newValue) -> {
-      if (!newValue.isBlank()) {
-        Path newPath = Path.of(newValue);
-        invalidMainFilePath.set(!Util.isJavaFile(newPath));
-      } else {
-        invalidMainFilePath.set(runMode.get() != REPORT_ONLY);
-      }
-    });
-    sourcesDir.addListener((observable, oldValue, newValue) -> {
-      if (newValue.isBlank()) {
-        invalidSourcesDirPath.set(false);
-      } else {
-        Path newPath = Path.of(newValue);
-        invalidSourcesDirPath.set(!newPath.toFile().isDirectory());
-      }
-    });
-    outputDir.addListener((observable, oldValue, newValue) -> {
-      if (newValue.isBlank()) {
-        invalidOutDirPath.set(false);
-      } else {
-        Path newPath = Path.of(newValue);
-        IO.outputDir = newPath;
-        invalidOutDirPath.set(!newPath.toFile().isDirectory());
-      }
-    });
+    invalidMainFilePath.bind(
+        mainFile.isNotEmpty().and(Bindings.createBooleanBinding(() -> !Util.isJavaFile(Path.of(mainFile.get()))))
+    );
+    invalidSourcesDirPath.bind(
+        sourcesDir.isNotEmpty().and(Bindings.createBooleanBinding(() -> !Path.of(sourcesDir.get()).toFile().isDirectory()))
+    );
+    invalidOutDirPath.bind(
+        outputDir.isNotEmpty().and(Bindings.createBooleanBinding(() -> !Path.of(outputDir.get()).toFile().isDirectory()))
+    );
   }
 
   public String[] getRunCommand() {

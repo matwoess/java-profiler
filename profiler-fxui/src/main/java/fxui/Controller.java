@@ -4,7 +4,7 @@ import common.IO;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.SystemOutputTextFlowWriter;
-import javafx.beans.binding.Binding;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -115,10 +115,14 @@ public class Controller {
 
   private void initButtonDisabledProperties() {
     btnOpenReport.disableProperty().bindBidirectional(parameters.invalidOutDirPath);
-    Binding<Boolean> anyPathInvalid = parameters.invalidMainFilePath
+    BooleanBinding anyPathInvalid = parameters.invalidMainFilePath
         .or(parameters.invalidSourcesDirPath)
         .or(parameters.invalidOutDirPath);
-    btnRunTool.disableProperty().bind(anyPathInvalid);
+    BooleanBinding instrumentWithoutTarget = parameters.runMode
+        .isNotEqualTo(RunMode.REPORT_ONLY)
+        .and(parameters.mainFile.isEmpty())
+        .and(parameters.sourcesDir.isEmpty());
+    btnRunTool.disableProperty().bind(anyPathInvalid.or(instrumentWithoutTarget));
   }
 
   private void initBorderListeners() {
