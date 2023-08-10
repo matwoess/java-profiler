@@ -1,9 +1,9 @@
 plugins {
-    id("java")
+    java
 }
 
 group = "dev.matwoess"
-version = "1.0-SNAPSHOT"
+version = "0.2.0"
 
 repositories {
     mavenCentral()
@@ -17,4 +17,22 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+val mainClass = "tool.Main"
+
+tasks {
+    register("fatJar", Jar::class.java) {
+        archiveClassifier.set("all")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        manifest {
+            attributes["Main-Class"] = mainClass
+        }
+        from(configurations.runtimeClasspath.get()
+            .onEach { println("add from dependencies: ${it.name}") }
+            .map { if (it.isDirectory) it else zipTree(it) })
+        val sourcesMain = sourceSets.main.get()
+        sourcesMain.allSource.forEach { println("add from sources: ${it.name}") }
+        from(sourcesMain.output)
+    }
 }
