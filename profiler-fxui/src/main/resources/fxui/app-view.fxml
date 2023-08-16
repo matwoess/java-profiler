@@ -22,7 +22,7 @@
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
                         <Tooltip
-                                text="In which mode the tool will be executed. Each mode allows different parameters."/>
+                                text="In which mode the tool will be executed. Each mode allows a different set of parameters."/>
                     </tooltip>
                 </Label>
             </HBox>
@@ -52,7 +52,7 @@
                 <Label text="Program arguments"/>
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
-                        <Tooltip text="Are passed on to the instrumented and compiled program when run."/>
+                        <Tooltip text="These arguments are passed on to the instrumented and compiled version of the program when run."/>
                     </tooltip>
                 </Label>
             </HBox>
@@ -63,7 +63,7 @@
                 <Label text="Additional sources directory"/>
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
-                        <Tooltip text="All java files in this directory will be instrumented recursively."/>
+                        <Tooltip text="All java files in this directory or its sub-folders will be instrumented in addition to the main file."/>
                     </tooltip>
                 </Label>
             </HBox>
