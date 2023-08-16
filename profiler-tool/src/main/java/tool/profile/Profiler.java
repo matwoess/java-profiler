@@ -35,6 +35,7 @@ public class Profiler {
     Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile.relativePath));
     String filePath = mainFile.toString();
     String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
+    System.out.println("Program output:");
     String[] command = Util.prependToArray(programArgs, "java", classFilePath);
     int exitCode = Util.runCommand(IO.getInstrumentDir(), command);
     if (exitCode != 0) {

@@ -34,12 +34,11 @@ public class Instrumenter {
   }
 
   void analyze(JavaFile javaFile) {
-    System.out.println("Reading File: \"" + javaFile.sourceFile + "\"");
+    System.out.println("Parsing file: \"" + javaFile.sourceFile + "\"");
     Parser parser = new Parser(new Scanner(javaFile.sourceFile.toString()));
     parser.state.verbose = verboseOutput;
     parser.Parse();
     int errors = parser.errors.count;
-    System.out.printf("Errors found: %d\n\n", errors);
     if (errors > 0) {
       throw new RuntimeException("Abort due to parse errors.");
     }
@@ -61,7 +60,7 @@ public class Instrumenter {
     }
     copyAuxiliaryFiles();
     System.out.println();
-    System.out.println("Total block found: " + blockCounter);
+    System.out.println("Total code block found: " + blockCounter);
   }
 
   void instrument(JavaFile javaFile) throws IOException {
