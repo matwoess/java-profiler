@@ -123,7 +123,7 @@
                     </tooltip>
                 </Label>
             </HBox>
-            <TextArea fx:id="txtFlowOutput"/>
+            <TextArea fx:id="txtProgramOutput"/>
         </VBox>
     </VBox>
 </VBox>
