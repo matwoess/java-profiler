@@ -49,7 +49,7 @@ public class Parameters {
     }
     boolean sync = syncCounters.get();
     if (sync && mode != REPORT_ONLY) {
-      arguments.add("--sync-counters");
+      arguments.add("--synchronized");
     }
     switch (mode) {
       case REPORT_ONLY -> arguments.add("--generate-report");
