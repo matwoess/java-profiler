@@ -22,17 +22,17 @@ import java.nio.file.Path;
 public class Controller {
 
   @FXML
-  private VBox vbMainFile;
+  private VBox boxMainFile;
   @FXML
   private TextField txtMainFile;
   @FXML
   private Button btnMainFile;
   @FXML
-  private VBox vbProgramArgs;
+  private VBox boxProgramArgs;
   @FXML
   private TextField txtProgramArgs;
   @FXML
-  private VBox vbSourcesDir;
+  private VBox boxSourcesDir;
   @FXML
   private TextField txtSourcesDir;
   @FXML
@@ -42,7 +42,7 @@ public class Controller {
   @FXML
   private Button btnOutputDir;
   @FXML
-  private HBox hbSyncCounters;
+  private HBox boxSyncCounters;
   @FXML
   private CheckBox cbSyncCounters;
   @FXML
@@ -101,10 +101,10 @@ public class Controller {
   }
 
   private void initDisabledPropertiesByMode() {
-    vbMainFile.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
-    vbProgramArgs.disableProperty().bind(parameters.runMode.isNotEqualTo(RunMode.DEFAULT));
-    vbSourcesDir.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
-    hbSyncCounters.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
+    boxMainFile.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
+    boxProgramArgs.disableProperty().bind(parameters.runMode.isNotEqualTo(RunMode.DEFAULT));
+    boxSourcesDir.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
+    boxSyncCounters.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
   }
 
   private void initButtonDisabledProperties() {
