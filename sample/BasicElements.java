@@ -57,4 +57,15 @@ public class BasicElements {
     assert x == 1;
     assert "Hello".chars().asDoubleStream().map(d -> d + 2).sum() > 0 : "is 0 or less";
   }
+
+  String multiLineString = """
+      Text
+      With
+      Multiple
+      lines!
+      """;
+
+  public String getMultiLineString() {
+    return multiLineString;
+  }
 }

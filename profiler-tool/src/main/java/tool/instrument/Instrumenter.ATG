@@ -28,14 +28,16 @@ TOKENS
 			| noApostrophe
 		) apostrophe.
 	string =
-		quote {(
-			bslash (
-				escapableChar
-				| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
-				| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
-			)
-			| noQuote
-		)} quote.
+		( quote quote quote lf {noQuote} quote quote quote
+		| quote {(
+				bslash (
+					escapableChar
+					| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
+					| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
+				)
+				| noQuote
+			)} quote
+		).
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
 	classRef = ".class".  // exclude from being interpreted as new class definition
 	this     = "this".

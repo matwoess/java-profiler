@@ -271,6 +271,36 @@ public class BasicElementsTest {
   }
 
   @Test
+  public void testMultilineStrings() {
+    String fileContent = """
+        class WithMLStrings {
+          static String mlString = ""\"
+              Line1,
+              Line2
+              ""\";
+          public static void main(String[] args) {
+            mlString += ""\"
+                ,
+                Line3,
+                Line4
+                ""\";
+          }
+          public static String getMlString() {
+            return mlString;
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("WithMLStrings",
+            jMethod("main", 2, 8, 62, 161, // TODO
+                jBlock(BLOCK, 4, 6, 112, 156)
+            )
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
   public void testTernaryOperatorInReturn() {
     String fileContent = String.format(baseTemplate, """
         if (false) {
