@@ -63,6 +63,10 @@ public class IO {
     return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 
+  public static Path getUIParametersPath() {
+    return getOutputDir().resolve("parameters.dat");
+  }
+
   public static <T> void copyResource(Class<T> resourceClass, String resourceName, Path destination) {
     try (InputStream resource = resourceClass.getClassLoader().getResourceAsStream(resourceName)) {
       if (resource == null) {

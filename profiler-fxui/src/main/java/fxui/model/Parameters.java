@@ -3,14 +3,15 @@ package fxui.model;
 import fxui.util.BindingUtils;
 import javafx.beans.property.*;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static common.IO.getUIParametersPath;
 import static fxui.model.RunMode.*;
 
-public class Parameters implements Serializable {
+public class Parameters {
   public ObjectProperty<RunMode> runMode = new SimpleObjectProperty<>(DEFAULT);
 
   public StringProperty mainFile = new SimpleStringProperty("");
@@ -70,5 +71,33 @@ public class Parameters implements Serializable {
       }
     }
     return arguments.toArray(String[]::new);
+  }
+
+  public void exportParameters() {
+    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(getUIParametersPath().toFile()))) {
+      oos.writeInt(runMode.get().ordinal());
+      oos.writeUTF(mainFile.get());
+      oos.writeUTF(programArgs.get());
+      oos.writeUTF(sourcesDir.get());
+      oos.writeUTF(outputDir.get());
+      oos.writeBoolean(syncCounters.get());
+      oos.writeBoolean(verboseOutput.get());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public void importParameters() {
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getUIParametersPath().toFile()))) {
+       runMode.set(RunMode.values()[ois.readInt()]);
+       mainFile.set(ois.readUTF());
+       programArgs.set(ois.readUTF());
+       sourcesDir.set(ois.readUTF());
+       outputDir.set(ois.readUTF());
+       syncCounters.set(ois.readBoolean());
+       verboseOutput.set(ois.readBoolean());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
