@@ -21,7 +21,7 @@
         </HBox>
         <ChoiceBox fx:id="cbRunMode" prefHeight="26.0" prefWidth="769.0"/>
     </VBox>
-    <VBox fx:id="vbMainFile">
+    <VBox fx:id="boxMainFile">
         <HBox>
             <Label text="Main file"/>
             <Label text=" (?) " textFill="darkgoldenrod">
@@ -40,7 +40,7 @@
             <Button fx:id="btnMainFile" text="Select"/>
         </HBox>
     </VBox>
-    <VBox fx:id="vbProgramArgs">
+    <VBox fx:id="boxProgramArgs">
         <HBox>
             <Label text="Program arguments"/>
             <Label text=" (?) " textFill="darkgoldenrod">
@@ -51,7 +51,7 @@
         </HBox>
         <TextField fx:id="txtProgramArgs" HBox.hgrow="ALWAYS"/>
     </VBox>
-    <VBox fx:id="vbSourcesDir">
+    <VBox fx:id="boxSourcesDir">
         <HBox>
             <Label text="Additional sources directory"/>
             <Label text=" (?) " textFill="darkgoldenrod">
@@ -95,7 +95,7 @@
                     <Insets right="16.0"/>
                 </HBox.margin>
             </CheckBox>
-            <HBox fx:id="hbSyncCounters" alignment="CENTER_LEFT">
+            <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
                 <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
