@@ -46,7 +46,7 @@ public class Controller {
   @FXML
   private Button btnRunTool;
   @FXML
-  private TextArea txtFlowOutput;
+  private TextArea txtProgramOutput;
   @FXML
   private ChoiceBox<RunMode> cbRunMode;
 
@@ -88,7 +88,7 @@ public class Controller {
   }
 
   private void initConsoleOutput() {
-    PrintStream consoleOutput = new PrintStream(new SystemOutputWriter(txtFlowOutput));
+    PrintStream consoleOutput = new PrintStream(new SystemOutputWriter(txtProgramOutput));
     System.setOut(consoleOutput);
     System.setErr(consoleOutput);
   }
@@ -120,7 +120,7 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    txtFlowOutput.clear();
+    txtProgramOutput.clear();
     tool.Main.main(parameters.getRunCommand());
   }
 
