@@ -105,6 +105,8 @@
                 </Label>
             </HBox>
         </HBox>
+        <Button onAction="#onSaveParameters" text="Save"/>
+        <Button onAction="#onRestoreParameters" text="Restore"/>
         <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">
             <HBox.margin>
                 <Insets right="16.0"/>

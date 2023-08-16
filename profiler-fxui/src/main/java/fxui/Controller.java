@@ -136,4 +136,14 @@ public class Controller {
     Path reportPath = IO.getReportIndexPath();
     SystemUtils.openWithDesktopApplication(reportPath);
   }
+
+  @FXML
+  protected void onSaveParameters() {
+    parameters.exportParameters();
+  }
+
+  @FXML
+  protected void onRestoreParameters() {
+    parameters.importParameters();
+  }
 }
