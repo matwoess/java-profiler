@@ -5,118 +5,124 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxui.Controller">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
-    <VBox>
-        <HBox>
-            <Label text="Run mode"/>
-            <Label text=" (?) " textFill="darkgoldenrod">
-                <tooltip>
-                    <Tooltip text="In which mode the tool will be executed. Each mode allows different parameters."/>
-                </tooltip>
-            </Label>
-        </HBox>
-        <ChoiceBox fx:id="cbRunMode" prefHeight="26.0" prefWidth="769.0"/>
-    </VBox>
-    <VBox fx:id="boxMainFile">
-        <HBox>
-            <Label text="Main file"/>
-            <Label text=" (?) " textFill="darkgoldenrod">
-                <tooltip>
-                    <Tooltip
-                            text="Java file containing the main entry point. Its instrumented version will be compiled and executed."/>
-                </tooltip>
-            </Label>
-        </HBox>
-        <HBox prefWidth="Infinity">
-            <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS">
-                <HBox.margin>
-                    <Insets right="8.0"/>
-                </HBox.margin>
-            </TextField>
-            <Button fx:id="btnMainFile" text="Select"/>
-        </HBox>
-    </VBox>
-    <VBox fx:id="boxProgramArgs">
-        <HBox>
-            <Label text="Program arguments"/>
-            <Label text=" (?) " textFill="darkgoldenrod">
-                <tooltip>
-                    <Tooltip text="Are passed on to the instrumented and compiled program when run."/>
-                </tooltip>
-            </Label>
-        </HBox>
-        <TextField fx:id="txtProgramArgs" HBox.hgrow="ALWAYS"/>
-    </VBox>
-    <VBox fx:id="boxSourcesDir">
-        <HBox>
-            <Label text="Additional sources directory"/>
-            <Label text=" (?) " textFill="darkgoldenrod">
-                <tooltip>
-                    <Tooltip text="All java files in this directory will be instrumented recursively."/>
-                </tooltip>
-            </Label>
-        </HBox>
-        <HBox prefWidth="Infinity">
-            <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS">
-                <HBox.margin>
-                    <Insets right="8.0"/>
-                </HBox.margin>
-            </TextField>
-            <Button fx:id="btnSourcesDir" text="Select"/>
-        </HBox>
-    </VBox>
-    <VBox>
-        <HBox>
-            <Label text="Profiler output directory"/>
-            <Label text=" (?) " textFill="darkgoldenrod">
-                <tooltip>
-                    <Tooltip
-                            text="Where the tool stores instrumented files, metadata and results. The default value is &quot;./out/profiler&quot;."/>
-                </tooltip>
-            </Label>
-        </HBox>
-        <HBox prefWidth="Infinity">
-            <TextField fx:id="txtOutputDir" HBox.hgrow="ALWAYS">
-                <HBox.margin>
-                    <Insets right="8.0"/>
-                </HBox.margin>
-            </TextField>
-            <Button fx:id="btnOutputDir" text="Select"/>
-        </HBox>
-    </VBox>
-    <HBox>
-        <HBox alignment="CENTER_LEFT" HBox.hgrow="SOMETIMES">
-            <CheckBox fx:id="cbVerboseOutput" text="Verbose output">
-                <HBox.margin>
-                    <Insets right="16.0"/>
-                </HBox.margin>
-            </CheckBox>
-            <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
-                <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
+    <ToolBar>
+        <Button onAction="#onSaveParameters" text="Save current parameters"/>
+        <Button onAction="#onRestoreParameters" text="Restore saved parameters"/>
+    </ToolBar>
+    <VBox spacing="20.0">
+        <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        </padding>
+        <VBox>
+            <HBox>
+                <Label text="Run mode"/>
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
                         <Tooltip
-                                text="All inserted counters will be incremented synchronously. This ensures exact results in multi-threaded programs."/>
+                                text="In which mode the tool will be executed. Each mode allows different parameters."/>
                     </tooltip>
                 </Label>
             </HBox>
+            <ChoiceBox fx:id="cbRunMode" prefHeight="26.0" prefWidth="769.0"/>
+        </VBox>
+        <VBox fx:id="boxMainFile">
+            <HBox>
+                <Label text="Main file"/>
+                <Label text=" (?) " textFill="darkgoldenrod">
+                    <tooltip>
+                        <Tooltip
+                                text="Java file containing the main entry point. Its instrumented version will be compiled and executed."/>
+                    </tooltip>
+                </Label>
+            </HBox>
+            <HBox prefWidth="Infinity">
+                <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS">
+                    <HBox.margin>
+                        <Insets right="8.0"/>
+                    </HBox.margin>
+                </TextField>
+                <Button fx:id="btnMainFile" text="Select"/>
+            </HBox>
+        </VBox>
+        <VBox fx:id="boxProgramArgs">
+            <HBox>
+                <Label text="Program arguments"/>
+                <Label text=" (?) " textFill="darkgoldenrod">
+                    <tooltip>
+                        <Tooltip text="Are passed on to the instrumented and compiled program when run."/>
+                    </tooltip>
+                </Label>
+            </HBox>
+            <TextField fx:id="txtProgramArgs" HBox.hgrow="ALWAYS"/>
+        </VBox>
+        <VBox fx:id="boxSourcesDir">
+            <HBox>
+                <Label text="Additional sources directory"/>
+                <Label text=" (?) " textFill="darkgoldenrod">
+                    <tooltip>
+                        <Tooltip text="All java files in this directory will be instrumented recursively."/>
+                    </tooltip>
+                </Label>
+            </HBox>
+            <HBox prefWidth="Infinity">
+                <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS">
+                    <HBox.margin>
+                        <Insets right="8.0"/>
+                    </HBox.margin>
+                </TextField>
+                <Button fx:id="btnSourcesDir" text="Select"/>
+            </HBox>
+        </VBox>
+        <VBox>
+            <HBox>
+                <Label text="Profiler output directory"/>
+                <Label text=" (?) " textFill="darkgoldenrod">
+                    <tooltip>
+                        <Tooltip
+                                text="Where the tool stores instrumented files, metadata and results. The default value is &quot;./out/profiler&quot;."/>
+                    </tooltip>
+                </Label>
+            </HBox>
+            <HBox prefWidth="Infinity">
+                <TextField fx:id="txtOutputDir" HBox.hgrow="ALWAYS">
+                    <HBox.margin>
+                        <Insets right="8.0"/>
+                    </HBox.margin>
+                </TextField>
+                <Button fx:id="btnOutputDir" text="Select"/>
+            </HBox>
+        </VBox>
+        <HBox>
+            <HBox alignment="CENTER_LEFT" HBox.hgrow="SOMETIMES">
+                <CheckBox fx:id="cbVerboseOutput" text="Verbose output">
+                    <HBox.margin>
+                        <Insets right="16.0"/>
+                    </HBox.margin>
+                </CheckBox>
+                <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
+                    <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
+                    <Label text=" (?) " textFill="darkgoldenrod">
+                        <tooltip>
+                            <Tooltip
+                                    text="All inserted counters will be incremented synchronously. This ensures exact results in multi-threaded programs."/>
+                        </tooltip>
+                    </Label>
+                </HBox>
+            </HBox>
+            <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">
+                <HBox.margin>
+                    <Insets right="16.0"/>
+                </HBox.margin>
+            </Button>
+            <Button fx:id="btnRunTool" defaultButton="true" onAction="#onExecuteTool" text="Run tool"/>
         </HBox>
-        <Button onAction="#onSaveParameters" text="Save"/>
-        <Button onAction="#onRestoreParameters" text="Restore"/>
-        <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">
-            <HBox.margin>
-                <Insets right="16.0"/>
-            </HBox.margin>
-        </Button>
-        <Button fx:id="btnRunTool" defaultButton="true" onAction="#onExecuteTool" text="Run tool"/>
-    </HBox>
-    <VBox prefHeight="200.0">
-        <ScrollPane style="-fx-background-color: #F3F9F322;" VBox.vgrow="ALWAYS">
-            <TextFlow fx:id="txtFlowOutput"/>
-        </ScrollPane>
+        <VBox prefHeight="200.0">
+            <ScrollPane style="-fx-background-color: #F3F9F322;" VBox.vgrow="ALWAYS">
+                <TextFlow fx:id="txtFlowOutput"/>
+            </ScrollPane>
+        </VBox>
     </VBox>
 </VBox>
