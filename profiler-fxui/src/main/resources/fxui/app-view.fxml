@@ -3,8 +3,6 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
 
 <VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxui.Controller">
@@ -12,9 +10,9 @@
         <Button onAction="#onSaveParameters" text="Save current parameters"/>
         <Button onAction="#onRestoreParameters" text="Restore saved parameters"/>
     </ToolBar>
-    <VBox spacing="20.0">
+    <VBox spacing="16.0">
         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
         </padding>
         <VBox>
             <HBox>
@@ -52,7 +50,8 @@
                 <Label text="Program arguments"/>
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
-                        <Tooltip text="These arguments are passed on to the instrumented and compiled version of the program when run."/>
+                        <Tooltip
+                                text="These arguments are passed on to the instrumented and compiled version of the program when run."/>
                     </tooltip>
                 </Label>
             </HBox>
@@ -63,7 +62,8 @@
                 <Label text="Additional sources directory"/>
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
-                        <Tooltip text="All java files in this directory or its sub-folders will be instrumented in addition to the main file."/>
+                        <Tooltip
+                                text="All java files in this directory or its sub-folders will be instrumented in addition to the main file."/>
                     </tooltip>
                 </Label>
             </HBox>
@@ -97,11 +97,6 @@
         </VBox>
         <HBox>
             <HBox alignment="CENTER_LEFT" HBox.hgrow="SOMETIMES">
-                <CheckBox fx:id="cbVerboseOutput" text="Verbose output">
-                    <HBox.margin>
-                        <Insets right="16.0"/>
-                    </HBox.margin>
-                </CheckBox>
                 <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
                     <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
                     <Label text=" (?) " textFill="darkgoldenrod">
@@ -119,10 +114,16 @@
             </Button>
             <Button fx:id="btnRunTool" defaultButton="true" onAction="#onExecuteTool" text="Run tool"/>
         </HBox>
-        <VBox prefHeight="200.0">
-            <ScrollPane style="-fx-background-color: #F3F9F322;" VBox.vgrow="ALWAYS">
-                <TextFlow fx:id="txtFlowOutput"/>
-            </ScrollPane>
+        <VBox>
+            <HBox>
+                <Label text="Tool output"/>
+                <Label text=" (?) " textFill="darkgoldenrod">
+                    <tooltip>
+                        <Tooltip text="The console output of the tool will be redirected here."/>
+                    </tooltip>
+                </Label>
+            </HBox>
+            <TextArea fx:id="txtFlowOutput"/>
         </VBox>
     </VBox>
 </VBox>
