@@ -19,7 +19,6 @@ public class Parameters {
   public StringProperty sourcesDir = new SimpleStringProperty("");
   public StringProperty outputDir = new SimpleStringProperty("");
   public BooleanProperty syncCounters = new SimpleBooleanProperty(false);
-  public BooleanProperty verboseOutput = new SimpleBooleanProperty(false);
 
   public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
   public BooleanProperty invalidOutDirPath = new SimpleBooleanProperty(false);
@@ -42,10 +41,6 @@ public class Parameters {
     if (!outDir.isBlank()) {
       arguments.add("--out-directory");
       arguments.add(outDir);
-    }
-    boolean verbose = verboseOutput.get();
-    if (verbose) {
-      arguments.add("--verbose");
     }
     boolean sync = syncCounters.get();
     if (sync && mode != REPORT_ONLY) {
@@ -81,7 +76,6 @@ public class Parameters {
       oos.writeUTF(sourcesDir.get());
       oos.writeUTF(outputDir.get());
       oos.writeBoolean(syncCounters.get());
-      oos.writeBoolean(verboseOutput.get());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -95,7 +89,6 @@ public class Parameters {
        sourcesDir.set(ois.readUTF());
        outputDir.set(ois.readUTF());
        syncCounters.set(ois.readBoolean());
-       verboseOutput.set(ois.readBoolean());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

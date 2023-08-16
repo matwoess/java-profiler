@@ -5,16 +5,12 @@ import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
-import fxui.util.SystemOutputTextFlowWriter;
+import fxui.util.SystemOutputWriter;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextFlow;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -46,13 +42,11 @@ public class Controller {
   @FXML
   private CheckBox cbSyncCounters;
   @FXML
-  private CheckBox cbVerboseOutput;
-  @FXML
   private Button btnOpenReport;
   @FXML
   private Button btnRunTool;
   @FXML
-  private TextFlow txtFlowOutput;
+  private TextArea txtFlowOutput;
   @FXML
   private ChoiceBox<RunMode> cbRunMode;
 
@@ -79,7 +73,6 @@ public class Controller {
     txtProgramArgs.textProperty().bindBidirectional(parameters.programArgs);
     txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir);
     txtOutputDir.textProperty().bindBidirectional(parameters.outputDir);
-    cbVerboseOutput.selectedProperty().bindBidirectional(parameters.verboseOutput);
     cbSyncCounters.selectedProperty().bindBidirectional(parameters.syncCounters);
   }
 
@@ -95,7 +88,7 @@ public class Controller {
   }
 
   private void initConsoleOutput() {
-    PrintStream consoleOutput = new PrintStream(new SystemOutputTextFlowWriter(txtFlowOutput));
+    PrintStream consoleOutput = new PrintStream(new SystemOutputWriter(txtFlowOutput));
     System.setOut(consoleOutput);
     System.setErr(consoleOutput);
   }
@@ -127,7 +120,7 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    txtFlowOutput.getChildren().clear();
+    txtFlowOutput.clear();
     tool.Main.main(parameters.getRunCommand());
   }
 
