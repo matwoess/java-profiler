@@ -27,15 +27,16 @@ TOKENS
 			)
 			| noApostrophe
 		) apostrophe.
+	textBlockEscSeq = quote CONTEXT ("\"\"").
 	string =
 		quote {(
-			bslash (
-				escapableChar
-				| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
-				| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
-			)
-			| noQuote
-		)} quote.
+				bslash (
+					escapableChar
+					| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
+					| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
+				)
+				| noQuote
+			)} quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
 	classRef = ".class".  // exclude from being interpreted as new class definition
 	this     = "this".
@@ -46,6 +47,8 @@ COMMENTS FROM "//" TO '\n'
 IGNORE tab + cr + lf
 
 PRODUCTIONS
+
+String = (string | textBlockEscSeq string /* always "\"\"" */ {ANY} textBlockEscSeq string /* always "\"\"" */).
 
 Instrumenter = [PackageDecl] { AnnotationType | Annotation | Class<false> | Enum<false> | ANY }.
 PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
@@ -107,8 +110,8 @@ Statement =
 		| ";"
 		.
 GenericStatement =
-	(ident | string | this | "throw" | ParExpr | Instantiation)
-		{string | char
+	(ident | String | this | "throw" | ParExpr | Instantiation)
+		{String | char
 			| ArrowExpression<false, false>
 			| SwitchStatement
 			| Instantiation
@@ -138,7 +141,7 @@ ArrowExpression<boolean inSwitch, boolean inAssignment> =
 	.
 SSArrowBody<boolean inSwitch, boolean inAssignment> =
  																		(. state.checkSingleStatement(inAssignment, inSwitch, true); .)
-				(ANY | ParExpr | string | char | ident | "throw" (. state.registerThrow(); .))
+				(ANY | ParExpr | String | char | ident | "throw" (. state.registerThrow(); .))
 				{ANY | ParExpr}
 				(")" | ";")									(. state.leaveSingleStatement(); .)
 				.
