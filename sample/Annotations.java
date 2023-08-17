@@ -1,9 +1,7 @@
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 
 @interface VersionID {
@@ -41,6 +39,7 @@ public class Annotations {
         return s1.compareTo(s2);
       }
     });
+    printData("data");
   }
 
   @Override
@@ -52,5 +51,24 @@ public class Annotations {
   )
   public boolean equals(@SuppressWarnings("null") Object obj) {
     return super.equals(obj);
+  }
+
+  @RuntimeRetentionPolicy.AuthorMetadata(
+      author = """
+          Me,
+          Others,
+          Annonymous
+          """,
+      date = "01.03.2020",
+      comments = {"Additional Markdown data below:", """
+      | Name  | Age |
+      |-------|-----|
+      | Mark  | 21  |
+      | John  | 45  |
+      | Maria | 19  |
+      """}
+  )
+  static void printData(String data) {
+    System.out.println(data);
   }
 }

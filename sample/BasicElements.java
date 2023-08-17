@@ -56,16 +56,24 @@ public class BasicElements {
     "Hello World".chars().sum();
     assert x == 1;
     assert "Hello".chars().asDoubleStream().map(d -> d + 2).sum() > 0 : "is 0 or less";
+    System.out.println(BasicElements.getMultiLineString());
   }
 
-  String multiLineString = """
-      Text
-      With
-      Multiple
-      lines!
+  static String multiLineString = """
+      Text with
+      multiple (!)
+      lines!\n
+      can contain "strings", \"escaped strings\"
+      and \t""\"
+      Text blocks!
+      with ""\\\\"
+        "nested(!) text blocks",
+        ""\\\\"
+      ""\"
+      
       """;
 
-  public String getMultiLineString() {
+  public static String getMultiLineString() {
     return multiLineString;
   }
 }

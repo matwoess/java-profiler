@@ -1,10 +1,11 @@
 package tool.instrument;
 
-import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
+import tool.model.JavaFile;
 
-import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
+import static tool.instrument.TestProgramBuilder.*;
+import static tool.model.BlockType.BLOCK;
 
 public class AnnotationsTest {
   @Test
@@ -85,7 +86,7 @@ public class AnnotationsTest {
         @interface VersionID {
           long id();
         }
-        
+                
         @SuppressWarnings({"unused"})
         @VersionID(id = 5123L)
         public class Annotations {
@@ -107,7 +108,7 @@ public class AnnotationsTest {
         package complexAnnotations;
         import java.lang.annotation.Retention;
         import java.lang.annotation.RetentionPolicy;
-        
+                
         public class Annotations {
           
           private static class RuntimeRetentionPolicy {
@@ -139,6 +140,41 @@ public class AnnotationsTest {
             jClass("RuntimeRetentionPolicy"),
             jMethod("equals", 24, 26, 682, 716),
             jMethod("main", 27, 28, 759, 763)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testAnnotationWithTextBlockParameter() {
+    String fileContent = """
+        class AnnotationTests {
+          @ParameterizedTest
+          @CsvSource(delimiter = '|', nullValues = "n/a", textBlock = ""\"
+              foo,bar,baz | baz,bar,foo
+              1,2         | 2,1
+              n/a         | n/a
+              ""\")
+          void bothNullOrReversed(String input, String expected) {
+            if (expected == null) {
+              assertNull(input);
+            } else {
+              List<String> items = Arrays.stream(input.split(",")).collect(Collectors.toList());
+              ;
+              Collections.reverse(items);
+              String result = String.join(",", items);
+              assertEquals(expected, result);
+            }
+          }
+        }
+        """;
+    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
+    JavaFile expected = jFile(
+        jClass("AnnotationTests",
+            jMethod("bothNullOrReversed", 8, 18, 260, 552,
+                jBlock(BLOCK, 9, 11, 288, 319),
+                jBlock(BLOCK, 11, 17, 326, 548)
+            )
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

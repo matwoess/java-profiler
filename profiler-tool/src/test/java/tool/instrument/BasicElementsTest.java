@@ -271,29 +271,97 @@ public class BasicElementsTest {
   }
 
   @Test
-  public void testMultilineStrings() {
+  public void testTextBlocks() {
     String fileContent = """
-        class WithMLStrings {
-          static String mlString = ""\"
+        class TextBlocks {
+          static String tBlock = ""\"
               Line1,
               Line2
               ""\";
           public static void main(String[] args) {
-            mlString += ""\"
+            tBlock += ""\"
                 ,
                 Line3,
                 Line4
                 ""\";
           }
-          public static String getMlString() {
-            return mlString;
+          public static String getTextBlock() {
+            return tBlock;
           }
         }
         """;
     JavaFile expected = jFile(
-        jClass("WithMLStrings",
-            jMethod("main", 6, 12, 131, 207),
-            jMethod("getMlString", 13, 15, 246, 271)
+        jClass("TextBlocks",
+            jMethod("main", 6, 12, 126, 200),
+            jMethod("getTextBlock", 13, 15, 240, 263)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testTextBlocksContainingStringsAndEscapeSequences() {
+    String fileContent = """
+        class TextBlocksAndSubStrings {
+          static String tBlock = ""\"
+              "Line1 containing character 'a'",
+              code = "String s = "some text"";
+              ""\";
+          public static void main(String[] args) {
+            tBlock += ""\"
+                "More text \t\034"
+                ""\";
+                if (tBlock.length() > 65) {
+                  return;
+                }
+          }
+          public static String getTextBlock() {
+            return tBlock;
+          }
+        }
+        """;
+    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
+    JavaFile expected = jFile(
+        jClass("TextBlocksAndSubStrings",
+            jMethod("main", 6, 13, 193, 315,
+                jBlock(BLOCK, 10, 12, 283, 311)
+            ),
+            jMethod("getTextBlock", 14, 16, 355, 378)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+
+  @Test
+  public void testTextBlocksContainingTextBlocks() {
+    String fileContent = """
+        class TextBlocksAndSubTextBlocks {
+          static String tBlock = ""\"
+              ""\\"
+              "TextBlock",
+              ""\\"
+              ""\";
+          public static void main(String[] args) {
+            tBlock += ""\"
+                ""\\"
+                ""\\\\"
+                "TextBlock",
+                ""\\\\"
+                ""\\"
+                ""\";
+          }
+          public static String getTextBlock() {
+            return tBlock;
+          }
+        }
+        """;
+
+    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
+    JavaFile expected = jFile(
+        jClass("TextBlocksAndSubTextBlocks",
+            jMethod("main", 7, 15, 158, 268),
+            jMethod("getTextBlock", 16, 18, 308, 331)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
