@@ -292,9 +292,8 @@ public class BasicElementsTest {
         """;
     JavaFile expected = jFile(
         jClass("WithMLStrings",
-            jMethod("main", 2, 8, 62, 161, // TODO
-                jBlock(BLOCK, 4, 6, 112, 156)
-            )
+            jMethod("main", 6, 12, 131, 207),
+            jMethod("getMlString", 13, 15, 246, 271)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
