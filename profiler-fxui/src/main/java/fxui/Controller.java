@@ -47,8 +47,6 @@ public class Controller {
   @FXML
   private Button btnRunTool;
   @FXML
-  private TextArea txtProgramOutput;
-  @FXML
   private ChoiceBox<RunMode> cbRunMode;
 
   private final Parameters parameters;
@@ -61,7 +59,6 @@ public class Controller {
   private void initialize() {
     bindParameters();
     setOnClickActions();
-    initConsoleOutput();
     initRunModeControl();
     initDisabledPropertiesByMode();
     initButtonDisabledProperties();
@@ -86,12 +83,6 @@ public class Controller {
   private void initRunModeControl() {
     cbRunMode.getItems().setAll(RunMode.values());
     cbRunMode.valueProperty().bindBidirectional(parameters.runMode);
-  }
-
-  private void initConsoleOutput() {
-    PrintStream consoleOutput = new PrintStream(new SystemOutputWriter(txtProgramOutput));
-    System.setOut(consoleOutput);
-    System.setErr(consoleOutput);
   }
 
   private void initDisabledPropertiesByMode() {

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+<VBox alignment="CENTER" prefHeight="00.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxui.Controller">
     <ToolBar>
         <Button onAction="#onSaveParameters" text="Save current parameters"/>
@@ -114,16 +114,5 @@
             </Button>
             <Button fx:id="btnRunTool" defaultButton="true" onAction="#onExecuteTool" text="Run tool"/>
         </HBox>
-        <VBox>
-            <HBox>
-                <Label text="Tool output"/>
-                <Label text=" (?) " textFill="darkgoldenrod">
-                    <tooltip>
-                        <Tooltip text="The console output of the tool will be redirected here."/>
-                    </tooltip>
-                </Label>
-            </HBox>
-            <TextArea fx:id="txtProgramOutput"/>
-        </VBox>
     </VBox>
 </VBox>
