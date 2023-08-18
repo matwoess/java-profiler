@@ -22,8 +22,16 @@ public class Util {
       throw new RuntimeException(String.format("'%s' is not a java source file!", filePath));
     }
   }
-
   public static int runCommand(Path cwd, String... command) {
+    return runCommand(cwd, false, command);
+  }
+  public static int runCommand(Path cwd, boolean detach, String... command) {
+    if (detach) {
+      command = switch (getOS()) {
+        case WINDOWS -> new String[]{"cmd.exe", "/c", "start cmd.exe /c " + String.join(" ", command), "&&", "exit"};
+        case MAC, LINUX, SOLARIS -> Util.prependToArray(command, "sh", "-c");
+      };
+    }
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
         .directory(cwd.toFile())
