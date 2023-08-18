@@ -37,7 +37,7 @@ public class Profiler {
     String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
     System.out.println("Program output:");
     String[] command = Util.prependToArray(programArgs, "java", classFilePath);
-    int exitCode = Util.runCommand(IO.getInstrumentDir(), true, command);
+    int exitCode = Util.runCommand(IO.getInstrumentDir(), command);
     if (exitCode != 0) {
       throw new RuntimeException("Error executing compiled class: " + classFilePath);
     }

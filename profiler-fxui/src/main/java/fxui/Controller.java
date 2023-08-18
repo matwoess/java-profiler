@@ -1,6 +1,7 @@
 package fxui;
 
 import common.IO;
+import common.Util;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.BindingUtils;
@@ -120,8 +121,12 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    txtProgramOutput.clear();
-    tool.Main.main(parameters.getRunCommand());
+    String[] jarCmd = {"java", "-cp", "build/libs/profiler-fxui-0.2.0-all.jar", "tool.Main"}; // TODO: dynamic jar path
+    String[] fullCmd = Util.prependToArray(parameters.getRunCommand(), jarCmd);
+    int exitCode = Util.runCommandInTerminal(Path.of("."), fullCmd);
+    if (exitCode != 0) {
+      throw new RuntimeException("error executing tool");
+    }
   }
 
   @FXML
