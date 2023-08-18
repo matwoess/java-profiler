@@ -34,7 +34,7 @@ public class Parameters {
     invalidOutDirPath.bind(outputDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(outputDir).not()));
   }
 
-  public String[] getRunCommand() {
+  public String[] getRunParameters() {
     RunMode mode = runMode.get();
     List<String> arguments = new ArrayList<>();
     String outDir = outputDir.get();

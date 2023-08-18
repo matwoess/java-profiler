@@ -113,9 +113,7 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    String[] jarCmd = {"java", "-cp", "build/libs/profiler-fxui-0.2.0-all.jar", "tool.Main"}; // TODO: dynamic jar path
-    String[] fullCmd = Util.prependToArray(parameters.getRunCommand(), jarCmd);
-    int exitCode = Util.runCommandInTerminal(Path.of("."), fullCmd);
+    int exitCode = SystemUtils.executeToolInTerminal(parameters.getRunParameters());
     if (exitCode != 0) {
       throw new RuntimeException("error executing tool");
     }

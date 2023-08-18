@@ -1,5 +1,6 @@
 package fxui.util;
 
+import common.Util;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -37,5 +38,30 @@ public class SystemUtils {
         throw new RuntimeException(e);
       }
     });
+  }
+
+  public static int executeToolInTerminal(String... parameters) {
+    String[] jarCmd = {"java", "-cp", "build/libs/profiler-fxui-0.2.0-all.jar", "tool.Main"}; // TODO: dynamic jar path
+    String[] fullCmd = Util.prependToArray(parameters, jarCmd);
+    String cmdString = String.join(" ", fullCmd);
+    String[] command = switch (Util.getOS()) {
+      case WINDOWS -> new String[]{
+          "cmd.exe", "/c",
+          "start cmd.exe /c \"%s\" && exit".formatted(cmdString)
+      };
+      case LINUX -> new String[]{ // TODO: works only on GNOME by now
+          "/bin/sh", "-c",
+          "gnome-terminal -- bash -c \"%s; echo Done - Press enter to exit; read\" ".formatted(cmdString)
+      };
+      case MAC -> new String[]{ // TODO: check
+          "osascript", "-e", """
+          'tell app "Terminal"
+              do script "%s"
+          end tell'
+          """.formatted(cmdString)
+      };
+      case SOLARIS -> throw new RuntimeException("unsupported operating system");
+    };
+    return Util.runCommand(Path.of("."), command);
   }
 }

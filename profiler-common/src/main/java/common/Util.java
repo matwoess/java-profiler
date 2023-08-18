@@ -22,29 +22,6 @@ public class Util {
     }
   }
 
-  public static int runCommandInTerminal(Path cwd, String... command) {
-    String cmdString = String.join(" ", command);
-    command = switch (getOS()) {
-      case WINDOWS -> new String[]{
-          "cmd.exe", "/c",
-          "start cmd.exe /c \"%s\" && exit".formatted(cmdString)
-      };
-      case LINUX -> new String[]{ // TODO: works only on GNOME by now
-          "/bin/sh", "-c",
-          "gnome-terminal -- bash -c \"%s; echo Done - Press enter to exit; read\" ".formatted(cmdString)
-      };
-      case MAC -> new String[]{ // TODO: check
-          "osascript", "-e", """
-          'tell app "Terminal"
-              do script "%s"
-          end tell'
-          """.formatted(cmdString)
-      };
-      case SOLARIS -> throw new RuntimeException("unsupported operating system");
-    };
-    return runCommand(cwd, command);
-  }
-
   public static int runCommand(Path cwd, String... command) {
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
