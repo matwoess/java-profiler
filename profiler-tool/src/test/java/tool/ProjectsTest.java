@@ -50,4 +50,10 @@ public class ProjectsTest {
     Path sourcesRoot = projectsRoot.resolve("dacapobench");
     TestUtils.instrumentFolder(sourcesRoot);
   }
+
+  @Test
+  public void testJUnit5_instrument() {
+    Path sourcesRoot = projectsRoot.resolve("junit5");
+    TestUtils.instrumentFolder(sourcesRoot);
+  }
 }
