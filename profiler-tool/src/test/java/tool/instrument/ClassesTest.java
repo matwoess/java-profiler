@@ -1,13 +1,13 @@
 package tool.instrument;
 
+import org.junit.jupiter.api.Test;
 import tool.model.JClass;
 import tool.model.JavaFile;
-import org.junit.jupiter.api.Test;
 
-import static tool.instrument.TestProgramBuilder.*;
-import static tool.instrument.TestInstrumentUtils.parseJavaFile;
-import static tool.model.BlockType.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static tool.instrument.TestInstrumentUtils.parseJavaFile;
+import static tool.instrument.TestProgramBuilder.*;
+import static tool.model.BlockType.*;
 
 public class ClassesTest {
   @Test
@@ -168,7 +168,7 @@ public class ClassesTest {
             jMethod("speak", 19, 19, 373, 391)
         ),
         jClass("Cat",
-            jConstructor("Cat",23, 26, 455, 501),
+            jConstructor("Cat", 23, 26, 455, 501),
             jMethod("speak", 27, 27, 530, 548)
         )
     );
@@ -335,6 +335,42 @@ public class ClassesTest {
                 jBlock(BLOCK, 25, 27, 472, 499),
                 jBlock(BLOCK, 27, 29, 506, 540)
             )
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testClassAndConstructorRefs() {
+    String fileContent = """
+        class WithRefs {
+          static Class<?> classRef = WithRefs.class;
+          Supplier<WithRefs> constructorRef = WithRefs::new;
+            
+          public WithRefs() {
+            updateRefs();
+          }
+          public void updateRefs() {
+            classRef = WithRefs.class;
+            this.constructorRef = WithRefs::new;
+            this.constructorRef = getConstructorRef();
+            classRef.toString().chars().average().orElseThrow(RuntimeException::new);
+            Consumer<String> anotherRef = Integer::parseInt;
+            anotherRef.accept("5");
+            anotherRef = System.out::println;
+            anotherRef.accept("updated ref variables");
+            System.out.println(List.of(1,2,3).toArray(Integer[]::new));
+          }
+          Supplier<WithRefs> getConstructorRef() {
+            return WithRefs::new;
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("WithRefs",
+            jConstructor("WithRefs", 5, 7, 137, 159),
+            jMethod("updateRefs", 8, 18, 188, 620),
+            jMethod("getConstructorRef", 19, 21, 663, 693)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

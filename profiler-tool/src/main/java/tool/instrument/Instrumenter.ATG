@@ -40,6 +40,7 @@ TOKENS
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
 	classRef = ".class".  // exclude from being interpreted as new class definition
 	this     = "this".
+	newRef   = "::new".  // exclude from being interpreted as Instantiation NTS
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
