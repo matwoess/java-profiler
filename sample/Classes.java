@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 public class Classes {
   static int i;
@@ -68,10 +70,23 @@ class Dog extends Pet {
 }
 
 class Cat extends Pet {
+  static Class<?> classRef = Pet.class;
+  BiFunction<String, Integer, Pet> constructorRef = Cat::new;
 
   public Cat(String name, int age) {
     this.name = name;
     this.age = age;
+    updateRefs();
+  }
+
+  public void updateRefs() {
+    classRef = Dog.class;
+    this.constructorRef = Cat::new;
+    classRef.toString().chars().average().orElseThrow(RuntimeException::new);
+    Consumer<String> anotherRef = Integer::parseInt;
+    anotherRef.accept("5");
+    anotherRef = System.out::println;
+    anotherRef.accept("updated ref variables");
   }
 
   @Override
