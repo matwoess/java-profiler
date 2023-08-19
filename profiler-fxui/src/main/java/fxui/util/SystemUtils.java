@@ -41,7 +41,8 @@ public class SystemUtils {
   }
 
   public static int executeToolInTerminal(String... parameters) {
-    String[] jarCmd = {"java", "-cp", "build/libs/profiler-fxui-0.2.0-all.jar", "tool.Main"}; // TODO: dynamic jar path
+    String executedJar = SystemUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    String[] jarCmd = {"java", "-cp", executedJar, "tool.Main"};
     String[] fullCmd = Util.prependToArray(parameters, jarCmd);
     String cmdString = String.join(" ", fullCmd);
     String[] command = switch (Util.getOS()) {
