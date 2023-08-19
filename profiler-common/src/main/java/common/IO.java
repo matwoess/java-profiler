@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class IO {
-  public static final Path DEFAULT_OUT_DIR = Path.of("out", "profiler");
+  public static final Path DEFAULT_OUT_DIR = Path.of(".profiler");
   public static Path outputDir;
 
   public static Path getOutputDir() {

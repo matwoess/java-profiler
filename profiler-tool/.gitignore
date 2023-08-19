@@ -46,3 +46,4 @@ bin/
 /src/main/java/tool/instrument/Parser.java.old
 /src/main/java/tool/instrument/Scanner.java
 /src/main/java/tool/instrument/Scanner.java.old
+.profiler/

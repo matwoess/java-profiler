@@ -82,7 +82,7 @@
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
                         <Tooltip
-                                text="Where the tool stores instrumented files, metadata and results. The default value is &quot;./out/profiler&quot;."/>
+                                text="Where the tool stores instrumented files, metadata and results. The default value is &quot;./.profiler&quot;."/>
                     </tooltip>
                 </Label>
             </HBox>
