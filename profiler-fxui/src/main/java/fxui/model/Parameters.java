@@ -1,15 +1,18 @@
 package fxui.model;
 
+import common.IO;
 import fxui.util.BindingUtils;
 import javafx.beans.property.*;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static common.IO.getUIParametersPath;
-import static fxui.model.RunMode.*;
+import static fxui.model.RunMode.DEFAULT;
+import static fxui.model.RunMode.REPORT_ONLY;
 
 public class Parameters {
   public ObjectProperty<RunMode> runMode = new SimpleObjectProperty<>(DEFAULT);
@@ -23,6 +26,7 @@ public class Parameters {
   public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
   public BooleanProperty invalidOutDirPath = new SimpleBooleanProperty(false);
   public BooleanProperty invalidSourcesDirPath = new SimpleBooleanProperty(false);
+  public BooleanProperty noStoredParametersPath = new SimpleBooleanProperty(false);
 
   public Parameters() {
     initializeExtraProperties();
@@ -32,6 +36,7 @@ public class Parameters {
     invalidMainFilePath.bind(mainFile.isNotEmpty().and(BindingUtils.createIsJavaFileBinding(mainFile).not()));
     invalidSourcesDirPath.bind(sourcesDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(sourcesDir).not()));
     invalidOutDirPath.bind(outputDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(outputDir).not()));
+    noStoredParametersPath.bind(BindingUtils.createPathExistsBinding(IO.getUIParametersPath()).not());
   }
 
   public String[] getRunParameters() {
@@ -69,7 +74,9 @@ public class Parameters {
   }
 
   public void exportParameters() {
-    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(getUIParametersPath().toFile()))) {
+    Path parametersPath = getUIParametersPath();
+    IO.createDirectoriesIfNotExists(parametersPath);
+    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(parametersPath.toFile()))) {
       oos.writeInt(runMode.get().ordinal());
       oos.writeUTF(mainFile.get());
       oos.writeUTF(programArgs.get());
