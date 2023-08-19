@@ -1,3 +1,5 @@
+import java.util.Map;
+
 public class BasicElements {
   static class MyClosable implements AutoCloseable {
     public void open() {
@@ -57,6 +59,7 @@ public class BasicElements {
     assert x == 1;
     assert "Hello".chars().asDoubleStream().map(d -> d + 2).sum() > 0 : "is 0 or less";
     System.out.println(BasicElements.getMultiLineString());
+    new GenArrays<Integer>().main(null);
   }
 
   static String multiLineString = """
@@ -75,5 +78,24 @@ public class BasicElements {
 
   public static String getMultiLineString() {
     return multiLineString;
+  }
+
+  private static class GenArrays<T> {
+    private GenArrays<?>[] genArray = new GenArrays<?>[0];
+    private final Class<?>[] classArray = new Class<?>[] {
+        GenArrays.class, String.class
+    };
+
+    public void main(String[] args) {
+      genArray = new GenArrays<?>[6];
+      genArray[0] = new GenArrays<String>();
+      genArray[1] = new GenArrays<Map<Integer, Map<String, Void>>>();
+      System.out.println(getFirstEntry());
+      classArray[0] = GenArrays.class;
+    }
+
+    public GenArrays<?> getFirstEntry() {
+      return genArray[0];
+    }
   }
 }

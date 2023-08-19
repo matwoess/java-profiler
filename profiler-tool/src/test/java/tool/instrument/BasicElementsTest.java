@@ -527,4 +527,35 @@ public class BasicElementsTest {
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+  @Test
+  public void testGenericArrayInstantiations() {
+    String fileContent = """
+        class GenArrays<T> {
+          private static GenArrays<?>[] genArray = new GenArrays<?>[0];
+          private static Class<?>[] classArray = new Class<?>[] {
+              GenArrays.class, String.class
+          };
+            
+          public static void main(String[] args) {
+            genArray = new GenArrays<?>[6];
+            genArray[0] = new GenArrays<String>();
+            genArray[1] = new GenArrays<Map<Integer, Map<String, Void>>>();
+            System.out.println(getFirstEntry());
+            classArray[0] = GenArrays.class;
+          }
+            
+          public static GenArrays<?> getFirstEntry() {
+            return genArray[0];
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("GenArrays",
+            jMethod("main", 7, 13, 227, 456),
+            jMethod("getFirstEntry", 15, 17, 504, 532)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }
