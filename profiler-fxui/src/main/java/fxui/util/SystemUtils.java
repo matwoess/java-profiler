@@ -41,9 +41,10 @@ public class SystemUtils {
   }
 
   public static int executeToolInTerminal(String... parameters) {
-    String executedJar = SystemUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    String[] jarCmd = {"java", "-cp", executedJar, "tool.Main"};
-    String[] fullCmd = Util.prependToArray(parameters, jarCmd);
+    String toolJar = tool.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    String commonJar = common.Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    String[] mainCmd = {"java", "-cp", toolJar + ":" + commonJar, "tool.Main"};
+    String[] fullCmd = Util.prependToArray(parameters, mainCmd);
     String cmdString = String.join(" ", fullCmd);
     String[] command = switch (Util.getOS()) {
       case WINDOWS -> new String[]{
