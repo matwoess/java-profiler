@@ -1,18 +1,20 @@
 package fxui;
 
 import common.IO;
+import common.Util;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
-import fxui.util.SystemOutputWriter;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.io.PrintStream;
 import java.nio.file.Path;
 
 public class Controller {
@@ -46,8 +48,6 @@ public class Controller {
   @FXML
   private Button btnRunTool;
   @FXML
-  private TextArea txtProgramOutput;
-  @FXML
   private ChoiceBox<RunMode> cbRunMode;
 
   private final Parameters parameters;
@@ -60,7 +60,6 @@ public class Controller {
   private void initialize() {
     bindParameters();
     setOnClickActions();
-    initConsoleOutput();
     initRunModeControl();
     initDisabledPropertiesByMode();
     initButtonDisabledProperties();
@@ -85,12 +84,6 @@ public class Controller {
   private void initRunModeControl() {
     cbRunMode.getItems().setAll(RunMode.values());
     cbRunMode.valueProperty().bindBidirectional(parameters.runMode);
-  }
-
-  private void initConsoleOutput() {
-    PrintStream consoleOutput = new PrintStream(new SystemOutputWriter(txtProgramOutput));
-    System.setOut(consoleOutput);
-    System.setErr(consoleOutput);
   }
 
   private void initDisabledPropertiesByMode() {
@@ -120,8 +113,10 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    txtProgramOutput.clear();
-    tool.Main.main(parameters.getRunCommand());
+    int exitCode = SystemUtils.executeToolInTerminal(parameters.getRunParameters());
+    if (exitCode != 0) {
+      throw new RuntimeException("error executing tool");
+    }
   }
 
   @FXML
