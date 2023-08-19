@@ -1,4 +1,4 @@
-package at.jku.test;
+package at.jku.classes;
 
 public class DeepPackage {
   public static void printHello() {

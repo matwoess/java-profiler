@@ -38,9 +38,9 @@ TOKENS
 				| noQuote
 			)} quote.
 	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
-	classRef = ".class".  // exclude from being interpreted as new class definition
-	this     = "this".
-	newRef   = "::new".  // exclude from being interpreted as Instantiation NTS
+	class  = "class".
+	this   = "this".
+	newRef = "::new".  // exclude from being interpreted as Instantiation NTS
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -51,7 +51,13 @@ PRODUCTIONS
 
 String = (string | textBlockEscSeq string /* always "\"\"" */ {ANY} textBlockEscSeq string /* always "\"\"" */).
 
-Instrumenter = [PackageDecl] { AnnotationType | Annotation | Class<false> | Enum<false> | ANY }.
+Instrumenter = [PackageDecl] {
+		AnnotationType
+		| Annotation
+		| IF(state.classDefWithNoLeadingDot()) Class<false>
+		| Enum<false>
+		| ANY
+	}.
 PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
 		ident 							(. packageName.add(t.val); .)
 		{'.' ident 					(. packageName.add(t.val); .)
@@ -61,7 +67,7 @@ PackageDecl = "package" (. ArrayList<String> packageName = new ArrayList<>(); .)
 AnnotationType = "@interface" ident BraceExpr.
 Annotation = "@" ident {"." ident} [ParExpr].
 Class<boolean local> =
-		("class" | "interface" | "record")	(. state.enterClass(false, local); .)
+		(class | "interface" | "record")	(. state.enterClass(false, local); .)
 		ident {ANY} "{"
 		ClassBody								(. state.leaveClass(); .)
 	.
@@ -73,7 +79,7 @@ Enum<boolean local> =
 		| "}") 									(. state.leaveClass(); .)
 	.
 ClassBody =
-	{ Enum<false> | Class<false>
+	{ Enum<false> | IF(state.classDefWithNoLeadingDot()) Class<false>
 		| "=" (BraceExpr | {ANY} Statement)
 		| IF(state.identAndLPar()) MethodDecl
 		| IF(state.classNameAndLBrace()) MethodDecl  // compact record constructor
@@ -104,7 +110,7 @@ Statement =
 		| "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
 		| IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
 		| ("++" | "--") ["("] ident [")"] ";"
-		| Class<true>
+		| IF(state.classDefWithNoLeadingDot()) Class<true>
 		| Enum<true>
 		| GenericStatement
 		| Block<false>

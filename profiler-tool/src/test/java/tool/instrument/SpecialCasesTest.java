@@ -190,7 +190,7 @@ public class SpecialCasesTest {
   public void testNamingWithInnerAndLocalClasses() {
     String fileContent = """
         package mixed.pkg;
-        
+                
         class MixedClasses {
           public class Inner {
           }
@@ -263,4 +263,29 @@ public class SpecialCasesTest {
     assertEquals("mixed.pkg.MixedClasses$3", innerClasses.get(5).getFullName());
   }
 
+  @Test
+  public void testNamesContainingDotClass() {
+    String fileContent = """
+        package dev.matwoess.classes;
+        class DotClass {
+          List<String> classes;
+          public void addClass(String className) {
+            this.classes.add("Class.class");
+            this.classes.add(DotClass.class.getName());
+            if (classes.getClass().isAnonymousClass()) {
+              classes.toArray(String[]::new);
+            }
+          }
+        }
+        """;
+    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
+    JavaFile expected = jFile("dev.matwoess.classes", 29,
+        jClass("DotClass",
+            jMethod("addClass", 4, 10, 113, 295,
+                jBlock(BLOCK, 7, 9, 247, 291)
+            )
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }

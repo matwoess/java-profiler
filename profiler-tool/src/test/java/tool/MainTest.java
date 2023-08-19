@@ -179,6 +179,6 @@ public class MainTest {
     Path tmpReportDir = tempDir.resolve(IO.getReportDir().getFileName());
     assertTrue(tmpReportDir.resolve("index_Simple.html").toFile().exists());
     assertTrue(tmpReportDir.resolve("source").resolve("Simple.html").toFile().exists());
-    assertTrue(tmpReportDir.resolve("source").resolve(Path.of("at", "jku", "test", "DeepPackage.html")).toFile().exists());
+    assertTrue(tmpReportDir.resolve("source").resolve(Path.of("at", "jku", "classes", "DeepPackage.html")).toFile().exists());
   }
 }

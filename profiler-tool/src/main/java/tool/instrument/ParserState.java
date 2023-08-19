@@ -210,6 +210,11 @@ public class ParserState {
     return parser.t.val.equals("=") || parser.t.val.equals("return") || parser.t.val.equals("yield");
   }
 
+  public boolean classDefWithNoLeadingDot() {
+    return !parser.t.val.equals(".")
+        && (parser.la.val.equals("class") || parser.la.val.equals("interface") || parser.la.val.equals("record"));
+  }
+
   public class Logger {
     public static final String GREEN = "\u001B[32m";
     public static final String RED = "\u001B[31m";

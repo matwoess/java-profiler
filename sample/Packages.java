@@ -1,4 +1,4 @@
-import at.jku.test.DeepPackage;
+import at.jku.classes.DeepPackage;
 import helper.Helper;
 
 public class Packages {
