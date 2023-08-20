@@ -200,4 +200,21 @@ public class LambdaExpressionsTest {
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+  @Test
+  void testClassLambda() {
+    String fileContent = """
+        class A {
+          Consumer<List<Integer>> listSumPrinter = (List<Integer> l) -> l.stream().reduce(Integer::sum).
+              ifPresent(System.out::println);
+        }
+        """;
+    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
+    JavaFile expected = jFile(
+        jClass("A",
+            jBlock(SS_LAMBDA, 2, 3, 73, 143)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }

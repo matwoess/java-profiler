@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -14,7 +15,7 @@ public class Lambdas {
   };
 
   static Function<Integer, Integer> addTwo = x -> x + 2;
-   static int[] ints = Arrays.stream(new int[]{5, 4}).map(x -> x * 2).filter(x -> x < 10).toArray();
+  static int[] ints = Arrays.stream(new int[]{5, 4}).map(x -> x * 2).filter(x -> x < 10).toArray();
 
   public static void main(String[] args) {
     for (int i = 0; i < 15; i++) {
@@ -52,5 +53,8 @@ public class Lambdas {
         .filter(x -> (x > 5))
         .reduce((acc, x) -> ((acc) + (x)))
         .ifPresent(possibleResult -> System.out.println("\nRes: " + possibleResult));
+
+    Consumer<List<Integer>> listSumPrinter = (List<Integer> l) -> l.stream().reduce(Integer::sum).
+        ifPresent(System.out::println);;
   }
 }
