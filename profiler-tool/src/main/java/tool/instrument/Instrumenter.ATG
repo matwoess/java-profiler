@@ -157,8 +157,13 @@ ArrowExpression<boolean inSwitch, boolean inAssignment> =
     "->" (Block<false> | SSArrowBody<inSwitch, inAssignment>)
 .
 SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. state.checkSingleStatement(inAssignment, inSwitch, true); .)
-    (ANY | ParExpr | String | char | ident | "throw"    (. state.registerThrow(); .))
-    {ANY | ParExpr}
+    (   String | char
+        | ParExpr
+        | ident
+        | "throw"                                       (. state.registerThrow(); .)
+        | ANY
+    )                                                   // exclude ")" or ";" in lambda blocks with no "Get" for ";"
+    {ANY | ParExpr}                                     (. if (!inSwitch) { state.leaveSingleStatement(); return; } .)
     (")" | ";")                                         (. state.leaveSingleStatement(); .)
 .
 Instantiation = "new" ident {["."] ident} [AngleBracketExpr] (ArrayInitRest | ClassInitRest).

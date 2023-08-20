@@ -124,10 +124,7 @@ public class ParserState {
 
   void leaveBlock(boolean isMethod) {
     curBlock.end = parser.t.line;
-    curBlock.endPos = parser.t.charPos;
-    if (curBlock.blockType != BlockType.SS_LAMBDA) { // exclude ")" or ";" in lambda blocks
-      curBlock.endPos += parser.t.val.length();
-    }
+    curBlock.endPos = parser.t.charPos + parser.t.val.length();
     logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;

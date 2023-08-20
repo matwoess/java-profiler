@@ -202,7 +202,7 @@ public class LambdaExpressionsTest {
   }
 
   @Test
-  void testClassLambda() {
+  void testSSLambdaAsLastStatement_NoTrailingSemicolonOrStatement() {
     String fileContent = """
         class A {
           Consumer<List<Integer>> listSumPrinter = (List<Integer> l) -> l.stream().reduce(Integer::sum).
