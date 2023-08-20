@@ -1,46 +1,46 @@
 COMPILER Instrumenter
-	ParserState state = new ParserState(this);
+    ParserState state = new ParserState(this);
 
 CHARACTERS
-	cr = '\r'.
-	lf = '\n'.
-	tab = '\t'.
-	letter = 'a'..'z' + 'A'..'Z' + '_'.
-	digit  = '0'..'9'.
-	bslash = '\\'.
-	quote = '"'.
-	apostrophe = '\''.
-	noApostrophe = ANY - apostrophe- bslash - cr - lf.
-	noQuote = ANY - quote - bslash - cr - lf.
-	escapableChar = 'b'+ 's' + 't' + 'n' + 'f' + 'r' + quote + apostrophe + bslash.
-	hexDigit = digit + 'a'..'f' + 'A'..'F'.
-	zeroToThree = "0123".
-	octalDigit = "01234567".
+    cr = '\r'.
+    lf = '\n'.
+    tab = '\t'.
+    letter = 'a'..'z' + 'A'..'Z' + '_'.
+    digit  = '0'..'9'.
+    bslash = '\\'.
+    quote = '"'.
+    apostrophe = '\''.
+    noApostrophe = ANY - apostrophe- bslash - cr - lf.
+    noQuote = ANY - quote - bslash - cr - lf.
+    escapableChar = 'b'+ 's' + 't' + 'n' + 'f' + 'r' + quote + apostrophe + bslash.
+    hexDigit = digit + 'a'..'f' + 'A'..'F'.
+    zeroToThree = "0123".
+    octalDigit = "01234567".
 TOKENS
-	ident = letter {letter | digit}.
-	char =
-		apostrophe (
-			bslash (
-				escapableChar
-				| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
-				| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
-			)
-			| noApostrophe
-		) apostrophe.
-	textBlockEscSeq = quote CONTEXT ("\"\"").
-	string =
-		quote {(
-			bslash (
-				escapableChar
-				| 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
-				| (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
-			)
-			| noQuote
-		)} quote.
-	// .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
-	class  = "class".
-	this   = "this".
-	newRef = "::new".  // exclude from being interpreted as Instantiation NTS
+    ident = letter {letter | digit}.
+    char =
+        apostrophe (
+            bslash (
+                escapableChar
+                | 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
+                | (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
+            )
+            | noApostrophe
+        ) apostrophe.
+    textBlockEscSeq = quote CONTEXT ("\"\"").
+    string =
+        quote {(
+            bslash (
+                escapableChar
+                | 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
+                | (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
+            )
+            | noQuote
+        )} quote.
+    // .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
+    class  = "class".
+    this   = "this".
+    newRef = "::new".  // exclude from being interpreted as Instantiation NTS
 
 COMMENTS FROM "/*" TO "*/"
 COMMENTS FROM "//" TO '\n'
@@ -50,126 +50,126 @@ IGNORE tab + cr + lf
 PRODUCTIONS
 
 String = (
-	string
-	| textBlockEscSeq string /* always "" */ {ANY} textBlockEscSeq string // always ""
+    string
+    | textBlockEscSeq string /* always "" */ {ANY} textBlockEscSeq string // always ""
 ).
 
 Instrumenter =
-	[PackageDecl]
-	{	AnnotationType
-		| Annotation
-		| IF(state.classDefWithNoLeadingDot()) Class<false>
-		| Enum<false>
-		| ANY
-	}
+    [PackageDecl]
+    {   AnnotationType
+        | Annotation
+        | IF(state.classDefWithNoLeadingDot()) Class<false>
+        | Enum<false>
+        | ANY
+    }
 .
-PackageDecl = "package"		(. ArrayList<String> packageName = new ArrayList<>(); .)
-	ident					(. packageName.add(t.val); .)
-	{'.' ident				(. packageName.add(t.val); .)
-	}
-	";"						(. state.setPackageName(packageName); .)
+PackageDecl = "package"     (. ArrayList<String> packageName = new ArrayList<>(); .)
+    ident                   (. packageName.add(t.val); .)
+    {'.' ident              (. packageName.add(t.val); .)
+    }
+    ";"                     (. state.setPackageName(packageName); .)
 .
 AnnotationType = "@interface" ident BraceExpr.
 Annotation = "@" ident {"." ident} [ParExpr].
 Class<boolean local> =
-	(class | "interface" | "record")	(. state.enterClass(false, local); .)
-	ident {ANY} "{"
-	ClassBody							(. state.leaveClass(); .)
+    (class | "interface" | "record")    (. state.enterClass(false, local); .)
+    ident {ANY} "{"
+    ClassBody                           (. state.leaveClass(); .)
 .
 Enum<boolean local> =
-	"enum"								(. state.enterClass(false, local); .)
-	ident {ANY} "{"
-	{ident [ParExpr] ["{" ClassBody] [","]}
-	(	";" ClassBody						// class body can follow only after a ";"
-		| "}"
-	) 									(. state.leaveClass(); .)
+    "enum"                              (. state.enterClass(false, local); .)
+    ident {ANY} "{"
+    {ident [ParExpr] ["{" ClassBody] [","]}
+    (   ";" ClassBody                   // class body can follow only after a ";"
+        | "}"
+    )                                   (. state.leaveClass(); .)
 .
 ClassBody =
-	{	Enum<false>
-		| IF(state.classDefWithNoLeadingDot()) Class<false>
-		| "=" (BraceExpr | {ANY} Statement)
-		| IF(state.identAndLPar()) MethodDecl
-		| IF(state.classNameAndLBrace()) MethodDecl  // compact record constructor
-		| IF(state.staticAndLBrace()) StaticBlock
-		| AnnotationType | Annotation
-		| ANY
-	}
-	"}"
+    {   Enum<false>
+        | IF(state.classDefWithNoLeadingDot()) Class<false>
+        | "=" (BraceExpr | {ANY} Statement)
+        | IF(state.identAndLPar()) MethodDecl
+        | IF(state.classNameAndLBrace()) MethodDecl  // compact record constructor
+        | IF(state.staticAndLBrace()) StaticBlock
+        | AnnotationType | Annotation
+        | ANY
+    }
+    "}"
 .
 StaticBlock = "static" Block<false>.
 MethodDecl =
-	ident					(. state.enterMethod(); .)
-	{ANY}
-	(	";"					(. state.leaveMethod(); .)
-		| Block<true>
-	)
+    ident                   (. state.enterMethod(); .)
+    {ANY}
+    (   ";"                 (. state.leaveMethod(); .)
+        | Block<true>
+    )
 .
 Statement =
-	"if" ParExpr BlockOrSingleStatement ["else" BlockOrSingleStatement]
-	| SwitchStatement
-	| "while" ParExpr BlockOrSingleStatement
-	| "do" BlockOrSingleStatement "while" ParExpr ";"
-	| "for" ParExpr BlockOrSingleStatement
-	| "try" [ParExpr] Block<false> {"catch" ParExpr Block<false>} ["finally" Block<false>]
-	| ("break" | "continue") {ANY} ";"
-	| ("return" | "yield") (SwitchStatement | {ANY}) ";"
-	| IF(state.isLabel()) ident ":"
-	| Annotation
-	| "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
-	| IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
-	| ("++" | "--") ["("] ident [")"] ";"
-	| IF(state.classDefWithNoLeadingDot()) Class<true>
-	| Enum<true>
-	| GenericStatement
-	| Block<false>
-	| ";"
+    "if" ParExpr BlockOrSingleStatement ["else" BlockOrSingleStatement]
+    | SwitchStatement
+    | "while" ParExpr BlockOrSingleStatement
+    | "do" BlockOrSingleStatement "while" ParExpr ";"
+    | "for" ParExpr BlockOrSingleStatement
+    | "try" [ParExpr] Block<false> {"catch" ParExpr Block<false>} ["finally" Block<false>]
+    | ("break" | "continue") {ANY} ";"
+    | ("return" | "yield") (SwitchStatement | {ANY}) ";"
+    | IF(state.isLabel()) ident ":"
+    | Annotation
+    | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
+    | IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
+    | ("++" | "--") ["("] ident [")"] ";"
+    | IF(state.classDefWithNoLeadingDot()) Class<true>
+    | Enum<true>
+    | GenericStatement
+    | Block<false>
+    | ";"
 .
 GenericStatement =
-	(ident | String | this | "throw" | ParExpr | Instantiation)
-	{	String | char
-		| ArrowExpression<false, false>
-		| SwitchStatement
-		| Instantiation
-		| ANY
-	}
-	";"
+    (ident | String | this | "throw" | ParExpr | Instantiation)
+    {   String | char
+        | ArrowExpression<false, false>
+        | SwitchStatement
+        | Instantiation
+        | ANY
+    }
+    ";"
 .
 BlockOrSingleStatement =
-	Block<false>
-	| (. state.checkSingleStatement(false, false, false); .) Statement (. state.leaveSingleStatement(); .)
+    Block<false>
+    | (. state.checkSingleStatement(false, false, false); .) Statement (. state.leaveSingleStatement(); .)
 .
-SwitchStatement = 						(. boolean inAssignment = state.isAssignment(); .)
-	"switch" ParExpr "{" {SwitchCase<inAssignment>}
-	"}"
+SwitchStatement =                       (. boolean inAssignment = state.isAssignment(); .)
+    "switch" ParExpr "{" {SwitchCase<inAssignment>}
+    "}"
 .
 SwitchCase<boolean inAssignment> =
-	("case" | "default") {ANY}
-	(	ArrowExpression<true, inAssignment>
-		| ":" {"case" {ANY} ":"}		(. state.checkSingleStatement(false, true, false); .)
-		  {Statement}					(. state.leaveSingleStatement(); .)
-	)
+    ("case" | "default") {ANY}
+    (   ArrowExpression<true, inAssignment>
+        | ":" {"case" {ANY} ":"}        (. state.checkSingleStatement(false, true, false); .)
+          {Statement}                   (. state.leaveSingleStatement(); .)
+    )
 .
 ParExpr = "(" {ParExpr | ANY} ")".
 BraceExpr = "{" {BraceExpr | ANY} "}".
 BracketExpr = "[" {ANY} "]".
 AngleBracketExpr = "<" {AngleBracketExpr | ANY} ">".
 ArrowExpression<boolean inSwitch, boolean inAssignment> =
-	"->" (Block<false> | SSArrowBody<inSwitch, inAssignment>)
+    "->" (Block<false> | SSArrowBody<inSwitch, inAssignment>)
 .
-SSArrowBody<boolean inSwitch, boolean inAssignment> =	(. state.checkSingleStatement(inAssignment, inSwitch, true); .)
-	(ANY | ParExpr | String | char | ident | "throw"	(. state.registerThrow(); .))
-	{ANY | ParExpr}
-	(")" | ";")											(. state.leaveSingleStatement(); .)
+SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. state.checkSingleStatement(inAssignment, inSwitch, true); .)
+    (ANY | ParExpr | String | char | ident | "throw"    (. state.registerThrow(); .))
+    {ANY | ParExpr}
+    (")" | ";")                                         (. state.leaveSingleStatement(); .)
 .
 Instantiation = "new" ident {["."] ident} [AngleBracketExpr] (ArrayInitRest | ClassInitRest).
 ArrayInitRest = BracketExpr [BraceExpr].
 ClassInitRest = ParExpr [ClassExtension].
 ClassExtension =
-	"{"							(. state.enterClass(true, false); .)
-	ClassBody					(. state.leaveClass();.)
+    "{"                         (. state.enterClass(true, false); .)
+    ClassBody                   (. state.leaveClass();.)
 .
-Block<boolean isMethod> = 		(. state.enterBlock(isMethod); .)
-	"{" {Statement} "}"			(. state.leaveBlock(isMethod); .)
+Block<boolean isMethod> =       (. state.enterBlock(isMethod); .)
+    "{" {Statement} "}"         (. state.leaveBlock(isMethod); .)
 .
 
 END Instrumenter.
