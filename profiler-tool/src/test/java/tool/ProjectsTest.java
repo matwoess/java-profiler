@@ -40,20 +40,27 @@ public class ProjectsTest {
   }
 
   @Test
-  public void testJaCoCo_instrument() {
+  public void testJaCoCo_instrumentAndMock() {
     Path sourcesRoot = projectsRoot.resolve("jacoco");
     TestUtils.instrumentFolder(sourcesRoot);
+    TestUtils.createMockCounterData();
+    TestUtils.generateReport();
   }
 
   @Test
-  public void testDaCapoBench_instrument() {
+  public void testDaCapoBench_instrumentAndMock() {
     Path sourcesRoot = projectsRoot.resolve("dacapobench");
     TestUtils.instrumentFolder(sourcesRoot);
+    TestUtils.createMockCounterData();
+    TestUtils.generateReport();
   }
 
+
   @Test
-  public void testJUnit5_instrument() {
+  public void testJUnit5_instrumentAndMock() {
     Path sourcesRoot = projectsRoot.resolve("junit5");
     TestUtils.instrumentFolder(sourcesRoot);
+    TestUtils.createMockCounterData();
+    TestUtils.generateReport();
   }
 }
