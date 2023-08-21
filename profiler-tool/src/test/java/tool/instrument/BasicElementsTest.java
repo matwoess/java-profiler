@@ -558,4 +558,57 @@ public class BasicElementsTest {
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+  @Test
+  public void testSynchronizedBlock() {
+    String fileContent = """
+        class SyncBlocks {
+          synchronized int syncMethod() {
+            Integer i = 1;
+            synchronized (this) {
+              System.out.println("in sync block");
+              String s = ";";
+              if (!s.isBlank()) {
+                synchronized (s) {
+                  System.out.println(s);
+                }
+              }
+            }
+            if (i > 0) {
+              synchronized (i) {
+                return i;
+              }
+            }
+            return 0;
+          }
+          String getSyncValue() {
+            int val = 0;
+            int syncVal = syncMethod();
+            if (syncVal != 0) {
+              val = syncVal;
+            }
+            return String.valueOf(val);
+          }
+          public static void main(String[] args) {
+            System.out.println(new SyncBlocks().getSyncValue());
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("SyncBlocks",
+            jMethod("syncMethod", 2, 19, 52, 364,
+                jBlock(BLOCK, 4, 12, 97, 272),
+                jBlock(BLOCK, 7, 11, 188, 266),
+                jBlock(BLOCK, 8, 10, 215, 258),
+                jBlock(BLOCK, 13, 17, 289, 346),
+                jBlock(BLOCK, 14, 16, 314, 340)
+            ),
+            jMethod("getSyncValue", 20, 27, 390, 526,
+                jBlock(BLOCK, 23, 25, 463, 490)
+            ),
+            jMethod("main", 28, 30, 569, 630)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }

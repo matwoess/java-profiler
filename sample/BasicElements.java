@@ -60,6 +60,7 @@ public class BasicElements {
     assert "Hello".chars().asDoubleStream().map(d -> d + 2).sum() > 0 : "is 0 or less";
     System.out.println(BasicElements.getMultiLineString());
     new GenArrays<Integer>().main(null);
+    int number = new BasicElements().syncMethod();
   }
 
   static String multiLineString = """
@@ -97,5 +98,24 @@ public class BasicElements {
     public GenArrays<?> getFirstEntry() {
       return genArray[0];
     }
+  }
+
+  synchronized int syncMethod() {
+    Integer i = 1;
+    synchronized (this) {
+      System.out.println("in sync block");
+      String s = ";";
+      if (!s.isBlank()) {
+        synchronized (s) {
+          System.out.println(s);
+        }
+      }
+    }
+    if (i > 0) {
+      synchronized (i) {
+        return i;
+      }
+    }
+    return 0;
   }
 }

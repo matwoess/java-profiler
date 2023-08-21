@@ -118,6 +118,7 @@ Statement =
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
     | IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
     | ("++" | "--") ["("] ident [")"] ";"
+    | "synchronized" ParExpr Block<false>
     | IF(state.classDefWithNoLeadingDot()) Class<true>
     | Enum<true>
     | GenericStatement
