@@ -1,6 +1,7 @@
 package tool;
 
 import common.IO;
+import common.Util;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -9,6 +10,10 @@ public class TestUtils {
   static void instrumentAndProfile(Path mainFile) {
     String[] args = new String[]{"-v", mainFile.toString()};
     Main.main(args);
+  }
+
+  static void instrumentAndProfileWithArgs(String... programArgs) {
+    Main.main(Util.prependToArray(programArgs, "-v"));
   }
 
   static void instrumentFolderAndProfile(Path sourcesDir, String mainFile) {

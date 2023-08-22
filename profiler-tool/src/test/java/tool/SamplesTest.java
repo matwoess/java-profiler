@@ -1,5 +1,7 @@
 package tool;
 
+import common.IO;
+import common.Util;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -7,7 +9,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SamplesTest {
-   Path samplesFolder = Path.of("..", "sample");
+  Path samplesFolder = Path.of("..", "sample");
 
   @Test
   public void testSimpleSample() {
@@ -171,5 +173,25 @@ public class SamplesTest {
   @Test
   public void testRecordsSample_Folder() {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "Records.java");
+  }
+
+  @Test
+  public void testParallelSumSample() {
+    Path mainFile = samplesFolder.resolve("ParallelSum.java");
+    TestUtils.instrumentAndProfileWithArgs(mainFile.toString(), String.valueOf(5_000_000), "4");
+  }
+
+  @Test
+  public void testParallelSumSample_SyncCounters() {
+    Path mainFile = samplesFolder.resolve("ParallelSum.java");
+    TestUtils.instrumentAndProfileWithArgs("--synchronized", mainFile.toString(), String.valueOf(5_000_000), "4");
+  }
+
+  @Test
+  public void testParallelSumSample_noCounters() {
+    Path mainFile = samplesFolder.resolve("ParallelSum.java");
+    Path cwd = Path.of(".");
+    Util.runCommand(cwd, "javac", mainFile.toString(), "-d", IO.getInstrumentDir().toString());
+    Util.runCommand(IO.getInstrumentDir(), "java", "ParallelSum", String.valueOf(5_000_000), "4");
   }
 }
