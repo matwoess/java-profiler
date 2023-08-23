@@ -208,8 +208,11 @@ public class ParserState {
   }
 
   public boolean classDefWithNoLeadingDot() {
+    parser.scanner.ResetPeek();
     return !parser.t.val.equals(".")
-        && (parser.la.val.equals("class") || parser.la.val.equals("interface") || parser.la.val.equals("record"));
+        && (parser.la.val.equals("class")
+        || parser.la.val.equals("interface")
+        || parser.la.val.equals("record") && parser.scanner.Peek().kind == Parser._ident);
   }
 
   public class Logger {

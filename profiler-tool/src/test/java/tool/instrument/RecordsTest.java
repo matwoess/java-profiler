@@ -124,4 +124,33 @@ public class RecordsTest {
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+  @Test
+  void testNonClassRecordDefinitions() {
+    String fileContent = """
+        record Record() {
+          private static final List<String> record = new ArrayList<>();
+          public void record(String record) {
+            this.record.add(record);
+          }
+          public String getRecord() {
+            return record.get(0);
+          }
+          public static void main(String[] args) {
+            Record record = new Record();
+            Record.record.add("record");
+            record.record("record");
+            System.out.println(record.getRecord());
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("Record",
+            jMethod("record", 3, 5, 119, 152),
+            jMethod("getRecord", 6, 8, 182, 212),
+            jMethod("main", 9, 14, 255, 399)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }
