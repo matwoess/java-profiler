@@ -289,4 +289,30 @@ public class EnumsTest {
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+
+  @Test
+  public void testEnumWithValueAnnotations() {
+    String fileContent = """
+        enum AnnotatedEnum {
+          @Deprecated A_VAL,
+          @API(status = STABLE, since = "5.4")
+          B_VAL,
+          C_VAL,
+          @API(status = STABLE, since = "6.0") D_VAL;
+          
+          public static final long ID = 1;
+          
+          AnnotatedEnum getDVal() {
+            return D_VAL;
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("AnnotatedEnum",
+            jMethod("getDVal", 10, 12, 209, 231)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
 }
