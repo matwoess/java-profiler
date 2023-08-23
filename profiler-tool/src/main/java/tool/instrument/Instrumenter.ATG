@@ -112,7 +112,7 @@ Statement =
     | "for" ParExpr BlockOrSingleStatement
     | "try" [ParExpr] Block<false> {"catch" ParExpr Block<false>} ["finally" Block<false>]
     | ("break" | "continue") {ANY} ";"
-    | ("return" | "yield") (SwitchStatement | {ANY}) ";"
+    | ("return" | "yield") (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
     | IF(state.isLabel()) ident ":"
     | Annotation
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
