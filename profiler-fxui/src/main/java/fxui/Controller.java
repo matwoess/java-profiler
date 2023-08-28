@@ -1,24 +1,31 @@
 package fxui;
 
 import common.IO;
-import common.Util;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 public class Controller {
 
+  @FXML
+  private TextField txtProjectRoot;
+  @FXML
+  private ChoiceBox<RunMode> cbRunMode;
   @FXML
   private VBox boxMainFile;
   @FXML
@@ -47,8 +54,6 @@ public class Controller {
   private Button btnOpenReport;
   @FXML
   private Button btnRunTool;
-  @FXML
-  private ChoiceBox<RunMode> cbRunMode;
 
   private final Parameters parameters;
 
@@ -57,7 +62,10 @@ public class Controller {
   }
 
   @FXML
-  private void initialize() {
+  private void initialize() throws IOException {
+    // project root dialog
+    chooseProjectDirectory();
+    // setup UI
     bindParameters();
     setOnClickActions();
     initRunModeControl();
@@ -67,7 +75,19 @@ public class Controller {
     txtOutputDir.setPromptText(Path.of(".").resolve(IO.DEFAULT_OUT_DIR).toString());
   }
 
+  private void chooseProjectDirectory() throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(ProjectController.class.getResource("project-view.fxml"));
+    Scene scene = new Scene(fxmlLoader.load());
+    ProjectController prjController = fxmlLoader.getController();
+    prjController.bindProjectRootProperty(parameters.projectRoot);
+    Stage projectState = new Stage();
+    projectState.setTitle("Choose Project Root");
+    projectState.setScene(scene);
+    projectState.showAndWait();
+  }
+
   private void bindParameters() {
+    txtProjectRoot.textProperty().bindBidirectional(parameters.projectRoot);
     txtMainFile.textProperty().bindBidirectional(parameters.mainFile);
     txtProgramArgs.textProperty().bindBidirectional(parameters.programArgs);
     txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir);

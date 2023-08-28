@@ -15,6 +15,8 @@ import static fxui.model.RunMode.DEFAULT;
 import static fxui.model.RunMode.REPORT_ONLY;
 
 public class Parameters {
+  public StringProperty projectRoot = new SimpleStringProperty("");
+
   public ObjectProperty<RunMode> runMode = new SimpleObjectProperty<>(DEFAULT);
 
   public StringProperty mainFile = new SimpleStringProperty("");

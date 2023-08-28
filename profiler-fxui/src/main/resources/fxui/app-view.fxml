@@ -16,6 +16,20 @@
         </padding>
         <VBox>
             <HBox>
+                <Label text="Project root directory"/>
+                <Label text=" (?) " textFill="darkgoldenrod">
+                    <tooltip>
+                        <Tooltip text="The base directory in which the java project is located."/>
+                    </tooltip>
+                </Label>
+            </HBox>
+            <HBox prefWidth="Infinity">
+                <TextField fx:id="txtProjectRoot" HBox.hgrow="ALWAYS" disable="true">
+                </TextField>
+            </HBox>
+        </VBox>
+        <VBox>
+            <HBox>
                 <Label text="Run mode"/>
                 <Label text=" (?) " textFill="darkgoldenrod">
                     <tooltip>
@@ -37,12 +51,13 @@
                 </Label>
             </HBox>
             <HBox prefWidth="Infinity">
-                <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS">
+                <Button fx:id="btnMainFile" text="Select">
                     <HBox.margin>
                         <Insets right="8.0"/>
                     </HBox.margin>
+                </Button>
+                <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS">
                 </TextField>
-                <Button fx:id="btnMainFile" text="Select"/>
             </HBox>
         </VBox>
         <VBox fx:id="boxProgramArgs">
@@ -68,12 +83,14 @@
                 </Label>
             </HBox>
             <HBox prefWidth="Infinity">
-                <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS">
+                <Button fx:id="btnSourcesDir" text="Select">
+
                     <HBox.margin>
                         <Insets right="8.0"/>
                     </HBox.margin>
+                </Button>
+                <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS">
                 </TextField>
-                <Button fx:id="btnSourcesDir" text="Select"/>
             </HBox>
         </VBox>
         <VBox>
@@ -87,12 +104,12 @@
                 </Label>
             </HBox>
             <HBox prefWidth="Infinity">
-                <TextField fx:id="txtOutputDir" HBox.hgrow="ALWAYS">
+                <Button fx:id="btnOutputDir" text="Select">
                     <HBox.margin>
                         <Insets right="8.0"/>
                     </HBox.margin>
-                </TextField>
-                <Button fx:id="btnOutputDir" text="Select"/>
+                </Button>
+                <TextField fx:id="txtOutputDir" HBox.hgrow="ALWAYS"/>
             </HBox>
         </VBox>
         <HBox>
