@@ -96,9 +96,9 @@ public class Controller {
   }
 
   private void setOnClickActions() {
-    btnMainFile.setOnAction(event -> SystemUtils.chooseFile(txtMainFile));
-    btnSourcesDir.setOnAction(event -> SystemUtils.chooseDirectory(txtSourcesDir));
-    btnOutputDir.setOnAction(event -> SystemUtils.chooseDirectory(txtOutputDir));
+    btnMainFile.setOnAction(event -> SystemUtils.chooseFile(txtMainFile, parameters.projectRoot.get()));
+    btnSourcesDir.setOnAction(event -> SystemUtils.chooseDirectory(txtSourcesDir, parameters.projectRoot.get()));
+    btnOutputDir.setOnAction(event -> SystemUtils.chooseDirectory(txtOutputDir, parameters.projectRoot.get()));
   }
 
   private void initRunModeControl() {

@@ -21,7 +21,7 @@ public class ProjectController {
     invalidProjectRootPath.bind(txtProjectRoot.textProperty().isNotEmpty()
         .and(BindingUtils.createIsDirectoryBinding(txtProjectRoot.textProperty()).not())
     );
-    btnProjectRoot.setOnAction(event -> SystemUtils.chooseDirectory(txtProjectRoot));
+    btnProjectRoot.setOnAction(event -> SystemUtils.chooseDirectory(txtProjectRoot, System.getProperty("user.home")));
     txtProjectRoot.borderProperty().bind(BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));
     btnOpenProject.disableProperty().bind(invalidProjectRootPath);
   }

@@ -12,18 +12,20 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class SystemUtils {
-  public static void chooseFile(TextField pathField) {
+  public static void chooseFile(TextField pathField, String initialDirectory) {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Choose File");
+    fileChooser.setInitialDirectory(Path.of(initialDirectory).toFile());
     File file = fileChooser.showOpenDialog(pathField.getScene().getWindow());
     if (file != null) {
       pathField.setText(file.toString());
     }
   }
 
-  public static void chooseDirectory(TextField pathField) {
+  public static void chooseDirectory(TextField pathField, String initialDirectory) {
     DirectoryChooser dirChooser = new DirectoryChooser();
     dirChooser.setTitle("Choose Directory");
+    dirChooser.setInitialDirectory(Path.of(initialDirectory).toFile());
     File dir = dirChooser.showDialog(pathField.getScene().getWindow());
     if (dir != null) {
       pathField.setText(dir.toString());
