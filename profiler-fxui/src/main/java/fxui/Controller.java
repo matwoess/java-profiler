@@ -9,19 +9,18 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
 public class Controller {
-
+  @FXML
+  private TreeView<String> treeProjectDir;
   @FXML
   private TextField txtProjectRoot;
   @FXML
@@ -66,6 +65,7 @@ public class Controller {
     // project root dialog
     chooseProjectDirectory();
     // setup UI
+    initTreeView();
     bindParameters();
     setOnClickActions();
     initRunModeControl();
@@ -84,6 +84,28 @@ public class Controller {
     projectState.setTitle("Choose Project Root");
     projectState.setScene(scene);
     projectState.showAndWait();
+  }
+
+  private void initTreeView() {
+    File rootDir = Path.of(parameters.projectRoot.get()).toFile();
+    TreeItem<String> root = new TreeItem<>(rootDir.getName());
+    populateTree(rootDir, root);
+    treeProjectDir.setRoot(root);
+    treeProjectDir.setShowRoot(false);
+  }
+
+  public static void populateTree(File directory, TreeItem<String> parent) {
+    File[] itemsInDir = directory.listFiles();
+    if (itemsInDir == null) return;
+    for (File item : itemsInDir) {
+      if (item.isDirectory()) {
+        TreeItem<String> dirItem = new TreeItem<>(item.getName());
+        parent.getChildren().add(dirItem);
+        populateTree(item, dirItem);
+      } else if (item.getName().endsWith(".java")) {
+        parent.getChildren().add(new TreeItem<>(item.getName()));
+      }
+    }
   }
 
   private void bindParameters() {
