@@ -192,7 +192,7 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    int exitCode = SystemUtils.executeToolInTerminal(parameters.getRunParameters());
+    int exitCode = SystemUtils.executeToolInTerminal(parameters.projectRoot.get(), parameters.getRunParameters());
     if (exitCode != 0) {
       throw new RuntimeException("error executing tool");
     }
@@ -200,6 +200,7 @@ public class Controller {
 
   @FXML
   protected void onOpenReport() {
+    IO.outputDir = Path.of(parameters.projectRoot.get()).resolve(IO.DEFAULT_OUT_DIR);
     Path reportPath = IO.getReportIndexPath();
     SystemUtils.openWithDesktopApplication(reportPath);
   }
