@@ -22,7 +22,6 @@ public class Parameters {
   public StringProperty mainFile = new SimpleStringProperty("");
   public StringProperty programArgs = new SimpleStringProperty("");
   public StringProperty sourcesDir = new SimpleStringProperty("");
-  public StringProperty outputDir = new SimpleStringProperty("");
   public BooleanProperty syncCounters = new SimpleBooleanProperty(false);
 
   public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
@@ -34,19 +33,13 @@ public class Parameters {
   }
 
   public void initializeExtraProperties() {
-    invalidMainFilePath.bind(mainFile.isNotEmpty().and(BindingUtils.createIsJavaFileBinding(mainFile).not()));
-    invalidSourcesDirPath.bind(sourcesDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(sourcesDir).not()));
-    invalidOutDirPath.bind(outputDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(outputDir).not()));
+    invalidMainFilePath.bind(mainFile.isNotEmpty().and(BindingUtils.createIsJavaFileBinding(projectRoot, mainFile).not()));
+    invalidSourcesDirPath.bind(sourcesDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(projectRoot, sourcesDir).not()));
   }
 
   public String[] getRunParameters() {
     RunMode mode = runMode.get();
     List<String> arguments = new ArrayList<>();
-    String outDir = outputDir.get();
-    if (!outDir.isBlank()) {
-      arguments.add("--out-directory");
-      arguments.add(outDir);
-    }
     boolean sync = syncCounters.get();
     if (sync && mode != REPORT_ONLY) {
       arguments.add("--synchronized");
@@ -81,7 +74,6 @@ public class Parameters {
       oos.writeUTF(mainFile.get());
       oos.writeUTF(programArgs.get());
       oos.writeUTF(sourcesDir.get());
-      oos.writeUTF(outputDir.get());
       oos.writeBoolean(syncCounters.get());
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -94,7 +86,6 @@ public class Parameters {
        mainFile.set(ois.readUTF());
        programArgs.set(ois.readUTF());
        sourcesDir.set(ois.readUTF());
-       outputDir.set(ois.readUTF());
        syncCounters.set(ois.readBoolean());
     } catch (IOException e) {
       throw new RuntimeException(e);

@@ -41,6 +41,25 @@
                 </HBox>
                 <ChoiceBox fx:id="cbRunMode" prefHeight="26.0" prefWidth="769.0"/>
             </VBox>
+            <VBox fx:id="boxSourcesDir">
+                <HBox>
+                    <Label text="Sources directory"/>
+                    <Label text=" (?) " textFill="darkgoldenrod">
+                        <tooltip>
+                            <Tooltip
+                                    text="All java files in this directory or its sub-folders will be instrumented in addition to the main file."/>
+                        </tooltip>
+                    </Label>
+                </HBox>
+                <HBox prefWidth="Infinity">
+                    <Button fx:id="btnSourcesDir" text="Select">
+                        <HBox.margin>
+                            <Insets right="8.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </VBox>
             <VBox fx:id="boxMainFile">
                 <HBox>
                     <Label text="Main file"/>
@@ -72,45 +91,7 @@
                 </HBox>
                 <TextField fx:id="txtProgramArgs" HBox.hgrow="ALWAYS"/>
             </VBox>
-            <VBox fx:id="boxSourcesDir">
-                <HBox>
-                    <Label text="Additional sources directory"/>
-                    <Label text=" (?) " textFill="darkgoldenrod">
-                        <tooltip>
-                            <Tooltip
-                                    text="All java files in this directory or its sub-folders will be instrumented in addition to the main file."/>
-                        </tooltip>
-                    </Label>
-                </HBox>
-                <HBox prefWidth="Infinity">
-                    <Button fx:id="btnSourcesDir" text="Select">
-                        <HBox.margin>
-                            <Insets right="8.0"/>
-                        </HBox.margin>
-                    </Button>
-                    <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS"/>
-                </HBox>
-            </VBox>
             <VBox>
-                <HBox>
-                    <Label text="Profiler output directory"/>
-                    <Label text=" (?) " textFill="darkgoldenrod">
-                        <tooltip>
-                            <Tooltip
-                                    text="Where the tool stores instrumented files, metadata and results. The default value is &quot;./.profiler&quot;."/>
-                        </tooltip>
-                    </Label>
-                </HBox>
-                <HBox prefWidth="Infinity">
-                    <Button fx:id="btnOutputDir" text="Select">
-                        <HBox.margin>
-                            <Insets right="8.0"/>
-                        </HBox.margin>
-                    </Button>
-                    <TextField fx:id="txtOutputDir" HBox.hgrow="ALWAYS"/>
-                </HBox>
-            </VBox>
-            <HBox>
                 <HBox alignment="CENTER_LEFT" HBox.hgrow="SOMETIMES">
                     <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
                         <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
@@ -122,6 +103,9 @@
                         </Label>
                     </HBox>
                 </HBox>
+            </VBox>
+            <HBox>
+                <HBox HBox.hgrow="ALWAYS"/>
                 <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">
                     <HBox.margin>
                         <Insets right="16.0"/>

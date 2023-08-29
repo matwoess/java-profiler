@@ -41,16 +41,16 @@ public class BindingUtils {
     );
   }
 
-  public static BooleanBinding createIsJavaFileBinding(StringProperty filePathProperty) {
+  public static BooleanBinding createIsJavaFileBinding(StringProperty projectRoot, StringProperty filePathProperty) {
     return Bindings.createBooleanBinding(
-        () -> common.Util.isJavaFile(Path.of(filePathProperty.get())),
+        () -> common.Util.isJavaFile(Path.of(projectRoot.get()).resolve(Path.of(filePathProperty.get()))),
         filePathProperty
     );
   }
 
-  public static BooleanBinding createIsDirectoryBinding(StringProperty dirPathProperty) {
+  public static BooleanBinding createIsDirectoryBinding(StringProperty projectRoot, StringProperty dirPathProperty) {
     return Bindings.createBooleanBinding(
-        () -> Path.of(dirPathProperty.get()).toFile().isDirectory(),
+        () -> Path.of(projectRoot.get()).resolve(Path.of(dirPathProperty.get())).toFile().isDirectory(),
         dirPathProperty
     );
   }

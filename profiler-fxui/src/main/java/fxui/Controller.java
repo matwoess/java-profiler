@@ -12,9 +12,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,11 +25,17 @@ import java.util.Objects;
 
 public class Controller {
   @FXML
-  private TreeView<String> treeProjectDir;
+  private TreeView<File> treeProjectDir;
   @FXML
   private TextField txtProjectRoot;
   @FXML
   private ChoiceBox<RunMode> cbRunMode;
+  @FXML
+  private VBox boxSourcesDir;
+  @FXML
+  private TextField txtSourcesDir;
+  @FXML
+  private Button btnSourcesDir;
   @FXML
   private VBox boxMainFile;
   @FXML
@@ -38,16 +46,6 @@ public class Controller {
   private VBox boxProgramArgs;
   @FXML
   private TextField txtProgramArgs;
-  @FXML
-  private VBox boxSourcesDir;
-  @FXML
-  private TextField txtSourcesDir;
-  @FXML
-  private Button btnSourcesDir;
-  @FXML
-  private TextField txtOutputDir;
-  @FXML
-  private Button btnOutputDir;
   @FXML
   private HBox boxSyncCounters;
   @FXML
@@ -78,7 +76,6 @@ public class Controller {
     initDisabledPropertiesByMode();
     initButtonDisabledProperties();
     initBorderListeners();
-    txtOutputDir.setPromptText(Path.of(".").resolve(IO.DEFAULT_OUT_DIR).toString());
   }
 
   private void chooseProjectDirectory() throws IOException {
@@ -94,24 +91,61 @@ public class Controller {
 
   private void initTreeView() {
     File rootDir = Path.of(parameters.projectRoot.get()).toFile();
-    TreeItem<String> root = new TreeItem<>(rootDir.getName());
+    TreeItem<File> root = new TreeItem<>(rootDir);
     populateTree(rootDir, root);
     treeProjectDir.setRoot(root);
     treeProjectDir.setShowRoot(false);
+    treeProjectDir.setOnKeyPressed(event -> {
+      TreeItem<File> selected = treeProjectDir.getSelectionModel().getSelectedItem();
+      if (selected != null && event.getCode() == KeyCode.ENTER) {
+        if (selected.getValue().isDirectory()) {
+          setSourcesDir(selected.getValue().toPath());
+        } else {
+          setMainFile(selected.getValue().toPath());
+        }
+      }
+    });
+    treeProjectDir.setCellFactory(new Callback<>() {
+      public TreeCell<File> call(TreeView<File> tv) {
+        return new TreeCell<>() {
+          @Override
+          protected void updateItem(File item, boolean empty) {
+            super.updateItem(item, empty);
+            setText((empty || item == null) ? "" : item.getName());
+            if (empty || item == null) return;
+            if (item.isDirectory()) {
+              setGraphic(new ImageView(folderIcon));
+            } else {
+              setGraphic(new ImageView(jFileIcon));
+            }
+          }
+        };
+      }
+    });
   }
 
-  public static void populateTree(File directory, TreeItem<String> parent) {
+  public void populateTree(File directory, TreeItem<File> parent) {
     File[] itemsInDir = directory.listFiles();
     if (itemsInDir == null) return;
     for (File item : itemsInDir) {
       if (item.isDirectory()) {
-        TreeItem<String> dirItem = new TreeItem<>(item.getName(), new ImageView(folderIcon));
+        TreeItem<File> dirItem = new TreeItem<>(item);
         parent.getChildren().add(dirItem);
         populateTree(item, dirItem);
       } else if (item.getName().endsWith(".java")) {
-        parent.getChildren().add(new TreeItem<>(item.getName(), new ImageView(jFileIcon)));
+        parent.getChildren().add(new TreeItem<>(item));
       }
     }
+  }
+
+  private void setSourcesDir(Path dir) {
+    Path relPath = Path.of(parameters.projectRoot.get()).relativize(dir);
+    txtSourcesDir.textProperty().set(relPath.toString());
+  }
+
+  private void setMainFile(Path jFile) {
+    Path relPath = Path.of(parameters.projectRoot.get()).relativize(jFile);
+    txtMainFile.textProperty().set(relPath.toString());
   }
 
   private void bindParameters() {
@@ -119,14 +153,12 @@ public class Controller {
     txtMainFile.textProperty().bindBidirectional(parameters.mainFile);
     txtProgramArgs.textProperty().bindBidirectional(parameters.programArgs);
     txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir);
-    txtOutputDir.textProperty().bindBidirectional(parameters.outputDir);
     cbSyncCounters.selectedProperty().bindBidirectional(parameters.syncCounters);
   }
 
   private void setOnClickActions() {
     btnMainFile.setOnAction(event -> SystemUtils.chooseFile(txtMainFile, parameters.projectRoot.get()));
     btnSourcesDir.setOnAction(event -> SystemUtils.chooseDirectory(txtSourcesDir, parameters.projectRoot.get()));
-    btnOutputDir.setOnAction(event -> SystemUtils.chooseDirectory(txtOutputDir, parameters.projectRoot.get()));
   }
 
   private void initRunModeControl() {
@@ -156,7 +188,6 @@ public class Controller {
   private void initBorderListeners() {
     txtMainFile.borderProperty().bind(BindingUtils.createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
     txtSourcesDir.borderProperty().bind(BindingUtils.createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
-    txtOutputDir.borderProperty().bind(BindingUtils.createBorderBinding(parameters.outputDir, parameters.invalidOutDirPath));
   }
 
   @FXML

@@ -19,7 +19,7 @@ public class ProjectController {
   void bindProjectRootProperty(StringProperty projectRoot) {
     txtProjectRoot.textProperty().bindBidirectional(projectRoot);
     invalidProjectRootPath.bind(txtProjectRoot.textProperty().isNotEmpty()
-        .and(BindingUtils.createIsDirectoryBinding(txtProjectRoot.textProperty()).not())
+        .and(BindingUtils.createIsDirectoryBinding(projectRoot, txtProjectRoot.textProperty()).not())
     );
     btnProjectRoot.setOnAction(event -> SystemUtils.chooseDirectory(txtProjectRoot, System.getProperty("user.home")));
     txtProjectRoot.borderProperty().bind(BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));
