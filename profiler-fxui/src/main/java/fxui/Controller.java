@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -17,6 +19,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class Controller {
   @FXML
@@ -55,6 +58,9 @@ public class Controller {
   private Button btnRunTool;
 
   private final Parameters parameters;
+
+  static Image folderIcon = new Image(Objects.requireNonNull(Controller.class.getResourceAsStream("folder-icon.png")));
+  static Image jFileIcon = new Image(Objects.requireNonNull(Controller.class.getResourceAsStream("java-icon.png")));
 
   public Controller() {
     parameters = new Parameters();
@@ -99,11 +105,11 @@ public class Controller {
     if (itemsInDir == null) return;
     for (File item : itemsInDir) {
       if (item.isDirectory()) {
-        TreeItem<String> dirItem = new TreeItem<>(item.getName());
+        TreeItem<String> dirItem = new TreeItem<>(item.getName(), new ImageView(folderIcon));
         parent.getChildren().add(dirItem);
         populateTree(item, dirItem);
       } else if (item.getName().endsWith(".java")) {
-        parent.getChildren().add(new TreeItem<>(item.getName()));
+        parent.getChildren().add(new TreeItem<>(item.getName(), new ImageView(jFileIcon)));
       }
     }
   }
