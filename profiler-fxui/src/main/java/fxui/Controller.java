@@ -35,13 +35,9 @@ public class Controller {
   @FXML
   private TextField txtSourcesDir;
   @FXML
-  private Button btnSourcesDir;
-  @FXML
   private VBox boxMainFile;
   @FXML
   private TextField txtMainFile;
-  @FXML
-  private Button btnMainFile;
   @FXML
   private VBox boxProgramArgs;
   @FXML
@@ -71,7 +67,6 @@ public class Controller {
     // setup UI
     initTreeView();
     bindParameters();
-    setOnClickActions();
     initRunModeControl();
     initDisabledPropertiesByMode();
     initButtonDisabledProperties();
@@ -154,11 +149,6 @@ public class Controller {
     txtProgramArgs.textProperty().bindBidirectional(parameters.programArgs);
     txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir);
     cbSyncCounters.selectedProperty().bindBidirectional(parameters.syncCounters);
-  }
-
-  private void setOnClickActions() {
-    btnMainFile.setOnAction(event -> SystemUtils.chooseFile(txtMainFile, parameters.projectRoot.get()));
-    btnSourcesDir.setOnAction(event -> SystemUtils.chooseDirectory(txtSourcesDir, parameters.projectRoot.get()));
   }
 
   private void initRunModeControl() {

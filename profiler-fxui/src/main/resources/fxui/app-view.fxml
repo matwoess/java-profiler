@@ -52,12 +52,7 @@
                     </Label>
                 </HBox>
                 <HBox prefWidth="Infinity">
-                    <Button fx:id="btnSourcesDir" text="Select">
-                        <HBox.margin>
-                            <Insets right="8.0"/>
-                        </HBox.margin>
-                    </Button>
-                    <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS" disable="true"/>
                 </HBox>
             </VBox>
             <VBox fx:id="boxMainFile">
@@ -71,12 +66,7 @@
                     </Label>
                 </HBox>
                 <HBox prefWidth="Infinity">
-                    <Button fx:id="btnMainFile" text="Select">
-                        <HBox.margin>
-                            <Insets right="8.0"/>
-                        </HBox.margin>
-                    </Button>
-                    <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS" disable="true"/>
                 </HBox>
             </VBox>
             <VBox fx:id="boxProgramArgs">
