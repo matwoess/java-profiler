@@ -51,8 +51,7 @@ public class Controller {
 
   private final Parameters parameters;
 
-  static Image folderIcon = new Image(Objects.requireNonNull(Controller.class.getResourceAsStream("folder-icon.png")));
-  static Image jFileIcon = new Image(Objects.requireNonNull(Controller.class.getResourceAsStream("java-icon.png")));
+   private JavaProjectTree projectTree;
 
   public Controller() {
     parameters = new Parameters();
@@ -69,8 +68,9 @@ public class Controller {
 
   public void chooseProjectDirectory(Stage stage) throws IOException {
     chooseProjectDirectory();
-    stage.setTitle(stage.getTitle() + " - " + parameters.projectRoot.get());
-    initTreeView();
+    String projectRootString = parameters.projectRoot.get();
+    stage.setTitle(stage.getTitle() + " - " + projectRootString);
+    projectTree = new JavaProjectTree(parameters, treeProjectDir);
   }
 
   private void chooseProjectDirectory() throws IOException {
@@ -82,65 +82,6 @@ public class Controller {
     projectState.setTitle("Choose Project Root");
     projectState.setScene(scene);
     projectState.showAndWait();
-  }
-
-  private void initTreeView() {
-    File rootDir = Path.of(parameters.projectRoot.get()).toFile();
-    TreeItem<File> root = new TreeItem<>(rootDir);
-    populateTree(rootDir, root);
-    treeProjectDir.setRoot(root);
-    treeProjectDir.setShowRoot(false);
-    treeProjectDir.setOnKeyPressed(event -> {
-      TreeItem<File> selected = treeProjectDir.getSelectionModel().getSelectedItem();
-      if (selected != null && event.getCode() == KeyCode.ENTER) {
-        if (selected.getValue().isDirectory()) {
-          setSourcesDir(selected.getValue().toPath());
-        } else {
-          setMainFile(selected.getValue().toPath());
-        }
-      }
-    });
-    treeProjectDir.setCellFactory(new Callback<>() {
-      public TreeCell<File> call(TreeView<File> tv) {
-        return new TreeCell<>() {
-          @Override
-          protected void updateItem(File item, boolean empty) {
-            super.updateItem(item, empty);
-            setText((empty || item == null) ? "" : item.getName());
-            if (empty || item == null) return;
-            if (item.isDirectory()) {
-              setGraphic(new ImageView(folderIcon));
-            } else {
-              setGraphic(new ImageView(jFileIcon));
-            }
-          }
-        };
-      }
-    });
-  }
-
-  public void populateTree(File directory, TreeItem<File> parent) {
-    File[] itemsInDir = directory.listFiles();
-    if (itemsInDir == null) return;
-    for (File item : itemsInDir) {
-      if (item.isDirectory()) {
-        TreeItem<File> dirItem = new TreeItem<>(item);
-        parent.getChildren().add(dirItem);
-        populateTree(item, dirItem);
-      } else if (item.getName().endsWith(".java")) {
-        parent.getChildren().add(new TreeItem<>(item));
-      }
-    }
-  }
-
-  private void setSourcesDir(Path dir) {
-    Path relPath = Path.of(parameters.projectRoot.get()).relativize(dir);
-    txtSourcesDir.textProperty().set(relPath.toString());
-  }
-
-  private void setMainFile(Path jFile) {
-    Path relPath = Path.of(parameters.projectRoot.get()).relativize(jFile);
-    txtMainFile.textProperty().set(relPath.toString());
   }
 
   private void bindParameters() {
