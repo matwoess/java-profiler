@@ -18,6 +18,8 @@ public class App extends Application {
     Scene scene = new Scene(fxmlLoader.load());
     stage.setTitle("Java Profiler");
     stage.setScene(scene);
+    Controller controller = fxmlLoader.getController();
+    controller.chooseProjectDirectory(stage);
     stage.show();
   }
 }

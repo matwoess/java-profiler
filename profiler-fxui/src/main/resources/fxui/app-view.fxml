@@ -18,19 +18,6 @@
             </padding>
             <VBox>
                 <HBox>
-                    <Label text="Project root directory"/>
-                    <Label text=" (?) " textFill="darkgoldenrod">
-                        <tooltip>
-                            <Tooltip text="The base directory in which the java project is located."/>
-                        </tooltip>
-                    </Label>
-                </HBox>
-                <HBox prefWidth="Infinity">
-                    <TextField fx:id="txtProjectRoot" disable="true" HBox.hgrow="ALWAYS"/>
-                </HBox>
-            </VBox>
-            <VBox>
-                <HBox>
                     <Label text="Run mode"/>
                     <Label text=" (?) " textFill="darkgoldenrod">
                         <tooltip>
@@ -94,6 +81,7 @@
                     </HBox>
                 </HBox>
             </VBox>
+            <VBox VBox.vgrow="SOMETIMES"/>
             <HBox>
                 <HBox HBox.hgrow="ALWAYS"/>
                 <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">

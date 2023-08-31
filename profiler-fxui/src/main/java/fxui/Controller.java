@@ -27,8 +27,6 @@ public class Controller {
   @FXML
   private TreeView<File> treeProjectDir;
   @FXML
-  private TextField txtProjectRoot;
-  @FXML
   private ChoiceBox<RunMode> cbRunMode;
   @FXML
   private VBox boxSourcesDir;
@@ -61,16 +59,18 @@ public class Controller {
   }
 
   @FXML
-  private void initialize() throws IOException {
-    // project root dialog
-    chooseProjectDirectory();
-    // setup UI
-    initTreeView();
+  private void initialize() {
     bindParameters();
     initRunModeControl();
     initDisabledPropertiesByMode();
     initButtonDisabledProperties();
     initBorderListeners();
+  }
+
+  public void chooseProjectDirectory(Stage stage) throws IOException {
+    chooseProjectDirectory();
+    stage.setTitle(stage.getTitle() + " - " + parameters.projectRoot.get());
+    initTreeView();
   }
 
   private void chooseProjectDirectory() throws IOException {
@@ -144,7 +144,6 @@ public class Controller {
   }
 
   private void bindParameters() {
-    txtProjectRoot.textProperty().bindBidirectional(parameters.projectRoot);
     txtMainFile.textProperty().bindBidirectional(parameters.mainFile);
     txtProgramArgs.textProperty().bindBidirectional(parameters.programArgs);
     txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir);
