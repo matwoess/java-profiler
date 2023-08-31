@@ -29,8 +29,8 @@
         </HBox>
         <HBox>
             <HBox HBox.hgrow="SOMETIMES"/>
-            <Button fx:id="btnOpenProject" alignment="BOTTOM_RIGHT" text="Open" onAction="#onOpenProject">
-            </Button>
+            <Button fx:id="btnOpenProject" alignment="BOTTOM_RIGHT" text="Open" onAction="#onOpenProject"
+                    defaultButton="true"/>
         </HBox>
     </VBox>
 </VBox>
