@@ -149,8 +149,6 @@ public class StringsTest {
           }
         }
         """;
-
-    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("TextBlocksAndSubTextBlocks",
             jMethod("main", 7, 15, 158, 268),
@@ -159,4 +157,135 @@ public class StringsTest {
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
+
+
+  @Test
+  public void testTextBlocksContainingXMLStructure() {
+    String fileContent = baseTemplate.formatted("""
+        System.out.println(""\"
+               <body>
+               <span>  static String startEndWithBSlash = "\\\\\\\\asdf\\\\tqwerty\\\\\\\\";</span>
+               <span>  static String emptyTextBlock = ""\\"</span>
+               <span>  ""\\";</span>
+               <span>  static String withNestedBlock = ""\\"</span>
+               <span>      Text with</span>
+               <span>      multiple (!)</span>
+               <span>      lines!\\\\n</span>
+               <span>      can contain "strings", \\\\"escaped strings\\\\"</span>
+               <span>      and \\\\t""\\\\"</span>
+               <span>      Text blocks!</span>
+               <span>      with ""\\\\\\\\\\\\\\\\"</span>
+               <span>        "nested(!) text blocks",</span>
+               <span>        ""\\\\\\\\\\\\\\\\"</span>
+               <span>      \\\\""\\"</span>
+               <span>      ""\\";</span>
+               <span></span>
+               </body>
+           ""\");
+        """, "");
+    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
+    JavaFile expected = jFile(
+        jClass("Main",
+            jMethod("main", 2, 24, 62, 841)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testTextBlocksWithDifferentEndings() {
+    String fileContent = """
+        class TextBlocksWithDifferentEndings {
+          public static void main(String[] args) {
+            System.out.println(printStrings());
+          }
+          
+          static String printStrings() {
+            {
+              System.out.print(""\"
+                  ""\");
+            } {
+              System.out.println(""\"
+                  x""\");
+            } {
+              System.out.println(""\"
+                  \\""\"");
+            } {
+              System.out.println(""\"
+                  "str1" "str2"
+                  ""\");
+            } {
+              System.out.println(""\"
+                  ""str1"" \\"\\"str2\\"\\"
+                  ""\");
+            } {
+              System.out.println(""\"
+                  ""str"" ßß$"!)(@æſĸðf\\t\\n\\
+                  "\\""\"");
+            }
+            return ""\"
+                \\""\"
+                nested "str"
+                ""\\"
+                ""\";
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("TextBlocksWithDifferentEndings",
+            jMethod("main", 2, 4, 81, 125),
+            jMethod("printStrings", 6, 34, 159, 663,
+                jBlock(BLOCK, 7, 10, 165, 214),
+                jBlock(BLOCK, 10, 13, 216, 268),
+                jBlock(BLOCK, 13, 16, 270, 323),
+                jBlock(BLOCK, 16, 20, 325, 400),
+                jBlock(BLOCK, 20, 24, 402, 485),
+                jBlock(BLOCK, 24, 28, 487, 584)
+            )
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testTextBlocksWithQuotesBeforeInlineEnd() {
+    String fileContent = """
+        class TextBlocksWithQuotesBeforeInlineEnd {
+          static String tBlock = ""\"
+              \\"\\"\\"
+              "TextBlock",
+              \\""\"\\"
+              ""\\""\"";
+              
+          public static void main(String[] args) {
+            tBlock += ""\"
+                \\""\\""\"";
+            if (args.length == 0) {
+              tBlock += ""\"
+                  \\""\"
+                  TextBlock",
+                  ""
+                  \\""\\"
+                  "\\""
+                  \\"\\"\\"
+                  ""\\""\"";
+            }
+          }
+          
+          public static String getTextBlock() {
+            return tBlock;
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("TextBlocksWithQuotesBeforeInlineEnd",
+            jMethod("main", 8, 21, 176, 387,
+                jBlock(BLOCK, 11, 20, 240, 383)
+            ),
+            jMethod("getTextBlock", 23, 25, 428, 451)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
 }

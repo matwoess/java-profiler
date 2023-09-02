@@ -31,7 +31,11 @@ TOKENS
     string =
         quote (
             quote quote lf  // multi-line "text block" string
-                { noQuote | bslash quote | quote CONTEXT (noQuote) | quote CONTEXT (quote noQuote) }
+                {   noQuote
+                    | quote noQuote
+                    | quote quote noQuote
+                    | [quote] [quote] bslash quote
+                }
                 quote quote quote
             | {
                 (   noQuoteNoBSlash

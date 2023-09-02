@@ -31,6 +31,8 @@ class Strings {
       String s2 = String.format("y has the value: %s\\", y);
       System.out.println(s2 + s1 + getMultiLineString());
       System.out.println(printStrings());
+      TextBlocksWithQuotesBeforeInlineEnd.main(new String[]{});
+      System.out.println(TextBlocksWithQuotesBeforeInlineEnd.getTextBlock());
     } else {
       System.out.println("""
               <body>
@@ -56,21 +58,33 @@ class Strings {
   }
 
   static String printStrings() {
-    System.out.print("""
-        """);
-    System.out.println("""
-        x""");
-    System.out.println("""
-        \"""");
-    System.out.println("""
-        "str1" "str2"
-        """);
-    System.out.println("""
-        ""str1"" \"\"str2\"\"
-        """);
-    System.out.println("""
-        ""str"" ßß$"!)(@æſĸðf\t\n\
-        "\"""");
+    {
+      System.out.print("""
+          """);
+    }
+    {
+      System.out.println("""
+          x""");
+    }
+    {
+      System.out.println("""
+          \"""");
+    }
+    {
+      System.out.println("""
+          "str1" "str2"
+          """);
+    }
+    {
+      System.out.println("""
+          ""str1"" \"\"str2\"\"
+          """);
+    }
+    {
+      System.out.println("""
+          ""str"" ßß$"!)(@æſĸðf\t\n\
+          "\"""");
+    }
     return """
         \"""
         nested "str"
@@ -78,4 +92,30 @@ class Strings {
         """;
   }
 
+  class TextBlocksWithQuotesBeforeInlineEnd {
+    static String tBlock = """
+        \"\"\"
+        "TextBlock",
+        \"""\"
+        ""\"""";
+
+    public static void main(String[] args) {
+      tBlock += """
+          \""\"""";
+      if (args.length == 0) {
+        tBlock += """
+            \"""
+            TextBlock",
+            ""
+            \""\"
+            "\""
+            \"\"\"
+            ""\"""";
+      }
+    }
+
+    public static String getTextBlock() {
+      return tBlock;
+    }
+  }
 }
