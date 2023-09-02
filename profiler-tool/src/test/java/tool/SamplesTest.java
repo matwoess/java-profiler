@@ -30,6 +30,15 @@ public class SamplesTest {
   public void testBasicElementsSample_Folder() {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "BasicElements.java");
   }
+   @Test
+  public void testStringsSample() {
+    TestUtils.instrumentAndProfile(samplesFolder.resolve("Strings.java"));
+  }
+
+  @Test
+  public void testStringsSample_Folder() {
+    TestUtils.instrumentFolderAndProfile(samplesFolder, "Strings.java");
+  }
 
   @Test
   public void testClassesSample() {

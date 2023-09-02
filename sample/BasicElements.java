@@ -44,8 +44,6 @@ public class BasicElements {
       } while (x > 0);
     }
     int y = (x == 1) ? 0 : 5;
-    // with trailing double-slash
-    String s = String.format("y has the value: %s\\", y);
     /* using a try catch with finally block */
     try {
       System.out.println(s);
@@ -61,24 +59,6 @@ public class BasicElements {
     System.out.println(BasicElements.getMultiLineString());
     new GenArrays<Integer>().main(null);
     int number = new BasicElements().syncMethod();
-  }
-
-  static String multiLineString = """
-      Text with
-      multiple (!)
-      lines!\n
-      can contain "strings", \"escaped strings\"
-      and \t""\"
-      Text blocks!
-      with ""\\\\"
-        "nested(!) text blocks",
-        ""\\\\"
-      ""\"
-      
-      """;
-
-  public static String getMultiLineString() {
-    return multiLineString;
   }
 
   private static class GenArrays<T> {
