@@ -44,6 +44,7 @@ public class BasicElements {
       } while (x > 0);
     }
     int y = (x == 1) ? 0 : 5;
+    String s = String.format("y has the value: %s\\", y);
     /* using a try catch with finally block */
     try {
       System.out.println(s);
@@ -56,7 +57,6 @@ public class BasicElements {
     "Hello World".chars().sum();
     assert x == 1;
     assert "Hello".chars().asDoubleStream().map(d -> d + 2).sum() > 0 : "is 0 or less";
-    System.out.println(BasicElements.getMultiLineString());
     new GenArrays<Integer>().main(null);
     int number = new BasicElements().syncMethod();
   }
