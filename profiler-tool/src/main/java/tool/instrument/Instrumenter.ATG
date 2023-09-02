@@ -10,8 +10,9 @@ CHARACTERS
     bslash = '\\'.
     quote = '"'.
     apostrophe = '\''.
-    noApostrophe = ANY - apostrophe- bslash - cr - lf.
-    noQuote = ANY - quote - bslash - cr - lf.
+    noApostrophe = ANY - apostrophe - bslash - cr - lf.
+    noQuote = ANY - quote.
+    noQuoteNoBSlash = ANY - quote - bslash.
     escapableChar = 'b'+ 's' + 't' + 'n' + 'f' + 'r' + quote + apostrophe + bslash.
     hexDigit = digit + 'a'..'f' + 'A'..'F'.
     zeroToThree = "0123".
@@ -20,23 +21,29 @@ TOKENS
     ident = letter {letter | digit}.
     char =
         apostrophe (
-            bslash (
+            noApostrophe
+            | bslash (
                 escapableChar
                 | 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
                 | (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
             )
-            | noApostrophe
         ) apostrophe.
-    textBlockEscSeq = quote CONTEXT ("\"\"").
     string =
-        quote {(
-            bslash (
-                escapableChar
-                | 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
-                | (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
-            )
-            | noQuote
-        )} quote.
+        quote (
+            quote quote lf  // multi-line "text block" string
+                { noQuote | bslash quote | quote CONTEXT (noQuote) | quote CONTEXT (quote noQuote) }
+                quote quote quote
+            | {
+                (   noQuoteNoBSlash
+                    | bslash (
+                        escapableChar
+                        | 'u' {'u'} hexDigit hexDigit hexDigit hexDigit
+                        | (octalDigit [octalDigit] | zeroToThree octalDigit octalDigit)
+                    )
+                )
+            }
+            quote
+        ).
     // .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
     class  = "class".
     this   = "this".
@@ -48,11 +55,6 @@ COMMENTS FROM "//" TO '\n'
 IGNORE tab + cr + lf
 
 PRODUCTIONS
-
-String = (
-    string
-    | textBlockEscSeq string /* always "" */ {ANY} textBlockEscSeq string // always ""
-).
 
 Instrumenter =
     [PackageDecl]
@@ -126,8 +128,8 @@ Statement =
     | ";"
 .
 GenericStatement =
-    (ident | String | this | "throw" | ParExpr | Instantiation)
-    {   String | char
+    (ident | string | this | "throw" | ParExpr | Instantiation)
+    {   string | char
         | ArrowExpression<false, false>
         | SwitchStatement
         | Instantiation
@@ -158,7 +160,7 @@ ArrowExpression<boolean inSwitch, boolean inAssignment> =
     "->" (Block<false> | SSArrowBody<inSwitch, inAssignment>)
 .
 SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. state.checkSingleStatement(inAssignment, inSwitch, true); .)
-    (   String | char
+    (   string | char
         | ParExpr
         | ident
         | "throw"                                       (. state.registerThrow(); .)
