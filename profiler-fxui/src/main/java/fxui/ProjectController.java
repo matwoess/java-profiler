@@ -23,7 +23,7 @@ public class ProjectController {
     );
     btnProjectRoot.setOnAction(event -> SystemUtils.chooseDirectory(txtProjectRoot, System.getProperty("user.home")));
     txtProjectRoot.borderProperty().bind(BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));
-    btnOpenProject.disableProperty().bind(invalidProjectRootPath);
+    btnOpenProject.disableProperty().bind(txtProjectRoot.textProperty().isEmpty().or(invalidProjectRootPath));
   }
 
   public void onOpenProject() {

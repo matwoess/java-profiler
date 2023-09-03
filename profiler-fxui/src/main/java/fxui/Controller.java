@@ -5,6 +5,7 @@ import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -78,10 +79,11 @@ public class Controller {
     Scene scene = new Scene(fxmlLoader.load());
     ProjectController prjController = fxmlLoader.getController();
     prjController.bindProjectRootProperty(parameters.projectRoot);
-    Stage projectState = new Stage();
-    projectState.setTitle("Choose Project Root");
-    projectState.setScene(scene);
-    projectState.showAndWait();
+    Stage projectStage = new Stage();
+    projectStage.setTitle("Open Java Project");
+    projectStage.setScene(scene);
+    scene.getWindow().setOnCloseRequest((e) -> Platform.exit());
+    projectStage.showAndWait();
   }
 
   private void bindParameters() {
