@@ -26,8 +26,7 @@ public class JavaProjectTree {
 
   private void initTreeView(TreeView<File> treeProjectDir) {
     File rootDir = Path.of(parameters.projectRoot.get()).toFile();
-    TreeItem<File> root = new TreeItem<>(rootDir);
-    populateTree(rootDir, root);
+    TreeItem<File> root = populateTree(rootDir);
     treeProjectDir.setRoot(root);
     treeProjectDir.setShowRoot(false);
     treeProjectDir.setOnKeyPressed(event -> {
@@ -59,18 +58,21 @@ public class JavaProjectTree {
     });
   }
 
-  public void populateTree(File directory, TreeItem<File> parent) {
+  public TreeItem<File> populateTree(File directory) {
     File[] itemsInDir = directory.listFiles();
-    if (itemsInDir == null) return;
+    TreeItem<File> folder = new TreeItem<>(directory);
+    if (itemsInDir == null) return folder;
     for (File item : itemsInDir) {
       if (item.isDirectory()) {
-        TreeItem<File> dirItem = new TreeItem<>(item);
-        parent.getChildren().add(dirItem);
-        populateTree(item, dirItem);
+        TreeItem<File> subFolder = populateTree(item);
+        if (!subFolder.getChildren().isEmpty()) {
+          folder.getChildren().add(subFolder);
+        }
       } else if (item.getName().endsWith(".java")) {
-        parent.getChildren().add(new TreeItem<>(item));
+        folder.getChildren().add(new TreeItem<>(item));
       }
     }
+    return folder;
   }
 
   private void setSourcesDir(Path dir) {
