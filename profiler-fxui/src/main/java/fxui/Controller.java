@@ -114,7 +114,10 @@ public class Controller {
         .isNotEqualTo(RunMode.REPORT_ONLY)
         .and(parameters.mainFile.isEmpty())
         .and(parameters.sourcesDir.isEmpty());
-    btnRunTool.disableProperty().bind(anyPathInvalid.or(instrumentWithoutTarget));
+    BooleanBinding runWithoutMainFile = parameters.runMode
+        .isEqualTo(RunMode.DEFAULT)
+        .and(parameters.mainFile.isEmpty());
+    btnRunTool.disableProperty().bind(anyPathInvalid.or(instrumentWithoutTarget).or(runWithoutMainFile));
   }
 
   private void initBorderListeners() {
