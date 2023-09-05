@@ -5,18 +5,14 @@ import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 public class Controller {
@@ -62,23 +58,10 @@ public class Controller {
     initBorderListeners();
   }
 
-  public void chooseProjectDirectory(Stage stage) throws IOException {
-    chooseProjectDirectory();
-    Path projectRootPath = parameters.projectRoot.get();
+  public void setProjectDirectory(Path projectRootPath, Stage stage) {
+    parameters.projectRoot.set(projectRootPath);
     stage.setTitle(stage.getTitle() + " - " + projectRootPath.toString());
     projectTree = new JavaProjectTree(parameters, treeProjectDir);
-  }
-
-  private void chooseProjectDirectory() throws IOException {
-    FXMLLoader fxmlLoader = new FXMLLoader(ProjectController.class.getResource("project-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load());
-    ProjectController prjController = fxmlLoader.getController();
-    prjController.bindProjectRootProperty(parameters.projectRoot);
-    Stage projectStage = new Stage();
-    projectStage.setTitle("Open Java Project");
-    projectStage.setScene(scene);
-    scene.getWindow().setOnCloseRequest((e) -> Platform.exit());
-    projectStage.showAndWait();
   }
 
   private void bindParameters() {

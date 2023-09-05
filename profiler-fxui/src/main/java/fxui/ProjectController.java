@@ -18,7 +18,7 @@ public class ProjectController {
   public Button btnOpenProject;
   public BooleanProperty invalidProjectRootPath = new SimpleBooleanProperty(false);
 
-  void bindProjectRootProperty(ObjectProperty<Path> projectRoot) {
+  void initProperties(ObjectProperty<Path> projectRoot) {
     txtProjectRoot.textProperty().bindBidirectional(projectRoot, BindingUtils.pathStringConverter);
     txtProjectRoot.textProperty().set(System.getProperty("user.home"));
     invalidProjectRootPath.bind(txtProjectRoot.textProperty().isNotEmpty()
