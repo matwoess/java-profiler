@@ -3,11 +3,13 @@ package fxui;
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.nio.file.Path;
 
 public class ProjectController {
 
@@ -16,10 +18,10 @@ public class ProjectController {
   public Button btnOpenProject;
   public BooleanProperty invalidProjectRootPath = new SimpleBooleanProperty(false);
 
-  void bindProjectRootProperty(StringProperty projectRoot) {
-    txtProjectRoot.textProperty().bindBidirectional(projectRoot);
+  void bindProjectRootProperty(ObjectProperty<Path> projectRoot) {
+    txtProjectRoot.textProperty().bindBidirectional(projectRoot, BindingUtils.pathStringConverter);
     invalidProjectRootPath.bind(txtProjectRoot.textProperty().isNotEmpty()
-        .and(BindingUtils.createIsDirectoryBinding(projectRoot, txtProjectRoot.textProperty()).not())
+        .and(BindingUtils.createIsDirectoryBinding(projectRoot).not())
     );
     btnProjectRoot.setOnAction(event -> SystemUtils.chooseDirectory(txtProjectRoot, System.getProperty("user.home")));
     txtProjectRoot.borderProperty().bind(BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));

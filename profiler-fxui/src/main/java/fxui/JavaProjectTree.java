@@ -33,7 +33,7 @@ public class JavaProjectTree {
   }
 
   private void initTreeView(TreeView<File> treeProjectDir) {
-    File rootDir = Path.of(parameters.projectRoot.get()).toFile();
+    File rootDir = parameters.projectRoot.get().toFile();
     TreeItem<File> root = populateTree(rootDir);
     treeProjectDir.setRoot(root);
     treeProjectDir.setShowRoot(false);
@@ -70,13 +70,13 @@ public class JavaProjectTree {
   }
 
   private void setSourcesDir(Path dir) {
-    Path relPath = Path.of(parameters.projectRoot.get()).relativize(dir);
-    parameters.sourcesDir.set(relPath.toString());
+    Path relPath = parameters.projectRoot.get().relativize(dir);
+    parameters.sourcesDir.set(relPath);
   }
 
   private void setMainFile(Path jFile) {
-    Path relPath = Path.of(parameters.projectRoot.get()).relativize(jFile);
-    parameters.mainFile.set(relPath.toString());
+    Path relPath = parameters.projectRoot.get().relativize(jFile);
+    parameters.mainFile.set(relPath);
   }
 
   static class SelectableTreeCell extends TreeCell<File> {

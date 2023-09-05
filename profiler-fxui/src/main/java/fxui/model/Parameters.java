@@ -15,13 +15,13 @@ import static fxui.model.RunMode.DEFAULT;
 import static fxui.model.RunMode.REPORT_ONLY;
 
 public class Parameters {
-  public StringProperty projectRoot = new SimpleStringProperty("");
+  public ObjectProperty<Path> projectRoot = new SimpleObjectProperty<>(null);
 
   public ObjectProperty<RunMode> runMode = new SimpleObjectProperty<>(DEFAULT);
 
-  public StringProperty mainFile = new SimpleStringProperty("");
+  public ObjectProperty<Path> mainFile = new SimpleObjectProperty<>(null);
   public StringProperty programArgs = new SimpleStringProperty("");
-  public StringProperty sourcesDir = new SimpleStringProperty("");
+  public ObjectProperty<Path> sourcesDir = new SimpleObjectProperty<>(null);
   public BooleanProperty syncCounters = new SimpleBooleanProperty(false);
 
   public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
@@ -33,8 +33,8 @@ public class Parameters {
   }
 
   public void initializeExtraProperties() {
-    invalidMainFilePath.bind(mainFile.isNotEmpty().and(BindingUtils.createIsJavaFileBinding(projectRoot, mainFile).not()));
-    invalidSourcesDirPath.bind(sourcesDir.isNotEmpty().and(BindingUtils.createIsDirectoryBinding(projectRoot, sourcesDir).not()));
+    invalidMainFilePath.bind(mainFile.isNotNull().and(BindingUtils.creatRelativeIsJavaFileBinding(projectRoot, mainFile).not()));
+    invalidSourcesDirPath.bind(sourcesDir.isNotNull().and(BindingUtils.createRelativeIsDirectoryBinding(projectRoot, sourcesDir).not()));
   }
 
   public String[] getRunParameters() {
@@ -48,15 +48,15 @@ public class Parameters {
       case REPORT_ONLY -> arguments.add("--generate-report");
       case INSTRUMENT_ONLY -> {
         arguments.add("--instrument-only");
-        arguments.add(mainFile.get());
+        arguments.add(mainFile.get().toString());
       }
       case DEFAULT -> {
-        String additionalSourcesDir = sourcesDir.get();
+        String additionalSourcesDir = sourcesDir.get().toString();
         if (!additionalSourcesDir.isBlank()) {
           arguments.add("--sources-directory");
           arguments.add(additionalSourcesDir);
         }
-        arguments.add(mainFile.get());
+        arguments.add(mainFile.get().toString());
         String args = programArgs.get();
         if (!args.isBlank()) {
           arguments.addAll(Arrays.stream(args.split(" ")).toList());
@@ -71,9 +71,9 @@ public class Parameters {
     IO.createDirectoriesIfNotExists(parametersPath);
     try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(parametersPath.toFile()))) {
       oos.writeInt(runMode.get().ordinal());
-      oos.writeUTF(mainFile.get());
+      oos.writeUTF(mainFile.get().toString());
       oos.writeUTF(programArgs.get());
-      oos.writeUTF(sourcesDir.get());
+      oos.writeUTF(sourcesDir.get().toString());
       oos.writeBoolean(syncCounters.get());
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -83,9 +83,9 @@ public class Parameters {
   public void importParameters() {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getUIParametersPath().toFile()))) {
        runMode.set(RunMode.values()[ois.readInt()]);
-       mainFile.set(ois.readUTF());
+       mainFile.set(Path.of(ois.readUTF()));
        programArgs.set(ois.readUTF());
-       sourcesDir.set(ois.readUTF());
+       sourcesDir.set(Path.of(ois.readUTF()));
        syncCounters.set(ois.readBoolean());
     } catch (IOException e) {
       throw new RuntimeException(e);

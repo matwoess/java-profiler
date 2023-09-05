@@ -64,8 +64,8 @@ public class Controller {
 
   public void chooseProjectDirectory(Stage stage) throws IOException {
     chooseProjectDirectory();
-    String projectRootString = parameters.projectRoot.get();
-    stage.setTitle(stage.getTitle() + " - " + projectRootString);
+    Path projectRootPath = parameters.projectRoot.get();
+    stage.setTitle(stage.getTitle() + " - " + projectRootPath.toString());
     projectTree = new JavaProjectTree(parameters, treeProjectDir);
   }
 
@@ -82,9 +82,9 @@ public class Controller {
   }
 
   private void bindParameters() {
-    txtMainFile.textProperty().bindBidirectional(parameters.mainFile);
+    txtMainFile.textProperty().bindBidirectional(parameters.mainFile, BindingUtils.pathStringConverter);
     txtProgramArgs.textProperty().bindBidirectional(parameters.programArgs);
-    txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir);
+    txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir, BindingUtils.pathStringConverter);
     cbSyncCounters.selectedProperty().bindBidirectional(parameters.syncCounters);
   }
 
@@ -107,11 +107,11 @@ public class Controller {
         .or(parameters.invalidOutDirPath);
     BooleanBinding instrumentWithoutTarget = parameters.runMode
         .isNotEqualTo(RunMode.REPORT_ONLY)
-        .and(parameters.mainFile.isEmpty())
-        .and(parameters.sourcesDir.isEmpty());
+        .and(parameters.mainFile.isNull())
+        .and(parameters.sourcesDir.isNull());
     BooleanBinding runWithoutMainFile = parameters.runMode
         .isEqualTo(RunMode.DEFAULT)
-        .and(parameters.mainFile.isEmpty());
+        .and(parameters.mainFile.isNull());
     btnRunTool.disableProperty().bind(anyPathInvalid.or(instrumentWithoutTarget).or(runWithoutMainFile));
   }
 
@@ -122,7 +122,7 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    int exitCode = SystemUtils.executeToolInTerminal(parameters.projectRoot.get(), parameters.getRunParameters());
+    int exitCode = SystemUtils.executeToolInTerminal(parameters.projectRoot.get().toString(), parameters.getRunParameters());
     if (exitCode != 0) {
       throw new RuntimeException("error executing tool");
     }
@@ -130,7 +130,7 @@ public class Controller {
 
   @FXML
   protected void onOpenReport() {
-    IO.outputDir = Path.of(parameters.projectRoot.get()).resolve(IO.DEFAULT_OUT_DIR);
+    IO.outputDir = parameters.projectRoot.get().resolve(IO.DEFAULT_OUT_DIR);
     Path reportPath = IO.getReportIndexPath();
     SystemUtils.openWithDesktopApplication(reportPath);
   }
