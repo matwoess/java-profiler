@@ -70,14 +70,21 @@ public class BindingUtils {
 
   public static BooleanBinding createIsJavaFileBinding(ObjectProperty<File> fileProperty) {
     return Bindings.createBooleanBinding(
-        () -> common.Util.isJavaFile(fileProperty.get().toPath()),
+        () -> {
+          if (fileProperty.isNull().get()) return false;
+          return common.Util.isJavaFile(fileProperty.get().toPath());
+        },
         fileProperty
     );
   }
 
   public static BooleanBinding creatRelativeIsJavaFileBinding(ObjectProperty<Path> parentDirProperty, ObjectProperty<Path> fileProperty) {
     return Bindings.createBooleanBinding(
-        () -> common.Util.isJavaFile(parentDirProperty.get().resolve(fileProperty.get())),
+        () -> {
+          if (parentDirProperty.isNull().get()) return false;
+          if (fileProperty.isNull().get()) return false;
+          return common.Util.isJavaFile(parentDirProperty.get().resolve(fileProperty.get()));
+        },
         fileProperty,
         parentDirProperty
     );
@@ -85,14 +92,21 @@ public class BindingUtils {
 
   public static BooleanBinding createIsDirectoryBinding(ObjectProperty<Path> dirProperty) {
     return Bindings.createBooleanBinding(
-        () -> dirProperty.get().toFile().isDirectory(),
+        () -> {
+          if (dirProperty.isNull().get()) return false;
+          return dirProperty.get().toFile().isDirectory();
+        },
         dirProperty
     );
   }
 
   public static BooleanBinding createRelativeIsDirectoryBinding(ObjectProperty<Path> parentDirProperty, ObjectProperty<Path> dirProperty) {
     return Bindings.createBooleanBinding(
-        () -> parentDirProperty.get().resolve(dirProperty.get()).toFile().isDirectory(),
+        () -> {
+          if (parentDirProperty.isNull().get()) return false;
+          if (dirProperty.isNull().get()) return false;
+          return parentDirProperty.get().resolve(dirProperty.get()).toFile().isDirectory();
+        },
         dirProperty,
         parentDirProperty
     );

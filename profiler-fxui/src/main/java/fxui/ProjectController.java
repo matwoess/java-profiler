@@ -20,10 +20,11 @@ public class ProjectController {
 
   void bindProjectRootProperty(ObjectProperty<Path> projectRoot) {
     txtProjectRoot.textProperty().bindBidirectional(projectRoot, BindingUtils.pathStringConverter);
+    txtProjectRoot.textProperty().set(System.getProperty("user.home"));
     invalidProjectRootPath.bind(txtProjectRoot.textProperty().isNotEmpty()
         .and(BindingUtils.createIsDirectoryBinding(projectRoot).not())
     );
-    btnProjectRoot.setOnAction(event -> SystemUtils.chooseDirectory(txtProjectRoot, System.getProperty("user.home")));
+    btnProjectRoot.setOnAction(event -> SystemUtils.chooseDirectory(projectRoot));
     txtProjectRoot.borderProperty().bind(BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));
     btnOpenProject.disableProperty().bind(txtProjectRoot.textProperty().isEmpty().or(invalidProjectRootPath));
   }

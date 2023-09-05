@@ -51,10 +51,12 @@ public class Parameters {
         arguments.add(mainFile.get().toString());
       }
       case DEFAULT -> {
-        String additionalSourcesDir = sourcesDir.get().toString();
-        if (!additionalSourcesDir.isBlank()) {
-          arguments.add("--sources-directory");
-          arguments.add(additionalSourcesDir);
+        if (sourcesDir.isNotNull().get()) {
+          String additionalSourcesDir = sourcesDir.get().toString();
+          if (!additionalSourcesDir.isBlank()) {
+            arguments.add("--sources-directory");
+            arguments.add(additionalSourcesDir);
+          }
         }
         arguments.add(mainFile.get().toString());
         String args = programArgs.get();

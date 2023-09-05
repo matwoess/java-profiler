@@ -1,9 +1,10 @@
 package fxui.util;
 
 import common.Util;
-import javafx.scene.control.TextField;
+import javafx.beans.property.ObjectProperty;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,23 +13,23 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class SystemUtils {
-  public static void chooseFile(TextField pathField, String initialDirectory) {
+  public static void chooseFile(ObjectProperty<Path> fileProperty) {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Choose File");
-    fileChooser.setInitialDirectory(Path.of(initialDirectory).toFile());
-    File file = fileChooser.showOpenDialog(pathField.getScene().getWindow());
-    if (file != null) {
-      pathField.setText(file.toString());
+    fileChooser.setInitialDirectory(fileProperty.get().toFile());
+    File filePath = fileChooser.showOpenDialog(new Stage());
+    if (filePath != null) {
+      fileProperty.set(filePath.toPath());
     }
   }
 
-  public static void chooseDirectory(TextField pathField, String initialDirectory) {
+  public static void chooseDirectory(ObjectProperty<Path> dirProperty) {
     DirectoryChooser dirChooser = new DirectoryChooser();
     dirChooser.setTitle("Choose Directory");
-    dirChooser.setInitialDirectory(Path.of(initialDirectory).toFile());
-    File dir = dirChooser.showDialog(pathField.getScene().getWindow());
-    if (dir != null) {
-      pathField.setText(dir.toString());
+    dirChooser.setInitialDirectory(dirProperty.get().toFile());
+    File dirPath = dirChooser.showDialog(new Stage());
+    if (dirPath != null) {
+      dirProperty.set(dirPath.toPath());
     }
   }
 
@@ -42,7 +43,7 @@ public class SystemUtils {
     });
   }
 
-  public static int executeToolInTerminal(String cwd, String... parameters) {
+  public static int executeToolInTerminal(Path cwd, String... parameters) {
     String toolJar = tool.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String commonJar = common.Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String[] mainCmd = {"java", "-cp", toolJar + ":" + commonJar, "tool.Main"};
@@ -66,6 +67,6 @@ public class SystemUtils {
       };
       case SOLARIS -> throw new RuntimeException("unsupported operating system");
     };
-    return Util.runCommand(Path.of(cwd), command);
+    return Util.runCommand(cwd, command);
   }
 }

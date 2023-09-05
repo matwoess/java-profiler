@@ -122,7 +122,7 @@ public class Controller {
 
   @FXML
   protected void onExecuteTool() {
-    int exitCode = SystemUtils.executeToolInTerminal(parameters.projectRoot.get().toString(), parameters.getRunParameters());
+    int exitCode = SystemUtils.executeToolInTerminal(parameters.projectRoot.get(), parameters.getRunParameters());
     if (exitCode != 0) {
       throw new RuntimeException("error executing tool");
     }
