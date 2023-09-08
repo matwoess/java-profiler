@@ -29,6 +29,8 @@ public class Controller {
   @FXML
   private TextField txtMainFile;
   @FXML
+  private Label requiredHintMainFile;
+  @FXML
   private VBox boxProgramArgs;
   @FXML
   private TextField txtProgramArgs;
@@ -81,6 +83,8 @@ public class Controller {
     boxProgramArgs.disableProperty().bind(parameters.runMode.isNotEqualTo(RunMode.DEFAULT));
     boxSourcesDir.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
     boxSyncCounters.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
+    requiredHintMainFile.visibleProperty().bind(parameters.runMode.isEqualTo(RunMode.DEFAULT));
+    requiredHintMainFile.managedProperty().bind(requiredHintMainFile.visibleProperty());
   }
 
   private void initButtonDisabledProperties() {

@@ -46,6 +46,11 @@
                 <VBox fx:id="boxMainFile">
                     <HBox>
                         <Label text="Main file"/>
+                        <Label fx:id="requiredHintMainFile" text="*" textFill="crimson">
+                            <tooltip>
+                                <Tooltip text="This parameter is required"/>
+                            </tooltip>
+                        </Label>
                         <Label text=" (?) " textFill="darkgoldenrod">
                             <tooltip>
                                 <Tooltip
