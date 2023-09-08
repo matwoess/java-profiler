@@ -21,8 +21,8 @@ import java.util.Objects;
 public class JavaProjectTree {
   private final Parameters parameters;
 
-  static Image folderIcon = new Image(Objects.requireNonNull(Controller.class.getResourceAsStream("folder-icon.png")));
-  static Image jFileIcon = new Image(Objects.requireNonNull(Controller.class.getResourceAsStream("java-icon.png")));
+  static Image folderIcon = new Image(Objects.requireNonNull(JavaProjectTree.class.getResourceAsStream("folder-icon.png")));
+  static Image jFileIcon = new Image(Objects.requireNonNull(JavaProjectTree.class.getResourceAsStream("java-icon.png")));
 
   ObjectProperty<TreeItem<File>> selectedDirNode = new SimpleObjectProperty<>();
   ObjectProperty<TreeItem<File>> selectedMainNode = new SimpleObjectProperty<>();

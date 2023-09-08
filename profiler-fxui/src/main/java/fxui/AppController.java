@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.nio.file.Path;
 
-public class Controller {
+public class AppController {
   @FXML
   private TreeView<File> treeProjectDir;
   @FXML
@@ -47,7 +47,7 @@ public class Controller {
 
    private JavaProjectTree projectTree;
 
-  public Controller() {
+  public AppController() {
     parameters = new Parameters();
   }
 
