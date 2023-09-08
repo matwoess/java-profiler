@@ -3,6 +3,7 @@ package fxui;
 import common.IO;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
+import fxui.tree.JavaProjectTree;
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
 import javafx.beans.binding.BooleanBinding;

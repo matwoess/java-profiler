@@ -1,4 +1,4 @@
-package fxui;
+package fxui.tree;
 
 import fxui.model.Parameters;
 import javafx.beans.binding.Bindings;
