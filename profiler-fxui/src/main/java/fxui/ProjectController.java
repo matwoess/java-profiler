@@ -18,15 +18,18 @@ public class ProjectController {
   public Button btnOpenProject;
   public BooleanProperty invalidProjectRootPath = new SimpleBooleanProperty(false);
 
-  void initProperties(ObjectProperty<Path> projectRoot) {
-    txtProjectRoot.textProperty().bindBidirectional(projectRoot, BindingUtils.pathStringConverter);
-    txtProjectRoot.textProperty().set(System.getProperty("user.home"));
+  void initProperties(ObjectProperty<Path> projectRootProperty) {
+    txtProjectRoot.textProperty().bindBidirectional(projectRootProperty, BindingUtils.pathStringConverter);
     invalidProjectRootPath.bind(txtProjectRoot.textProperty().isNotEmpty()
-        .and(BindingUtils.createIsDirectoryBinding(projectRoot).not())
+        .and(BindingUtils.createIsDirectoryBinding(projectRootProperty).not())
     );
-    btnProjectRoot.setOnAction(event -> SystemUtils.chooseDirectory(projectRoot));
+    btnProjectRoot.setOnAction(event -> onPickProjectRoot(projectRootProperty));
     txtProjectRoot.borderProperty().bind(BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));
     btnOpenProject.disableProperty().bind(txtProjectRoot.textProperty().isEmpty().or(invalidProjectRootPath));
+  }
+
+  private void onPickProjectRoot(ObjectProperty<Path> projectRootProperty) {
+    SystemUtils.chooseDirectory(projectRootProperty);
   }
 
   public void onOpenProject() {

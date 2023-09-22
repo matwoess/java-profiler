@@ -63,6 +63,10 @@ public class IO {
     return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 
+  public static Path getUserHomeDir() {
+    return Path.of(System.getProperty("user.home"));
+  }
+
   public static Path getUIParametersPath() {
     return getOutputDir().resolve("parameters.dat");
   }

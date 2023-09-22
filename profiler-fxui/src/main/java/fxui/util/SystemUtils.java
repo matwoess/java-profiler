@@ -1,5 +1,6 @@
 package fxui.util;
 
+import common.IO;
 import common.Util;
 import javafx.beans.property.ObjectProperty;
 import javafx.stage.DirectoryChooser;
@@ -26,7 +27,11 @@ public class SystemUtils {
   public static void chooseDirectory(ObjectProperty<Path> dirProperty) {
     DirectoryChooser dirChooser = new DirectoryChooser();
     dirChooser.setTitle("Choose Directory");
-    dirChooser.setInitialDirectory(dirProperty.get().toFile());
+    Path initialDir = dirProperty.get();
+    if (initialDir == null || !initialDir.toFile().isDirectory()) {
+      initialDir = IO.getUserHomeDir();
+    }
+    dirChooser.setInitialDirectory(initialDir.toFile());
     File dirPath = dirChooser.showDialog(new Stage());
     if (dirPath != null) {
       dirProperty.set(dirPath.toPath());
