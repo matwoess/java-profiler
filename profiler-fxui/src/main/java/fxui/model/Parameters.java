@@ -25,7 +25,6 @@ public class Parameters {
   public BooleanProperty syncCounters = new SimpleBooleanProperty(false);
 
   public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
-  public BooleanProperty invalidOutDirPath = new SimpleBooleanProperty(false);
   public BooleanProperty invalidSourcesDirPath = new SimpleBooleanProperty(false);
 
   public Parameters() {
