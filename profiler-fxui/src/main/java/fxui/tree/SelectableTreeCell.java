@@ -1,9 +1,9 @@
 package fxui.tree;
 
 import common.IO;
+import fxui.model.Parameters;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
@@ -28,17 +28,31 @@ class SelectableTreeCell extends TreeCell<File> {
   static final Background mainFileColor = Background.fill(Color.color(.1, .5, .1, .2));
   static final Background mainFileSelColor = Background.fill(Color.color(.1, .5, .1, .3));
 
-  final Path projectRoot;
 
-  public SelectableTreeCell(Path projectRoot, ObjectProperty<TreeItem<File>> selectedDir, ObjectProperty<TreeItem<File>> selectedMain) {
-    this.projectRoot = projectRoot;
+  public SelectableTreeCell(Parameters parameters) {
     BooleanBinding isSelectedDir = Bindings.createBooleanBinding(
-        () -> selectedDir.isNotNull().get() && selectedDir.get().equals(getTreeItem()),
-        treeItemProperty(), selectedDir
+        () -> {
+          Path srcDir = parameters.sourcesDir.get();
+          if (srcDir == null) return false;
+          TreeItem<File> item = this.getTreeItem();
+          if (item == null) return false;
+          File dir = item.getValue();
+          if (dir == null) return false;
+          return parameters.projectRoot.get().resolve(srcDir).equals(dir.toPath());
+        },
+        treeItemProperty(), parameters.sourcesDir
     );
     BooleanBinding isSelectedMain = Bindings.createBooleanBinding(
-        () -> selectedMain.isNotNull().get() && selectedMain.get().equals(getTreeItem()),
-        treeItemProperty(), selectedMain
+        () -> {
+          Path mainFile = parameters.mainFile.get();
+          if (mainFile == null) return false;
+          TreeItem<File> item = this.getTreeItem();
+          if (item == null) return false;
+          File file = item.getValue();
+          if (file == null) return false;
+          return parameters.projectRoot.get().resolve(mainFile).equals(file.toPath());
+        },
+        treeItemProperty(), parameters.mainFile
     );
     graphicProperty().bind(Bindings.createObjectBinding(
             this::getItemGraphic,
@@ -46,7 +60,7 @@ class SelectableTreeCell extends TreeCell<File> {
         )
     );
     backgroundProperty().bind(Bindings.createObjectBinding(
-        () -> getItemBackgroundColor(isSelectedDir, isSelectedMain),
+        () -> getItemBackgroundColor(parameters.projectRoot.get(), isSelectedDir.get(), isSelectedMain.get()),
         isSelectedDir, isSelectedMain, selectedProperty(), itemProperty()
     ));
   }
@@ -64,17 +78,17 @@ class SelectableTreeCell extends TreeCell<File> {
     return null;
   }
 
-  public Background getItemBackgroundColor(BooleanBinding isSelectedDir, BooleanBinding isSelectedMain) {
+  public Background getItemBackgroundColor(Path projectRoot, boolean isSelectedDir, boolean isSelectedMain) {
     if (itemProperty().isNotNull().get()) {
       Path itemPath = itemProperty().get().toPath();
       if (itemPath.equals(projectRoot.resolve(IO.getOutputDir()))) {
         return isSelected() ? outDirSelColor : outDirColor;
       }
     }
-    if (isSelectedDir.get()) {
+    if (isSelectedDir) {
       return isSelected() ? srcDirSelColor : srcDirColor;
     }
-    if (isSelectedMain.get()) {
+    if (isSelectedMain) {
       return isSelected() ? mainFileSelColor : mainFileColor;
     }
     if (isSelected()) {

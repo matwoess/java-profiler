@@ -38,7 +38,7 @@ public class JavaProjectTree {
         }
       }
     });
-    treeProjectDir.setCellFactory((tv) -> new SelectableTreeCell(parameters.projectRoot.get(), selectedDirNode, selectedMainNode));
+    treeProjectDir.setCellFactory(tv -> new SelectableTreeCell(parameters));
   }
 
   public TreeItem<File> populateTree(File directory) {
