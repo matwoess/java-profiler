@@ -26,11 +26,15 @@ public class AppController {
   @FXML
   private TextField txtSourcesDir;
   @FXML
+  private Button btnClearSourcesDir;
+  @FXML
   private VBox boxMainFile;
   @FXML
   private TextField txtMainFile;
   @FXML
   private Label requiredHintMainFile;
+  @FXML
+  private Button btnClearMainFile;
   @FXML
   private VBox boxProgramArgs;
   @FXML
@@ -46,7 +50,7 @@ public class AppController {
 
   private final Parameters parameters;
 
-   private JavaProjectTree projectTree;
+  private JavaProjectTree projectTree;
 
   public AppController() {
     parameters = new Parameters();
@@ -89,6 +93,10 @@ public class AppController {
   }
 
   private void initButtonDisabledProperties() {
+    btnClearSourcesDir.disableProperty().bind(parameters.sourcesDir.isNotNull());
+    btnClearSourcesDir.managedProperty().bind(btnClearSourcesDir.visibleProperty());
+    btnClearMainFile.visibleProperty().bind(parameters.mainFile.isNotNull());
+    btnClearMainFile.managedProperty().bind(btnClearMainFile.visibleProperty());
     btnOpenReport.disableProperty().bindBidirectional(parameters.invalidOutDirPath);
     BooleanBinding anyPathInvalid = parameters.invalidMainFilePath
         .or(parameters.invalidSourcesDirPath)
@@ -106,6 +114,14 @@ public class AppController {
   private void initBorderListeners() {
     txtMainFile.borderProperty().bind(BindingUtils.createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
     txtSourcesDir.borderProperty().bind(BindingUtils.createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
+  }
+
+  public void onClearSourcesDir() {
+    parameters.sourcesDir.set(null);
+  }
+
+  public void onClearMainFile() {
+    parameters.mainFile.set(null);
   }
 
   @FXML

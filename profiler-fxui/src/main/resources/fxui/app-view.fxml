@@ -41,6 +41,11 @@
                     </HBox>
                     <HBox prefWidth="Infinity">
                         <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS" disable="true"/>
+                        <Button fx:id="btnClearSourcesDir" text="X" onAction="#onClearSourcesDir">
+                            <HBox.margin>
+                                <Insets left="8.0"/>
+                            </HBox.margin>
+                        </Button>
                     </HBox>
                 </VBox>
                 <VBox fx:id="boxMainFile">
@@ -60,6 +65,11 @@
                     </HBox>
                     <HBox prefWidth="Infinity">
                         <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS" disable="true"/>
+                        <Button fx:id="btnClearMainFile" text="X" onAction="#onClearMainFile">
+                            <HBox.margin>
+                                <Insets left="8.0"/>
+                            </HBox.margin>
+                        </Button>
                     </HBox>
                 </VBox>
                 <VBox fx:id="boxProgramArgs">
