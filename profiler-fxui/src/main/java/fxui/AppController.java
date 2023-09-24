@@ -97,7 +97,7 @@ public class AppController {
     btnClearSourcesDir.managedProperty().bind(btnClearSourcesDir.visibleProperty());
     btnClearMainFile.visibleProperty().bind(parameters.mainFile.isNotNull());
     btnClearMainFile.managedProperty().bind(btnClearMainFile.visibleProperty());
-    btnOpenReport.disableProperty().bindBidirectional(parameters.invalidOutDirPath);
+    btnOpenReport.disableProperty().bind(parameters.invalidOutDirPath);
     BooleanBinding anyPathInvalid = parameters.invalidMainFilePath
         .or(parameters.invalidSourcesDirPath)
         .or(parameters.invalidOutDirPath);
