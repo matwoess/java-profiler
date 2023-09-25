@@ -67,7 +67,8 @@ public class AppController {
 
   public void setProjectDirectory(Path projectRootPath, Stage stage) {
     parameters.projectRoot.set(projectRootPath);
-    stage.setTitle(stage.getTitle() + " - " + projectRootPath.toString());
+    IO.outputDir = projectRootPath.resolve(IO.DEFAULT_OUT_DIR);
+    stage.setTitle(stage.getTitle() + " - " + projectRootPath);
     projectTree = new JavaProjectTree(parameters, treeProjectDir);
   }
 
@@ -131,7 +132,6 @@ public class AppController {
 
   @FXML
   protected void onOpenReport() {
-    IO.outputDir = parameters.projectRoot.get().resolve(IO.DEFAULT_OUT_DIR);
     Path reportPath = IO.getReportIndexPath();
     SystemUtils.openWithDesktopApplication(reportPath);
   }
