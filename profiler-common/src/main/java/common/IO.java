@@ -63,8 +63,16 @@ public class IO {
     return reportFilePath.resolveSibling(reportFilePath.getFileName().toString().replace(".java", ".html"));
   }
 
+  public static Path getUserHomeDir() {
+    return Path.of(System.getProperty("user.home"));
+  }
+
   public static Path getUIParametersPath() {
     return getOutputDir().resolve("parameters.dat");
+  }
+
+  public static boolean isChildPath(Path child, Path parent) {
+    return child.toAbsolutePath().startsWith(parent.toAbsolutePath());
   }
 
   public static <T> void copyResource(Class<T> resourceClass, String resourceName, Path destination) {
