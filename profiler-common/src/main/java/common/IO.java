@@ -71,6 +71,10 @@ public class IO {
     return getOutputDir().resolve("parameters.dat");
   }
 
+  public static boolean isChildPath(Path child, Path parent) {
+    return child.toAbsolutePath().startsWith(parent.toAbsolutePath());
+  }
+
   public static <T> void copyResource(Class<T> resourceClass, String resourceName, Path destination) {
     try (InputStream resource = resourceClass.getClassLoader().getResourceAsStream(resourceName)) {
       if (resource == null) {

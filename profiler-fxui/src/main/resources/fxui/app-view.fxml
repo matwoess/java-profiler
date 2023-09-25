@@ -11,7 +11,7 @@
         <VBox>
             <ToolBar>
                 <Button onAction="#onSaveParameters" text="Save current parameters"/>
-                <Button onAction="#onRestoreParameters" text="Restore saved parameters"/>
+                <Button fx:id="btnRestoreParameters" onAction="#onRestoreParameters" text="Restore saved parameters"/>
             </ToolBar>
             <VBox prefHeight="1200.0" prefWidth="500.0" spacing="16.0">
                 <padding>

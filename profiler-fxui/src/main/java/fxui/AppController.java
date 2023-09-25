@@ -5,6 +5,7 @@ import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.tree.JavaProjectTree;
 import fxui.util.BindingUtils;
+import fxui.util.RecursiveDirectoryWatcher;
 import fxui.util.SystemUtils;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -14,9 +15,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
-public class AppController {
+public class AppController implements RecursiveDirectoryWatcher.FileEventListener {
   @FXML
   private TreeView<File> treeProjectDir;
   @FXML
@@ -47,10 +49,13 @@ public class AppController {
   private Button btnOpenReport;
   @FXML
   private Button btnRunTool;
+  @FXML
+  private Button btnRestoreParameters;
 
   private final Parameters parameters;
 
   private JavaProjectTree projectTree;
+  private RecursiveDirectoryWatcher recursiveDirectoryWatcher;
 
   public AppController() {
     parameters = new Parameters();
@@ -69,7 +74,21 @@ public class AppController {
     parameters.projectRoot.set(projectRootPath);
     IO.outputDir = projectRootPath.resolve(IO.DEFAULT_OUT_DIR);
     stage.setTitle(stage.getTitle() + " - " + projectRootPath);
+    btnRestoreParameters.visibleProperty().set(IO.getUIParametersPath().toFile().exists());
+    btnOpenReport.visibleProperty().set(IO.getReportIndexPath().toFile().exists());
     projectTree = new JavaProjectTree(parameters, treeProjectDir);
+    initDirectoryWatcher(projectRootPath);
+  }
+
+  private void initDirectoryWatcher(Path projectRootPath) {
+    try {
+      recursiveDirectoryWatcher = new RecursiveDirectoryWatcher(this, projectRootPath, IO.getOutputDir(), IO.getReportDir());
+      Thread watcherThread = new Thread(() -> recursiveDirectoryWatcher.processEvents());
+      watcherThread.setDaemon(true);
+      watcherThread.start();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void bindParameters() {
@@ -144,5 +163,32 @@ public class AppController {
   @FXML
   protected void onRestoreParameters() {
     parameters.importParameters();
+  }
+
+  @Override
+  public void onFileCreated(Path path) {
+    if (path.equals(IO.getReportIndexPath())) {
+      btnOpenReport.setVisible(true);
+    } else if (path.equals(IO.getReportDir())) { // needed because child event might not be reported
+      btnOpenReport.setVisible(IO.getReportIndexPath().toFile().exists());
+    } else if (path.equals(IO.getUIParametersPath())) {
+      btnRestoreParameters.setVisible(true);
+    } else if (path.equals(IO.getOutputDir())) { // needed because child event might not be reported
+      btnRestoreParameters.setVisible(IO.getUIParametersPath().toFile().exists());
+    }
+  }
+
+  @Override
+  public void onFileModified(Path path) {
+  }
+
+  @Override
+  public void onFileDeleted(Path path) {
+    if (path.equals(IO.getReportIndexPath()) || IO.isChildPath(IO.getReportIndexPath(), path)) {
+      btnOpenReport.setVisible(false);
+    }
+    if (path.equals(IO.getUIParametersPath()) || IO.isChildPath(IO.getUIParametersPath(), path)) {
+      btnRestoreParameters.setVisible(false);
+    }
   }
 }
