@@ -72,9 +72,9 @@ public class Parameters {
     IO.createDirectoriesIfNotExists(parametersPath);
     try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(parametersPath.toFile()))) {
       oos.writeInt(runMode.get().ordinal());
-      oos.writeUTF(mainFile.get().toString());
+      oos.writeUTF(sourcesDir.get() != null ? sourcesDir.get().toString() : "");
+      oos.writeUTF(mainFile.get() != null ? mainFile.get().toString() : "");
       oos.writeUTF(programArgs.get());
-      oos.writeUTF(sourcesDir.get().toString());
       oos.writeBoolean(syncCounters.get());
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -83,11 +83,13 @@ public class Parameters {
 
   public void importParameters() {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getUIParametersPath().toFile()))) {
-       runMode.set(RunMode.values()[ois.readInt()]);
-       mainFile.set(Path.of(ois.readUTF()));
-       programArgs.set(ois.readUTF());
-       sourcesDir.set(Path.of(ois.readUTF()));
-       syncCounters.set(ois.readBoolean());
+      runMode.set(RunMode.values()[ois.readInt()]);
+      String sourcesDirVal = ois.readUTF();
+      sourcesDir.set(sourcesDirVal.isBlank() ? null : Path.of(sourcesDirVal));
+      String mainFileVal = ois.readUTF();
+      mainFile.set(mainFileVal.isBlank() ? null : Path.of(mainFileVal));
+      programArgs.set(ois.readUTF());
+      syncCounters.set(ois.readBoolean());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

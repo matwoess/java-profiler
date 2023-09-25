@@ -94,7 +94,7 @@ public class AppController {
   }
 
   private void initButtonDisabledProperties() {
-    btnClearSourcesDir.disableProperty().bind(parameters.sourcesDir.isNotNull());
+    btnClearSourcesDir.visibleProperty().bind(parameters.sourcesDir.isNotNull());
     btnClearSourcesDir.managedProperty().bind(btnClearSourcesDir.visibleProperty());
     btnClearMainFile.visibleProperty().bind(parameters.mainFile.isNotNull());
     btnClearMainFile.managedProperty().bind(btnClearMainFile.visibleProperty());
