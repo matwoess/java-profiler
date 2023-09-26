@@ -1,15 +1,24 @@
-const colorCovered = 'rgba(144, 238, 144, 0.3)';
-const colorNotCovered = 'rgba(255, 182, 193, 0.3)';
-const colorHoverHighlight = 'rgba(245, 222, 179, 1)';
+const colorCovered = [144, 238, 144, 0.3];
+const colorNotCovered = [255, 182, 193, 0.3];
+const colorHoverHighlight = [245, 222, 179, 1];
 
 function setCoverageBackground(span) {
-  let backgroundColor = '';
+  let backgroundColor = null;
   if (span.hasClass('c')) {
     backgroundColor = colorCovered;
   } else if (span.hasClass('nc')) {
     backgroundColor = colorNotCovered;
   }
-  span.css({'background-color': backgroundColor})
+  setColor(span, backgroundColor)
+}
+
+function setColor(elems, color) {
+  if (color == null) {
+    elems.css({'background-color': ''});
+  } else {
+    let [r, g, b, a] = color
+    elems.css({'background-color': `rgba(${r},${g},${b},${a})`});
+  }
 }
 
 $('span.c,span.nc').each(function () {
@@ -22,7 +31,7 @@ $("span").mouseenter(function () {
   const classList = classes.split(/\s+/);
   const lastClass = classList.slice(-1);
   if (lastClass != null) {
-    $('span.' + lastClass).css({'background-color': colorHoverHighlight});
+    setColor($('span.' + lastClass), colorHoverHighlight);
   }
 });
 
