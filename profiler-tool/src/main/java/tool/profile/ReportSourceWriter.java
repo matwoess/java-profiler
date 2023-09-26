@@ -136,16 +136,10 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   }
 
   private String codeSpan(List<Integer> activeBlocks, Block block) {
-    String description = block.toString();
     int hits = block.hits;
-    String title;
-    String coverageClass;
-    coverageClass = hits > 0 ? "c" : "nc";
-    String coverageStatus = hits > 0 ? "covered" : "not covered";
-    // &#10; == <br/> == newLine
-    title = String.format("%s&#10;&#10;Hits: %d (%s)", description, hits, coverageStatus);
+    String coverageClass = hits > 0 ? "c" : "nc";
     String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
-    return String.format("<span class=\"%s %s\" title=\"%s\">", coverageClass, classes, title);
+    return String.format("<span class=\"%s %s\" title=\"%d\">", coverageClass, classes, hits);
   }
 
   private String codeSpanAt(int chPos) {
