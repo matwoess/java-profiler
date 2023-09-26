@@ -45,6 +45,10 @@ public class ParserState {
     curBlock.startsWithThrow = true;
   }
 
+  void registerJumpStatement() {
+    curBlock.endsWithJumpStatement = true;
+  }
+
 
   void enterClass(boolean anonymous, boolean local) {
     if (curClass != null) {
@@ -126,10 +130,16 @@ public class ParserState {
     curBlock.end = parser.t.line;
     curBlock.endPos = parser.t.charPos + parser.t.val.length();
     logger.leave(curBlock);
+    boolean splitParentBlock = curBlock.endsWithJumpStatement;
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
+      if (splitParentBlock && !parser.la.val.equals("}")) { // no statement after block end
+        leaveBlock(false); // do not exit methods, ever
+        // SS_BLOCK for now ... just for inserting counter right away, not after next token (which should be '{') TODO
+        enterBlock(BlockType.SS_BLOCK);
+      }
     }
     if (isMethod) {
       leaveMethod();

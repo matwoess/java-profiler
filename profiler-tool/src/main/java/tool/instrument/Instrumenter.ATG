@@ -117,8 +117,8 @@ Statement =
     | "do" BlockOrSingleStatement "while" ParExpr ";"
     | "for" ParExpr BlockOrSingleStatement
     | "try" [ParExpr] Block<false> {"catch" ParExpr Block<false>} ["finally" Block<false>]
-    | ("break" | "continue") {ANY} ";"
-    | ("return" | "yield") (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
+    | ("break" | "continue") {ANY} ";"                                          (. state.registerJumpStatement(); .)
+    | ("return" | "yield") (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"  (. state.registerJumpStatement(); .)
     | IF(state.isLabel()) ident ":"
     | Annotation
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
