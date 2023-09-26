@@ -28,6 +28,9 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         body {
           font-family: Helvetica Neue, Verdana, sans-serif;
         }
+        table {
+          border-collapse: collapse;
+        }
         td.lNr {
           text-align: right;
           background-color: #dedede;
