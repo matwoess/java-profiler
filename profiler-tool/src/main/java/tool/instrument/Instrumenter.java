@@ -94,7 +94,7 @@ public class Instrumenter {
       } else {
         inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc%s(%d);", incRefAdd, blockCounter++)));
       }
-      if (block.blockType == BlockType.SS_SWITCH_EXPR_ARROW_CASE && !block.startsWithThrow) {
+      if (block.blockType == BlockType.SS_SWITCH_EXPR_ARROW_CASE && block.jumpStatement != JumpStatement.THROW) {
         inserts.add(new CodeInsert(block.getIncInsertPos(), "yield "));
       }
       if (block.blockType.hasNoBraces() && block.blockType != BlockType.SS_LAMBDA) {

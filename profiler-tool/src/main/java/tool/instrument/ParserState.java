@@ -41,12 +41,16 @@ public class ParserState {
     curBlock.incInsertPosition = parser.t.charPos + parser.t.val.length();
   }
 
-  void registerThrow() {
-    curBlock.startsWithThrow = true;
-  }
-
   void registerJumpStatement() {
-    curBlock.endsWithJumpStatement = true;
+    // TODO: check for existing and do not downgrade
+    curBlock.jumpStatement = switch (parser.t.val) {
+      case "break" -> JumpStatement.BREAK;
+      case "continue" -> JumpStatement.CONTINUE;
+      case "return" -> JumpStatement.RETURN;
+      case "yield" -> JumpStatement.YIELD;
+      case "throw" -> JumpStatement.THROW;
+      default -> throw new RuntimeException("unknown jump statement '" + parser.t.val + "'");
+    };
   }
 
 
@@ -130,15 +134,18 @@ public class ParserState {
     curBlock.end = parser.t.line;
     curBlock.endPos = parser.t.charPos + parser.t.val.length();
     logger.leave(curBlock);
-    boolean splitParentBlock = curBlock.endsWithJumpStatement;
+    JumpStatement childJumpStatement = curBlock.jumpStatement;
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
-      if (splitParentBlock && !parser.la.val.equals("}")) { // no statement after block end
-        leaveBlock(false); // do not exit methods, ever
-        // SS_BLOCK for now ... just for inserting counter right away, not after next token (which should be '{') TODO
-        enterBlock(BlockType.SS_BLOCK);
+      if (childJumpStatement != null) {
+        boolean isSingleStmtBlock = curBlock.blockType == BlockType.SS_BLOCK; // TODO: check other types
+        boolean blockHasFollowingStatements = !parser.la.val.equals("}") && !isSingleStmtBlock;
+        if (blockHasFollowingStatements) {
+          curBlock.splitBlock(parser.t.charPos + parser.t.val.length());
+        }
+        // TODO: propagate jump statement till next loop/method, especially return/throw
       }
     }
     if (isMethod) {

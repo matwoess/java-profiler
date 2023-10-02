@@ -117,8 +117,9 @@ Statement =
     | "do" BlockOrSingleStatement<true> "while" ParExpr ";"
     | "for" ParExpr BlockOrSingleStatement<true>
     | "try" [ParExpr] Block<false, false> {"catch" ParExpr Block<false, false>} ["finally" Block<false, false>]
-    | ("break" | "continue") {ANY} ";"                                          (. state.registerJumpStatement(); .)
-    | ("return" | "yield") (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"  (. state.registerJumpStatement(); .)
+    | ("break" | "continue") (. state.registerJumpStatement(); .) {ANY} ";"
+    | ("return" | "yield") (. state.registerJumpStatement(); .) (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
+    | "throw" (. state.registerJumpStatement() .) {ANY} ";"
     | IF(state.isLabel()) ident ":"
     | Annotation
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
@@ -132,7 +133,7 @@ Statement =
     | ";"
 .
 GenericStatement =
-    (ident | string | this | "throw" | ParExpr | Instantiation)
+    (ident | string | this | ParExpr | Instantiation)
     {   string | char
         | ArrowExpression<false, false>
         | SwitchStatement
@@ -167,7 +168,7 @@ SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. state.checkSingleStat
     (   string | char
         | ParExpr
         | ident
-        | "throw"                                       (. state.registerThrow(); .)
+        | "throw"                                       (. state.registerJumpStatement(); .)
         | ANY
     )                                                   // exclude ")" or ";" in lambda blocks with no "Get" for ";"
     {ANY | ParExpr}                                     (. if (!inSwitch) { state.leaveSingleStatement(); return; } .)

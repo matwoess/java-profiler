@@ -1,6 +1,8 @@
 package tool.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Block implements Serializable, Component {
@@ -11,8 +13,8 @@ public class Block implements Serializable, Component {
   public int begPos;
   public int endPos;
   public BlockType blockType;
-  public boolean startsWithThrow = false;
-  public boolean endsWithJumpStatement = false;
+  public JumpStatement jumpStatement = null;
+  public List<Integer> splitPoints = new ArrayList<>();
 
   public int incInsertPosition;
   transient public int hits;
@@ -37,6 +39,10 @@ public class Block implements Serializable, Component {
     }
   }
 
+  public void splitBlock(int chPos) {
+    splitPoints.add(chPos);
+  }
+
   public String toString() {
     return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s%s",
         clazz.name,
@@ -48,7 +54,7 @@ public class Block implements Serializable, Component {
         endPos != 0 ? endPos : "?",
         blockType.toString(),
         method == null ? " [class-level]" : "",
-        startsWithThrow ? " [throw]" : ""
+        jumpStatement != null ? " [" + jumpStatement.name() + "]" : ""
     );
   }
 
@@ -61,10 +67,10 @@ public class Block implements Serializable, Component {
     if (end != block.end) return false;
     if (begPos != block.begPos) return false;
     if (endPos != block.endPos) return false;
-    if (startsWithThrow != block.startsWithThrow) return false;
     if (incInsertPosition != block.incInsertPosition) return false;
     if (!clazz.equals(block.clazz)) return false;
     if (!Objects.equals(method, block.method)) return false;
+    if (!Objects.equals(jumpStatement, block.jumpStatement)) return false;
     return blockType == block.blockType;
   }
 
@@ -77,8 +83,8 @@ public class Block implements Serializable, Component {
     result = 31 * result + begPos;
     result = 31 * result + endPos;
     result = 31 * result + blockType.hashCode();
-    result = 31 * result + (startsWithThrow ? 1 : 0);
     result = 31 * result + incInsertPosition;
+    result = 31 * result + (jumpStatement != null ? jumpStatement.hashCode() : 0);
     return result;
   }
 
