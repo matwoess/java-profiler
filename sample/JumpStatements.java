@@ -28,6 +28,11 @@ public class JumpStatements {
       }
     }
     System.out.println("finished with x=" + counter);
+    for (int i = 0; i < 10; i++) {
+      if (i < 5) continue;
+      if (i > 20) if (i < 15) { return; }
+      i = i + 0;
+    }
     if (counter == 35) {
       System.out.println("exit early...");
       return;
