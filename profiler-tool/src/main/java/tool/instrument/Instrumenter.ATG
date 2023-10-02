@@ -102,21 +102,21 @@ ClassBody =
     }
     "}"
 .
-StaticBlock = "static" Block<false>.
+StaticBlock = "static" Block<false, false>.
 MethodDecl =
     ident                   (. state.enterMethod(); .)
     {ANY}
     (   ";"                 (. state.leaveMethod(); .)
-        | Block<true>
+        | Block<true, false>
     )
 .
 Statement =
-    "if" ParExpr BlockOrSingleStatement ["else" BlockOrSingleStatement]
+    "if" ParExpr BlockOrSingleStatement<false> ["else" BlockOrSingleStatement<false>]
     | SwitchStatement
-    | "while" ParExpr BlockOrSingleStatement
-    | "do" BlockOrSingleStatement "while" ParExpr ";"
-    | "for" ParExpr BlockOrSingleStatement
-    | "try" [ParExpr] Block<false> {"catch" ParExpr Block<false>} ["finally" Block<false>]
+    | "while" ParExpr BlockOrSingleStatement<true>
+    | "do" BlockOrSingleStatement<true> "while" ParExpr ";"
+    | "for" ParExpr BlockOrSingleStatement<true>
+    | "try" [ParExpr] Block<false, false> {"catch" ParExpr Block<false, false>} ["finally" Block<false, false>]
     | ("break" | "continue") {ANY} ";"                                          (. state.registerJumpStatement(); .)
     | ("return" | "yield") (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"  (. state.registerJumpStatement(); .)
     | IF(state.isLabel()) ident ":"
@@ -124,11 +124,11 @@ Statement =
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
     | IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
     | ("++" | "--") ["("] ident [")"] ";"
-    | "synchronized" ParExpr Block<false>
+    | "synchronized" ParExpr Block<false, false>
     | IF(state.classDefWithNoLeadingDot()) Class<true>
     | Enum<true>
     | GenericStatement
-    | Block<false>
+    | Block<false, false>
     | ";"
 .
 GenericStatement =
@@ -141,9 +141,9 @@ GenericStatement =
     }
     ";"
 .
-BlockOrSingleStatement =
-    Block<false>
-    | (. state.checkSingleStatement(false, false, false); .) Statement (. state.leaveSingleStatement(); .)
+BlockOrSingleStatement<boolean isLoop> =
+    Block<false, isLoop>
+    | (. state.checkSingleStatement(isLoop, false, false, false); .) Statement (. state.leaveSingleStatement(); .)
 .
 SwitchStatement =                       (. boolean inAssignment = state.isAssignment(); .)
     "switch" ParExpr "{" {SwitchCase<inAssignment>}
@@ -152,7 +152,7 @@ SwitchStatement =                       (. boolean inAssignment = state.isAssign
 SwitchCase<boolean inAssignment> =
     ("case" | "default") {ANY}
     (   ArrowExpression<true, inAssignment>
-        | ":" {"case" {ANY} ":"}        (. state.checkSingleStatement(false, true, false); .)
+        | ":" {"case" {ANY} ":"}        (. state.checkSingleStatement(false, false, true, false); .)
           {Statement}                   (. state.leaveSingleStatement(); .)
     )
 .
@@ -161,9 +161,9 @@ BraceExpr = "{" {BraceExpr | ANY} "}".
 BracketExpr = "[" {ANY} "]".
 AngleBracketExpr = "<" {AngleBracketExpr | ANY} ">".
 ArrowExpression<boolean inSwitch, boolean inAssignment> =
-    "->" (Block<false> | SSArrowBody<inSwitch, inAssignment>)
+    "->" (Block<false, false> | SSArrowBody<inSwitch, inAssignment>)
 .
-SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. state.checkSingleStatement(inAssignment, inSwitch, true); .)
+SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. state.checkSingleStatement(false, inAssignment, inSwitch, true); .)
     (   string | char
         | ParExpr
         | ident
@@ -177,11 +177,11 @@ Instantiation = "new" ident {["."] ident} [AngleBracketExpr] (ArrayInitRest | Cl
 ArrayInitRest = BracketExpr [BraceExpr].
 ClassInitRest = ParExpr [ClassExtension].
 ClassExtension =
-    "{"                         (. state.enterClass(true, false); .)
-    ClassBody                   (. state.leaveClass();.)
+    "{"                                     (. state.enterClass(true, false); .)
+    ClassBody                               (. state.leaveClass();.)
 .
-Block<boolean isMethod> =       (. state.enterBlock(isMethod); .)
-    "{" {Statement} "}"         (. state.leaveBlock(isMethod); .)
+Block<boolean isMethod, boolean isLoop> =   (. state.enterBlock(isMethod, isLoop); .)
+    "{" {Statement} "}"                     (. state.leaveBlock(isMethod); .)
 .
 
 END Instrumenter.

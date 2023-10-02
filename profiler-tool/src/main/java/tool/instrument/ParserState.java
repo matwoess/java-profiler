@@ -102,8 +102,8 @@ public class ParserState {
     curMeth = null;
   }
 
-  void enterBlock(boolean isMethod) {  // no missing braces
-    enterBlock(getBlockTypeByContext(isMethod));
+  void enterBlock(boolean isMethod, boolean isLoop) {  // no missing braces
+    enterBlock(getBlockTypeByContext(isMethod, isLoop));
   }
 
   void enterBlock(BlockType blockType) {
@@ -146,13 +146,17 @@ public class ParserState {
     }
   }
 
-  void checkSingleStatement(boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
+  void checkSingleStatement(boolean isLoop, boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
     if (parser.t.val.equals("else") && parser.la.val.equals("if")) {
       logger.log("else if found. no block.");
       return;
     }
     if (!parser.la.val.equals("{")) {
-      enterBlock(getBlockTypeByContext(true, isAssignment, isSwitch, isArrowExpr));
+      if (isLoop) {
+        enterBlock(BlockType.SS_LOOP);
+      } else {
+        enterBlock(getBlockTypeByContext(true, isAssignment, isSwitch, isArrowExpr));
+      }
     }
   }
 
@@ -162,13 +166,16 @@ public class ParserState {
     }
   }
 
-  BlockType getBlockTypeByContext(boolean isMethod) {
+  BlockType getBlockTypeByContext(boolean isMethod, boolean isLoop) {
     if (isMethod) {
       if (curMeth.name.equals(curClass.name)) { // TODO: not entirely correct, also must not have return type
         return BlockType.CONSTRUCTOR;
       } else {
         return BlockType.METHOD;
       }
+    }
+    if (isLoop) {
+      return BlockType.LOOP;
     }
     return getBlockTypeByContext(false, false, false, false);
   }
