@@ -51,6 +51,7 @@ public class ParserState {
       case "throw" -> JumpStatement.THROW;
       default -> throw new RuntimeException("unknown jump statement '" + parser.t.val + "'");
     };
+    logger.log("> found jump statement: %s", curBlock.jumpStatement.name());
   }
 
 
@@ -144,13 +145,25 @@ public class ParserState {
         boolean blockHasFollowingStatements = !parser.la.val.equals("}") && !isSingleStmtBlock;
         if (blockHasFollowingStatements) {
           curBlock.splitBlock(parser.t.charPos + parser.t.val.length());
+          logger.log("<split> at " + (parser.t.charPos + parser.t.val.length()));
         }
-        // TODO: propagate jump statement till next loop/method, especially return/throw
+        propagateJumpStatement(childJumpStatement);
       }
     }
     if (isMethod) {
       leaveMethod();
     }
+  }
+
+  void propagateJumpStatement(JumpStatement childJumpStatement) {
+    if (curBlock.blockType.isLoop() && childJumpStatement.propagateUntilLoop()) {
+      return;
+    }
+    if (curBlock.blockType == BlockType.METHOD) {
+      return;
+    }
+    curBlock.jumpStatement = childJumpStatement;
+    logger.log("< inherit jump statement: %s", childJumpStatement.name());
   }
 
   void checkSingleStatement(boolean isLoop, boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {

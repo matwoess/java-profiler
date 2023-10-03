@@ -22,4 +22,8 @@ public enum BlockType {
     };
     return prefix + "block";
   }
+
+  public boolean isLoop() {
+    return this == LOOP || this == SS_LOOP;
+  }
 }
