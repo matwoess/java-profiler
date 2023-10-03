@@ -2,6 +2,7 @@ package tool.instrument;
 
 import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
+import tool.model.JumpStatement;
 
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.baseTemplate;
@@ -100,7 +101,7 @@ public class SwitchesTest {
             )
         )
     );
-    expected.foundBlocks.get(expected.foundBlocks.size() - 1).startsWithThrow = true;
+    expected.foundBlocks.get(expected.foundBlocks.size() - 1).jumpStatement = JumpStatement.THROW;
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 

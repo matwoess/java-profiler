@@ -119,7 +119,7 @@ Statement =
     | "try" [ParExpr] Block<false, false> {"catch" ParExpr Block<false, false>} ["finally" Block<false, false>]
     | ("break" | "continue") (. state.registerJumpStatement(); .) {ANY} ";"
     | ("return" | "yield") (. state.registerJumpStatement(); .) (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
-    | "throw" (. state.registerJumpStatement() .) {ANY} ";"
+    | "throw" (. state.registerJumpStatement(); .) {ANY} ";"
     | IF(state.isLabel()) ident ":"
     | Annotation
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
