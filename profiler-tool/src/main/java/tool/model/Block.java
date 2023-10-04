@@ -14,7 +14,6 @@ public class Block implements Serializable, Component {
   public int endPos;
   public BlockType blockType;
   public JumpStatement jumpStatement = null;
-  public List<Integer> splitPoints = new ArrayList<>();
 
   public int incInsertPosition;
   transient public int hits;
@@ -37,10 +36,6 @@ public class Block implements Serializable, Component {
     if (method == null) {
       clazz.classBlocks.add(this);
     }
-  }
-
-  public void splitBlock(int chPos) {
-    splitPoints.add(chPos);
   }
 
   public String toString() {
