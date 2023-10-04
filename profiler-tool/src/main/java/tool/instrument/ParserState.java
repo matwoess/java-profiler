@@ -266,7 +266,12 @@ public class ParserState {
       if (comp instanceof JClass clazz) return "class <" + clazz.getFullName() + ">";
       if (comp instanceof Method meth) return meth + "()";
       if (comp instanceof Block block)
-        return String.format("%s [%d]", block.blockType, leave ? block.endPos : block.begPos);
+        return String.format(
+            "%s [%d]%s",
+            block.blockType,
+            leave ? block.endPos : block.begPos,
+            block.jumpStatement != null ? " (" + block.jumpStatement.name() + ")" : ""
+        );
       throw new RuntimeException("unknown component type: " + comp.getClass());
     }
   }
