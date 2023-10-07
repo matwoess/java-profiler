@@ -43,7 +43,7 @@ public class ParserState {
 
   void registerJumpStatement() {
     // TODO: check for existing and do not downgrade
-    curBlock.jumpStatement = switch (parser.t.val) {
+    JumpStatement jumpStatement = switch (parser.t.val) {
       case "break" -> JumpStatement.BREAK;
       case "continue" -> JumpStatement.CONTINUE;
       case "return" -> JumpStatement.RETURN;
@@ -51,6 +51,22 @@ public class ParserState {
       case "throw" -> JumpStatement.THROW;
       default -> throw new RuntimeException("unknown jump statement '" + parser.t.val + "'");
     };
+    curBlock.jumpStatement = jumpStatement;
+    logger.log("> found jump statement: %s", jumpStatement.name());
+    registerJumpInOuterBlocks(jumpStatement);
+  }
+
+  private void registerJumpInOuterBlocks(JumpStatement jumpStatement) {
+    for (int i = blockStack.size() - 1; i >= 0; i--) {
+      Block block = blockStack.get(i);
+      block.registerInnerJumpBlock(curBlock);
+      if (block.blockType.isLoop() && jumpStatement.propagateUntilLoop()) {
+        break;
+      }
+      if (block.blockType == BlockType.METHOD && jumpStatement.propagateUntilMethod()) {
+        break;
+      }
+    }
   }
 
 
@@ -113,6 +129,7 @@ public class ParserState {
   void enterBlock(BlockType blockType) {
     assert curClass != null;
     if (curBlock != null) {
+      curBlock.endCodeRegion(parser.t.charPos);
       blockStack.push(curBlock);
     }
     curBlock = new Block(blockType);
@@ -126,6 +143,7 @@ public class ParserState {
       curBlock.begPos = parser.la.charPos;
       curBlock.incInsertPosition = parser.la.charPos + parser.la.val.length();
     }
+    curBlock.startCodeRegion(curBlock.begPos);
     allBlocks.add(curBlock);
     logger.enter(curBlock);
   }
@@ -133,11 +151,14 @@ public class ParserState {
   void leaveBlock(boolean isMethod) {
     curBlock.end = parser.t.line;
     curBlock.endPos = parser.t.charPos + parser.t.val.length();
+    curBlock.endCodeRegion(curBlock.endPos);
     logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
+      Block innerBlock = curBlock;
       curBlock = blockStack.pop();
+      curBlock.reenterBlock(innerBlock);
     }
     if (isMethod) {
       leaveMethod();

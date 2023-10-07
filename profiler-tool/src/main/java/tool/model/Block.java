@@ -14,9 +14,13 @@ public class Block implements Serializable, Component {
   public int endPos;
   public BlockType blockType;
   public JumpStatement jumpStatement = null;
+  public List<CodeRegion> codeRegions = new ArrayList<>();
 
   public int incInsertPosition;
+
   transient public int hits;
+  transient CodeRegion curCodeRegion;
+  transient List<Block> innerJumpBlocks = new ArrayList<>();
 
   public Block(BlockType type) {
     blockType = type;
@@ -36,6 +40,29 @@ public class Block implements Serializable, Component {
     if (method == null) {
       clazz.classBlocks.add(this);
     }
+  }
+
+  public void startCodeRegion(int begPos) {
+    curCodeRegion = new CodeRegion();
+    curCodeRegion.begPos = begPos;
+  }
+
+  public void endCodeRegion(int endPos) {
+    assert curCodeRegion != null;
+    curCodeRegion.endPos = endPos;
+    if (curCodeRegion.begPos != endPos) {
+      codeRegions.add(curCodeRegion);
+    }
+    curCodeRegion = null;
+  }
+
+  public void registerInnerJumpBlock(Block jumpBlock) {
+    innerJumpBlocks.add(jumpBlock);
+  }
+
+  public void reenterBlock(Block innerBlock) {
+    startCodeRegion(innerBlock.endPos);
+    curCodeRegion.minusBlocks.addAll(innerJumpBlocks);
   }
 
   public String toString() {

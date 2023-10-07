@@ -6,4 +6,8 @@ public enum JumpStatement {
   public boolean propagateUntilLoop() {
     return this == BREAK || this == CONTINUE;
   }
+
+  public boolean propagateUntilMethod() {
+    return !propagateUntilLoop();
+  }
 }
