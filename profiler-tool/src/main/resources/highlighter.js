@@ -1,6 +1,7 @@
-const colorCovered = [144, 238, 144, 0.3];
-const colorNotCovered = [255, 182, 193, 0.3];
-const colorHoverHighlight = [245, 222, 179, 1];
+const colorCovered = `rgba(144, 238, 144, 0.3)`;
+const colorNotCovered = `rgba(255, 182, 193, 0.3)`;
+const colorHoverHighlight = `rgba(245, 222, 179, 0.8)`;
+const colorHoverRegionHighlight = `rgba(245, 222, 130, 1)`;
 
 function setCoverageBackground(span) {
   let backgroundColor = null;
@@ -17,7 +18,7 @@ function setColor(elems, color) {
     elems.css({'background-color': ''});
   } else {
     let [r, g, b, a] = color
-    elems.css({'background-color': `rgba(${r},${g},${b},${a})`});
+    elems.css({'background-color': color});
   }
 }
 
@@ -29,13 +30,15 @@ $("span").mouseenter(function () {
   const classes = $(this).attr('class');
   if (classes == null) return;
   const classList = classes.split(/\s+/);
-  const lastClass = classList.slice(-1);
-  if (lastClass != null) {
-    setColor($('span.' + lastClass), colorHoverHighlight);
+  const lastBlock = classList.slice(-2);
+  const lastBlockRegion = classList.slice(-1);
+  if (lastBlock != null) {
+    setColor($('span.' + lastBlock), colorHoverHighlight);
   }
-});
-
-$("span").mouseleave(function () {
+  if (lastBlockRegion != null) {
+    setColor($('span.' + lastBlockRegion), colorHoverRegionHighlight);
+  }
+}).mouseleave(function () {
   $('span.c,span.nc').each(function () {
     setCoverageBackground($(this))
   });

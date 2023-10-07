@@ -2,6 +2,7 @@ package tool.profile;
 
 import tool.model.CodeInsert;
 import tool.model.Block;
+import tool.model.CodeRegion;
 import tool.model.JavaFile;
 
 import java.io.IOException;
@@ -102,13 +103,15 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(0, "<span>"));
     for (Block block : javaFile.foundBlocks) {
-      if (sourceCode.charAt(block.begPos) != lf) { // optimization to not add 0-length block spans
-        inserts.add(new CodeInsert(block.begPos, "</span>"));
-        inserts.add(new CodeInsert(block.begPos, codeSpanAt(block.begPos)));
-      }
-      if (sourceCode.charAt(block.endPos) != lf) { // optimization to not add 0-length block spans
-        inserts.add(new CodeInsert(block.endPos, "</span>"));
-        inserts.add(new CodeInsert(block.endPos, codeSpanAt(block.endPos)));
+      for (CodeRegion region : block.codeRegions) {
+        if (sourceCode.charAt(region.begPos) != lf) { // optimization to not add 0-length block spans
+          inserts.add(new CodeInsert(region.begPos, "</span>"));
+          inserts.add(new CodeInsert(region.begPos, codeSpanAt(region.begPos)));
+        }
+        if (sourceCode.charAt(region.endPos) != lf) { // optimization to not add 0-length block spans
+          inserts.add(new CodeInsert(region.endPos, "</span>"));
+          inserts.add(new CodeInsert(region.endPos, codeSpanAt(region.endPos)));
+        }
       }
     }
     for (int index = sourceCode.indexOf(lf); index >= 0; index = sourceCode.indexOf(lf, index + 1)) {
@@ -135,10 +138,11 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     return builder.toString();
   }
 
-  private String codeSpan(List<Integer> activeBlocks, Block block) {
+  private String codeSpan(List<Integer> activeBlocks, Block block, int region) {
     int hits = block.hits;
     String coverageClass = hits > 0 ? "c" : "nc";
     String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
+    classes += " r" + activeBlocks.get(activeBlocks.size() - 1) + "_" + region;
     return String.format("<span class=\"%s %s\" title=\"%d\">", coverageClass, classes, hits);
   }
 
@@ -154,7 +158,15 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       return "<span>";
     } else {
       Block lastBlock = javaFile.foundBlocks.get(activeBlocks.get(activeBlocks.size() - 1));
-      return codeSpan(activeBlocks, lastBlock);
+      int region = -1;
+      for (int i = 0; i < lastBlock.codeRegions.size(); i++) {
+        CodeRegion r = lastBlock.codeRegions.get(i);
+        if (r.begPos <= chPos && chPos < r.endPos) {
+          region = i;
+        }
+      }
+      assert region != -1; // should never happen
+      return codeSpan(activeBlocks, lastBlock, region);
     }
   }
 
