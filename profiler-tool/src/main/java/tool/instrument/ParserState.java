@@ -129,7 +129,8 @@ public class ParserState {
   void enterBlock(BlockType blockType) {
     assert curClass != null;
     if (curBlock != null) {
-      curBlock.endCodeRegion(parser.t.charPos);
+      int regionEndPos = blockType.hasNoBraces() ? parser.t.charPos + parser.t.val.length() : parser.la.charPos;
+      curBlock.endCodeRegion(regionEndPos);
       blockStack.push(curBlock);
     }
     curBlock = new Block(blockType);
