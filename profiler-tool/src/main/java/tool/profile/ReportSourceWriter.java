@@ -103,13 +103,13 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     inserts.add(new CodeInsert(0, "<span>"));
     for (Block block : javaFile.foundBlocks) {
       for (CodeRegion region : block.codeRegions) {
-        if (sourceCode.charAt(region.begPos) != lf) { // optimization to not add 0-length block spans
-          inserts.add(new CodeInsert(region.begPos, "</span>"));
-          inserts.add(new CodeInsert(region.begPos, codeSpanAt(region.begPos)));
+        if (sourceCode.charAt(region.beg.pos()) != lf) { // optimization to not add 0-length region spans
+          inserts.add(new CodeInsert(region.beg.pos(), "</span>"));
+          inserts.add(new CodeInsert(region.beg.pos(), codeSpanAt(region.beg.pos())));
         }
-        if (sourceCode.charAt(region.endPos) != lf) { // optimization to not add 0-length block spans
-          inserts.add(new CodeInsert(region.endPos, "</span>"));
-          inserts.add(new CodeInsert(region.endPos, codeSpanAt(region.endPos)));
+        if (sourceCode.charAt(region.end.pos()) != lf) { // optimization to not add 0-length region spans
+          inserts.add(new CodeInsert(region.end.pos(), "</span>"));
+          inserts.add(new CodeInsert(region.end.pos(), codeSpanAt(region.end.pos())));
         }
       }
     }
@@ -160,7 +160,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     List<Integer> activeBlocks = new ArrayList<>();
     for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
       Block b = javaFile.foundBlocks.get(i);
-      if (b.begPos <= chPos && chPos < b.endPos) {
+      if (b.beg.pos() <= chPos && chPos < b.end.pos()) {
         activeBlocks.add(i);
       }
     }
@@ -171,7 +171,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       int region = -1;
       for (int i = 0; i < lastBlock.codeRegions.size(); i++) {
         CodeRegion r = lastBlock.codeRegions.get(i);
-        if (r.begPos <= chPos && chPos < r.endPos) {
+        if (r.beg.pos() <= chPos && chPos < r.end.pos()) {
           region = i;
         }
       }
