@@ -140,12 +140,12 @@ public class ParserState {
     curBlock.setParentClass(curClass);
     if (blockType.hasNoBraces()) {
       curBlock.beg = tokenEndPosition(parser.t);
+      curBlock.startCodeRegion(tokenStartPosition(parser.la));
     } else { // la == '{'
-
       curBlock.beg = tokenStartPosition(parser.la);
       curBlock.incInsertPosition = endOfToken(parser.la);
+      curBlock.startCodeRegion(tokenStartPosition(parser.scanner.Peek()));
     }
-    curBlock.startCodeRegion(curBlock.beg);
     allBlocks.add(curBlock);
     logger.enter(curBlock);
   }
@@ -157,9 +157,8 @@ public class ParserState {
     if (blockStack.empty()) {
       curBlock = null;
     } else {
-      Block innerBlock = curBlock;
       curBlock = blockStack.pop();
-      curBlock.reenterBlock(innerBlock);
+      curBlock.reenterBlock(tokenStartPosition(parser.la));
     }
     if (isMethod) {
       leaveMethod();

@@ -59,8 +59,8 @@ public class Block implements Serializable, Component {
     innerJumpBlocks.add(jumpBlock);
   }
 
-  public void reenterBlock(Block innerBlock) {
-    startCodeRegion(innerBlock.end);
+   public void reenterBlock(CodePosition nextTokenPosition) {
+    startCodeRegion(nextTokenPosition);
     curCodeRegion.minusBlocks.addAll(innerJumpBlocks);
   }
 
