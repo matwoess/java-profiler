@@ -43,6 +43,7 @@ public class Block implements Serializable, Component {
   public void startCodeRegion(CodePosition beg) {
     curCodeRegion = new CodeRegion();
     curCodeRegion.beg = beg;
+    curCodeRegion.block = this;
   }
 
   public void endCodeRegion(CodePosition end) {
