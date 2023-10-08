@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import common.IO;
@@ -41,6 +39,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         }
         td.hits {
           background-color: #eee;
+          text-align: end;
         }
         """;
     bodyScripts = new String[]{
@@ -125,15 +124,21 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
 
   private String getHitsForLine(int lineNr) {
     StringBuilder builder = new StringBuilder();
+    Map<String, Integer> activeRegions = new LinkedHashMap<>();
     for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
-      Block b = javaFile.foundBlocks.get(i);
-      if (b.beg <= lineNr && lineNr <= b.end) {
-        String blockTag = "b" + i;
-        String hits = Integer.toString(b.hits);
-        String coverageStatus = b.hits > 0 ? "c" : "nc";
-        builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, blockTag, hits));
-        builder.append(" ");
+      Block block = javaFile.foundBlocks.get(i);
+      List<CodeRegion> codeRegions = block.codeRegions;
+      for (int j = 0; j < codeRegions.size(); j++) {
+        CodeRegion region = codeRegions.get(j);
+        if (region.isActiveInLine(lineNr)) {
+          activeRegions.put("r" + i + "_" + j, region.getHitCount());
+        }
       }
+    }
+    for (var region : activeRegions.entrySet()) {
+      String coverageStatus = region.getValue() > 0 ? "c" : "nc";
+      builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, region.getKey(), region.getValue()));
+      builder.append(" ");
     }
     return builder.toString();
   }

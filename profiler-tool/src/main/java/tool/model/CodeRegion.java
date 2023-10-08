@@ -15,6 +15,10 @@ public class CodeRegion implements Serializable {
     return block.hits - minusBlocks.stream().mapToInt(b -> b.hits).sum();
   }
 
+  public boolean isActiveInLine(int lineNr) {
+    return beg.line() <= lineNr && end.line() >= lineNr;
+  }
+
   @Override
   public String toString() {
     return String.format(
