@@ -146,13 +146,18 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   private String codeSpan(List<Integer> activeBlocks, Block block, int region) {
     int hits = block.hits;
     String description = block.toString();
-    String regionDescr = block.codeRegions.get(region).toString();
+    String regionDescr = "";
+    if (region != -1) {
+      regionDescr = block.codeRegions.get(region).toString();
+    }
     String coverageClass = hits > 0 ? "c" : "nc";
     String coverageStatus = hits > 0 ? "covered" : "not covered";
     // &#10; == <br/> == newLine
     String title = String.format("%s&#10;%s&#10;Hits: %d (%s)", description, regionDescr, hits, coverageStatus);
     String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
-    classes += " r" + activeBlocks.get(activeBlocks.size()-1) + "_" + region;
+    if (region != -1) {
+      classes += " r" + activeBlocks.get(activeBlocks.size() - 1) + "_" + region;
+    }
     return String.format("<span class=\"%s %s\" title=\"%s\">", coverageClass, classes, title);
   }
 
@@ -175,7 +180,6 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
           region = i;
         }
       }
-      assert region != -1; // should never happen
       return codeSpan(activeBlocks, lastBlock, region);
     }
   }
