@@ -19,7 +19,7 @@ public class TestProgramBuilder {
       javaFile.topLevelClasses.add(clazz);
       javaFile.foundBlocks.addAll(clazz.getBlocksRecursive());
     }
-    javaFile.foundBlocks.sort(Comparator.comparingInt(b -> b.begPos));
+    javaFile.foundBlocks.sort(Comparator.comparing(b -> b.beg));
     return javaFile;
   }
 
@@ -74,15 +74,11 @@ public class TestProgramBuilder {
 
   public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block(type);
-    b.beg = beg;
-    b.end = end;
-    if (b.blockType.hasNoBraces()) {
-      b.begPos = begPos;
-    } else {
+    b.beg = new CodePosition(beg, b.blockType.hasNoBraces() ? begPos : begPos - 1);
+    if (!b.blockType.hasNoBraces()) {
       b.incInsertPosition = begPos;
-      b.begPos = begPos - 1;
     }
-    b.endPos = endPos;
+    b.end = new CodePosition(end, endPos);
     return b;
   }
 
@@ -148,7 +144,7 @@ public class TestProgramBuilder {
       return;
     }
     Block methBlock = method.getMethodBlock();
-    builder.append(String.format(", %d, %d, %d, %d", methBlock.beg, methBlock.end, methBlock.begPos + 1, methBlock.endPos));
+    builder.append(String.format(", %d, %d, %d, %d", methBlock.beg, methBlock.end, methBlock.beg.pos() + 1, methBlock.end.pos()));
     List<Block> blocks = method.blocks;
     if (blocks.size() == 1) {
       builder.append(")");
@@ -163,8 +159,8 @@ public class TestProgramBuilder {
 
   public static void getBuilderCode(Block block, StringBuilder builder) {
     builder.append(",\n jBlock(");
-    int begPos = block.blockType.hasNoBraces() ? block.begPos : block.begPos + 1;
-    builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg, block.end, begPos, block.endPos));
+    int begPos = block.blockType.hasNoBraces() ? block.beg.pos() : block.beg.pos() + 1;
+    builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg.line(), block.end.line(), begPos, block.end.pos()));
     if (block.incInsertPosition != 0 && block.incInsertPosition != begPos) {
       builder.append(", ").append(block.incInsertPosition - begPos);
     }

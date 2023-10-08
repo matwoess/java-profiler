@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import static tool.instrument.Util.*;
+
 public class ParserState {
   Parser parser;
   Logger logger;
@@ -33,12 +35,12 @@ public class ParserState {
 
   void setPackageName(List<String> packageName) {
     this.packageName = String.join(".", packageName);
-    this.beginOfImports = parser.t.charPos + parser.t.val.length();
+    this.beginOfImports = endOfToken(parser.t);
   }
 
   void markEndOfSuperCall() {
     assert curClass != null && curMeth != null && curBlock.blockType == BlockType.CONSTRUCTOR;
-    curBlock.incInsertPosition = parser.t.charPos + parser.t.val.length();
+    curBlock.incInsertPosition = endOfToken(parser.t);
   }
 
   void registerJumpStatement() {
@@ -129,7 +131,7 @@ public class ParserState {
   void enterBlock(BlockType blockType) {
     assert curClass != null;
     if (curBlock != null) {
-      int regionEndPos = blockType.hasNoBraces() ? parser.t.charPos + parser.t.val.length() : parser.la.charPos;
+      CodePosition regionEndPos = blockType.hasNoBraces() ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
       curBlock.endCodeRegion(regionEndPos);
       blockStack.push(curBlock);
     }
@@ -137,22 +139,20 @@ public class ParserState {
     curBlock.setParentMethod(curMeth);
     curBlock.setParentClass(curClass);
     if (blockType.hasNoBraces()) {
-      curBlock.beg = parser.t.line;
-      curBlock.begPos = parser.t.charPos + parser.t.val.length();
+      curBlock.beg = tokenEndPosition(parser.t);
     } else { // la == '{'
-      curBlock.beg = parser.la.line;
-      curBlock.begPos = parser.la.charPos;
-      curBlock.incInsertPosition = parser.la.charPos + parser.la.val.length();
+
+      curBlock.beg = tokenStartPosition(parser.la);
+      curBlock.incInsertPosition = endOfToken(parser.la);
     }
-    curBlock.startCodeRegion(curBlock.begPos);
+    curBlock.startCodeRegion(curBlock.beg);
     allBlocks.add(curBlock);
     logger.enter(curBlock);
   }
 
   void leaveBlock(boolean isMethod) {
-    curBlock.end = parser.t.line;
-    curBlock.endPos = parser.t.charPos + parser.t.val.length();
-    curBlock.endCodeRegion(curBlock.endPos);
+    curBlock.end = tokenEndPosition(parser.t);
+    curBlock.endCodeRegion(curBlock.end);
     logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;
@@ -291,7 +291,7 @@ public class ParserState {
         return String.format(
             "%s [%d]%s",
             block.blockType,
-            leave ? block.endPos : block.begPos,
+            leave ? block.end.pos() : block.beg.pos(),
             block.jumpStatement != null ? " (" + block.jumpStatement.name() + ")" : ""
         );
       throw new RuntimeException("unknown component type: " + comp.getClass());

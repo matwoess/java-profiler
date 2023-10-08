@@ -1,5 +1,7 @@
 package tool.instrument;
 
+import tool.model.Block;
+import tool.model.CodePosition;
 import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
 
@@ -224,9 +226,9 @@ public class EnumsTest {
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
     fileContent = fileContent.replace("D,E;", "D,E");
     expected.foundBlocks.forEach(block -> {
-      block.begPos--;
+      block.beg = new CodePosition(block.beg.line(), block.beg.pos() - 1);
       block.incInsertPosition--;
-      block.endPos--;
+      block.end = new CodePosition(block.end.line(), block.end.pos() - 1);
     });
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }

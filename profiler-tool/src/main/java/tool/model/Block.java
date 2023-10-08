@@ -8,10 +8,8 @@ import java.util.Objects;
 public class Block implements Serializable, Component {
   public JClass clazz;
   public Method method;
-  public int beg;
-  public int end;
-  public int begPos;
-  public int endPos;
+  public CodePosition beg;
+  public CodePosition end;
   public BlockType blockType;
   public JumpStatement jumpStatement = null;
   public List<CodeRegion> codeRegions = new ArrayList<>();
@@ -42,15 +40,15 @@ public class Block implements Serializable, Component {
     }
   }
 
-  public void startCodeRegion(int begPos) {
+  public void startCodeRegion(CodePosition beg) {
     curCodeRegion = new CodeRegion();
-    curCodeRegion.begPos = begPos;
+    curCodeRegion.beg = beg;
   }
 
-  public void endCodeRegion(int endPos) {
+  public void endCodeRegion(CodePosition end) {
     assert curCodeRegion != null;
-    curCodeRegion.endPos = endPos;
-    if (curCodeRegion.begPos != endPos) {
+    curCodeRegion.end = end;
+    if (curCodeRegion.beg != end) {
       codeRegions.add(curCodeRegion);
     }
     curCodeRegion = null;
@@ -61,7 +59,7 @@ public class Block implements Serializable, Component {
   }
 
   public void reenterBlock(Block innerBlock) {
-    startCodeRegion(innerBlock.endPos);
+    startCodeRegion(innerBlock.end);
     curCodeRegion.minusBlocks.addAll(innerJumpBlocks);
   }
 
@@ -69,11 +67,11 @@ public class Block implements Serializable, Component {
     return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s%s",
         clazz.name,
         method != null ? ("." + method.name) : "",
-        beg,
-        begPos,
+        beg.line(),
+        beg.pos(),
         incInsertPosition != 0 ? "(" + incInsertPosition + ")" : "",
-        end != 0 ? end : "?",
-        endPos != 0 ? endPos : "?",
+        end != null ? end.line() : "?",
+        end != null ? end.pos() : "?",
         blockType.toString(),
         method == null ? " [class-level]" : "",
         jumpStatement != null ? " [" + jumpStatement.name() + "]" : ""
@@ -85,10 +83,8 @@ public class Block implements Serializable, Component {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Block block = (Block) o;
-    if (beg != block.beg) return false;
-    if (end != block.end) return false;
-    if (begPos != block.begPos) return false;
-    if (endPos != block.endPos) return false;
+    if (!Objects.equals(beg, block.beg)) return false;
+    if (!Objects.equals(end, block.end)) return false;
     if (incInsertPosition != block.incInsertPosition) return false;
     if (!clazz.equals(block.clazz)) return false;
     if (!Objects.equals(method, block.method)) return false;
@@ -100,10 +96,8 @@ public class Block implements Serializable, Component {
   public int hashCode() {
     int result = clazz.hashCode();
     result = 31 * result + (method != null ? method.hashCode() : 0);
-    result = 31 * result + beg;
-    result = 31 * result + end;
-    result = 31 * result + begPos;
-    result = 31 * result + endPos;
+    result = 31 * result + beg.hashCode();
+    result = 31 * result + end.hashCode();
     result = 31 * result + blockType.hashCode();
     result = 31 * result + incInsertPosition;
     result = 31 * result + (jumpStatement != null ? jumpStatement.hashCode() : 0);
@@ -111,6 +105,6 @@ public class Block implements Serializable, Component {
   }
 
   public int getIncInsertPos() {
-    return (incInsertPosition != 0) ? incInsertPosition : begPos;
+    return (incInsertPosition != 0) ? incInsertPosition : beg.pos();
   }
 }
