@@ -12,6 +12,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 public class SystemUtils {
   public static void chooseFile(ObjectProperty<Path> fileProperty) {
@@ -51,13 +52,13 @@ public class SystemUtils {
   public static int executeToolInTerminal(Path cwd, String... parameters) {
     String toolJar = tool.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String commonJar = common.Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    String[] mainCmd = {"java", "-cp", toolJar + ":" + commonJar, "tool.Main"};
+    String[] mainCmd = {"java", "-cp", toolJar + Util.getOS().pathSeparator() + commonJar, "tool.Main"};
     String[] fullCmd = Util.prependToArray(parameters, mainCmd);
     String cmdString = String.join(" ", fullCmd);
     String[] command = switch (Util.getOS()) {
       case WINDOWS -> new String[]{
           "cmd.exe", "/c",
-          "start cmd.exe /c \"%s\" && exit".formatted(cmdString)
+          "start cmd.exe /c \"%s && pause || pause\"".formatted(cmdString)
       };
       case LINUX -> new String[]{ // TODO: works only on GNOME by now
           "/bin/sh", "-c",

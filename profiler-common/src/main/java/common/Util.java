@@ -45,6 +45,14 @@ public class Util {
         return "\n";
       }
     }
+
+    public String pathSeparator() {
+      if (this == WINDOWS) {
+        return ";";
+      } else {
+        return ":";
+      }
+    }
   }
 
   private static OS os = null;
