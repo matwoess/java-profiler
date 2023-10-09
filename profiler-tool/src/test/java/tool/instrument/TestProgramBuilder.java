@@ -10,20 +10,39 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TestProgramBuilder {
+  public interface BuilderComponent {
+  }
 
-  public static JavaFile jFile(JClass... classes) {
+  public record BuilderClass(JClass element) implements BuilderComponent {
+  }
+
+  public record BuilderMethod(Method element) implements BuilderComponent {
+    public BuilderMethod withJump(JumpStatement jumpStatement) {
+      element.getMethodBlock().jumpStatement = jumpStatement;
+      return this;
+    }
+  }
+
+  public record BuilderBlock(Block element) implements BuilderComponent {
+    public BuilderBlock withJump(JumpStatement jumpStatement) {
+      element.jumpStatement = jumpStatement;
+      return this;
+    }
+  }
+
+  public static JavaFile jFile(BuilderClass... classes) {
     JavaFile javaFile = new JavaFile(Path.of("."));
     javaFile.topLevelClasses = new ArrayList<>();
     javaFile.foundBlocks = new ArrayList<>();
-    for (JClass clazz : classes) {
-      javaFile.topLevelClasses.add(clazz);
-      javaFile.foundBlocks.addAll(clazz.getBlocksRecursive());
+    for (BuilderClass clazz : classes) {
+      javaFile.topLevelClasses.add(clazz.element);
+      javaFile.foundBlocks.addAll(clazz.element.getBlocksRecursive());
     }
     javaFile.foundBlocks.sort(Comparator.comparing(b -> b.beg));
     return javaFile;
   }
 
-  public static JavaFile jFile(String packageName, int beginOfImports, JClass... classes) {
+  public static JavaFile jFile(String packageName, int beginOfImports, BuilderClass... classes) {
     JavaFile javaFile = jFile(classes);
     javaFile.packageName = packageName;
     javaFile.beginOfImports = beginOfImports;
@@ -31,61 +50,61 @@ public class TestProgramBuilder {
     return javaFile;
   }
 
-  public static JClass jClass(String name, Component... classChildren) {
+  public static BuilderClass jClass(String name, BuilderComponent... classChildren) {
     JClass clazz = new JClass(name);
-    for (Component child : classChildren) {
-      if (child instanceof JClass innerClass) {
-        innerClass.setParentClass(clazz);
-      } else if (child instanceof Method method) {
-        method.setParentClass(clazz);
-        method.blocks.forEach(block -> block.clazz = clazz);
-      } else if (child instanceof Block classLevelBlock) {
-        classLevelBlock.setParentClass(clazz);
+    for (BuilderComponent child : classChildren) {
+      if (child instanceof BuilderClass innerClass) {
+        innerClass.element.setParentClass(clazz);
+      } else if (child instanceof BuilderMethod method) {
+        method.element.setParentClass(clazz);
+        method.element.blocks.forEach(block -> block.clazz = clazz);
+      } else if (child instanceof BuilderBlock classLevelBlock) {
+        classLevelBlock.element.setParentClass(clazz);
       } else {
         throw new RuntimeException("invalid child of class");
       }
     }
+    return new BuilderClass(clazz);
+  }
+
+  public static BuilderClass jClass(ClassType classType, String name, BuilderComponent... classChildren) {
+    BuilderClass clazz = jClass(name, classChildren);
+    clazz.element.classType = classType;
     return clazz;
   }
 
-  public static JClass jClass(ClassType classType, String name, Component... classChildren) {
-    JClass clazz = jClass(name, classChildren);
-    clazz.classType = classType;
-    return clazz;
-  }
-
-  public static Method jMethod(String name, Block... blocks) {
+  public static BuilderMethod jMethod(String name, BuilderBlock... blocks) {
     Method method = new Method(name);
-    for (Block block : blocks) {
-      block.setParentMethod(method);
+    for (BuilderBlock block : blocks) {
+      block.element.setParentMethod(method);
     }
-    return method;
+    return new BuilderMethod(method);
   }
 
-  public static Method jMethod(String name, int beg, int end, int begPos, int endPos, Block... blocks) {
-    Block methodBlock = jBlock(BlockType.METHOD, beg, end, begPos, endPos);
+  public static BuilderMethod jMethod(String name, int beg, int end, int begPos, int endPos, BuilderBlock... blocks) {
+    BuilderBlock methodBlock = jBlock(BlockType.METHOD, beg, end, begPos, endPos);
     return jMethod(name, Util.prependToArray(blocks, methodBlock));
   }
 
-  public static Method jConstructor(String name, int beg, int end, int begPos, int endPos, Block... blocks) {
-    Block constructorBlock = jBlock(BlockType.CONSTRUCTOR, beg, end, begPos, endPos);
+  public static BuilderMethod jConstructor(String name, int beg, int end, int begPos, int endPos, BuilderBlock... blocks) {
+    BuilderBlock constructorBlock = jBlock(BlockType.CONSTRUCTOR, beg, end, begPos, endPos);
     return jMethod(name, Util.prependToArray(blocks, constructorBlock));
   }
 
-  public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
+  public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block(type);
     b.beg = new CodePosition(beg, b.blockType.hasNoBraces() ? begPos : begPos - 1);
     if (!b.blockType.hasNoBraces()) {
       b.incInsertPosition = begPos;
     }
     b.end = new CodePosition(end, endPos);
-    return b;
+    return new BuilderBlock(b);
   }
 
-  public static Block jBlock(BlockType type, int beg, int end, int begPos, int endPos, int incInsertPosOffset) {
-    Block b = jBlock(type, beg, end, begPos, endPos);
-    b.incInsertPosition += incInsertPosOffset;
-    return b;
+  public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos, int incInsertPosOffset) {
+    BuilderBlock block = jBlock(type, beg, end, begPos, endPos);
+    block.element.incInsertPosition += incInsertPosOffset;
+    return block;
   }
 
   /* DSL-generation methods */
@@ -131,6 +150,7 @@ public class TestProgramBuilder {
     builder.append("\n)");
   }
 
+  // TODO: also generate withJump calls
   public static void getBuilderCode(Method method, StringBuilder builder) {
     builder.append(",\n ");
     if (!method.isAbstract() && method.getMethodBlock().blockType == BlockType.CONSTRUCTOR) {
@@ -144,7 +164,7 @@ public class TestProgramBuilder {
       return;
     }
     Block methBlock = method.getMethodBlock();
-    builder.append(String.format(", %d, %d, %d, %d", methBlock.beg, methBlock.end, methBlock.beg.pos() + 1, methBlock.end.pos()));
+    builder.append(String.format(", %d, %d, %d, %d", methBlock.beg.line(), methBlock.end.line(), methBlock.beg.pos() + 1, methBlock.end.pos()));
     List<Block> blocks = method.blocks;
     if (blocks.size() == 1) {
       builder.append(")");
@@ -157,6 +177,7 @@ public class TestProgramBuilder {
     builder.append("\n)");
   }
 
+  // TODO: also generate withJump calls
   public static void getBuilderCode(Block block, StringBuilder builder) {
     builder.append(",\n jBlock(");
     int begPos = block.blockType.hasNoBraces() ? block.beg.pos() : block.beg.pos() + 1;

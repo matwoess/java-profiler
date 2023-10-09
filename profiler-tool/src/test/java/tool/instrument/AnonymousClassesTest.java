@@ -10,6 +10,7 @@ import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.BLOCK;
 import static tool.model.ClassType.ANONYMOUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static tool.model.JumpStatement.RETURN;
 
 public class AnonymousClassesTest {
   @Test
@@ -47,15 +48,15 @@ public class AnonymousClassesTest {
         jClass("Main",
             jMethod("main", 2, 4, 62, 71),
             jMethod("firstJavaFile", 5, 31, 118, 715,
-                jBlock(BLOCK, 26, 28, 653, 685),
-                jBlock(BLOCK, 28, 30, 692, 713)
+                jBlock(BLOCK, 26, 28, 653, 685).withJump(RETURN),
+                jBlock(BLOCK, 28, 30, 692, 713).withJump(RETURN)
             ),
             jClass(ANONYMOUS, null,
-                jMethod("accept", 10, 13, 289, 361),
+                jMethod("accept", 10, 13, 289, 361).withJump(RETURN),
                 jClass("X",
                     jMethod("methodInX", 16, 18, 408, 503)
                 ),
-                jMethod("returnTrue", 21, 24, 544, 590)
+                jMethod("returnTrue", 21, 24, 544, 590).withJump(RETURN)
             )
         )
     );
@@ -85,11 +86,11 @@ public class AnonymousClassesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 4, 62, 71),
-            jMethod("getSortedIntegers", 5, 17, 140, 380),
+            jMethod("getSortedIntegers", 5, 17, 140, 380).withJump(RETURN),
             jClass(ANONYMOUS, null,
                 jMethod("compare", 8, 14, 261, 352,
-                    jBlock(BLOCK, 9, 11, 288, 314)
-                )
+                    jBlock(BLOCK, 9, 11, 288, 314).withJump(RETURN)
+                ).withJump(RETURN)
             )
         )
     );
@@ -111,7 +112,7 @@ public class AnonymousClassesTest {
         jClass("Main",
             jMethod("main", 2, 10, 62, 158),
             jClass(ANONYMOUS, null,
-                jMethod("hashCode", 5, 7, 117, 150)
+                jMethod("hashCode", 5, 7, 117, 150).withJump(RETURN)
             )
         )
     );

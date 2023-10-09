@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.*;
+import static tool.model.JumpStatement.RETURN;
+import static tool.model.JumpStatement.THROW;
 
 public class RecordsTest {
   @Test
@@ -35,7 +37,7 @@ public class RecordsTest {
     JavaFile expected = jFile(
         jClass("LenWidth",
             jConstructor("LenWidth", 2, 8, 88, 285,
-                jBlock(BLOCK, 3, 5, 123, 231)
+                jBlock(BLOCK, 3, 5, 123, 231).withJump(THROW)
             )
         )
     );
@@ -60,7 +62,7 @@ public class RecordsTest {
     JavaFile expected = jFile(null, 0,
         jClass("LenWidth",
             jConstructor("LenWidth", 2, 6, 59, 206,
-                jBlock(BLOCK, 3, 5, 94, 202)
+                jBlock(BLOCK, 3, 5, 94, 202).withJump(THROW)
             ),
             jMethod("LenWidth",
                 jBlock(CONSTRUCTOR, 7, 9, 251, 323, thisCallOffset)
@@ -88,8 +90,8 @@ public class RecordsTest {
         """;
     JavaFile expected = jFile(
         jClass("Coordinate",
-            jMethod("x", 3, 6, 64, 146),
-            jMethod("y", 8, 11, 177, 259)
+            jMethod("x", 3, 6, 64, 146).withJump(RETURN),
+            jMethod("y", 8, 11, 177, 259).withJump(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -119,7 +121,7 @@ public class RecordsTest {
         jClass("Coordinate",
             jBlock(STATIC, 4, 6, 90, 106),
             jMethod("main", 7, 12, 149, 324),
-            jMethod("manhattanDistanceTo", 13, 15, 370, 436)
+            jMethod("manhattanDistanceTo", 13, 15, 370, 436).withJump(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -147,7 +149,7 @@ public class RecordsTest {
     JavaFile expected = jFile(
         jClass("Record",
             jMethod("record", 3, 5, 119, 152),
-            jMethod("getRecord", 6, 8, 182, 212),
+            jMethod("getRecord", 6, 8, 182, 212).withJump(RETURN),
             jMethod("main", 9, 14, 255, 399)
         )
     );

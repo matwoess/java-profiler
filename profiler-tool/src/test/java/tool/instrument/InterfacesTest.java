@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.ClassType.CLASS;
+import static tool.model.JumpStatement.RETURN;
 
 public class InterfacesTest {
   @Test
@@ -60,8 +61,8 @@ public class InterfacesTest {
         }""";
     JavaFile expected = jFile(
         jClass("DefaultStatic",
-            jMethod("getName", 3, 5, 67, 91),
-            jMethod("getAge", 6, 8, 133, 160),
+            jMethod("getName", 3, 5, 67, 91).withJump(RETURN),
+            jMethod("getAge", 6, 8, 133, 160).withJump(RETURN),
             jMethod("printInfo", 9, 11, 212, 266)
         )
     );
@@ -96,9 +97,9 @@ public class InterfacesTest {
     JavaFile expected = jFile(
         jClass("Interfaces",
             jClass("SubInterface",
-                jMethod("get", 6, 8, 174, 225),
+                jMethod("get", 6, 8, 174, 225).withJump(RETURN),
                 jClass(CLASS, "SubClass",
-                    jMethod("getXPlus1", 11, 13, 278, 308)
+                    jMethod("getXPlus1", 11, 13, 278, 308).withJump(RETURN)
                 )
             ),
             jClass("X",
@@ -131,7 +132,7 @@ public class InterfacesTest {
     JavaFile expected = jFile(
         jClass("WithMain",
             jClass("X",
-                jMethod("get", 6, 8, 110, 132)
+                jMethod("get", 6, 8, 110, 132).withJump(RETURN)
             ),
             jMethod("main", 11, 15, 180, 268)
         )

@@ -6,6 +6,7 @@ import tool.model.JavaFile;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.BLOCK;
+import static tool.model.JumpStatement.RETURN;
 
 public class AnnotationsTest {
   @Test
@@ -138,7 +139,7 @@ public class AnnotationsTest {
     JavaFile expected = jFile("complexAnnotations", 27,
         jClass("Annotations",
             jClass("RuntimeRetentionPolicy"),
-            jMethod("equals", 24, 26, 682, 716),
+            jMethod("equals", 24, 26, 682, 716).withJump(RETURN),
             jMethod("main", 27, 28, 759, 763)
         )
     );

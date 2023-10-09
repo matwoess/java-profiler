@@ -7,6 +7,7 @@ import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.*;
+import static tool.model.JumpStatement.RETURN;
 
 public class LambdaExpressionsTest {
   @Test
@@ -36,7 +37,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 62, 197,
-                jBlock(BLOCK, 3, 3, 115, 131)
+                jBlock(BLOCK, 3, 3, 115, 131).withJump(RETURN)
             )
         )
     );
@@ -54,7 +55,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 62, 164,
-                jBlock(BLOCK, 3, 5, 102, 122)
+                jBlock(BLOCK, 3, 5, 102, 122).withJump(RETURN)
             )
         )
     );
@@ -162,7 +163,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("LambdaMembers",
             jBlock(BLOCK, 2, 4, 68, 106),
-            jBlock(BLOCK, 5, 7, 163, 187),
+            jBlock(BLOCK, 5, 7, 163, 187).withJump(RETURN),
             jBlock(BLOCK, 8, 10, 237, 268),
             jMethod("main", 11, 14, 312, 400)
         )

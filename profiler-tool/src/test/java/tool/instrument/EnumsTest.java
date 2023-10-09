@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.*;
+import static tool.model.JumpStatement.RETURN;
 
 public class EnumsTest {
   @Test
@@ -98,7 +99,7 @@ public class EnumsTest {
         }""";
     JavaFile expected = jFile(
         jClass("Enum",
-            jMethod("lowercase", 4, 6, 91, 133)
+            jMethod("lowercase", 4, 6, 91, 133).withJump(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -187,7 +188,7 @@ public class EnumsTest {
                 jMethod("printName", 5, 7, 169, 213)
             ),
             jClass("InterfaceInEnum",
-                jMethod("lowercase", 11, 13, 317, 362)
+                jMethod("lowercase", 11, 13, 317, 362).withJump(RETURN)
             ),
             jMethod("callMethods", 16, 19, 404, 499)
         )
@@ -218,8 +219,8 @@ public class EnumsTest {
         jClass("WithInnerEnum",
             jClass("InnerEnum"),
             jMethod("printValues", 8, 15, 107, 287,
-                jBlock(BLOCK, 9, 11, 154, 191),
-                jBlock(BLOCK, 12, 14, 246, 283)
+                jBlock(LOOP, 9, 11, 154, 191),
+                jBlock(LOOP, 12, 14, 246, 283)
             )
         )
     );
@@ -278,10 +279,10 @@ public class EnumsTest {
     JavaFile expected = jFile(
         jClass("EnumWithInnerAbstractEnum",
             jClass("WithAbstractMethods",
-                jMethod("description", 12, 14, 303, 341),
+                jMethod("description", 12, 14, 303, 341).withJump(RETURN),
                 jBlock(STATIC, 16, 18, 376, 399),
                 jMethod("printDescription", 21, 23, 448, 515),
-                jMethod("description", 27, 29, 580, 609),
+                jMethod("description", 27, 29, 580, 609).withJump(RETURN),
                 jMethod("printDescription", 32, 34, 658, 738),
                 jMethod("description"),
                 jMethod("printDescription")
@@ -312,7 +313,7 @@ public class EnumsTest {
         """;
     JavaFile expected = jFile(
         jClass("AnnotatedEnum",
-            jMethod("getDVal", 10, 12, 209, 231)
+            jMethod("getDVal", 10, 12, 209, 231).withJump(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
