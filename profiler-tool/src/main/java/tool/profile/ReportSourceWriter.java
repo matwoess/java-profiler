@@ -39,7 +39,6 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         }
         td.hits {
           background-color: #eee;
-          text-align: end;
         }
         """;
     bodyScripts = new String[]{

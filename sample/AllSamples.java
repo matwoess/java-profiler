@@ -15,5 +15,6 @@ public class AllSamples {
     AnonymousClasses.main(args);
     NestedBlockTypes.main(args);
     Fibonacci.main(new String[]{"10"});
+    JumpStatements.main(args);
   }
 }
