@@ -15,6 +15,10 @@ public class AllSamples {
     AnonymousClasses.main(args);
     NestedBlockTypes.main(args);
     Fibonacci.main(new String[]{"10"});
+    LocalClasses.main(args);
+    Records.main(args);
+    Strings.main(args);
     JumpStatements.main(args);
+    ParallelSum.main(new String[]{String.valueOf(100), "1"});
   }
 }
