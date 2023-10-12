@@ -182,7 +182,8 @@ ClassExtension =
     ClassBody                               (. state.leaveClass();.)
 .
 Block<boolean isMethod, boolean isLoop> =   (. state.enterBlock(isMethod, isLoop); .)
-    "{" {Statement} "}"                     (. state.leaveBlock(isMethod); .)
+    "{" {Statement}                         (. state.leaveBlock(isMethod); .)
+    "}"
 .
 
 END Instrumenter.

@@ -151,14 +151,15 @@ public class ParserState {
   }
 
   void leaveBlock(boolean isMethod) {
-    curBlock.end = tokenEndPosition(parser.t);
-    curBlock.endCodeRegion(curBlock.end);
+    boolean noClosingBrace = curBlock.blockType.hasNoBraces();
+    curBlock.end = tokenEndPosition(noClosingBrace ? parser.t : parser.la);
+    curBlock.endCodeRegion(tokenEndPosition(parser.t));
     logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
-      curBlock.reenterBlock(tokenStartPosition(parser.la));
+      curBlock.reenterBlock(tokenStartPosition(noClosingBrace ? parser.la : parser.scanner.Peek()));
     }
     if (isMethod) {
       leaveMethod();
