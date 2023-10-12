@@ -68,6 +68,9 @@ public class ParserState {
       if (block.blockType == BlockType.METHOD && jumpStatement.propagateUntilMethod()) {
         break;
       }
+      if (block.blockType == BlockType.SWITCH_CASE && jumpStatement == JumpStatement.BREAK) {
+        break;
+      }
     }
   }
 
