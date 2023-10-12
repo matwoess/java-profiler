@@ -153,6 +153,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     String coverageStatus = hits > 0 ? "covered" : "not covered";
     // &#10; == <br/> == newLine
     String title = String.format("%s&#10;%s&#10;Hits: %d (%s)", description, regionDescr, hits, coverageStatus);
+    //title = String.valueOf(hits);
     String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
     if (region != -1) {
       classes += " r" + activeBlocks.get(activeBlocks.size() - 1) + "_" + region;
