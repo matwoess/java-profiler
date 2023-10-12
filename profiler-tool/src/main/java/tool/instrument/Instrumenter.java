@@ -86,19 +86,19 @@ public class Instrumenter {
       // insert order is important, in case of same CodeInsert char positions
       if (block.blockType.hasNoBraces() && block.blockType != BlockType.SS_LAMBDA) {
         assert block.blockType != BlockType.METHOD;
-        inserts.add(new CodeInsert(block.begPos, "{"));
+        inserts.add(new CodeInsert(block.beg.pos(), "{"));
       }
       if (block.blockType == BlockType.SS_LAMBDA) {
         inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.incLambda%s(%d, () -> ", incRefAdd, blockCounter++)));
-        inserts.add(new CodeInsert(block.endPos, ")"));
+        inserts.add(new CodeInsert(block.end.pos(), ")"));
       } else {
         inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc%s(%d);", incRefAdd, blockCounter++)));
       }
-      if (block.blockType == BlockType.SS_SWITCH_EXPR_ARROW_CASE && !block.startsWithThrow) {
+      if (block.blockType == BlockType.SS_SWITCH_EXPR_ARROW_CASE && block.jumpStatement != JumpStatement.THROW) {
         inserts.add(new CodeInsert(block.getIncInsertPos(), "yield "));
       }
       if (block.blockType.hasNoBraces() && block.blockType != BlockType.SS_LAMBDA) {
-        inserts.add(new CodeInsert(block.endPos, "}"));
+        inserts.add(new CodeInsert(block.end.pos(), "}"));
       }
     }
     inserts.sort(Comparator.comparing(CodeInsert::chPos));

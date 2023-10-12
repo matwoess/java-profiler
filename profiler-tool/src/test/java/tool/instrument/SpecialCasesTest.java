@@ -12,6 +12,8 @@ import static tool.model.BlockType.*;
 import static tool.model.ClassType.ANONYMOUS;
 import static tool.model.ClassType.LOCAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static tool.model.JumpStatement.RETURN;
+import static tool.model.JumpStatement.YIELD;
 
 public class SpecialCasesTest {
   @Test
@@ -153,24 +155,24 @@ public class SpecialCasesTest {
             jClass(ANONYMOUS, null,
                 jMethod("compare", 56, 65, 1457, 1706,
                     jBlock(SS_SWITCH_EXPR_ARROW_CASE, 58, 58, 1523, 1526),
-                    jBlock(BLOCK, 59, 61, 1557, 1607),
+                    jBlock(BLOCK, 59, 61, 1557, 1607).withJump(YIELD),
                     jBlock(SS_SWITCH_EXPR_ARROW_CASE, 62, 62, 1636, 1645)
-                )
+                ).withJump(RETURN)
             ),
             jMethod("method", 23, 75, 398, 1921,
                 jBlock(BLOCK, 25, 71, 443, 1876),
-                jBlock(SS_BLOCK, 26, 70, 489, 1870),
+                jBlock(SS_LOOP, 26, 70, 489, 1870),
                 jBlock(SWITCH_CASE, 28, 29, 534, 569),
                 jBlock(SWITCH_CASE, 30, 51, 587, 1246),
-                jBlock(BLOCK, 31, 51, 621, 1208),
-                jBlock(BLOCK, 33, 35, 684, 729),
+                jBlock(BLOCK, 31, 51, 621, 1208).withJump(RETURN),
+                jBlock(BLOCK, 33, 35, 684, 729).withJump(YIELD),
                 jBlock(SS_SWITCH_EXPR_ARROW_CASE, 36, 36, 755, 762),
                 jBlock(SS_SWITCH_EXPR_ARROW_CASE, 37, 39, 788, 887),
                 // TODO: missing lambda blocks!
                 jBlock(BLOCK, 40, 43, 915, 1006),
-                jBlock(SS_BLOCK, 41, 41, 946, 955),
-                jBlock(SS_BLOCK, 42, 42, 978, 988),
-                jBlock(BLOCK, 44, 48, 1034, 1146),
+                jBlock(SS_BLOCK, 41, 41, 946, 955).withJump(YIELD),
+                jBlock(SS_BLOCK, 42, 42, 978, 988).withJump(YIELD),
+                jBlock(BLOCK, 44, 48, 1034, 1146).withJump(YIELD),
                 jBlock(SS_SWITCH_EXPR_ARROW_CASE, 46, 46, 1103, 1107),
                 jBlock(SS_SWITCH_EXPR_ARROW_CASE, 49, 49, 1173, 1177),
                 jBlock(SS_LAMBDA, 51, 51, 1222, 1244),

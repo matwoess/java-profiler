@@ -2,11 +2,13 @@ package tool.instrument;
 
 import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
+import tool.model.JumpStatement;
 
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.*;
+import static tool.model.JumpStatement.*;
 
 public class SwitchesTest {
 
@@ -33,11 +35,11 @@ public class SwitchesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 20, 62, 239,
-                jBlock(BLOCK, 5, 8, 102, 129),
+                jBlock(BLOCK, 5, 8, 102, 129).withJump(BREAK),
                 jBlock(BLOCK, 9, 9, 141, 142),
                 jBlock(BLOCK, 10, 13, 154, 183),
-                jBlock(BLOCK, 14, 16, 195, 210),
-                jBlock(BLOCK, 17, 17, 223, 232)
+                jBlock(BLOCK, 14, 16, 195, 210).withJump(BREAK),
+                jBlock(BLOCK, 17, 17, 223, 232).withJump(BREAK)
             )
         )
     );
@@ -63,9 +65,9 @@ public class SwitchesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 16, 62, 210,
-                jBlock(BLOCK, 5, 8, 108, 135),
+                jBlock(BLOCK, 5, 8, 108, 135).withJump(BREAK),
                 jBlock(BLOCK, 9, 12, 150, 181),
-                jBlock(BLOCK, 13, 13, 194, 203)
+                jBlock(BLOCK, 13, 13, 194, 203).withJump(BREAK)
             )
         )
     );
@@ -95,12 +97,12 @@ public class SwitchesTest {
                 jBlock(BLOCK, 5, 9, 127, 225),
                 jBlock(BLOCK, 6, 8, 174, 221),
                 jBlock(SS_BLOCK, 10, 10, 249, 283),
-                jBlock(BLOCK, 11, 13, 298, 313),
-                jBlock(SS_BLOCK, 14, 14, 326, 377)
+                jBlock(BLOCK, 11, 13, 298, 313).withJump(BREAK),
+                jBlock(SS_BLOCK, 14, 14, 326, 377).withJump(THROW)
             )
         )
     );
-    expected.foundBlocks.get(expected.foundBlocks.size() - 1).startsWithThrow = true;
+    expected.foundBlocks.get(expected.foundBlocks.size() - 1).jumpStatement = JumpStatement.THROW;
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
@@ -128,13 +130,13 @@ public class SwitchesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 21, 62, 442,
-                jBlock(BLOCK, 3, 20, 97, 438),
-                jBlock(BLOCK, 5, 7, 139, 160),
-                jBlock(SWITCH_CASE, 8, 8, 180, 189),
-                jBlock(SWITCH_CASE, 9, 9, 211, 241),
+                jBlock(LOOP, 3, 20, 97, 438),
+                jBlock(BLOCK, 5, 7, 139, 160).withJump(YIELD),
+                jBlock(SWITCH_CASE, 8, 8, 180, 189).withJump(YIELD),
+                jBlock(SWITCH_CASE, 9, 9, 211, 241).withJump(THROW),
                 jBlock(BLOCK, 10, 17, 256, 389),
-                jBlock(BLOCK, 11, 14, 276, 350),
-                jBlock(BLOCK, 14, 16, 357, 383)
+                jBlock(BLOCK, 11, 14, 276, 350).withJump(YIELD),
+                jBlock(BLOCK, 14, 16, 357, 383).withJump(YIELD)
             )
         )
     );
@@ -164,11 +166,11 @@ public class SwitchesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 20, 62, 364,
-                jBlock(BLOCK, 5, 7, 137, 154),
+                jBlock(BLOCK, 5, 7, 137, 154).withJump(YIELD),
                 jBlock(SS_SWITCH_EXPR_ARROW_CASE, 8, 8, 169, 172),
                 jBlock(BLOCK, 9, 16, 187, 316),
-                jBlock(BLOCK, 10, 13, 215, 283),
-                jBlock(BLOCK, 13, 15, 290, 312)
+                jBlock(BLOCK, 10, 13, 215, 283).withJump(YIELD),
+                jBlock(BLOCK, 13, 15, 290, 312).withJump(YIELD)
             )
         )
     );
@@ -196,7 +198,7 @@ public class SwitchesTest {
         jClass("ClassLevelSwitch",
             jBlock(SS_SWITCH_EXPR_ARROW_CASE, 3, 3, 105, 108),
             jBlock(SS_SWITCH_EXPR_ARROW_CASE, 4, 4, 125, 128),
-            jBlock(BLOCK, 5, 7, 145, 166),
+            jBlock(BLOCK, 5, 7, 145, 166).withJump(YIELD),
             jMethod("main", 10, 12, 215, 254)
         )
     );
@@ -230,8 +232,8 @@ public class SwitchesTest {
                 jMethod("getStatusCodeDescription", 9, 17, 368, 591,
                     jBlock(SS_SWITCH_EXPR_ARROW_CASE, 11, 11, 411, 436),
                     jBlock(SS_SWITCH_EXPR_ARROW_CASE, 12, 12, 470, 487),
-                    jBlock(BLOCK, 13, 15, 516, 580)
-                )
+                    jBlock(BLOCK, 13, 15, 516, 580).withJump(YIELD)
+                ).withJump(RETURN)
             )
         )
     );

@@ -10,6 +10,8 @@ import static tool.model.BlockType.BLOCK;
 import static tool.model.BlockType.SS_BLOCK;
 import static tool.model.ClassType.ANONYMOUS;
 import static tool.model.ClassType.LOCAL;
+import static tool.model.JumpStatement.RETURN;
+import static tool.model.JumpStatement.THROW;
 
 public class LocalClassesTest {
 
@@ -28,7 +30,7 @@ public class LocalClassesTest {
         jClass("Main",
             jClass(LOCAL, "StatusCode"),
             jMethod("main", 2, 11, 62, 262,
-                jBlock(BLOCK, 7, 9, 214, 257)
+                jBlock(BLOCK, 7, 9, 214, 257).withJump(THROW)
             )
         )
     );
@@ -66,7 +68,7 @@ public class LocalClassesTest {
             ),
             jMethod("main", 2, 20, 62, 463,
                 jBlock(BLOCK, 3, 17, 90, 440),
-                jBlock(SS_BLOCK, 18, 18, 450, 458)
+                jBlock(SS_BLOCK, 18, 18, 450, 458).withJump(RETURN)
             )
         )
     );
@@ -95,9 +97,9 @@ public class LocalClassesTest {
         jClass("Main",
             jClass(ANONYMOUS, null,
                 jClass(LOCAL, "CompHelper",
-                    jMethod("comp", 7, 9, 250, 300)
+                    jMethod("comp", 7, 9, 250, 300).withJump(RETURN)
                 ),
-                jMethod("compare", 5, 14, 188, 409)
+                jMethod("compare", 5, 14, 188, 409).withJump(RETURN)
             ),
             jMethod("main", 2, 18, 62, 460)
         )

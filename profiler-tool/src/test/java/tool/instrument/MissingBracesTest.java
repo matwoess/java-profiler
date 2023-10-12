@@ -7,6 +7,7 @@ import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.*;
+import static tool.model.JumpStatement.*;
 
 public class MissingBracesTest {
   @Test
@@ -17,7 +18,7 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 5, 62, 97,
-                jBlock(SS_BLOCK, 3, 3, 85, 92)
+                jBlock(SS_BLOCK, 3, 3, 85, 92).withJump(RETURN)
             )
         )
     );
@@ -33,8 +34,8 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 6, 62, 112,
-                jBlock(SS_BLOCK, 3, 3, 85, 92),
-                jBlock(SS_BLOCK, 4, 4, 97, 107)
+                jBlock(SS_BLOCK, 3, 3, 85, 92).withJump(BREAK),
+                jBlock(SS_BLOCK, 4, 4, 97, 107).withJump(CONTINUE)
             )
         )
     );
@@ -51,9 +52,9 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 62, 143,
-                jBlock(SS_BLOCK, 3, 3, 85, 92),
-                jBlock(SS_BLOCK, 4, 4, 115, 123),
-                jBlock(SS_BLOCK, 5, 5, 128, 138)
+                jBlock(SS_BLOCK, 3, 3, 85, 92).withJump(BREAK),
+                jBlock(SS_BLOCK, 4, 4, 115, 123).withJump(RETURN),
+                jBlock(SS_BLOCK, 5, 5, 128, 138).withJump(CONTINUE)
             )
         )
     );
@@ -81,9 +82,9 @@ public class MissingBracesTest {
             jMethod("main", 2, 16, 62, 269,
                 jBlock(SS_BLOCK, 4, 5, 94, 104),
                 jBlock(BLOCK, 6, 8, 127, 139),
-                jBlock(SS_BLOCK, 9, 9, 144, 189),
+                jBlock(SS_BLOCK, 9, 9, 144, 189).withJump(THROW),
                 jBlock(BLOCK, 11, 13, 204, 241),
-                jBlock(SS_BLOCK, 12, 12, 219, 227),
+                jBlock(SS_BLOCK, 12, 12, 219, 227).withJump(RETURN),
                 jBlock(SS_BLOCK, 12, 12, 232, 239)
             )
         )
@@ -104,9 +105,9 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 10, 62, 147,
-                jBlock(SS_BLOCK, 4, 8, 91, 142),
-                jBlock(SS_BLOCK, 4, 8, 103, 142),
-                jBlock(SS_BLOCK, 5, 6, 114, 126),
+                jBlock(SS_LOOP, 4, 8, 91, 142),
+                jBlock(SS_LOOP, 4, 8, 103, 142),
+                jBlock(SS_BLOCK, 5, 6, 114, 126).withJump(RETURN),
                 jBlock(SS_BLOCK, 7, 8, 133, 142)
             )
         )
@@ -126,8 +127,8 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 9, 62, 129,
-                jBlock(SS_BLOCK, 4, 4, 80, 86),
-                jBlock(SS_BLOCK, 5, 6, 102, 110)
+                jBlock(SS_LOOP, 4, 4, 80, 86),
+                jBlock(SS_LOOP, 5, 6, 102, 110)
             )
         )
     );
@@ -145,8 +146,8 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 62, 188,
-                jBlock(SS_BLOCK, 4, 5, 120, 136),
-                jBlock(SS_BLOCK, 6, 6, 158, 183)
+                jBlock(SS_LOOP, 4, 5, 120, 136),
+                jBlock(SS_LOOP, 6, 6, 158, 183)
             )
         )
     );
@@ -174,10 +175,10 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 18, 62, 228,
-                jBlock(BLOCK, 5, 8, 102, 129),
+                jBlock(BLOCK, 5, 8, 102, 129).withJump(BREAK),
                 jBlock(SWITCH_CASE, 10, 12, 157, 182),
-                jBlock(SWITCH_CASE, 13, 14, 192, 203),
-                jBlock(SWITCH_CASE, 15, 15, 214, 221)
+                jBlock(SWITCH_CASE, 13, 14, 192, 203).withJump(BREAK),
+                jBlock(SWITCH_CASE, 15, 15, 214, 221).withJump(BREAK)
             )
         )
     );
@@ -197,10 +198,10 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 10, 62, 165,
-                jBlock(SS_BLOCK, 4, 8, 97, 160),
-                jBlock(SS_BLOCK, 4, 8, 109, 160),
-                jBlock(SS_BLOCK, 5, 6, 121, 134),
-                jBlock(SS_BLOCK, 7, 8, 142, 160)
+                jBlock(SS_LOOP, 4, 8, 97, 160),
+                jBlock(SS_LOOP, 4, 8, 109, 160),
+                jBlock(SS_BLOCK, 5, 6, 121, 134).withJump(RETURN),
+                jBlock(SS_BLOCK, 7, 8, 142, 160).withJump(BREAK)
             )
         )
     );

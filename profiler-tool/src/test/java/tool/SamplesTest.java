@@ -184,6 +184,17 @@ public class SamplesTest {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "Records.java");
   }
 
+
+  @Test
+  public void testJumpStatementsSample() {
+    TestUtils.instrumentAndProfile(samplesFolder.resolve("JumpStatements.java"));
+  }
+
+  @Test
+  public void testJumpStatementsSample_Folder() {
+    TestUtils.instrumentFolderAndProfile(samplesFolder, "JumpStatements.java");
+  }
+
   @Test
   public void testParallelSumSample() {
     Path mainFile = samplesFolder.resolve("ParallelSum.java");

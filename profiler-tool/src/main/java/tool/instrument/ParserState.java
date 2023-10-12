@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import static tool.instrument.Util.*;
+
 public class ParserState {
   Parser parser;
   Logger logger;
@@ -33,16 +35,40 @@ public class ParserState {
 
   void setPackageName(List<String> packageName) {
     this.packageName = String.join(".", packageName);
-    this.beginOfImports = parser.t.charPos + parser.t.val.length();
+    this.beginOfImports = endOfToken(parser.t);
   }
 
   void markEndOfSuperCall() {
     assert curClass != null && curMeth != null && curBlock.blockType == BlockType.CONSTRUCTOR;
-    curBlock.incInsertPosition = parser.t.charPos + parser.t.val.length();
+    curBlock.incInsertPosition = endOfToken(parser.t);
   }
 
-  void registerThrow() {
-    curBlock.startsWithThrow = true;
+  void registerJumpStatement() {
+    // TODO: check for existing and do not downgrade
+    JumpStatement jumpStatement = switch (parser.t.val) {
+      case "break" -> JumpStatement.BREAK;
+      case "continue" -> JumpStatement.CONTINUE;
+      case "return" -> JumpStatement.RETURN;
+      case "yield" -> JumpStatement.YIELD;
+      case "throw" -> JumpStatement.THROW;
+      default -> throw new RuntimeException("unknown jump statement '" + parser.t.val + "'");
+    };
+    curBlock.jumpStatement = jumpStatement;
+    logger.log("> found jump statement: %s", jumpStatement.name());
+    registerJumpInOuterBlocks(jumpStatement);
+  }
+
+  private void registerJumpInOuterBlocks(JumpStatement jumpStatement) {
+    for (int i = blockStack.size() - 1; i >= 0; i--) {
+      Block block = blockStack.get(i);
+      block.registerInnerJumpBlock(curBlock);
+      if (block.blockType.isLoop() && jumpStatement.propagateUntilLoop()) {
+        break;
+      }
+      if (block.blockType == BlockType.METHOD && jumpStatement.propagateUntilMethod()) {
+        break;
+      }
+    }
   }
 
 
@@ -98,51 +124,59 @@ public class ParserState {
     curMeth = null;
   }
 
-  void enterBlock(boolean isMethod) {  // no missing braces
-    enterBlock(getBlockTypeByContext(isMethod));
+  void enterBlock(boolean isMethod, boolean isLoop) {  // no missing braces
+    enterBlock(getBlockTypeByContext(isMethod, isLoop));
   }
 
   void enterBlock(BlockType blockType) {
     assert curClass != null;
     if (curBlock != null) {
+      CodePosition regionEndPos = blockType.hasNoBraces() ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
+      curBlock.endCodeRegion(regionEndPos);
       blockStack.push(curBlock);
     }
     curBlock = new Block(blockType);
     curBlock.setParentMethod(curMeth);
     curBlock.setParentClass(curClass);
     if (blockType.hasNoBraces()) {
-      curBlock.beg = parser.t.line;
-      curBlock.begPos = parser.t.charPos + parser.t.val.length();
+      curBlock.beg = tokenEndPosition(parser.t);
+      curBlock.startCodeRegion(tokenStartPosition(parser.la));
     } else { // la == '{'
-      curBlock.beg = parser.la.line;
-      curBlock.begPos = parser.la.charPos;
-      curBlock.incInsertPosition = parser.la.charPos + parser.la.val.length();
+      curBlock.beg = tokenStartPosition(parser.la);
+      curBlock.incInsertPosition = endOfToken(parser.la);
+      curBlock.startCodeRegion(tokenStartPosition(parser.scanner.Peek()));
     }
     allBlocks.add(curBlock);
     logger.enter(curBlock);
   }
 
   void leaveBlock(boolean isMethod) {
-    curBlock.end = parser.t.line;
-    curBlock.endPos = parser.t.charPos + parser.t.val.length();
+    boolean noClosingBrace = curBlock.blockType.hasNoBraces();
+    curBlock.end = tokenEndPosition(noClosingBrace ? parser.t : parser.la);
+    curBlock.endCodeRegion(tokenEndPosition(parser.t));
     logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
+      curBlock.reenterBlock(tokenStartPosition(noClosingBrace ? parser.la : parser.scanner.Peek()));
     }
     if (isMethod) {
       leaveMethod();
     }
   }
 
-  void checkSingleStatement(boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
+  void checkSingleStatement(boolean isLoop, boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
     if (parser.t.val.equals("else") && parser.la.val.equals("if")) {
       logger.log("else if found. no block.");
       return;
     }
     if (!parser.la.val.equals("{")) {
-      enterBlock(getBlockTypeByContext(true, isAssignment, isSwitch, isArrowExpr));
+      if (isLoop) {
+        enterBlock(BlockType.SS_LOOP);
+      } else {
+        enterBlock(getBlockTypeByContext(true, isAssignment, isSwitch, isArrowExpr));
+      }
     }
   }
 
@@ -152,13 +186,16 @@ public class ParserState {
     }
   }
 
-  BlockType getBlockTypeByContext(boolean isMethod) {
+  BlockType getBlockTypeByContext(boolean isMethod, boolean isLoop) {
     if (isMethod) {
       if (curMeth.name.equals(curClass.name)) { // TODO: not entirely correct, also must not have return type
         return BlockType.CONSTRUCTOR;
       } else {
         return BlockType.METHOD;
       }
+    }
+    if (isLoop) {
+      return BlockType.LOOP;
     }
     return getBlockTypeByContext(false, false, false, false);
   }
@@ -251,7 +288,12 @@ public class ParserState {
       if (comp instanceof JClass clazz) return "class <" + clazz.getFullName() + ">";
       if (comp instanceof Method meth) return meth + "()";
       if (comp instanceof Block block)
-        return String.format("%s [%d]", block.blockType, leave ? block.endPos : block.begPos);
+        return String.format(
+            "%s [%d]%s",
+            block.blockType,
+            leave ? block.end.pos() : block.beg.pos(),
+            block.jumpStatement != null ? " (" + block.jumpStatement.name() + ")" : ""
+        );
       throw new RuntimeException("unknown component type: " + comp.getClass());
     }
   }
