@@ -15,6 +15,14 @@ public enum JumpStatement {
     };
   }
 
+  public boolean abortPropagation(BlockType blockType) {
+    return switch (this) {
+      case RETURN -> blockType == LAMBDA;
+      case YIELD -> blockType == SWITCH_CASE;
+      default -> false;
+    };
+  }
+
   public static JumpStatement fromToken(String tokenValue) {
     return switch (tokenValue) {
       case "break" -> JumpStatement.BREAK;
