@@ -101,6 +101,10 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(0, "<span>"));
     for (Block block : javaFile.foundBlocks) {
+      if (sourceCode.charAt(block.beg.pos()) != lf) { // optimization to not add 0-length region spans
+        inserts.add(new CodeInsert(block.beg.pos(), "</span>"));
+        inserts.add(new CodeInsert(block.beg.pos(), codeSpanAt(block.beg.pos())));
+      }
       for (CodeRegion region : block.codeRegions) {
         if (sourceCode.charAt(region.beg.pos()) != lf) { // optimization to not add 0-length region spans
           inserts.add(new CodeInsert(region.beg.pos(), "</span>"));
