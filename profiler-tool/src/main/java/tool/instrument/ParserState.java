@@ -44,15 +44,7 @@ public class ParserState {
   }
 
   void registerJumpStatement() {
-    // TODO: check for existing and do not downgrade
-    JumpStatement jumpStatement = switch (parser.t.val) {
-      case "break" -> JumpStatement.BREAK;
-      case "continue" -> JumpStatement.CONTINUE;
-      case "return" -> JumpStatement.RETURN;
-      case "yield" -> JumpStatement.YIELD;
-      case "throw" -> JumpStatement.THROW;
-      default -> throw new RuntimeException("unknown jump statement '" + parser.t.val + "'");
-    };
+    JumpStatement jumpStatement = JumpStatement.fromToken(parser.t.val);
     curBlock.jumpStatement = jumpStatement;
     logger.log("> found jump statement: %s", jumpStatement.name());
     registerJumpInOuterBlocks(jumpStatement);

@@ -14,4 +14,15 @@ public enum JumpStatement {
       case THROW -> blockType == METHOD; // TODO: new block type TRY
     };
   }
+
+  public static JumpStatement fromToken(String tokenValue) {
+    return switch (tokenValue) {
+      case "break" -> JumpStatement.BREAK;
+      case "continue" -> JumpStatement.CONTINUE;
+      case "return" -> JumpStatement.RETURN;
+      case "yield" -> JumpStatement.YIELD;
+      case "throw" -> JumpStatement.THROW;
+      default -> throw new RuntimeException("unknown jump statement '" + tokenValue + "'");
+    };
+  }
 }
