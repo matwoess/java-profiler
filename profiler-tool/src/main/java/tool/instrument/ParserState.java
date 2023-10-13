@@ -62,13 +62,7 @@ public class ParserState {
     for (int i = blockStack.size() - 1; i >= 0; i--) {
       Block block = blockStack.get(i);
       block.registerInnerJumpBlock(curBlock);
-      if (block.blockType.isLoop() && jumpStatement.propagateUntilLoop()) {
-        break;
-      }
-      if (block.blockType == BlockType.METHOD && jumpStatement.propagateUntilMethod()) {
-        break;
-      }
-      if (block.blockType == BlockType.SWITCH_CASE && jumpStatement == JumpStatement.BREAK) {
+      if (jumpStatement.stopPropagationAt(block.blockType)) {
         break;
       }
     }
