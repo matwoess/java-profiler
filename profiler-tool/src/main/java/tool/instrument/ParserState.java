@@ -121,8 +121,8 @@ public class ParserState {
     curMeth = null;
   }
 
-  void enterBlock(boolean isMethod, boolean isLoop) {  // no missing braces
-    enterBlock(getBlockTypeByContext(isMethod, isLoop));
+  void enterBlock(boolean isMethod, boolean isLoop, boolean inSwitch) {  // no missing braces
+    enterBlock(getBlockTypeByContext(isMethod, isLoop, inSwitch));
   }
 
   void enterBlock(BlockType blockType) {
@@ -183,7 +183,7 @@ public class ParserState {
     }
   }
 
-  BlockType getBlockTypeByContext(boolean isMethod, boolean isLoop) {
+  BlockType getBlockTypeByContext(boolean isMethod, boolean isLoop, boolean inSwitch) {
     if (isMethod) {
       if (curMeth.name.equals(curClass.name)) { // TODO: not entirely correct, also must not have return type
         return BlockType.CONSTRUCTOR;
@@ -194,7 +194,7 @@ public class ParserState {
     if (isLoop) {
       return BlockType.LOOP;
     }
-    return getBlockTypeByContext(false, false, false, false);
+    return getBlockTypeByContext(false, false, inSwitch, false);
   }
 
   BlockType getBlockTypeByContext(boolean missingBraces, boolean inAssignment, boolean inSwitch, boolean inArrowExpr) {
@@ -202,6 +202,13 @@ public class ParserState {
       return BlockType.STATIC;
     }
     if (!missingBraces) {
+      if (parser.t.val.equals("->") && parser.la.val.equals("{")) {
+        if (inSwitch) {
+          return BlockType.SWITCH_CASE;
+        } else {
+          return BlockType.LAMBDA;
+        }
+      }
       return BlockType.BLOCK;
     }
     if (inArrowExpr && inSwitch && inAssignment) {

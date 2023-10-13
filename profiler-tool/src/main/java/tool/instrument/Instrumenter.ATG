@@ -102,12 +102,12 @@ ClassBody =
     }
     "}"
 .
-StaticBlock = "static" Block<false, false>.
+StaticBlock = "static" Block<false, false, false>.
 MethodDecl =
     ident                   (. state.enterMethod(); .)
     {ANY}
     (   ";"                 (. state.leaveMethod(); .)
-        | Block<true, false>
+        | Block<true, false, false>
     )
 .
 Statement =
@@ -116,7 +116,7 @@ Statement =
     | "while" ParExpr BlockOrSingleStatement<true>
     | "do" BlockOrSingleStatement<true> "while" ParExpr ";"
     | "for" ParExpr BlockOrSingleStatement<true>
-    | "try" [ParExpr] Block<false, false> {"catch" ParExpr Block<false, false>} ["finally" Block<false, false>]
+    | "try" [ParExpr] Block<false, false, false> {"catch" ParExpr Block<false, false, false>} ["finally" Block<false, false, false>]
     | ("break" | "continue") (. state.registerJumpStatement(); .) {ANY} ";"
     | ("return" | "yield") (. state.registerJumpStatement(); .) (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
     | "throw" (. state.registerJumpStatement(); .) {ANY} ";"
@@ -125,11 +125,11 @@ Statement =
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
     | IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
     | ("++" | "--") ["("] ident [")"] ";"
-    | "synchronized" ParExpr Block<false, false>
+    | "synchronized" ParExpr Block<false, false, false>
     | IF(state.classDefWithNoLeadingDot()) Class<true>
     | Enum<true>
     | GenericStatement
-    | Block<false, false>
+    | Block<false, false, false>
     | ";"
 .
 GenericStatement =
@@ -143,7 +143,7 @@ GenericStatement =
     ";"
 .
 BlockOrSingleStatement<boolean isLoop> =
-    Block<false, isLoop>
+    Block<false, isLoop, false>
     | (. state.checkSingleStatement(isLoop, false, false, false); .) Statement (. state.leaveSingleStatement(); .)
 .
 SwitchStatement =                       (. boolean inAssignment = state.isAssignment(); .)
@@ -162,7 +162,7 @@ BraceExpr = "{" {BraceExpr | ANY} "}".
 BracketExpr = "[" {ANY} "]".
 AngleBracketExpr = "<" {AngleBracketExpr | ANY} ">".
 ArrowExpression<boolean inSwitch, boolean inAssignment> =
-    "->" (Block<false, false> | SSArrowBody<inSwitch, inAssignment>)
+    "->" (Block<false, false, inSwitch> | SSArrowBody<inSwitch, inAssignment>)
 .
 SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. state.checkSingleStatement(false, inAssignment, inSwitch, true); .)
     (   string | char
@@ -181,7 +181,7 @@ ClassExtension =
     "{"                                     (. state.enterClass(true, false); .)
     ClassBody                               (. state.leaveClass();.)
 .
-Block<boolean isMethod, boolean isLoop> =   (. state.enterBlock(isMethod, isLoop); .)
+Block<boolean isMethod, boolean isLoop, boolean inSwitch> = (. state.enterBlock(isMethod, isLoop, inSwitch); .)
     "{" {Statement}                         (. state.leaveBlock(isMethod); .)
     "}"
 .
