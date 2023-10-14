@@ -153,8 +153,8 @@ SwitchStatement =                       (. boolean inAssignment = state.isAssign
 SwitchCase<boolean inAssignment> =
     ("case" | "default") {ANY}
     (   ArrowExpression<true, inAssignment>
-        | ":" {"case" {ANY} ":"}        (. state.checkSingleStatement(false, false, true, false); .)
-          {Statement}                   (. state.leaveSingleStatement(); .)
+        | ":" {"case" {ANY} ":"}        (. state.enterBlock(BlockType.SWITCH_CASE); .)
+          {Statement}                   (. state.leaveBlock(false); .)
     )
 .
 ParExpr = "(" {ParExpr | ANY} ")".
