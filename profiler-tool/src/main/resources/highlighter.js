@@ -4,10 +4,12 @@ const notCoveredBlockColor = `rgba(255, 182, 193, 0.2)`;
 const notCoveredRegionColor = `rgba(255, 162, 173, 0.4)`;
 const hoverBlockColor = `rgba(245, 222, 179, 0.5)`;
 const hoverRegionColor = `rgba(245, 222, 130, 1)`;
+const minusBlockColor = `rgba(105, 202, 254, 0.2)`;
 const isCovered = 'c';
 const isNotCovered = 'nc';
 const blockPrefix = 'b';
 const regionPrefix = 'r';
+const minusPrefix = 'm';
 
 function setCoverageBackground(span) {
   let backgroundColor = null;
@@ -54,10 +56,15 @@ function highlightSelection() {
       setColor($('span.' + preLastClass), hoverBlockColor);
     }
     setColor($('span.' + lastClass), hoverRegionColor);
-  }
-  else if (lastClass.startsWith(blockPrefix)) {
+  } else if (lastClass.startsWith(blockPrefix)) {
     setColor($('span.' + lastClass), hoverBlockColor);
   }
+  classList.forEach(function (cls) {
+    if (cls.startsWith(minusPrefix)) {
+      const blockClass = cls.replace('m', 'b');
+      setColor($('span.' + blockClass), minusBlockColor);
+    }
+  })
 }
 
 resetColors();

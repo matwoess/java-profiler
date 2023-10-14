@@ -27,6 +27,7 @@ public class ParserState {
   JClass curClass = null;
   Method curMeth = null;
   Block curBlock = null;
+  int curBlockId = 0;
 
   public ParserState(Parser p) {
     parser = p;
@@ -128,6 +129,7 @@ public class ParserState {
       blockStack.push(curBlock);
     }
     curBlock = new Block(blockType);
+    curBlock.id = curBlockId++;
     curBlock.setParentMethod(curMeth);
     curBlock.setParentClass(curClass);
     if (blockType.hasNoBraces()) {

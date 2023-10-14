@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Block implements Serializable, Component {
+  public int id;
   public JClass clazz;
   public Method method;
   public CodePosition beg;

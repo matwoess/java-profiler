@@ -146,48 +146,46 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     return builder.toString();
   }
 
-  private String codeSpan(List<Integer> activeBlocks, Block block, int region) {
+  private String codeSpan(List<Block> activeBlocks, Block block, CodeRegion region) {
     String description = block.toString();
     String regionDescr = "";
-    CodeRegion activeRegion = null;
-    if (region != -1) {
-      activeRegion = block.codeRegions.get(region);
-      regionDescr = activeRegion.toString();
+    String minusBlocks = null;
+    if (region != null) {
+      regionDescr = region.toString();
+      minusBlocks = region.minusBlocks.stream().map(b -> "m" + b.id).collect(Collectors.joining(" "));
     }
-    int hits = (activeRegion != null) ? activeRegion.getHitCount() : block.hits;
+    int hits = (region != null) ? region.getHitCount() : block.hits;
     String coverageClass = hits > 0 ? "c" : "nc";
     String coverageStatus = hits > 0 ? "covered" : "not covered";
     // &#10; == <br/> == newLine
     String title = String.format("%s&#10;%s&#10;Hits: %d (%s)", description, regionDescr, hits, coverageStatus);
     //title = String.valueOf(hits);
-    String classes = activeBlocks.stream().map(i -> "b" + i).collect(Collectors.joining(" "));
-    if (activeRegion != null) {
-      classes += " r" + activeBlocks.get(activeBlocks.size() - 1) + "_" + region;
+    String classes = activeBlocks.stream().map(b -> "b" + b.id).collect(Collectors.joining(" "));
+    if (region != null) {
+      classes += " r" + activeBlocks.get(activeBlocks.size() - 1).id + "_" + block.codeRegions.indexOf(region);
+      if (!minusBlocks.isBlank()) {
+        classes = minusBlocks + " " + classes;
+      }
     }
     return String.format("<span class=\"%s %s\" title=\"%s\">", coverageClass, classes, title);
   }
 
   private String codeSpanAt(int chPos) {
-    List<Integer> activeBlocks = new ArrayList<>();
-    for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
-      Block b = javaFile.foundBlocks.get(i);
-      if (b.beg.pos() <= chPos && chPos < b.end.pos()) {
-        activeBlocks.add(i);
-      }
-    }
+    List<Block> activeBlocks = javaFile.foundBlocks.stream()
+        .filter(b -> b.beg.pos() <= chPos && chPos < b.end.pos())
+        .collect(Collectors.toList());
     if (activeBlocks.isEmpty()) {
       return "<span>";
-    } else {
-      Block lastBlock = javaFile.foundBlocks.get(activeBlocks.get(activeBlocks.size() - 1));
-      int region = -1;
-      for (int i = 0; i < lastBlock.codeRegions.size(); i++) {
-        CodeRegion r = lastBlock.codeRegions.get(i);
-        if (r.beg.pos() <= chPos && chPos < r.end.pos()) {
-          region = i;
-        }
-      }
-      return codeSpan(activeBlocks, lastBlock, region);
     }
+    Block lastBlock = activeBlocks.get(activeBlocks.size() - 1);
+    CodeRegion region = null;
+    for (CodeRegion r : lastBlock.codeRegions) {
+      if (r.beg.pos() <= chPos && chPos < r.end.pos()) {
+        region = r;
+      }
+    }
+    return codeSpan(activeBlocks, lastBlock, region);
+
   }
 
   @Override
