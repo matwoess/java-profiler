@@ -1,13 +1,12 @@
 package tool.instrument;
 
-import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
+import tool.model.JavaFile;
 
 import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.BLOCK;
-import static tool.model.BlockType.SS_BLOCK;
 import static tool.model.ClassType.ANONYMOUS;
 import static tool.model.ClassType.LOCAL;
 import static tool.model.JumpStatement.RETURN;
@@ -68,7 +67,7 @@ public class LocalClassesTest {
             ),
             jMethod("main", 2, 20, 62, 463,
                 jBlock(BLOCK, 3, 17, 90, 440),
-                jBlock(SS_BLOCK, 18, 18, 450, 458).withJump(RETURN)
+                jSsBlock(BLOCK, 18, 18, 450, 458).withJump(RETURN)
             )
         )
     );

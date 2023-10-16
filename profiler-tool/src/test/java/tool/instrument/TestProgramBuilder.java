@@ -91,12 +91,18 @@ public class TestProgramBuilder {
     return jMethod(name, Util.prependToArray(blocks, constructorBlock));
   }
 
+  public static BuilderBlock jSsBlock(BlockType type, int beg, int end, int begPos, int endPos) {
+    BuilderBlock bb = jBlock(type, beg, end, begPos, endPos);
+    bb.element.isSingleStatement = true;
+    bb.element.beg = new CodePosition(beg, begPos);
+    bb.element.incInsertPosition = 0;
+    return bb;
+  }
+
   public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block(type);
-    b.beg = new CodePosition(beg, b.blockType.hasNoBraces() ? begPos : begPos - 1);
-    if (!b.blockType.hasNoBraces()) {
-      b.incInsertPosition = begPos;
-    }
+    b.beg = new CodePosition(beg, begPos - 1);
+    b.incInsertPosition = begPos;
     b.end = new CodePosition(end, endPos);
     return new BuilderBlock(b);
   }
@@ -180,7 +186,7 @@ public class TestProgramBuilder {
   // TODO: also generate withJump calls
   public static void getBuilderCode(Block block, StringBuilder builder) {
     builder.append(",\n jBlock(");
-    int begPos = block.blockType.hasNoBraces() ? block.beg.pos() : block.beg.pos() + 1;
+    int begPos = block.isSingleStatement ? block.beg.pos() : block.beg.pos() + 1;
     builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg.line(), block.end.line(), begPos, block.end.pos()));
     if (block.incInsertPosition != 0 && block.incInsertPosition != begPos) {
       builder.append(", ").append(block.incInsertPosition - begPos);

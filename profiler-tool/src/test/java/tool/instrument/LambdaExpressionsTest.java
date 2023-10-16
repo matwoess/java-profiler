@@ -20,7 +20,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 62, 131,
-                jBlock(BLOCK, 3, 5, 96, 124)
+                jBlock(LAMBDA, 3, 5, 96, 124)
             )
         )
     );
@@ -37,7 +37,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 62, 197,
-                jBlock(BLOCK, 3, 3, 115, 131).withJump(RETURN)
+                jBlock(LAMBDA, 3, 3, 115, 131).withJump(RETURN)
             )
         )
     );
@@ -55,7 +55,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 62, 164,
-                jBlock(BLOCK, 3, 5, 102, 122).withJump(RETURN)
+                jBlock(LAMBDA, 3, 5, 102, 122).withJump(RETURN)
             )
         )
     );
@@ -72,7 +72,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 62, 191,
-                jBlock(SS_LAMBDA, 3, 3, 111, 121)
+                jSsBlock(LAMBDA, 3, 3, 111, 121)
             )
         )
     );
@@ -89,7 +89,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 62, 209,
-                jBlock(SS_LAMBDA, 3, 3, 122, 130)
+                jSsBlock(LAMBDA, 3, 3, 122, 130)
             )
         )
     );
@@ -108,8 +108,8 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 9, 62, 336,
-                jBlock(SS_LAMBDA, 4, 4, 145, 189),
-                jBlock(SS_LAMBDA, 5, 5, 237, 252)
+                jSsBlock(LAMBDA, 4, 4, 145, 189),
+                jSsBlock(LAMBDA, 5, 5, 237, 252)
             )
         )
     );
@@ -130,11 +130,11 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 11, 62, 345,
-                jBlock(SS_LAMBDA, 5, 5, 144, 148),
-                jBlock(SS_LAMBDA, 6, 6, 164, 192),
-                jBlock(SS_LAMBDA, 7, 7, 210, 218),
-                jBlock(SS_LAMBDA, 8, 8, 243, 257),
-                jBlock(SS_LAMBDA, 9, 9, 291, 338)
+                jSsBlock(LAMBDA, 5, 5, 144, 148),
+                jSsBlock(LAMBDA, 6, 6, 164, 192),
+                jSsBlock(LAMBDA, 7, 7, 210, 218),
+                jSsBlock(LAMBDA, 8, 8, 243, 257),
+                jSsBlock(LAMBDA, 9, 9, 291, 338)
             )
         )
     );
@@ -162,9 +162,9 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("LambdaMembers",
-            jBlock(BLOCK, 2, 4, 68, 106),
-            jBlock(BLOCK, 5, 7, 163, 187).withJump(RETURN),
-            jBlock(BLOCK, 8, 10, 237, 268),
+            jBlock(LAMBDA, 2, 4, 68, 106),
+            jBlock(LAMBDA, 5, 7, 163, 187).withJump(RETURN),
+            jBlock(LAMBDA, 8, 10, 237, 268),
             jMethod("main", 11, 14, 312, 400)
         )
     );
@@ -190,12 +190,12 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("LambdaMembers",
-            jBlock(SS_LAMBDA, 2, 2, 58, 87),
-            jBlock(SS_LAMBDA, 3, 3, 142, 150),
-            jBlock(SS_LAMBDA, 4, 5, 198, 224),
-            jBlock(SS_LAMBDA, 6, 6, 275, 281),
-            jBlock(SS_LAMBDA, 7, 7, 344, 350),
-            jBlock(SS_LAMBDA, 7, 7, 363, 370),
+            jSsBlock(LAMBDA, 2, 2, 58, 87),
+            jSsBlock(LAMBDA, 3, 3, 142, 150),
+            jSsBlock(LAMBDA, 4, 5, 198, 224),
+            jSsBlock(LAMBDA, 6, 6, 275, 281),
+            jSsBlock(LAMBDA, 7, 7, 344, 350),
+            jSsBlock(LAMBDA, 7, 7, 363, 370),
             jMethod("main", 9, 12, 426, 527)
         )
     );
@@ -213,7 +213,7 @@ public class LambdaExpressionsTest {
     System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("A",
-            jBlock(SS_LAMBDA, 2, 3, 73, 143)
+            jSsBlock(LAMBDA, 2, 3, 73, 143)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

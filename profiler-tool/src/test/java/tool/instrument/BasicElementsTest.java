@@ -346,7 +346,7 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 62, 183,
-                jBlock(SS_LAMBDA, 5, 5, 128, 135)
+                jSsBlock(LAMBDA, 5, 5, 128, 135)
             )
         )
     );
