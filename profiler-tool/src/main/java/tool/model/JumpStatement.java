@@ -7,8 +7,8 @@ public enum JumpStatement {
 
   public boolean stopPropagationAt(BlockType blockType) {
     return switch (this) {
-      case BREAK -> blockType.isLoop() || blockType == SWITCH_CASE;
-      case CONTINUE -> blockType.isLoop();
+      case BREAK -> blockType == LOOP || blockType == SWITCH_CASE;
+      case CONTINUE -> blockType == LOOP;
       case YIELD -> blockType == SWITCH_CASE;
       case RETURN -> blockType == METHOD || blockType == LAMBDA;
       case THROW -> blockType == METHOD; // TODO: new block type TRY

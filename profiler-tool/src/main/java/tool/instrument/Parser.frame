@@ -29,6 +29,7 @@ Coco/R itself) does not fall under the GNU General Public License.
 
 import java.util.ArrayList;
 import tool.model.BlockType;
+import static tool.model.BlockType.*;
 
 public class Parser {
 -->constants

@@ -12,6 +12,7 @@ public class Block implements Serializable, Component {
   public CodePosition beg;
   public CodePosition end;
   public BlockType blockType;
+  public boolean isSingleStatement;
   public JumpStatement jumpStatement = null;
   public List<CodeRegion> codeRegions = new ArrayList<>();
 
@@ -66,7 +67,7 @@ public class Block implements Serializable, Component {
   }
 
   public String toString() {
-    return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s)%s%s",
+    return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s%s)%s%s",
         clazz.name,
         method != null ? ("." + method.name) : "",
         beg.line(),
@@ -75,6 +76,7 @@ public class Block implements Serializable, Component {
         end != null ? end.line() : "?",
         end != null ? end.pos() : "?",
         blockType.toString(),
+        isSingleStatement ? ", SS" : "",
         method == null ? " [class-level]" : "",
         jumpStatement != null ? " [" + jumpStatement.name() + "]" : ""
     );

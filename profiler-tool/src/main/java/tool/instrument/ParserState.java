@@ -117,14 +117,19 @@ public class ParserState {
     curMeth = null;
   }
 
-  void enterBlock(boolean isMethod, boolean isLoop, boolean inSwitch) {  // no missing braces
-    enterBlock(getBlockTypeByContext(isMethod, isLoop, inSwitch));
+  void enterBlock(BlockType blockType) {
+    if (blockType == BlockType.METHOD) {
+      if (curMeth.name.equals(curClass.name)) { // TODO: not entirely correct, also must not have return type
+        blockType = BlockType.CONSTRUCTOR;
+      }
+    }
+    enterBlock(blockType, false);
   }
 
-  void enterBlock(BlockType blockType) {
+  void enterBlock(BlockType blockType, boolean isSingleStatement) {
     assert curClass != null;
     if (curBlock != null) {
-      CodePosition regionEndPos = blockType.hasNoBraces() ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
+      CodePosition regionEndPos = curBlock.isSingleStatement ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
       curBlock.endCodeRegion(regionEndPos);
       blockStack.push(curBlock);
     }
@@ -132,7 +137,8 @@ public class ParserState {
     curBlock.id = curBlockId++;
     curBlock.setParentMethod(curMeth);
     curBlock.setParentClass(curClass);
-    if (blockType.hasNoBraces()) {
+    curBlock.isSingleStatement = isSingleStatement;
+    if (isSingleStatement || blockType == BlockType.SWITCH_CASE) {
       curBlock.beg = tokenEndPosition(parser.t);
       curBlock.startCodeRegion(tokenStartPosition(parser.la));
     } else { // la == '{'
@@ -144,8 +150,8 @@ public class ParserState {
     logger.enter(curBlock);
   }
 
-  void leaveBlock(boolean isMethod) {
-    boolean noClosingBrace = curBlock.blockType.hasNoBraces();
+  void leaveBlock(BlockType blockType) {
+    boolean noClosingBrace = curBlock.isSingleStatement || blockType == BlockType.SWITCH_CASE;
     curBlock.end = tokenEndPosition(noClosingBrace ? parser.t : parser.la);
     curBlock.endCodeRegion(tokenEndPosition(parser.t));
     logger.leave(curBlock);
@@ -155,67 +161,34 @@ public class ParserState {
       curBlock = blockStack.pop();
       curBlock.reenterBlock(tokenStartPosition(noClosingBrace ? parser.la : parser.scanner.Peek()));
     }
-    if (isMethod) {
+    if (blockType == BlockType.METHOD) {
       leaveMethod();
     }
   }
 
-  void checkSingleStatement(boolean isLoop, boolean isAssignment, boolean isSwitch, boolean isArrowExpr) {
+  void enterSingleStatementBlock(BlockType blockType) {
     if (parser.t.val.equals("else") && parser.la.val.equals("if")) {
       logger.log("else if found. no block.");
       return;
     }
     if (!parser.la.val.equals("{")) {
-      if (isLoop) {
-        enterBlock(BlockType.SS_LOOP);
-      } else {
-        enterBlock(getBlockTypeByContext(true, isAssignment, isSwitch, isArrowExpr));
-      }
+      enterBlock(blockType, true);
     }
   }
 
-  void leaveSingleStatement() {
-    if (curBlock.blockType.hasNoBraces()) {
-      leaveBlock(false);
+  BlockType enterSSArrowBlock(boolean isSwitch, boolean isAssignment) {
+    BlockType blockType = BlockType.LAMBDA;
+    if (isSwitch) {
+      blockType = (isAssignment) ? BlockType.SWITCH_EXPR_ARROW_CASE : BlockType.SWITCH_CASE;
     }
+    enterBlock(blockType, true);
+    return blockType;
   }
 
-  BlockType getBlockTypeByContext(boolean isMethod, boolean isLoop, boolean inSwitch) {
-    if (isMethod) {
-      if (curMeth.name.equals(curClass.name)) { // TODO: not entirely correct, also must not have return type
-        return BlockType.CONSTRUCTOR;
-      } else {
-        return BlockType.METHOD;
-      }
+  void leaveSingleStatement(BlockType blockType) {
+    if (curBlock.isSingleStatement) {
+      leaveBlock(blockType);
     }
-    if (isLoop) {
-      return BlockType.LOOP;
-    }
-    return getBlockTypeByContext(false, false, inSwitch, false);
-  }
-
-  BlockType getBlockTypeByContext(boolean missingBraces, boolean inAssignment, boolean inSwitch, boolean inArrowExpr) {
-    if (curMeth == null && parser.t.val.equals("static") && parser.la.val.equals("{")) {
-      return BlockType.STATIC;
-    }
-    if (!missingBraces) {
-      if (parser.t.val.equals("->") && parser.la.val.equals("{")) {
-        if (inSwitch) {
-          return BlockType.SWITCH_CASE;
-        } else {
-          return BlockType.LAMBDA;
-        }
-      }
-      return BlockType.BLOCK;
-    }
-    if (inArrowExpr && inSwitch && inAssignment) {
-      return BlockType.SS_SWITCH_EXPR_ARROW_CASE;
-    } else if (inArrowExpr && !inSwitch) {
-      return BlockType.SS_LAMBDA;
-    } else if (!inArrowExpr && inSwitch) {
-      return BlockType.SWITCH_CASE;
-    }
-    return BlockType.SS_BLOCK;
   }
 
   boolean identAndLPar() {
@@ -290,8 +263,9 @@ public class ParserState {
       if (comp instanceof Method meth) return meth + "()";
       if (comp instanceof Block block)
         return String.format(
-            "%s [%d]%s",
+            "%s%s [%d]%s",
             block.blockType,
+            block.isSingleStatement ? ", SS" : "",
             leave ? block.end.pos() : block.beg.pos(),
             block.jumpStatement != null ? " (" + block.jumpStatement.name() + ")" : ""
         );
