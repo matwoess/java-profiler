@@ -153,8 +153,8 @@ SwitchStatement =                       (. boolean inAssignment = state.isAssign
 SwitchCase<boolean inAssignment> =
     ("case" | "default") {ANY}
     (   ArrowExpression<true, inAssignment>
-        | ":" {"case" {ANY} ":"}        (. state.enterBlock(BlockType.SWITCH_CASE); .)
-          {Statement}                   (. state.leaveBlock(BlockType.SWITCH_CASE); .)
+        | ":" {"case" {ANY} ":"}        (. state.enterBlock(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
+          {Statement}                   (. state.leaveBlock(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
     )
 .
 ParExpr = "(" {ParExpr | ANY} ")".
@@ -162,7 +162,7 @@ BraceExpr = "{" {BraceExpr | ANY} "}".
 BracketExpr = "[" {ANY} "]".
 AngleBracketExpr = "<" {AngleBracketExpr | ANY} ">".
 ArrowExpression<boolean inSwitch, boolean inAssignment> =
-    "->" (Block<inSwitch ? SWITCH_CASE: LAMBDA> | SSArrowBody<inSwitch, inAssignment>)
+    "->" (Block<inSwitch ? inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE : LAMBDA> | SSArrowBody<inSwitch, inAssignment>)
 .
 SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. BlockType blockType = state.enterSSArrowBlock(inSwitch, inAssignment); .)
     (   string | char
