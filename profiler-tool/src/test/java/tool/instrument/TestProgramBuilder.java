@@ -92,23 +92,21 @@ public class TestProgramBuilder {
   }
 
   public static BuilderBlock jSsBlock(BlockType type, int beg, int end, int begPos, int endPos) {
-    BuilderBlock bb = jBlock(type, beg, end, begPos, endPos);
-    bb.element.isSingleStatement = true;
-    bb.element.beg = new CodePosition(beg, begPos);
-    bb.element.incInsertPosition = 0;
-    return bb;
+    Block b = new Block(type);
+    b.isSingleStatement = true;
+    b.beg = new CodePosition(beg, begPos);
+    b.end = new CodePosition(end, endPos);
+    return new BuilderBlock(b);
   }
 
   public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block(type);
     if (type == BlockType.SWITCH_CASE || type == BlockType.SWITCH_EXPR_CASE) {
       b.beg = new CodePosition(beg, begPos);
-      if (type == BlockType.SWITCH_EXPR_CASE) {
-        b.incInsertPosition = begPos + 1;
-      }
+      b.incInsertPosition = begPos + 1;
     } else {
       b.beg = new CodePosition(beg, begPos - 1);
-      b.incInsertPosition = begPos;
+      b.incInsertPosition = begPos; // length of '{'
     }
     b.end = new CodePosition(end, endPos);
     return new BuilderBlock(b);
