@@ -1,5 +1,6 @@
 package tool.instrument;
 
+import tool.model.BlockType;
 import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
 import tool.model.JumpStatement;
@@ -104,7 +105,7 @@ public class SwitchesTest {
             jMethod("main", 2, 17, 62, 384,
                 jBlock(SWITCH_CASE, 5, 9, 127, 225),
                 jBlock(BLOCK, 6, 8, 174, 221),
-                jBlock(SWITCH_CASE, 10, 10, 249, 283),
+                jSsBlock(SWITCH_CASE, 10, 10, 249, 283),
                 jBlock(SWITCH_CASE, 11, 13, 298, 313).withJump(BREAK),
                 jSsBlock(BLOCK, 14, 14, 326, 377).withJump(THROW)
             )
@@ -176,11 +177,11 @@ public class SwitchesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 20, 62, 364,
-                jBlock(SWITCH_CASE, 5, 7, 137, 154).withJump(YIELD),
-                jBlock(SWITCH_EXPR_ARROW_CASE, 8, 8, 169, 172),
-                jBlock(SWITCH_CASE, 9, 16, 187, 316),
-                jBlock(SWITCH_CASE, 10, 13, 215, 283).withJump(YIELD),
-                jBlock(SWITCH_CASE, 13, 15, 290, 312).withJump(YIELD)
+                jBlock(SWITCH_EXPR_CASE, 5, 7, 137, 154).withJump(YIELD),
+                jSsBlock(SWITCH_EXPR_CASE, 8, 8, 169, 172),
+                jBlock(SWITCH_EXPR_CASE, 9, 16, 187, 316),
+                jBlock(BLOCK, 10, 13, 215, 283).withJump(YIELD),
+                jBlock(BLOCK, 13, 15, 290, 312).withJump(YIELD)
             )
         )
     );
@@ -206,9 +207,9 @@ public class SwitchesTest {
         """;
     JavaFile expected = jFile(
         jClass("ClassLevelSwitch",
-            jBlock(SWITCH_EXPR_ARROW_CASE, 3, 3, 105, 108),
-            jBlock(SWITCH_EXPR_ARROW_CASE, 4, 4, 125, 128),
-            jBlock(SWITCH_CASE, 5, 7, 145, 166).withJump(YIELD),
+            jSsBlock(SWITCH_EXPR_CASE, 3, 3, 105, 108),
+            jSsBlock(SWITCH_EXPR_CASE, 4, 4, 125, 128),
+            jBlock(SWITCH_EXPR_CASE, 5, 7, 145, 166).withJump(YIELD),
             jMethod("main", 10, 12, 215, 254)
         )
     );
@@ -240,9 +241,9 @@ public class SwitchesTest {
             jMethod("main", 2, 6, 62, 232),
             jClass("StatusCode",
                 jMethod("getStatusCodeDescription", 9, 17, 368, 591,
-                    jBlock(SWITCH_EXPR_ARROW_CASE, 11, 11, 411, 436),
-                    jBlock(SWITCH_EXPR_ARROW_CASE, 12, 12, 470, 487),
-                    jBlock(SWITCH_CASE, 13, 15, 516, 580).withJump(YIELD)
+                    jSsBlock(SWITCH_EXPR_CASE, 11, 11, 411, 436),
+                    jSsBlock(SWITCH_EXPR_CASE, 12, 12, 470, 487),
+                    jBlock(SWITCH_EXPR_CASE, 13, 15, 516, 580).withJump(YIELD)
                 ).withJump(RETURN)
             )
         )

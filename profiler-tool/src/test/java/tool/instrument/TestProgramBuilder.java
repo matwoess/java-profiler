@@ -101,8 +101,15 @@ public class TestProgramBuilder {
 
   public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block(type);
-    b.beg = new CodePosition(beg, begPos - 1);
-    b.incInsertPosition = begPos;
+    if (type == BlockType.SWITCH_CASE || type == BlockType.SWITCH_EXPR_CASE) {
+      b.beg = new CodePosition(beg, begPos);
+      if (type == BlockType.SWITCH_EXPR_CASE) {
+        b.incInsertPosition = begPos + 1;
+      }
+    } else {
+      b.beg = new CodePosition(beg, begPos - 1);
+      b.incInsertPosition = begPos;
+    }
     b.end = new CodePosition(end, endPos);
     return new BuilderBlock(b);
   }

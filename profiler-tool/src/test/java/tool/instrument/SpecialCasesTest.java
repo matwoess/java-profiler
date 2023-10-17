@@ -154,9 +154,9 @@ public class SpecialCasesTest {
             ),
             jClass(ANONYMOUS, null,
                 jMethod("compare", 56, 65, 1457, 1706,
-                    jSsBlock(SWITCH_EXPR_ARROW_CASE, 58, 58, 1523, 1526),
+                    jSsBlock(SWITCH_EXPR_CASE, 58, 58, 1523, 1526),
                     jBlock(BLOCK, 59, 61, 1557, 1607).withJump(YIELD),
-                    jSsBlock(SWITCH_EXPR_ARROW_CASE, 62, 62, 1636, 1645)
+                    jSsBlock(SWITCH_EXPR_CASE, 62, 62, 1636, 1645)
                 ).withJump(RETURN)
             ),
             jMethod("method", 23, 75, 398, 1921,
@@ -166,15 +166,15 @@ public class SpecialCasesTest {
                 jBlock(SWITCH_CASE, 30, 51, 587, 1246),
                 jBlock(BLOCK, 31, 51, 621, 1208).withJump(RETURN),
                 jBlock(BLOCK, 33, 35, 684, 729).withJump(YIELD),
-                jSsBlock(SWITCH_EXPR_ARROW_CASE, 36, 36, 755, 762),
-                jSsBlock(SWITCH_EXPR_ARROW_CASE, 37, 39, 788, 887),
+                jSsBlock(SWITCH_EXPR_CASE, 36, 36, 755, 762),
+                jSsBlock(SWITCH_EXPR_CASE, 37, 39, 788, 887),
                 // TODO: missing lambda blocks!
                 jBlock(BLOCK, 40, 43, 915, 1006),
                 jSsBlock(BLOCK, 41, 41, 946, 955).withJump(YIELD),
                 jSsBlock(BLOCK, 42, 42, 978, 988).withJump(YIELD),
                 jBlock(BLOCK, 44, 48, 1034, 1146).withJump(YIELD),
-                jSsBlock(SWITCH_EXPR_ARROW_CASE, 46, 46, 1103, 1107),
-                jSsBlock(SWITCH_EXPR_ARROW_CASE, 49, 49, 1173, 1177),
+                jSsBlock(SWITCH_EXPR_CASE, 46, 46, 1103, 1107),
+                jSsBlock(SWITCH_EXPR_CASE, 49, 49, 1173, 1177),
                 jSsBlock(LAMBDA, 51, 51, 1222, 1244),
                 jBlock(SWITCH_CASE, 52, 67, 1264, 1794),
                 jSsBlock(BLOCK, 67, 67, 1758, 1794),
