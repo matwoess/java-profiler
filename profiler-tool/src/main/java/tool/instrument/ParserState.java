@@ -138,14 +138,10 @@ public class ParserState {
     curBlock.setParentMethod(curMeth);
     curBlock.setParentClass(curClass);
     curBlock.isSingleStatement = isSingleStatement;
-    if (isSingleStatement || blockType == BlockType.SWITCH_CASE) {
-      curBlock.beg = tokenEndPosition(parser.t);
-      curBlock.startCodeRegion(tokenStartPosition(parser.la));
-    } else { // la == '{'
-      curBlock.beg = tokenStartPosition(parser.la);
-      curBlock.incInsertPosition = endOfToken(parser.la);
-      curBlock.startCodeRegion(tokenStartPosition(parser.scanner.Peek()));
-    }
+    curBlock.beg = Util.getBlockBegPos(parser, blockType, isSingleStatement);
+    curBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, isSingleStatement);
+    CodePosition regionStartPosition = Util.getRegionStartPos(parser, blockType, isSingleStatement);
+    curBlock.startCodeRegion(regionStartPosition);
     allBlocks.add(curBlock);
     logger.enter(curBlock);
   }
@@ -179,7 +175,7 @@ public class ParserState {
   BlockType enterSSArrowBlock(boolean isSwitch, boolean isAssignment) {
     BlockType blockType = BlockType.LAMBDA;
     if (isSwitch) {
-      blockType = (isAssignment) ? BlockType.SWITCH_EXPR_ARROW_CASE : BlockType.SWITCH_CASE;
+      blockType = (isAssignment) ? BlockType.SWITCH_EXPR_CASE : BlockType.SWITCH_CASE;
     }
     enterBlock(blockType, true);
     return blockType;
