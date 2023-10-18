@@ -126,10 +126,15 @@ public class ParserState {
     enterBlock(blockType, false);
   }
 
-  void enterBlock(BlockType blockType, boolean isSingleStatement) {
+  void enterSwitchColonCase(BlockType blockType) {
+    enterBlock(blockType, true);
+    curBlock.isSingleStatement = false;
+  }
+
+  void enterBlock(BlockType blockType, boolean missingBraces) {
     assert curClass != null;
     if (curBlock != null) {
-      CodePosition regionEndPos = curBlock.isSingleStatement ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
+      CodePosition regionEndPos = missingBraces ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
       curBlock.endCodeRegion(regionEndPos);
       blockStack.push(curBlock);
     }
@@ -137,10 +142,10 @@ public class ParserState {
     curBlock.id = curBlockId++;
     curBlock.setParentMethod(curMeth);
     curBlock.setParentClass(curClass);
-    curBlock.isSingleStatement = isSingleStatement;
-    curBlock.beg = Util.getBlockBegPos(parser, blockType, isSingleStatement);
-    curBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, isSingleStatement);
-    CodePosition regionStartPosition = Util.getRegionStartPos(parser, blockType, isSingleStatement);
+    curBlock.isSingleStatement = missingBraces;
+    curBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
+    curBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, missingBraces);
+    CodePosition regionStartPosition = Util.getRegionStartPos(parser, blockType, missingBraces);
     curBlock.startCodeRegion(regionStartPosition);
     allBlocks.add(curBlock);
     logger.enter(curBlock);

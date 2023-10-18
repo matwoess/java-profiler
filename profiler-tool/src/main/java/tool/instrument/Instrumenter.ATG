@@ -153,7 +153,7 @@ SwitchStatement =                       (. boolean inAssignment = state.isAssign
 SwitchCase<boolean inAssignment> =
     ("case" | "default") {ANY}
     (   ArrowExpression<true, inAssignment>
-        | ":" {"case" {ANY} ":"}        (. state.enterBlock(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
+        | ":" {"case" {ANY} ":"}        (. state.enterSwitchColonCase(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
           {Statement}                   (. state.leaveSwitchColonCase(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
     )
 .
