@@ -1,13 +1,12 @@
 package tool.instrument;
 
-import tool.model.BlockType;
-import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
+import tool.model.JavaFile;
 import tool.model.JumpStatement;
 
-import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
+import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.*;
 import static tool.model.JumpStatement.*;
 
@@ -36,15 +35,15 @@ public class SwitchesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 20, 62, 239,
-                jBlock(SWITCH_CASE, 5, 8, 100, 129),
+                jBlock(SWITCH_CASE, 5, 8, 100, 129).noIncOffset(),
                 jBlock(BLOCK, 5, 8, 102, 129).withJump(BREAK),
-                jBlock(SWITCH_CASE, 9, 9, 139, 142),
+                jBlock(SWITCH_CASE, 9, 9, 139, 142).noIncOffset(),
                 jBlock(BLOCK, 9, 9, 141, 142),
-                jBlock(SWITCH_CASE, 10, 13, 152, 183),
+                jBlock(SWITCH_CASE, 10, 13, 152, 183).noIncOffset(),
                 jBlock(BLOCK, 10, 13, 154, 183),
-                jBlock(SWITCH_CASE, 14, 16, 193, 210),
+                jBlock(SWITCH_CASE, 14, 16, 193, 210).noIncOffset(),
                 jBlock(BLOCK, 14, 16, 195, 210).withJump(BREAK),
-                jBlock(SWITCH_CASE, 17, 17, 221, 232),
+                jBlock(SWITCH_CASE, 17, 17, 221, 232).noIncOffset(),
                 jBlock(BLOCK, 17, 17, 223, 232).withJump(BREAK)
             )
         )
@@ -71,11 +70,11 @@ public class SwitchesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 16, 62, 210,
-                jBlock(SWITCH_CASE, 5, 8, 106, 135),
+                jBlock(SWITCH_CASE, 5, 8, 106, 135).noIncOffset(),
                 jBlock(BLOCK, 5, 8, 108, 135).withJump(BREAK),
-                jBlock(SWITCH_CASE, 9, 12, 148, 181),
+                jBlock(SWITCH_CASE, 9, 12, 148, 181).noIncOffset(),
                 jBlock(BLOCK, 9, 12, 150, 181),
-                jBlock(SWITCH_CASE, 13, 13, 192, 203),
+                jBlock(SWITCH_CASE, 13, 13, 192, 203).noIncOffset(),
                 jBlock(BLOCK, 13, 13, 194, 203).withJump(BREAK)
             )
         )
@@ -107,7 +106,7 @@ public class SwitchesTest {
                 jBlock(BLOCK, 6, 8, 174, 221),
                 jSsBlock(SWITCH_CASE, 10, 10, 249, 283),
                 jBlock(SWITCH_CASE, 11, 13, 298, 313).withJump(BREAK),
-                jSsBlock(BLOCK, 14, 14, 326, 377).withJump(THROW)
+                jSsBlock(SWITCH_CASE, 14, 14, 326, 377).withJump(THROW)
             )
         )
     );
@@ -140,11 +139,11 @@ public class SwitchesTest {
         jClass("Main",
             jMethod("main", 2, 21, 62, 442,
                 jBlock(LOOP, 3, 20, 97, 438),
-                jBlock(SWITCH_EXPR_CASE, 5, 7, 137, 160),
+                jBlock(SWITCH_EXPR_CASE, 5, 7, 137, 160).noIncOffset(),
                 jBlock(BLOCK, 5, 7, 139, 160).withJump(YIELD),
-                jBlock(SWITCH_EXPR_CASE, 8, 8, 180, 189).withJump(YIELD),
-                jBlock(SWITCH_EXPR_CASE, 9, 9, 211, 241).withJump(THROW),
-                jBlock(SWITCH_EXPR_CASE, 10, 17, 254, 389),
+                jBlock(SWITCH_EXPR_CASE, 8, 8, 180, 189).noIncOffset().withJump(YIELD),
+                jBlock(SWITCH_EXPR_CASE, 9, 9, 211, 241).noIncOffset().withJump(THROW),
+                jBlock(SWITCH_EXPR_CASE, 10, 17, 254, 389).noIncOffset(),
                 jBlock(BLOCK, 10, 17, 256, 389),
                 jBlock(BLOCK, 11, 14, 276, 350).withJump(YIELD),
                 jBlock(BLOCK, 14, 16, 357, 383).withJump(YIELD)

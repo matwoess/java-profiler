@@ -175,11 +175,11 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 18, 62, 228,
-                jBlock(SWITCH_CASE, 5, 8, 100, 129),
+                jBlock(SWITCH_CASE, 5, 8, 100, 129).noIncOffset(),
                 jBlock(BLOCK, 5, 8, 102, 129).withJump(BREAK),
-                jBlock(SWITCH_CASE, 10, 12, 157, 182),
-                jBlock(SWITCH_CASE, 13, 14, 192, 203).withJump(BREAK),
-                jBlock(SWITCH_CASE, 15, 15, 214, 221).withJump(BREAK)
+                jBlock(SWITCH_CASE, 10, 12, 157, 182).noIncOffset(),
+                jBlock(SWITCH_CASE, 13, 14, 192, 203).noIncOffset().withJump(BREAK),
+                jBlock(SWITCH_CASE, 15, 15, 214, 221).noIncOffset().withJump(BREAK)
             )
         )
     );

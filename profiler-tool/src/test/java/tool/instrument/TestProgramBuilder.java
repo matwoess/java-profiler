@@ -28,6 +28,12 @@ public class TestProgramBuilder {
       element.jumpStatement = jumpStatement;
       return this;
     }
+
+    public BuilderBlock noIncOffset() {
+      element.incInsertPosition = 0;
+      element.beg = new CodePosition(element.beg.line(), element.beg.pos() + 1);
+      return this;
+    }
   }
 
   public static JavaFile jFile(BuilderClass... classes) {
@@ -101,13 +107,8 @@ public class TestProgramBuilder {
 
   public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block(type);
-    if (type == BlockType.SWITCH_CASE || type == BlockType.SWITCH_EXPR_CASE) {
-      b.beg = new CodePosition(beg, begPos);
-      b.incInsertPosition = begPos + 1;
-    } else {
-      b.beg = new CodePosition(beg, begPos - 1);
-      b.incInsertPosition = begPos; // length of '{'
-    }
+    b.incInsertPosition = begPos;
+    b.beg = new CodePosition(beg, begPos - 1); // minus length of '{'
     b.end = new CodePosition(end, endPos);
     return new BuilderBlock(b);
   }

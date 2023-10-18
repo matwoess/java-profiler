@@ -1,12 +1,11 @@
 package tool.instrument;
 
-import tool.model.Block;
+import org.junit.jupiter.api.Test;
 import tool.model.CodePosition;
 import tool.model.JavaFile;
-import org.junit.jupiter.api.Test;
 
-import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
+import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.*;
 import static tool.model.JumpStatement.RETURN;
 
@@ -151,8 +150,8 @@ public class EnumsTest {
     JavaFile expected = jFile(
         jClass("WithMain",
             jMethod("main", 5, 13, 80, 222,
-                jBlock(SWITCH_CASE, 8, 9, 133, 158),
-                jBlock(SWITCH_CASE, 10, 11, 173, 212)
+                jBlock(SWITCH_CASE, 8, 9, 133, 158).noIncOffset(),
+                jBlock(SWITCH_CASE, 10, 11, 173, 212).noIncOffset()
             )
         )
     );
