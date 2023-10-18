@@ -147,15 +147,22 @@ public class ParserState {
   }
 
   void leaveBlock(BlockType blockType) {
-    boolean noClosingBrace = curBlock.isSingleStatement || blockType == BlockType.SWITCH_CASE;
-    curBlock.end = tokenEndPosition(noClosingBrace ? parser.t : parser.la);
+    leaveBlock(blockType, curBlock.isSingleStatement);
+  }
+
+  void leaveSwitchColonCase(BlockType blockType) {
+    leaveBlock(blockType, true);
+  }
+
+  void leaveBlock(BlockType blockType, boolean missingBraces) {
+    curBlock.end = tokenEndPosition(missingBraces ? parser.t : parser.la);
     curBlock.endCodeRegion(tokenEndPosition(parser.t));
     logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
-      curBlock.reenterBlock(tokenStartPosition(noClosingBrace ? parser.la : parser.scanner.Peek()));
+      curBlock.reenterBlock(tokenStartPosition(missingBraces ? parser.la : parser.scanner.Peek()));
     }
     if (blockType == BlockType.METHOD) {
       leaveMethod();

@@ -154,7 +154,7 @@ SwitchCase<boolean inAssignment> =
     ("case" | "default") {ANY}
     (   ArrowExpression<true, inAssignment>
         | ":" {"case" {ANY} ":"}        (. state.enterBlock(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
-          {Statement}                   (. state.leaveBlock(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
+          {Statement}                   (. state.leaveSwitchColonCase(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
     )
 .
 ParExpr = "(" {ParExpr | ANY} ")".
