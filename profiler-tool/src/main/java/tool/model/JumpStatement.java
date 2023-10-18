@@ -9,7 +9,7 @@ public enum JumpStatement {
     return switch (this) {
       case BREAK -> blockType == LOOP || blockType == SWITCH_CASE;
       case CONTINUE -> blockType == LOOP;
-      case YIELD -> blockType == SWITCH_CASE;
+      case YIELD -> blockType == SWITCH_EXPR_CASE;
       case RETURN -> blockType == METHOD || blockType == LAMBDA;
       case THROW -> blockType == METHOD; // TODO: new block type TRY
     };
@@ -18,7 +18,8 @@ public enum JumpStatement {
   public boolean abortPropagation(BlockType blockType) {
     return switch (this) {
       case RETURN -> blockType == LAMBDA;
-      case YIELD -> blockType == SWITCH_CASE;
+      case BREAK -> blockType == SWITCH_CASE;
+      case YIELD -> blockType == SWITCH_EXPR_CASE;
       default -> false;
     };
   }
