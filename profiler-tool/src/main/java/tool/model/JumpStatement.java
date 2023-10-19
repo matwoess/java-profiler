@@ -11,7 +11,7 @@ public enum JumpStatement {
       case CONTINUE -> blockType == LOOP;
       case YIELD -> blockType == SWITCH_EXPR_CASE;
       case RETURN -> blockType == METHOD || blockType == LAMBDA;
-      case THROW -> blockType == METHOD; // TODO: new block type TRY
+      case THROW -> blockType == METHOD || blockType == TRY;
     };
   }
 
@@ -20,6 +20,7 @@ public enum JumpStatement {
       case RETURN -> blockType == LAMBDA;
       case BREAK -> blockType == SWITCH_CASE;
       case YIELD -> blockType == SWITCH_EXPR_CASE;
+      case THROW -> blockType == TRY;
       default -> false;
     };
   }
