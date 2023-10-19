@@ -186,7 +186,6 @@ public class ParserState {
 
   void enterSSArrowBlock(BlockType blockType) {
     enterBlock(blockType, true);
-    return blockType;
   }
 
   void leaveSingleStatement(BlockType blockType) {
