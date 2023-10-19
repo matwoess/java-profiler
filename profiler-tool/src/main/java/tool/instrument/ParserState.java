@@ -126,9 +126,9 @@ public class ParserState {
     enterBlock(blockType, false);
   }
 
-  void enterSwitchColonCase(BlockType blockType) {
-    enterBlock(blockType, true);
-    curBlock.isSingleStatement = false;
+  void enterSwitchColonCase() {
+    assert curBlock != null && curBlock.blockType.isSwitch();
+    enterBlock(BlockType.COLON_CASE, true);
   }
 
   void enterBlock(BlockType blockType, boolean missingBraces) {
@@ -142,7 +142,7 @@ public class ParserState {
     curBlock.id = curBlockId++;
     curBlock.setParentMethod(curMeth);
     curBlock.setParentClass(curClass);
-    curBlock.isSingleStatement = missingBraces;
+    curBlock.isSingleStatement = blockType != BlockType.COLON_CASE && missingBraces;
     curBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
     curBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, missingBraces);
     CodePosition regionStartPosition = Util.getRegionStartPos(parser, blockType, missingBraces);
@@ -155,8 +155,8 @@ public class ParserState {
     leaveBlock(blockType, curBlock.isSingleStatement);
   }
 
-  void leaveSwitchColonCase(BlockType blockType) {
-    leaveBlock(blockType, true);
+  void leaveSwitchColonCase() {
+    leaveBlock(BlockType.COLON_CASE, true);
   }
 
   void leaveBlock(BlockType blockType, boolean missingBraces) {
@@ -184,11 +184,7 @@ public class ParserState {
     }
   }
 
-  BlockType enterSSArrowBlock(boolean isSwitch, boolean isAssignment) {
-    BlockType blockType = BlockType.LAMBDA;
-    if (isSwitch) {
-      blockType = (isAssignment) ? BlockType.SWITCH_EXPR_CASE : BlockType.SWITCH_CASE;
-    }
+  void enterSSArrowBlock(BlockType blockType) {
     enterBlock(blockType, true);
     return blockType;
   }

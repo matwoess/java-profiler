@@ -79,6 +79,9 @@ public class Profiler {
     PrimitiveIterator.OfInt allBlockCounts = Arrays.stream(counts).iterator();
     for (JavaFile jFile : allJavaFiles) {
       for (Block block : jFile.foundBlocks) {
+        if (block.blockType.hasNoCounter()) {
+          continue;
+        }
         if (!allBlockCounts.hasNext()) {
           throw new RuntimeException("Ran out of block counts. Mismatching entry counts");
         }

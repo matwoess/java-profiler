@@ -135,7 +135,7 @@ Statement =
 GenericStatement =
     (ident | string | this | ParExpr | Instantiation)
     {   string | char
-        | ArrowExpression<false, false>
+        | ArrowExpression<LAMBDA>
         | SwitchStatement
         | Instantiation
         | ANY
@@ -146,25 +146,27 @@ BlockOrSingleStatement<BlockType blockType> =
     Block<blockType>
     | (. state.enterSingleStatementBlock(blockType); .) Statement (. state.leaveSingleStatement(blockType); .)
 .
-SwitchStatement =                       (. boolean inAssignment = state.isAssignment(); .)
-    "switch" ParExpr "{" {SwitchCase<inAssignment>}
+SwitchStatement =                       (. BlockType switchType = state.isAssignment() ? SWITCH_EXPR : SWITCH_STMT; .)
+    "switch" ParExpr                    (. state.enterBlock(switchType); .)
+    "{" {SwitchCase}                    (. state.leaveBlock(switchType); .)
     "}"
 .
-SwitchCase<boolean inAssignment> =
+SwitchCase =
     ("case" | "default") {ANY}
-    (   ArrowExpression<true, inAssignment>
-        | ":" {"case" {ANY} ":"}        (. state.enterSwitchColonCase(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
-          {Statement}                   (. state.leaveSwitchColonCase(inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE); .)
+    (   ArrowExpression<ARROW_CASE>
+        | ":" {"case" {ANY} ":"}        (. state.enterSwitchColonCase(); .)
+          {Statement}                   (. state.leaveSwitchColonCase(); .)
     )
 .
 ParExpr = "(" {ParExpr | ANY} ")".
 BraceExpr = "{" {BraceExpr | ANY} "}".
 BracketExpr = "[" {ANY} "]".
 AngleBracketExpr = "<" {AngleBracketExpr | ANY} ">".
-ArrowExpression<boolean inSwitch, boolean inAssignment> =
-    "->" (Block<inSwitch ? inAssignment ? SWITCH_EXPR_CASE : SWITCH_CASE : LAMBDA> | SSArrowBody<inSwitch, inAssignment>)
+ArrowExpression<BlockType blockType> =
+    "->" (Block<blockType> | SSArrowBody<blockType>)
 .
-SSArrowBody<boolean inSwitch, boolean inAssignment> =   (. BlockType blockType = state.enterSSArrowBlock(inSwitch, inAssignment); .)
+SSArrowBody<BlockType blockType> =                      (. state.enterSSArrowBlock(blockType); .)
+                                                        (. boolean inSwitch = blockType.isSwitchCase(); .)
     (   string | char
         | ParExpr
         | ident
