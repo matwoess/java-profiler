@@ -21,7 +21,7 @@ public class Util {
   }
 
   public static CodePosition getBlockBegPos(Parser parser, BlockType blockType, boolean isSingleStatement) {
-    if (parser.t.val.equals(":") && (blockType == BlockType.SWITCH_CASE || blockType == BlockType.SWITCH_EXPR_CASE)) {
+    if (blockType == BlockType.COLON_CASE) {
       return tokenEndPosition(parser.t);
     }
     if (isSingleStatement) {
@@ -32,7 +32,7 @@ public class Util {
   }
 
   public static int getIncInsertPos(Parser parser, BlockType blockType, boolean isSingleStatement) {
-    if (parser.t.val.equals(":") && (blockType == BlockType.SWITCH_CASE || blockType == BlockType.SWITCH_EXPR_CASE)) {
+    if (blockType == BlockType.COLON_CASE) {
       return 0;
     }
     if (!isSingleStatement) { // la == '{'
@@ -42,7 +42,7 @@ public class Util {
   }
 
   public static CodePosition getRegionStartPos(Parser parser, BlockType blockType, boolean isSingleStatement) {
-    if (parser.t.val.equals(":") && (blockType == BlockType.SWITCH_CASE || blockType == BlockType.SWITCH_EXPR_CASE)) {
+    if (blockType == BlockType.COLON_CASE) {
       return tokenStartPosition(parser.la);
     }
     if (isSingleStatement) {
