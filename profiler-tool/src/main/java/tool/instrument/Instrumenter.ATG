@@ -116,7 +116,7 @@ Statement =
     | "while" ParExpr BlockOrSingleStatement<LOOP>
     | "do" BlockOrSingleStatement<LOOP> "while" ParExpr ";"
     | "for" ParExpr BlockOrSingleStatement<LOOP>
-    | "try" [ParExpr] Block<BLOCK> {"catch" ParExpr Block<BLOCK>} ["finally" Block<BLOCK>]
+    | "try" [ParExpr] Block<TRY> {"catch" ParExpr Block<BLOCK>} ["finally" Block<BLOCK>]
     | ("break" | "continue") (. state.registerJumpStatement(); .) {ANY} ";"
     | ("return" | "yield") (. state.registerJumpStatement(); .) (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
     | "throw" (. state.registerJumpStatement(); .) {ANY} ";"

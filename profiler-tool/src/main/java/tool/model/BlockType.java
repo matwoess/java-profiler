@@ -1,7 +1,7 @@
 package tool.model;
 
 public enum BlockType {
-  BLOCK, METHOD, CONSTRUCTOR, STATIC, LOOP, LAMBDA, SWITCH_CASE, SWITCH_EXPR_CASE;
+  BLOCK, METHOD, CONSTRUCTOR, STATIC, LOOP, TRY, LAMBDA, SWITCH_CASE, SWITCH_EXPR_CASE;
 
   public String toString() {
     String prefix = switch (this) {
@@ -10,6 +10,7 @@ public enum BlockType {
       case CONSTRUCTOR -> "constructor ";
       case STATIC -> "static ";
       case LOOP -> "loop ";
+      case TRY -> "try ";
       case LAMBDA -> "lambda ";
       case SWITCH_CASE -> "switch case ";
       case SWITCH_EXPR_CASE -> "switch expression case ";
