@@ -7,6 +7,7 @@ public class JumpStatements {
     if (singleStmtIfsInLoop()) return;
     lambdasWithReturn();
     switchesWithBreaksAndReturns("param");
+    tryBlocksWithThrow();
   }
 
   private static void loopWithLabels() {
@@ -105,5 +106,85 @@ public class JumpStatements {
       System.out.println("switch executed.");
     }
     System.out.println("returning now..");
+  }
+
+  private static void tryBlocksWithThrow() {
+    Result result = null;
+    for (int i = -1; i < 3; i++) {
+      try {
+        result = Result.fromInt(i);
+      } catch (IllegalArgumentException e) {
+        System.out.println("argument was invalid.");
+      } catch (RuntimeException e) {
+        System.out.println("other error: " + e.getMessage());
+      }
+    }
+    if (result != Result.OK) {
+      try {
+        result = Result.fromString("NOK");
+        result = Result.fromString("0");
+        if (result == Result.NOK) {
+          throw new RuntimeException("NOK");
+        }
+        result = Result.fromString("asdf");
+        if (result == null) throw new RuntimeException("error getting result.");
+        result = Result.fromString("never reached");
+      } catch (Exception e) {
+        result = Result.NOK;
+      }
+      if (result == null) {
+        throw new RuntimeException("no result!");
+      }
+    }
+    if (result != null) {
+      // inner block should also depend on no result throw
+      System.out.println(result);
+    }
+  }
+
+  enum Result {
+    OK, NOK;
+
+    static Result fromInt(int code) {
+      if (code >= 0) {
+        try {
+          if (code == 0) return OK;
+          if (code == 1) return NOK;
+          throw new IllegalArgumentException("undefined code " + code);
+        } catch (Exception e) {
+          System.out.println("the following error occurred: " + e.getMessage());
+          throw e;
+        }
+      }
+      throw new RuntimeException("invalid error code");
+    }
+
+    static Result fromString(String codeString) {
+      int code = -1;
+      try {
+        code = Integer.parseInt(codeString);
+      } catch (Exception e) {
+        System.out.println("could not convert: " + e.getMessage());
+      }
+      System.out.println(code);
+      Result result = null;
+      if (code == -1) {
+        try {
+          result = Result.valueOf(codeString);
+          if (code != -1) {
+            throw new RuntimeException("something went wrong...");
+          }
+          code = 5;
+        } catch(Exception e) {
+          System.out.println(e.getMessage());
+        }
+      }
+      if (result != null) {
+        return result;
+      } else {
+        System.out.println("invalid code");
+        return null;
+      }
+    }
   }
 }
