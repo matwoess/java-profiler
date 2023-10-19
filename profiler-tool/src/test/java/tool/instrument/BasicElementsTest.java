@@ -127,7 +127,7 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 15, 62, 336,
-                jBlock(BLOCK, 4, 6, 84, 99),
+                jBlock(TRY, 4, 6, 84, 99),
                 jBlock(BLOCK, 6, 8, 132, 185),
                 jBlock(BLOCK, 8, 10, 215, 279),
                 jBlock(BLOCK, 10, 12, 289, 301)
@@ -166,7 +166,7 @@ public class BasicElementsTest {
                 jMethod("close", 7, 9, 207, 262)
             ),
             jMethod("main", 12, 18, 310, 459,
-                jBlock(BLOCK, 13, 15, 361, 390),
+                jBlock(TRY, 13, 15, 361, 390),
                 jBlock(BLOCK, 15, 17, 412, 455).withJump(THROW)
             )
         )
@@ -370,7 +370,7 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 14, 62, 349,
-                jBlock(BLOCK, 3, 5, 72, 91),
+                jBlock(TRY, 3, 5, 72, 91),
                 jBlock(BLOCK, 5, 12, 114, 344).withJump(THROW),
                 jBlock(BLOCK, 6, 8, 157, 197).withJump(THROW),
                 jBlock(BLOCK, 8, 10, 250, 273).withJump(THROW)
