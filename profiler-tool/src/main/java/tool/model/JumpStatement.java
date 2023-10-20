@@ -5,22 +5,22 @@ import static tool.model.BlockType.*;
 public enum JumpStatement {
   BREAK, CONTINUE, RETURN, YIELD, THROW;
 
-  public boolean stopPropagationAt(BlockType blockType) {
+  public boolean stopPropagationAt(Block block) {
     return switch (this) {
-      case BREAK -> blockType == LOOP || blockType == SWITCH_CASE;
-      case CONTINUE -> blockType == LOOP;
-      case YIELD -> blockType == SWITCH_EXPR_CASE;
-      case RETURN -> blockType == METHOD || blockType == LAMBDA;
-      case THROW -> blockType == METHOD || blockType == TRY;
+      case BREAK -> block.blockType == LOOP || block.isSwitchStatementCase();
+      case CONTINUE -> block.blockType == LOOP;
+      case YIELD -> block.isSwitchExpressionCase();
+      case RETURN -> block.blockType == METHOD || block.blockType == LAMBDA;
+      case THROW -> block.blockType == METHOD || block.blockType == TRY;
     };
   }
 
-  public boolean abortPropagation(BlockType blockType) {
+  public boolean abortPropagation(Block block) {
     return switch (this) {
-      case RETURN -> blockType == LAMBDA;
-      case BREAK -> blockType == SWITCH_CASE;
-      case YIELD -> blockType == SWITCH_EXPR_CASE;
-      case THROW -> blockType == TRY;
+      case RETURN -> block.blockType == LAMBDA;
+      case BREAK -> block.isSwitchStatementCase();
+      case YIELD -> block.isSwitchExpressionCase();
+      case THROW -> block.blockType == TRY;
       default -> false;
     };
   }

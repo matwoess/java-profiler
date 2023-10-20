@@ -52,13 +52,13 @@ public class ParserState {
   }
 
   private void registerJumpInOuterBlocks(JumpStatement jumpStatement) {
-    if (jumpStatement.abortPropagation(curBlock.blockType)) {
+    if (jumpStatement.abortPropagation(curBlock)) {
       return;
     }
     for (int i = blockStack.size() - 1; i >= 0; i--) {
       Block block = blockStack.get(i);
       block.registerInnerJumpBlock(curBlock);
-      if (jumpStatement.stopPropagationAt(block.blockType)) {
+      if (jumpStatement.stopPropagationAt(block)) {
         break;
       }
     }
@@ -133,6 +133,7 @@ public class ParserState {
 
   void enterBlock(BlockType blockType, boolean missingBraces) {
     assert curClass != null;
+    Block parentBlock = curBlock;
     if (curBlock != null) {
       CodePosition regionEndPos = missingBraces ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
       curBlock.endCodeRegion(regionEndPos);
@@ -142,6 +143,7 @@ public class ParserState {
     curBlock.id = curBlockId++;
     curBlock.setParentMethod(curMeth);
     curBlock.setParentClass(curClass);
+    curBlock.setParentBlock(parentBlock);
     curBlock.isSingleStatement = blockType != BlockType.COLON_CASE && missingBraces;
     curBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
     curBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, missingBraces);

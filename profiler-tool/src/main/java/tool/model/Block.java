@@ -9,6 +9,7 @@ public class Block implements Serializable, Component {
   public int id;
   public JClass clazz;
   public Method method;
+  public Block parentBlock;
   public CodePosition beg;
   public CodePosition end;
   public BlockType blockType;
@@ -42,6 +43,10 @@ public class Block implements Serializable, Component {
     }
   }
 
+  public void setParentBlock(Block block) {
+    parentBlock = block;
+  }
+
   public void startCodeRegion(CodePosition beg) {
     curCodeRegion = new CodeRegion();
     curCodeRegion.beg = beg;
@@ -61,9 +66,21 @@ public class Block implements Serializable, Component {
     innerJumpBlocks.add(jumpBlock);
   }
 
-   public void reenterBlock(CodePosition nextTokenPosition) {
+  public void reenterBlock(CodePosition nextTokenPosition) {
     startCodeRegion(nextTokenPosition);
     curCodeRegion.minusBlocks.addAll(innerJumpBlocks);
+  }
+
+  public boolean isSwitchStatementCase() {
+    return blockType.isSwitchCase()
+        && parentBlock != null
+        && parentBlock.blockType == BlockType.SWITCH_STMT;
+  }
+
+  public boolean isSwitchExpressionCase() {
+    return blockType.isSwitchCase()
+        && parentBlock != null
+        && parentBlock.blockType == BlockType.SWITCH_EXPR;
   }
 
   public String toString() {
