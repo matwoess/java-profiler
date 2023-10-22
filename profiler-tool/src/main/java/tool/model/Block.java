@@ -57,6 +57,7 @@ public class Block implements Serializable, Component {
     assert curCodeRegion != null;
     curCodeRegion.end = end;
     if (curCodeRegion.beg != end) {
+      curCodeRegion.id = codeRegions.size();
       codeRegions.add(curCodeRegion);
     }
     curCodeRegion = null;
@@ -81,6 +82,14 @@ public class Block implements Serializable, Component {
     return blockType.isSwitchCase()
         && parentBlock != null
         && parentBlock.blockType == BlockType.SWITCH_EXPR;
+  }
+
+  public int getIncInsertPos() {
+    return (incInsertPosition != 0) ? incInsertPosition : beg.pos();
+  }
+
+  public boolean isActiveInLine(int lineNr) {
+    return beg.line() <= lineNr && end.line() >= lineNr;
   }
 
   public String toString() {
@@ -123,9 +132,5 @@ public class Block implements Serializable, Component {
     result = 31 * result + incInsertPosition;
     result = 31 * result + (jumpStatement != null ? jumpStatement.hashCode() : 0);
     return result;
-  }
-
-  public int getIncInsertPos() {
-    return (incInsertPosition != 0) ? incInsertPosition : beg.pos();
   }
 }

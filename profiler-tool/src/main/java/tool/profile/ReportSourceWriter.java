@@ -127,23 +127,31 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
 
   private String getHitsForLine(int lineNr) {
     StringBuilder builder = new StringBuilder();
-    Map<String, Integer> activeRegions = new LinkedHashMap<>();
-    for (int i = 0; i < javaFile.foundBlocks.size(); i++) {
-      Block block = javaFile.foundBlocks.get(i);
-      List<CodeRegion> codeRegions = block.codeRegions;
-      for (int j = 0; j < codeRegions.size(); j++) {
-        CodeRegion region = codeRegions.get(j);
-        if (region.isActiveInLine(lineNr)) {
-          activeRegions.put("r" + i + "_" + j, region.getHitCount());
-        }
-      }
-    }
-    for (var region : activeRegions.entrySet()) {
-      String coverageStatus = region.getValue() > 0 ? "c" : "nc";
-      builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, region.getKey(), region.getValue()));
+    List<CodeRegion> activeRegions = getActiveCodeRegionsForLine(lineNr);
+    for (CodeRegion region : activeRegions) {
+      int hitCount = region.getHitCount();
+      String coverageStatus = hitCount > 0 ? "c" : "nc";
+      String regionClass = "r" + region.block.id + "_" + region.id;
+      builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, regionClass, hitCount));
       builder.append(" ");
     }
     return builder.toString();
+  }
+
+  private String codeSpanAt(int chPos) {
+    List<Block> activeBlocks = getActiveBlocksAtCharPosition(chPos);
+    if (activeBlocks.isEmpty()) {
+      return "<span>";
+    }
+    Block lastBlock = activeBlocks.get(activeBlocks.size() - 1);
+    CodeRegion region = null;
+    for (CodeRegion r : lastBlock.codeRegions) {
+      if (r.beg.pos() <= chPos && chPos < r.end.pos()) {
+        region = r;
+      }
+    }
+    return codeSpan(activeBlocks, lastBlock, region);
+
   }
 
   private String codeSpan(List<Block> activeBlocks, Block block, CodeRegion region) {
@@ -170,22 +178,19 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     return String.format("<span class=\"%s %s\" title=\"%s\">", coverageClass, classes, title);
   }
 
-  private String codeSpanAt(int chPos) {
-    List<Block> activeBlocks = javaFile.foundBlocks.stream()
+  private List<Block> getActiveBlocksAtCharPosition(int chPos) {
+    return javaFile.foundBlocks.stream()
         .filter(b -> b.beg.pos() <= chPos && chPos < b.end.pos())
         .collect(Collectors.toList());
-    if (activeBlocks.isEmpty()) {
-      return "<span>";
-    }
-    Block lastBlock = activeBlocks.get(activeBlocks.size() - 1);
-    CodeRegion region = null;
-    for (CodeRegion r : lastBlock.codeRegions) {
-      if (r.beg.pos() <= chPos && chPos < r.end.pos()) {
-        region = r;
-      }
-    }
-    return codeSpan(activeBlocks, lastBlock, region);
+  }
 
+  private List<CodeRegion> getActiveCodeRegionsForLine(int lineNr) {
+    return javaFile.foundBlocks.stream()
+        .filter(b -> b.isActiveInLine(lineNr))
+        .flatMap(b -> b.codeRegions.stream())
+        .filter(cr -> cr.isActiveInLine(lineNr))
+        .sorted(Comparator.comparing(cr -> cr.beg))
+        .collect(Collectors.toList());
   }
 
   @Override
