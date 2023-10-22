@@ -52,7 +52,7 @@ public class ParserState {
   }
 
   private void registerJumpInOuterBlocks(JumpStatement jumpStatement) {
-    if (jumpStatement.abortPropagation(curBlock)) {
+    if (jumpStatement.stopPropagationAt(curBlock)) {
       return;
     }
     for (int i = blockStack.size() - 1; i >= 0; i--) {

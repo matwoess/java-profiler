@@ -15,16 +15,6 @@ public enum JumpStatement {
     };
   }
 
-  public boolean abortPropagation(Block block) {
-    return switch (this) {
-      case RETURN -> block.blockType == LAMBDA;
-      case BREAK -> block.isSwitchStatementCase();
-      case YIELD -> block.isSwitchExpressionCase();
-      case THROW -> block.blockType == TRY;
-      default -> false;
-    };
-  }
-
   public static JumpStatement fromToken(String tokenValue) {
     return switch (tokenValue) {
       case "break" -> JumpStatement.BREAK;
