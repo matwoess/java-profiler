@@ -164,13 +164,12 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     }
     int hits = (region != null) ? region.getHitCount() : block.hits;
     String coverageClass = hits > 0 ? "c" : "nc";
-    String coverageStatus = hits > 0 ? "covered" : "not covered";
     // &#10; == <br/> == newLine
-    String title = String.format("%s&#10;%s&#10;Hits: %d (%s)", description, regionDescr, hits, coverageStatus);
+    String title = String.format("%s&#10;%s&#10;Hits: %d", description, regionDescr, hits);
     //title = String.valueOf(hits);
     String classes = activeBlocks.stream().map(b -> "b" + b.id).collect(Collectors.joining(" "));
     if (region != null) {
-      classes += " r" + activeBlocks.get(activeBlocks.size() - 1).id + "_" + block.codeRegions.indexOf(region);
+      classes += " r" + activeBlocks.get(activeBlocks.size() - 1).id + "_" + region.id;
       if (!minusBlocks.isBlank()) {
         classes = minusBlocks + " " + classes;
       }
