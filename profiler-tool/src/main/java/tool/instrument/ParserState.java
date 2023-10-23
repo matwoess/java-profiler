@@ -80,8 +80,7 @@ public class ParserState {
     }
     if (!classStack.isEmpty()) {
       curClass.setParentClass(classStack.peek());
-    }
-    if (classStack.isEmpty()) {
+    } else {
       topLevelClasses.add(curClass);
     }
     logger.enter(curClass);

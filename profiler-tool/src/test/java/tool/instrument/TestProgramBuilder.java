@@ -57,7 +57,7 @@ public class TestProgramBuilder {
   }
 
   public static BuilderClass jClass(String name, BuilderComponent... classChildren) {
-    JClass clazz = new JClass(name);
+    JClass clazz = new JClass(name, ClassType.CLASS);
     for (BuilderComponent child : classChildren) {
       if (child instanceof BuilderClass innerClass) {
         innerClass.element.setParentClass(clazz);
