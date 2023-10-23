@@ -141,8 +141,10 @@ public class ParserState {
     curBlock.isSingleStatement = blockType != BlockType.COLON_CASE && missingBraces;
     curBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
     curBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, missingBraces);
-    CodePosition regionStartPosition = Util.getRegionStartPos(parser, blockType, missingBraces);
-    curBlock.startCodeRegion(regionStartPosition);
+    if (!Util.preventCodeRegion(getRegionStartToken(parser, blockType, missingBraces).val)) {
+      CodePosition regionStartPosition = Util.getRegionStartPos(parser, blockType, missingBraces);
+      curBlock.startCodeRegion(regionStartPosition);
+    }
     allBlocks.add(curBlock);
     logger.enter(curBlock);
   }
@@ -163,7 +165,10 @@ public class ParserState {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
-      curBlock.reenterBlock(tokenStartPosition(missingBraces ? parser.la : parser.scanner.Peek()));
+      Token nextToken = missingBraces ? parser.la : parser.scanner.Peek();
+      if (!Util.preventCodeRegion(nextToken.val)) {
+        curBlock.reenterBlock(tokenStartPosition(nextToken));
+      }
     }
     if (blockType == BlockType.METHOD) {
       leaveMethod();

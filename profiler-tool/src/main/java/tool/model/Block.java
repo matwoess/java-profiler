@@ -54,13 +54,14 @@ public class Block implements Serializable, Component {
   }
 
   public void endCodeRegion(CodePosition end) {
-    assert curCodeRegion != null;
-    curCodeRegion.end = end;
-    if (curCodeRegion.beg != end) {
-      curCodeRegion.id = codeRegions.size();
-      codeRegions.add(curCodeRegion);
+    if (curCodeRegion != null) {
+      curCodeRegion.end = end;
+      if (curCodeRegion.beg != end) {
+        curCodeRegion.id = codeRegions.size();
+        codeRegions.add(curCodeRegion);
+      }
+      curCodeRegion = null;
     }
-    curCodeRegion = null;
   }
 
   public void registerInnerJumpBlock(Block jumpBlock) {

@@ -21,10 +21,7 @@ public class Util {
   }
 
   public static CodePosition getBlockBegPos(Parser parser, BlockType blockType, boolean isSingleStatement) {
-    if (blockType == BlockType.COLON_CASE) {
-      return tokenEndPosition(parser.t);
-    }
-    if (isSingleStatement) {
+    if (blockType == BlockType.COLON_CASE || isSingleStatement) {
       return tokenEndPosition(parser.t);
     } else { // la == '{'
       return tokenStartPosition(parser.la);
@@ -32,23 +29,30 @@ public class Util {
   }
 
   public static int getIncInsertPos(Parser parser, BlockType blockType, boolean isSingleStatement) {
-    if (blockType == BlockType.COLON_CASE) {
+    if (!isSingleStatement && blockType != BlockType.COLON_CASE) { // la == '{'
+      return endOfToken(parser.la);
+    } else {
       return 0;
     }
-    if (!isSingleStatement) { // la == '{'
-      return endOfToken(parser.la);
+  }
+
+  static Token getRegionStartToken(Parser parser, BlockType blockType, boolean isSingleStatement) {
+    parser.scanner.ResetPeek();
+    if (blockType == BlockType.COLON_CASE || isSingleStatement) {
+      return parser.la;
+    } else { // la == '{'
+      return parser.scanner.Peek();
     }
-    return 0;
   }
 
   public static CodePosition getRegionStartPos(Parser parser, BlockType blockType, boolean isSingleStatement) {
-    if (blockType == BlockType.COLON_CASE) {
-      return tokenStartPosition(parser.la);
-    }
-    if (isSingleStatement) {
-      return tokenStartPosition(parser.la);
-    } else { // la == '{'
-      return tokenStartPosition(parser.scanner.Peek());
-    }
+    return tokenStartPosition(getRegionStartToken(parser, blockType, isSingleStatement));
+  }
+
+  public static boolean preventCodeRegion(String nextToken) {
+    return nextToken.equals("case")
+        || nextToken.equals("default")
+        || nextToken.equals("else")
+        || nextToken.equals("catch");
   }
 }
