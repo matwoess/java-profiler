@@ -64,8 +64,8 @@ Instrumenter =
     [PackageDecl]
     {   AnnotationType
         | Annotation
-        | IF(state.classDefWithNoLeadingDot()) Class<false>
-        | Enum<false>
+        | IF(state.classDefWithNoLeadingDot()) Class<CLASS>
+        | Enum<CLASS>
         | ANY
     }
 .
@@ -77,13 +77,13 @@ PackageDecl = "package"     (. ArrayList<String> packageName = new ArrayList<>()
 .
 AnnotationType = "@interface" ident BraceExpr.
 Annotation = "@" ident {"." ident} [ParExpr].
-Class<boolean local> =
-    (class | "interface" | ident/*"record"*/)    (. state.enterClass(false, local); .)
+Class<ClassType classType> =
+    (class | "interface" | ident/*"record"*/)    (. state.enterClass(classType); .)
     ident {ANY} "{"
     ClassBody                           (. state.leaveClass(); .)
 .
-Enum<boolean local> =
-    "enum"                              (. state.enterClass(false, local); .)
+Enum<ClassType classType> =
+    "enum"                              (. state.enterClass(classType); .)
     ident {ANY} "{"
     { [Annotation] ident [ParExpr] ["{" ClassBody] [","]}
     (   ";" ClassBody                   // class body can follow only after a ";"
@@ -91,8 +91,8 @@ Enum<boolean local> =
     )                                   (. state.leaveClass(); .)
 .
 ClassBody =
-    {   Enum<false>
-        | IF(state.classDefWithNoLeadingDot()) Class<false>
+    {   Enum<CLASS>
+        | IF(state.classDefWithNoLeadingDot()) Class<CLASS>
         | "=" (BraceExpr | {ANY} Statement)
         | IF(state.identAndLPar()) MethodDecl
         | IF(state.classNameAndLBrace()) MethodDecl  // compact record constructor
@@ -126,8 +126,8 @@ Statement =
     | IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)
     | ("++" | "--") ["("] ident [")"] ";"
     | "synchronized" ParExpr Block<BLOCK>
-    | IF(state.classDefWithNoLeadingDot()) Class<true>
-    | Enum<true>
+    | IF(state.classDefWithNoLeadingDot()) Class<LOCAL>
+    | Enum<LOCAL>
     | GenericStatement
     | Block<BLOCK>
     | ";"
@@ -180,7 +180,7 @@ Instantiation = "new" ident {["."] ident} [AngleBracketExpr] (ArrayInitRest | Cl
 ArrayInitRest = BracketExpr [BraceExpr].
 ClassInitRest = ParExpr [ClassExtension].
 ClassExtension =
-    "{"                                     (. state.enterClass(true, false); .)
+    "{"                                     (. state.enterClass(ANONYMOUS); .)
     ClassBody                               (. state.leaveClass();.)
 .
 Block<BlockType blockType> =                (. state.enterBlock(blockType); .)

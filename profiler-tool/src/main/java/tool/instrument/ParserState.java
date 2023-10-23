@@ -65,7 +65,7 @@ public class ParserState {
   }
 
 
-  void enterClass(boolean anonymous, boolean local) {
+  void enterClass(ClassType classType) {
     if (curClass != null) {
       classStack.push(curClass);
     }
@@ -73,18 +73,13 @@ public class ParserState {
       methodStack.push(curMeth);
       curMeth = null;
     }
-    String className = (anonymous) ? null : parser.la.val;
-    curClass = new JClass(className);
+    String className = (classType == ClassType.ANONYMOUS) ? null : parser.la.val;
+    curClass = new JClass(className, classType);
     if (packageName != null) {
       curClass.packageName = packageName;
     }
     if (!classStack.isEmpty()) {
       curClass.setParentClass(classStack.peek());
-    }
-    if (anonymous) {
-      curClass.classType = ClassType.ANONYMOUS;
-    } else if (local) {
-      curClass.classType = ClassType.LOCAL;
     }
     if (classStack.isEmpty()) {
       topLevelClasses.add(curClass);

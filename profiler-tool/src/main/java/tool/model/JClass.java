@@ -7,19 +7,15 @@ import java.util.Objects;
 
 public class JClass implements Serializable, Component {
   public String name;
-  public ClassType classType = ClassType.CLASS;
+  public ClassType classType;
   public String packageName;
   public JClass parentClass;
   public List<JClass> innerClasses = new ArrayList<>();
   public List<Method> methods = new ArrayList<>();
   public List<Block> classBlocks = new ArrayList<>();
 
-  public JClass(String name) {
-    this.name = name;
-  }
-
   public JClass(String name, ClassType type) {
-    this(name);
+    this.name = name;
     this.classType = type;
   }
 
