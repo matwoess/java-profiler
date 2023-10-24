@@ -73,7 +73,12 @@ public class ParserState {
       methodStack.push(curMeth);
       curMeth = null;
     }
-    String className = (classType == ClassType.ANONYMOUS) ? null : parser.la.val;
+    String className = null;
+    if (classType == ClassType.ANONYMOUS) {
+      endCodeRegion();
+    } else {
+      className = parser.la.val;
+    }
     curClass = new JClass(className, classType);
     if (packageName != null) {
       curClass.packageName = packageName;
