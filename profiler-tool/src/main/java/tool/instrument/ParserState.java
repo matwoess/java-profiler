@@ -205,7 +205,7 @@ public class ParserState {
 
   static boolean validCodeRegionStartToken(Token nextToken) {
     return switch (nextToken.val) {
-      case "case", "catch", "default", "else" -> false;
+      case "case", "catch", "default", "else", "class", "enum", "interface" /*, "record"*/ -> false;
       default -> true;
     };
   }
