@@ -36,7 +36,7 @@ public class Instrumenter {
   void analyze(JavaFile javaFile) {
     System.out.println("Parsing file: \"" + javaFile.sourceFile + "\"");
     Parser parser = new Parser(new Scanner(javaFile.sourceFile.toString()));
-    parser.state.verbose = verboseOutput;
+    parser.state.logger.active = verboseOutput;
     parser.Parse();
     int errors = parser.errors.count;
     if (errors > 0) {
