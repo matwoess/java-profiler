@@ -27,6 +27,7 @@ public class ParserState {
   Method curMeth = null;
   Block curBlock = null;
   int curBlockId = 0;
+  CodeRegion curCodeRegion;
 
   public ParserState(Parser p) {
     parser = p;
@@ -128,8 +129,7 @@ public class ParserState {
     assert curClass != null;
     Block parentBlock = curBlock;
     if (curBlock != null) {
-      CodePosition regionEndPos = missingBraces ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
-      curBlock.endCodeRegion(regionEndPos);
+      endCodeRegion();
       blockStack.push(curBlock);
     }
     curBlock = new Block(blockType);
@@ -140,12 +140,9 @@ public class ParserState {
     curBlock.isSingleStatement = blockType != BlockType.COLON_CASE && missingBraces;
     curBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
     curBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, missingBraces);
-    if (!Util.preventCodeRegion(getRegionStartToken(parser, blockType, missingBraces).val)) {
-      CodePosition regionStartPosition = Util.getRegionStartPos(parser, blockType, missingBraces);
-      curBlock.startCodeRegion(regionStartPosition);
-    }
     allBlocks.add(curBlock);
     logger.enter(curBlock);
+    startCodeRegion(blockType, missingBraces);
   }
 
   void leaveBlock(BlockType blockType) {
@@ -158,16 +155,13 @@ public class ParserState {
 
   void leaveBlock(BlockType blockType, boolean missingBraces) {
     curBlock.end = tokenEndPosition(missingBraces ? parser.t : parser.la);
-    curBlock.endCodeRegion(tokenEndPosition(parser.t));
+    endCodeRegion();
     logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
-      Token nextToken = missingBraces ? parser.la : parser.scanner.Peek();
-      if (!Util.preventCodeRegion(nextToken.val)) {
-        curBlock.reenterBlock(tokenStartPosition(nextToken));
-      }
+      reenterBlock(blockType, missingBraces);
     }
     if (blockType == BlockType.METHOD) {
       leaveMethod();
@@ -191,6 +185,45 @@ public class ParserState {
   void leaveSingleStatement(BlockType blockType) {
     if (curBlock.isSingleStatement) {
       leaveBlock(blockType);
+    }
+  }
+
+  void startCodeRegion(BlockType blockType, boolean missingBraces) {
+    Token nextToken = getRegionStartToken(parser, blockType, missingBraces);
+    if (validCodeRegionStartToken(nextToken)) {
+      curCodeRegion = new CodeRegion();
+      curCodeRegion.beg = tokenStartPosition(nextToken);
+      curCodeRegion.block = curBlock;
+      logger.enter(curCodeRegion);
+    }
+  }
+
+  static boolean validCodeRegionStartToken(Token nextToken) {
+    return switch (nextToken.val) {
+      case "case", "catch", "default", "else" -> false;
+      default -> true;
+    };
+  }
+
+  private void endCodeRegion() {
+    if (curCodeRegion == null) {
+      return;
+    }
+    curCodeRegion.end = tokenEndPosition(parser.t);
+    logger.leave(curCodeRegion);
+    if (curCodeRegion.end == curCodeRegion.beg) {
+      logger.log("empty code region. ignore.");
+      return;
+    }
+    curBlock.addCodeRegion(curCodeRegion);
+    curCodeRegion = null;
+  }
+
+  private void reenterBlock(BlockType blockType, boolean missingBraces) {
+    Token nextToken = missingBraces ? parser.la : parser.scanner.Peek();
+    if (validCodeRegionStartToken(nextToken)) {
+      startCodeRegion(blockType, missingBraces);
+      curCodeRegion.minusBlocks.addAll(curBlock.innerJumpBlocks);
     }
   }
 

@@ -1,9 +1,8 @@
 package tool.instrument;
 
-import tool.model.Block;
-import tool.model.Component;
-import tool.model.JClass;
-import tool.model.Method;
+import tool.model.*;
+
+import java.util.List;
 
 public class Logger {
   public static final String GREEN = "\u001B[32m";
@@ -41,14 +40,25 @@ public class Logger {
   private String describe(Component comp, boolean leave) {
     if (comp instanceof JClass clazz) return "class <" + clazz.getFullName() + ">";
     if (comp instanceof Method meth) return meth + "()";
-    if (comp instanceof Block block)
+    if (comp instanceof Block block) {
       return String.format(
           "%s%s [%d]%s",
           block.blockType,
           block.isSingleStatement ? ", SS" : "",
           leave ? block.end.pos() : block.beg.pos(),
-          block.jumpStatement != null ? " (" + block.jumpStatement.name() + ")" : ""
+          block.jumpStatement == null ? "" : " (" + block.jumpStatement.name() + ")"
       );
+    }
+    if (comp instanceof CodeRegion region) {
+      List<String> minusBlockLineNrs = region.minusBlocks.stream()
+          .map(b -> String.valueOf(b.beg.line()))
+          .toList();
+      return String.format(
+          "region [%d]%s",
+          leave ? region.end.pos() : region.beg.pos(),
+          minusBlockLineNrs.isEmpty() ? "" : " -(" + String.join(",", minusBlockLineNrs) + ")"
+      );
+    }
     throw new RuntimeException("unknown component type: " + comp.getClass());
   }
 }

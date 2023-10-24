@@ -45,14 +45,4 @@ public class Util {
     }
   }
 
-  public static CodePosition getRegionStartPos(Parser parser, BlockType blockType, boolean isSingleStatement) {
-    return tokenStartPosition(getRegionStartToken(parser, blockType, isSingleStatement));
-  }
-
-  public static boolean preventCodeRegion(String nextToken) {
-    return nextToken.equals("case")
-        || nextToken.equals("default")
-        || nextToken.equals("else")
-        || nextToken.equals("catch");
-  }
 }
