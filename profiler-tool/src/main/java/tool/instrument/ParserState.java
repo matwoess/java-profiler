@@ -14,7 +14,6 @@ import static tool.instrument.Util.*;
 public class ParserState {
   Parser parser;
   Logger logger;
-  boolean verbose = false;
 
   int beginOfImports = 0;
   String packageName;
@@ -228,52 +227,5 @@ public class ParserState {
         && (parser.la.val.equals("class")
         || parser.la.val.equals("interface")
         || parser.la.val.equals("record") && parser.scanner.Peek().kind == Parser._ident);
-  }
-
-  public class Logger {
-    public static final String GREEN = "\u001B[32m";
-    public static final String RED = "\u001B[31m";
-    public static final String BRIGHT = "\u001B[97m";
-    public static final String RESET = "\u001B[0m";
-
-    Parser parser;
-    public static int indent = 1;
-
-    public Logger(Parser p) {
-      parser = p;
-    }
-
-    public void log(String logMessage) {
-      if (!verbose) return;
-      System.out.printf("%s%3d:%s%-" + indent + "s%s%n", BRIGHT, parser.t.line, RESET, "", logMessage);
-    }
-
-    public void log(String formatString, Object... values) {
-      log(String.format(formatString, values));
-    }
-
-    void enter(Component comp) {
-      log(describe(comp, false) + GREEN + " -->" + RESET);
-      indent += 2;
-    }
-
-    void leave(Component comp) {
-      indent -= 2;
-      log(describe(comp, true) + RED + " <--" + RESET);
-    }
-
-    private String describe(Component comp, boolean leave) {
-      if (comp instanceof JClass clazz) return "class <" + clazz.getFullName() + ">";
-      if (comp instanceof Method meth) return meth + "()";
-      if (comp instanceof Block block)
-        return String.format(
-            "%s%s [%d]%s",
-            block.blockType,
-            block.isSingleStatement ? ", SS" : "",
-            leave ? block.end.pos() : block.beg.pos(),
-            block.jumpStatement != null ? " (" + block.jumpStatement.name() + ")" : ""
-        );
-      throw new RuntimeException("unknown component type: " + comp.getClass());
-    }
   }
 }
