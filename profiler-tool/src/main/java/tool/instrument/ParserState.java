@@ -95,6 +95,7 @@ public class ParserState {
     logger.leave(curClass);
     if (!methodStack.empty() && (curClass.classType == ClassType.ANONYMOUS || curClass.classType == ClassType.LOCAL)) {
       curMeth = methodStack.pop();
+      //reenterBlock(curBlock.blockType, curBlock.isSingleStatement || curBlock.blockType == BlockType.COLON_CASE);
     }
     if (classStack.empty()) {
       curClass = null;
@@ -166,11 +167,11 @@ public class ParserState {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
-      reenterBlock(blockType, missingBraces);
     }
     if (blockType == BlockType.METHOD) {
       leaveMethod();
     }
+    reenterBlock(blockType, missingBraces);
   }
 
   void enterSingleStatementBlock(BlockType blockType) {
@@ -203,11 +204,11 @@ public class ParserState {
     }
   }
 
-  static boolean validCodeRegionStartToken(Token nextToken) {
-    return switch (nextToken.val) {
-      case "case", "catch", "default", "else", "class", "enum", "interface" /*, "record"*/ -> false;
-      default -> true;
-    };
+  boolean validCodeRegionStartToken(Token nextToken) {
+    //if (curMeth == null) return false;
+    if (curBlock.blockType.hasNoCounter()) return false;
+    if (nextToken.val.equals("else")) return false;
+    return true;
   }
 
   private void endCodeRegion() {
