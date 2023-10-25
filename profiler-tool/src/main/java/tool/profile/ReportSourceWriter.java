@@ -115,6 +115,10 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
           inserts.add(new CodeInsert(region.end.pos(), codeSpanAt(region.end.pos())));
         }
       }
+      if (sourceCode.charAt(block.end.pos()) != lf) { // optimization to not add 0-length region spans
+        inserts.add(new CodeInsert(block.end.pos(), "</span>"));
+        inserts.add(new CodeInsert(block.end.pos(), codeSpanAt(block.end.pos())));
+      }
     }
     for (int index = sourceCode.indexOf(lf); index >= 0; index = sourceCode.indexOf(lf, index + 1)) {
       inserts.add(new CodeInsert(index, "</span>"));
@@ -179,7 +183,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
 
   private List<Block> getActiveBlocksAtCharPosition(int chPos) {
     return javaFile.foundBlocks.stream()
-        .filter(b -> b.beg.pos() <= chPos && chPos < b.end.pos())
+        .filter(b -> b.beg.pos() <= chPos && chPos < b.end.pos() && !b.blockType.hasNoCounter())
         .collect(Collectors.toList());
   }
 

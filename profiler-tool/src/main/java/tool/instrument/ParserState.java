@@ -27,6 +27,7 @@ public class ParserState {
   Method curMeth = null;
   Block curBlock = null;
   int curBlockId = 0;
+  CodeRegion curCodeRegion;
 
   public ParserState(Parser p) {
     parser = p;
@@ -72,7 +73,12 @@ public class ParserState {
       methodStack.push(curMeth);
       curMeth = null;
     }
-    String className = (classType == ClassType.ANONYMOUS) ? null : parser.la.val;
+    String className = null;
+    if (classType == ClassType.ANONYMOUS) {
+      endCodeRegion();
+    } else {
+      className = parser.la.val;
+    }
     curClass = new JClass(className, classType);
     if (packageName != null) {
       curClass.packageName = packageName;
@@ -89,6 +95,7 @@ public class ParserState {
     logger.leave(curClass);
     if (!methodStack.empty() && (curClass.classType == ClassType.ANONYMOUS || curClass.classType == ClassType.LOCAL)) {
       curMeth = methodStack.pop();
+      //reenterBlock(curBlock.blockType, curBlock.isSingleStatement || curBlock.blockType == BlockType.COLON_CASE);
     }
     if (classStack.empty()) {
       curClass = null;
@@ -128,8 +135,7 @@ public class ParserState {
     assert curClass != null;
     Block parentBlock = curBlock;
     if (curBlock != null) {
-      CodePosition regionEndPos = missingBraces ? tokenEndPosition(parser.t) : tokenStartPosition(parser.la);
-      curBlock.endCodeRegion(regionEndPos);
+      endCodeRegion();
       blockStack.push(curBlock);
     }
     curBlock = new Block(blockType);
@@ -140,10 +146,9 @@ public class ParserState {
     curBlock.isSingleStatement = blockType != BlockType.COLON_CASE && missingBraces;
     curBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
     curBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, missingBraces);
-    CodePosition regionStartPosition = Util.getRegionStartPos(parser, blockType, missingBraces);
-    curBlock.startCodeRegion(regionStartPosition);
     allBlocks.add(curBlock);
     logger.enter(curBlock);
+    startCodeRegion(blockType, missingBraces);
   }
 
   void leaveBlock(BlockType blockType) {
@@ -156,17 +161,17 @@ public class ParserState {
 
   void leaveBlock(BlockType blockType, boolean missingBraces) {
     curBlock.end = tokenEndPosition(missingBraces ? parser.t : parser.la);
-    curBlock.endCodeRegion(tokenEndPosition(parser.t));
+    endCodeRegion();
     logger.leave(curBlock);
     if (blockStack.empty()) {
       curBlock = null;
     } else {
       curBlock = blockStack.pop();
-      curBlock.reenterBlock(tokenStartPosition(missingBraces ? parser.la : parser.scanner.Peek()));
     }
     if (blockType == BlockType.METHOD) {
       leaveMethod();
     }
+    reenterBlock(blockType, missingBraces);
   }
 
   void enterSingleStatementBlock(BlockType blockType) {
@@ -186,6 +191,46 @@ public class ParserState {
   void leaveSingleStatement(BlockType blockType) {
     if (curBlock.isSingleStatement) {
       leaveBlock(blockType);
+    }
+  }
+
+  void startCodeRegion(BlockType blockType, boolean missingBraces) {
+    Token nextToken = getRegionStartToken(parser, blockType, missingBraces);
+    if (validCodeRegionStartToken(nextToken)) {
+      curCodeRegion = new CodeRegion();
+      curCodeRegion.beg = tokenStartPosition(nextToken);
+      curCodeRegion.block = curBlock;
+      logger.enter(curCodeRegion);
+    }
+  }
+
+  boolean validCodeRegionStartToken(Token nextToken) {
+    //if (curMeth == null) return false;
+    if (curBlock.blockType.hasNoCounter()) return false;
+    if (nextToken.val.equals("else")) return false;
+    return true;
+  }
+
+  private void endCodeRegion() {
+    if (curCodeRegion == null) {
+      return;
+    }
+    curCodeRegion.end = tokenEndPosition(parser.t);
+    logger.leave(curCodeRegion);
+    if (curCodeRegion.end == curCodeRegion.beg) {
+      logger.log("empty code region. ignore.");
+      return;
+    }
+    curBlock.addCodeRegion(curCodeRegion);
+    curCodeRegion = null;
+  }
+
+  private void reenterBlock(BlockType blockType, boolean missingBraces) {
+    if (curBlock == null) return;
+    Token nextToken = missingBraces ? parser.la : parser.scanner.Peek();
+    if (validCodeRegionStartToken(nextToken)) {
+      startCodeRegion(blockType, missingBraces);
+      curCodeRegion.minusBlocks.addAll(curBlock.innerJumpBlocks);
     }
   }
 

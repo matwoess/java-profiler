@@ -20,8 +20,7 @@ public class Block implements Serializable, Component {
   public int incInsertPosition;
 
   transient public int hits;
-  transient CodeRegion curCodeRegion;
-  transient List<Block> innerJumpBlocks = new ArrayList<>();
+  public transient List<Block> innerJumpBlocks = new ArrayList<>();
 
   public Block(BlockType type) {
     blockType = type;
@@ -47,29 +46,13 @@ public class Block implements Serializable, Component {
     parentBlock = block;
   }
 
-  public void startCodeRegion(CodePosition beg) {
-    curCodeRegion = new CodeRegion();
-    curCodeRegion.beg = beg;
-    curCodeRegion.block = this;
-  }
-
-  public void endCodeRegion(CodePosition end) {
-    assert curCodeRegion != null;
-    curCodeRegion.end = end;
-    if (curCodeRegion.beg != end) {
-      curCodeRegion.id = codeRegions.size();
-      codeRegions.add(curCodeRegion);
-    }
-    curCodeRegion = null;
-  }
-
   public void registerInnerJumpBlock(Block jumpBlock) {
     innerJumpBlocks.add(jumpBlock);
   }
 
-  public void reenterBlock(CodePosition nextTokenPosition) {
-    startCodeRegion(nextTokenPosition);
-    curCodeRegion.minusBlocks.addAll(innerJumpBlocks);
+  public void addCodeRegion(CodeRegion region) {
+    region.id = codeRegions.size();
+    codeRegions.add(region);
   }
 
   public boolean isSwitchStatementCase() {

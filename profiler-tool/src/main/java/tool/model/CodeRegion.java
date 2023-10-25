@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CodeRegion implements Serializable {
+public class CodeRegion implements Serializable, Component {
   public int id;
   public CodePosition beg;
   public CodePosition end;
