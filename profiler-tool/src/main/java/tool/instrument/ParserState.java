@@ -225,6 +225,7 @@ public class ParserState {
   }
 
   private void reenterBlock(BlockType blockType, boolean missingBraces) {
+    if (curBlock == null) return;
     Token nextToken = missingBraces ? parser.la : parser.scanner.Peek();
     if (validCodeRegionStartToken(nextToken)) {
       startCodeRegion(blockType, missingBraces);
