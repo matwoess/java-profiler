@@ -102,6 +102,11 @@
                             <Insets right="16.0"/>
                         </HBox.margin>
                     </Button>
+                    <Button fx:id="btnCommandPreview" onAction="#showRunCommand" text="Preview command">
+                        <HBox.margin>
+                            <Insets right="16.0"/>
+                        </HBox.margin>
+                    </Button>
                     <Button fx:id="btnRunTool" defaultButton="true" onAction="#onExecuteTool" text="Run tool"/>
                 </HBox>
             </VBox>

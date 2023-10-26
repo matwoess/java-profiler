@@ -9,9 +9,12 @@ import fxui.util.RecursiveDirectoryWatcher;
 import fxui.util.SystemUtils;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -44,6 +47,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   @FXML
   private HBox boxSyncCounters;
   @FXML
+  private Button btnCommandPreview;
+  @FXML
   private CheckBox cbSyncCounters;
   @FXML
   private Button btnOpenReport;
@@ -56,6 +61,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
 
   private JavaProjectTree projectTree;
   private RecursiveDirectoryWatcher recursiveDirectoryWatcher;
+
+  Stage applicationStage;
 
   public AppController() {
     parameters = new Parameters();
@@ -71,6 +78,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   public void setProjectDirectory(Path projectRootPath, Stage stage) {
+    applicationStage = stage;
     parameters.projectRoot.set(projectRootPath);
     IO.outputDir = projectRootPath.resolve(IO.DEFAULT_OUT_DIR);
     stage.setTitle(stage.getTitle() + " - " + projectRootPath);
@@ -126,6 +134,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
         .isEqualTo(RunMode.DEFAULT)
         .and(parameters.mainFile.isNull());
     btnRunTool.disableProperty().bind(anyPathInvalid.or(instrumentWithoutTarget).or(runWithoutMainFile));
+    btnCommandPreview.disableProperty().bind(btnRunTool.disableProperty());
   }
 
   private void initBorderListeners() {
@@ -153,6 +162,20 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   protected void onOpenReport() {
     Path reportPath = IO.getReportIndexPath();
     SystemUtils.openWithDesktopApplication(reportPath);
+  }
+
+  @FXML
+  protected void showRunCommand() throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(ProjectController.class.getResource("command-view.fxml"));
+    Scene scene = new Scene(fxmlLoader.load());
+    CommandController cmdController = fxmlLoader.getController();
+    Stage cmdStage = new Stage();
+    cmdStage.initOwner(applicationStage);
+    cmdStage.initModality(Modality.APPLICATION_MODAL);
+    cmdStage.setScene(scene);
+    cmdController.init(cmdStage, scene);
+    cmdController.setCommand(SystemUtils.getRunCommand(parameters.getRunParameters()));
+    cmdStage.showAndWait();
   }
 
   @FXML

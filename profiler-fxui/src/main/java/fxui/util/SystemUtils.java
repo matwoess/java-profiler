@@ -50,8 +50,13 @@ public class SystemUtils {
   }
 
   public static int executeToolInTerminal(Path cwd, String... parameters) {
+    String[] command = getRunCommand(parameters);
+    return Util.runCommand(cwd, command);
+  }
+
+  public static String[] getRunCommand(String[] parameters) {
     String toolJar = tool.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    String commonJar = common.Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    String commonJar = Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String[] mainCmd = {"java", "-cp", toolJar + Util.getOS().pathSeparator() + commonJar, "tool.Main"};
     String[] fullCmd = Util.prependToArray(parameters, mainCmd);
     String cmdString = String.join(" ", fullCmd);
@@ -73,6 +78,6 @@ public class SystemUtils {
       };
       case SOLARIS -> throw new RuntimeException("unsupported operating system");
     };
-    return Util.runCommand(cwd, command);
+    return command;
   }
 }
