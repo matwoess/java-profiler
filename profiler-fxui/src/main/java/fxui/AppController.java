@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class AppController implements RecursiveDirectoryWatcher.FileEventListener {
+
+  private Stage applicationStage;
+
   @FXML
   private TreeView<File> treeProjectDir;
   @FXML
@@ -62,8 +65,6 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   private JavaProjectTree projectTree;
   private RecursiveDirectoryWatcher recursiveDirectoryWatcher;
 
-  Stage applicationStage;
-
   public AppController() {
     parameters = new Parameters();
   }
@@ -77,11 +78,16 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     initBorderListeners();
   }
 
-  public void setProjectDirectory(Path projectRootPath, Stage stage) {
+  void initUI(Stage stage) {
     applicationStage = stage;
+    applicationStage.setResizable(false);
+    applicationStage.setTitle("Java Profiler");
+  }
+
+  public void setProjectDirectory(Path projectRootPath) {
     parameters.projectRoot.set(projectRootPath);
     IO.outputDir = projectRootPath.resolve(IO.DEFAULT_OUT_DIR);
-    stage.setTitle(stage.getTitle() + " - " + projectRootPath);
+    applicationStage.setTitle(applicationStage.getTitle() + " - " + projectRootPath);
     btnRestoreParameters.visibleProperty().set(IO.getUIParametersPath().toFile().exists());
     btnOpenReport.visibleProperty().set(IO.getReportIndexPath().toFile().exists());
     projectTree = new JavaProjectTree(parameters, treeProjectDir);
@@ -167,13 +173,12 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   @FXML
   protected void showRunCommand() throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(ProjectController.class.getResource("command-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load());
-    CommandController cmdController = fxmlLoader.getController();
     Stage cmdStage = new Stage();
+    cmdStage.setScene(new Scene(fxmlLoader.load()));
     cmdStage.initOwner(applicationStage);
     cmdStage.initModality(Modality.APPLICATION_MODAL);
-    cmdStage.setScene(scene);
-    cmdController.init(cmdStage, scene);
+    CommandController cmdController = fxmlLoader.getController();
+    cmdController.initUI(cmdStage);
     cmdController.setCommand(SystemUtils.getRunCommand(parameters.getRunParameters()));
     cmdStage.showAndWait();
   }

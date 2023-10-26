@@ -14,10 +14,10 @@ public class CommandController {
 
   Stage dialogStage;
 
-  public void init(Stage stage, Scene scene) {
+  public void initUI(Stage stage) {
     this.dialogStage = stage;
     stage.setTitle("Run Command Preview");
-    scene.setOnKeyPressed(event -> {
+    stage.getScene().setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.ESCAPE) {
         stage.close();
       }

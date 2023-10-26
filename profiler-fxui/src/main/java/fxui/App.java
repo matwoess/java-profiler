@@ -27,12 +27,11 @@ public class App extends Application {
 
   private void showProjectRootDialog(ObjectProperty<Path> projectRootProperty) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(ProjectController.class.getResource("project-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load());
+    Stage projectStage = new Stage();
+    projectStage.setScene(new Scene(fxmlLoader.load()));
     ProjectController prjController = fxmlLoader.getController();
     prjController.initProperties(projectRootProperty);
-    Stage projectStage = new Stage();
-    projectStage.setTitle("Open Java Project");
-    projectStage.setScene(scene);
+    prjController.initUI(projectStage);
     projectStage.setOnCloseRequest((e) -> {
       Platform.exit();
       System.exit(0);
@@ -40,13 +39,12 @@ public class App extends Application {
     projectStage.showAndWait();
   }
 
-  private void showMainApp(Stage stage, ObjectProperty<Path> projectRootProperty) throws IOException {
+  private void showMainApp(Stage primaryStage, ObjectProperty<Path> projectRootProperty) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("app-view.fxml"));
-    Scene scene = new Scene(fxmlLoader.load());
-    stage.setTitle("Java Profiler");
-    stage.setScene(scene);
+    primaryStage.setScene(new Scene(fxmlLoader.load()));
     AppController appController = fxmlLoader.getController();
-    appController.setProjectDirectory(projectRootProperty.get(), stage);
-    stage.show();
+    appController.initUI(primaryStage);
+    appController.setProjectDirectory(projectRootProperty.get());
+    primaryStage.show();
   }
 }

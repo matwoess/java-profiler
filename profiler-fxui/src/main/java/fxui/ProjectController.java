@@ -5,6 +5,7 @@ import fxui.util.SystemUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -12,11 +13,22 @@ import javafx.stage.Stage;
 import java.nio.file.Path;
 
 public class ProjectController {
+  public Stage projectStage;
 
-  public Button btnProjectRoot;
-  public TextField txtProjectRoot;
-  public Button btnOpenProject;
+  @FXML
+  private Button btnProjectRoot;
+  @FXML
+  private TextField txtProjectRoot;
+  @FXML
+  private Button btnOpenProject;
+
   public BooleanProperty invalidProjectRootPath = new SimpleBooleanProperty(false);
+
+  public void initUI(Stage stage) {
+    projectStage = stage;
+    projectStage.setResizable(false);
+    projectStage.setTitle("Open Java Project");
+  }
 
   void initProperties(ObjectProperty<Path> projectRootProperty) {
     txtProjectRoot.textProperty().bindBidirectional(projectRootProperty, BindingUtils.pathStringConverter);
@@ -33,7 +45,6 @@ public class ProjectController {
   }
 
   public void onOpenProject() {
-    Stage stage = (Stage) btnOpenProject.getScene().getWindow();
-    stage.close();
+    projectStage.close();
   }
 }
