@@ -84,20 +84,17 @@
                     </HBox>
                     <TextField fx:id="txtProgramArgs" HBox.hgrow="ALWAYS"/>
                 </VBox>
-                <VBox>
-                    <HBox alignment="CENTER_LEFT" HBox.hgrow="SOMETIMES">
-                        <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
-                            <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
-                            <Label text=" (?) " textFill="darkgoldenrod">
-                                <tooltip>
-                                    <Tooltip
-                                            text="All inserted counters will be incremented synchronously. This ensures exact results in multi-threaded programs."/>
-                                </tooltip>
-                            </Label>
-                        </HBox>
-                    </HBox>
-                </VBox>
                 <VBox VBox.vgrow="SOMETIMES"/>
+                <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
+                    <HBox HBox.hgrow="ALWAYS"/>
+                    <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
+                    <Label text=" (?) " textFill="darkgoldenrod">
+                        <tooltip>
+                            <Tooltip
+                                    text="All inserted counters will be incremented synchronously. This ensures exact results in multi-threaded programs."/>
+                        </tooltip>
+                    </Label>
+                </HBox>
                 <HBox>
                     <HBox HBox.hgrow="ALWAYS"/>
                     <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">
