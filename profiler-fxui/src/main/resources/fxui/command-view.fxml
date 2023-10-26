@@ -18,7 +18,7 @@
             <Insets top="16.0"/>
         </padding>
         <HBox HBox.hgrow="ALWAYS"/>
-        <Button onAction="#copyCommandToClipboard" text="Copy to Clipboard">
+        <Button fx:id="btnCopyToClipboard" onAction="#copyCommandToClipboard" text="Copy to Clipboard">
             <HBox.margin>
                 <Insets right="16.0"/>
             </HBox.margin>

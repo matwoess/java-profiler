@@ -1,18 +1,32 @@
 package fxui;
 
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class CommandController {
+  Stage dialogStage;
+
   @FXML
   private TextArea txtRunCommand;
+  @FXML
+  private Button btnCopyToClipboard;
 
-  Stage dialogStage;
+  private static final Border clickedBorder = new Border(
+      new BorderStroke(
+          Color.GREEN,
+          BorderStrokeStyle.SOLID,
+          CornerRadii.EMPTY,
+          BorderWidths.DEFAULT
+      )
+  );
+
 
   public void initUI(Stage stage) {
     this.dialogStage = stage;
@@ -34,6 +48,7 @@ public class CommandController {
     ClipboardContent content = new ClipboardContent();
     content.putString(txtRunCommand.textProperty().get());
     clipboard.setContent(content);
+    btnCopyToClipboard.borderProperty().set(clickedBorder);
   }
 
   @FXML
