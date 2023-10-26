@@ -104,10 +104,10 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   private void initDisabledPropertiesByMode() {
-    boxMainFile.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
-    boxProgramArgs.disableProperty().bind(parameters.runMode.isNotEqualTo(RunMode.DEFAULT));
-    boxSourcesDir.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
-    boxSyncCounters.disableProperty().bind(parameters.runMode.isEqualTo(RunMode.REPORT_ONLY));
+    boxMainFile.visibleProperty().bind(parameters.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
+    boxProgramArgs.visibleProperty().bind(parameters.runMode.isEqualTo(RunMode.DEFAULT));
+    boxSourcesDir.visibleProperty().bind(parameters.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
+    boxSyncCounters.visibleProperty().bind(parameters.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
     requiredHintMainFile.visibleProperty().bind(parameters.runMode.isEqualTo(RunMode.DEFAULT));
     requiredHintMainFile.managedProperty().bind(requiredHintMainFile.visibleProperty());
   }
