@@ -1,7 +1,7 @@
 plugins {
     java
     application
-    id("org.openjfx.javafxplugin") version "0.0.14"
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 group = "dev.matwoess"
@@ -23,11 +23,11 @@ javafx {
 
 application {
     mainModule.set("fxui")
-    mainClass.set("fxui.App")
+    mainClass.set("fxui.Launcher")
 }
 
 
-val mainClass = "fxui.App"
+val mainClass = "fxui.Launcher"
 
 tasks {
     register("fatJar", Jar::class.java) {
