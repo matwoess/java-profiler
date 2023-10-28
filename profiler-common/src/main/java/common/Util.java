@@ -1,8 +1,12 @@
 package common;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Util {
   @SafeVarargs
@@ -33,6 +37,22 @@ public class Util {
     } catch (IOException | InterruptedException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static String[] runCommandAndGetOutput(Path cwd, String... command) {
+    ProcessBuilder builder = new ProcessBuilder().directory(cwd.toFile()).command(command);
+    List<String> output = new ArrayList<>();
+    try {
+      Process process = builder.start();
+      BufferedReader stdIn = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      BufferedReader stdErr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+      process.waitFor();
+      stdIn.lines().forEach(output::add);
+      stdErr.lines().forEach(output::add);
+    } catch (IOException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    return output.toArray(String[]::new);
   }
 
   public enum OS {

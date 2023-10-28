@@ -1,6 +1,7 @@
 package fxui;
 
 import common.IO;
+import common.Util;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
 import fxui.model.Terminal;
@@ -8,6 +9,7 @@ import fxui.tree.JavaProjectTree;
 import fxui.util.BindingUtils;
 import fxui.util.RecursiveDirectoryWatcher;
 import fxui.util.SystemUtils;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,13 +51,15 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   @FXML
   private TextField txtProgramArgs;
   @FXML
-  private ChoiceBox<Terminal> cbTerminalEmulator;
-  @FXML
   private HBox boxSyncCounters;
   @FXML
-  private Button btnCommandPreview;
-  @FXML
   private CheckBox cbSyncCounters;
+  @FXML
+  private ChoiceBox<Terminal> cbTerminalEmulator;
+  @FXML
+  private TextField txtJavaVersion;
+  @FXML
+  private Button btnCommandPreview;
   @FXML
   private Button btnOpenReport;
   @FXML
@@ -80,6 +84,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     initDisabledPropertiesByMode();
     initButtonDisabledProperties();
     initBorderListeners();
+    initRecognizedJavaVersionControl();
   }
 
   void initUI(Stage stage) {
@@ -191,6 +196,22 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     cmdController.initUI(cmdStage);
     cmdController.setCommand(SystemUtils.getTerminalCommand(parameters));
     cmdStage.showAndWait();
+  }
+
+  private void initRecognizedJavaVersionControl() {
+    Platform.runLater(() -> {
+      String[] command = new String[]{"java", "-version"};
+      String result = null;
+      try {
+        String[] output = Util.runCommandAndGetOutput(parameters.projectRoot.get(), command);
+        if (output.length > 0) {
+          result = output[0];
+        }
+      } catch (Exception e) {
+        result = "Unable to determine";
+      }
+      txtJavaVersion.textProperty().set(result);
+    });
   }
 
   @FXML
