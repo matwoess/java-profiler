@@ -85,6 +85,19 @@
                     <TextField fx:id="txtProgramArgs" HBox.hgrow="ALWAYS"/>
                 </VBox>
                 <VBox VBox.vgrow="SOMETIMES"/>
+                <HBox>
+                    <VBox>
+                        <HBox>
+                            <Label text="Terminal emulator"/>
+                            <Label text=" (?) " textFill="darkgoldenrod">
+                                <tooltip>
+                                    <Tooltip text="The terminal emulator in which the tool will be executed."/>
+                                </tooltip>
+                            </Label>
+                        </HBox>
+                        <ChoiceBox fx:id="cbTerminalEmulator"/>
+                    </VBox>
+                </HBox>
                 <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
                     <HBox HBox.hgrow="ALWAYS"/>
                     <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>

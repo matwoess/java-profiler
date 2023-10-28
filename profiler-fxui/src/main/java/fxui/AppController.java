@@ -3,6 +3,7 @@ package fxui;
 import common.IO;
 import fxui.model.Parameters;
 import fxui.model.RunMode;
+import fxui.model.Terminal;
 import fxui.tree.JavaProjectTree;
 import fxui.util.BindingUtils;
 import fxui.util.RecursiveDirectoryWatcher;
@@ -48,6 +49,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   @FXML
   private TextField txtProgramArgs;
   @FXML
+  private ChoiceBox<Terminal> cbTerminalEmulator;
+  @FXML
   private HBox boxSyncCounters;
   @FXML
   private Button btnCommandPreview;
@@ -73,6 +76,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   private void initialize() {
     bindParameters();
     initRunModeControl();
+    initTerminalEmulatorControl();
     initDisabledPropertiesByMode();
     initButtonDisabledProperties();
     initBorderListeners();
@@ -117,6 +121,11 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     cbRunMode.valueProperty().bindBidirectional(parameters.runMode);
   }
 
+  private void initTerminalEmulatorControl() {
+    cbTerminalEmulator.getItems().setAll(Terminal.getSystemTerminalOptions());
+    cbTerminalEmulator.valueProperty().bindBidirectional(parameters.terminal);
+  }
+
   private void initDisabledPropertiesByMode() {
     boxMainFile.visibleProperty().bind(parameters.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
     boxProgramArgs.visibleProperty().bind(parameters.runMode.isEqualTo(RunMode.DEFAULT));
@@ -158,7 +167,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
 
   @FXML
   protected void onExecuteTool() {
-    int exitCode = SystemUtils.executeToolInTerminal(parameters.projectRoot.get(), parameters.getRunParameters());
+    int exitCode = SystemUtils.executeToolWithParameters(parameters);
     if (exitCode != 0) {
       throw new RuntimeException("error executing tool");
     }
@@ -179,7 +188,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     cmdStage.initModality(Modality.APPLICATION_MODAL);
     CommandController cmdController = fxmlLoader.getController();
     cmdController.initUI(cmdStage);
-    cmdController.setCommand(SystemUtils.getRunCommand(parameters.getRunParameters()));
+    cmdController.setCommand(SystemUtils.getTerminalCommand(parameters));
     cmdStage.showAndWait();
   }
 

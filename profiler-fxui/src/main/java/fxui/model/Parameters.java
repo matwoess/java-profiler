@@ -23,20 +23,21 @@ public class Parameters {
   public StringProperty programArgs = new SimpleStringProperty("");
   public ObjectProperty<Path> sourcesDir = new SimpleObjectProperty<>(null);
   public BooleanProperty syncCounters = new SimpleBooleanProperty(false);
+  public ObjectProperty<Terminal> terminal = new SimpleObjectProperty<>(Terminal.getDefaultSystemTerminal());
 
   public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
   public BooleanProperty invalidSourcesDirPath = new SimpleBooleanProperty(false);
 
   public Parameters() {
-    initializeExtraProperties();
+    initializeAdditionalProperties();
   }
 
-  public void initializeExtraProperties() {
+  public void initializeAdditionalProperties() {
     invalidMainFilePath.bind(mainFile.isNotNull().and(BindingUtils.creatRelativeIsJavaFileBinding(projectRoot, mainFile).not()));
     invalidSourcesDirPath.bind(sourcesDir.isNotNull().and(BindingUtils.createRelativeIsDirectoryBinding(projectRoot, sourcesDir).not()));
   }
 
-  public String[] getRunParameters() {
+  public String[] getProgramArguments() {
     RunMode mode = runMode.get();
     List<String> arguments = new ArrayList<>();
     boolean sync = syncCounters.get();
@@ -76,6 +77,7 @@ public class Parameters {
       oos.writeUTF(mainFile.get() != null ? mainFile.get().toString() : "");
       oos.writeUTF(programArgs.get());
       oos.writeBoolean(syncCounters.get());
+      oos.writeInt(terminal.get().ordinal());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -90,6 +92,7 @@ public class Parameters {
       mainFile.set(mainFileVal.isBlank() ? null : Path.of(mainFileVal));
       programArgs.set(ois.readUTF());
       syncCounters.set(ois.readBoolean());
+      terminal.set(Terminal.values()[ois.readInt()]);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

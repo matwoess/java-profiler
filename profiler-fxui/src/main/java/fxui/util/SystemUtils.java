@@ -2,6 +2,7 @@ package fxui.util;
 
 import common.IO;
 import common.Util;
+import fxui.model.Parameters;
 import javafx.beans.property.ObjectProperty;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -12,7 +13,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 public class SystemUtils {
   public static void chooseFile(ObjectProperty<Path> fileProperty) {
@@ -49,35 +49,25 @@ public class SystemUtils {
     });
   }
 
-  public static int executeToolInTerminal(Path cwd, String... parameters) {
-    String[] command = getRunCommand(parameters);
-    return Util.runCommand(cwd, command);
+  public static int executeToolWithParameters(Parameters parameters) {
+    String[] terminalCommand = getTerminalCommand(parameters);
+    return Util.runCommand(parameters.projectRoot.get(), terminalCommand);
   }
 
-  public static String[] getRunCommand(String[] parameters) {
+  public static String[] getTerminalCommand(Parameters parameters) {
+    String javaCommand = getJavaRunCommand(parameters.getProgramArguments());
+    return parameters.terminal.get().wrapWithTerminalCommand(javaCommand);
+  }
+
+  public static String getJavaRunCommand(String[] toolArguments) {
     String toolJar = tool.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String commonJar = Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    String[] mainCmd = {"java", "-cp", toolJar + Util.getOS().pathSeparator() + commonJar, "tool.Main"};
-    String[] fullCmd = Util.prependToArray(parameters, mainCmd);
-    String cmdString = String.join(" ", fullCmd);
-    String[] command = switch (Util.getOS()) {
-      case WINDOWS -> new String[]{
-          "cmd.exe", "/c",
-          "start cmd.exe /c \"%s && pause || pause\"".formatted(cmdString)
-      };
-      case LINUX -> new String[]{ // TODO: works only on GNOME by now
-          "/bin/sh", "-c",
-          "gnome-terminal -- bash -c \"%s; echo Done - Press enter to exit; read\" ".formatted(cmdString)
-      };
-      case MAC -> new String[]{ // TODO: check
-          "osascript", "-e", """
-          'tell app "Terminal"
-              do script "%s"
-          end tell'
-          """.formatted(cmdString)
-      };
-      case SOLARIS -> throw new RuntimeException("unsupported operating system");
-    };
-    return command;
+    String classPath = toolJar;
+    if (!commonJar.equals(toolJar)) {
+      classPath += Util.getOS().pathSeparator() + commonJar;
+    }
+    String[] toolMainCmd = {"java", "-cp", classPath, "tool.Main"};
+    String[] fullCmd = Util.prependToArray(toolArguments, toolMainCmd);
+    return String.join(" ", fullCmd);
   }
 }
