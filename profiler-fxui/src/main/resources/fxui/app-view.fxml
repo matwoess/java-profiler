@@ -19,25 +19,25 @@
                 </padding>
                 <VBox>
                     <HBox>
-                        <Label text="Run mode"/>
-                        <Label text=" (?) " textFill="darkgoldenrod">
+                        <Label text="(?) " textFill="darkgoldenrod">
                             <tooltip>
                                 <Tooltip
                                         text="In which mode the tool will be executed. Each mode allows a different set of parameters."/>
                             </tooltip>
                         </Label>
+                        <Label text="Run mode"/>
                     </HBox>
                     <ChoiceBox fx:id="cbRunMode" maxWidth="Infinity"/>
                 </VBox>
                 <VBox fx:id="boxSourcesDir">
                     <HBox>
-                        <Label text="Sources directory"/>
-                        <Label text=" (?) " textFill="darkgoldenrod">
+                        <Label text="(?) " textFill="darkgoldenrod">
                             <tooltip>
                                 <Tooltip
                                         text="All java files in this directory or its sub-folders will be instrumented in addition to the main file."/>
                             </tooltip>
                         </Label>
+                        <Label text="Sources directory"/>
                     </HBox>
                     <HBox prefWidth="Infinity">
                         <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS" disable="true"/>
@@ -50,16 +50,16 @@
                 </VBox>
                 <VBox fx:id="boxMainFile">
                     <HBox>
+                        <Label text="(?) " textFill="darkgoldenrod">
+                            <tooltip>
+                                <Tooltip
+                                        text="Java file containing the main entry point. Its instrumented version will be compiled and executed."/>
+                            </tooltip>
+                        </Label>
                         <Label text="Main file"/>
                         <Label fx:id="requiredHintMainFile" text="*" textFill="crimson">
                             <tooltip>
                                 <Tooltip text="This parameter is required"/>
-                            </tooltip>
-                        </Label>
-                        <Label text=" (?) " textFill="darkgoldenrod">
-                            <tooltip>
-                                <Tooltip
-                                        text="Java file containing the main entry point. Its instrumented version will be compiled and executed."/>
                             </tooltip>
                         </Label>
                     </HBox>
@@ -74,47 +74,47 @@
                 </VBox>
                 <VBox fx:id="boxProgramArgs">
                     <HBox>
-                        <Label text="Program arguments"/>
-                        <Label text=" (?) " textFill="darkgoldenrod">
+                        <Label text="(?) " textFill="darkgoldenrod">
                             <tooltip>
                                 <Tooltip
                                         text="These arguments are passed on to the instrumented and compiled version of the program when run."/>
                             </tooltip>
                         </Label>
+                        <Label text="Program arguments"/>
                     </HBox>
                     <TextField fx:id="txtProgramArgs" HBox.hgrow="ALWAYS"/>
                 </VBox>
                 <HBox fx:id="boxSyncCounters">
-                    <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
-                    <Label text=" (?) " textFill="darkgoldenrod">
+                    <Label text="(?) " textFill="darkgoldenrod">
                         <tooltip>
                             <Tooltip
                                     text="All inserted counters will be incremented synchronously. This ensures exact results in multi-threaded programs."/>
                         </tooltip>
                     </Label>
+                    <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
                 </HBox>
                 <VBox VBox.vgrow="SOMETIMES"/>
                 <Separator/>
                 <VBox>
                     <HBox>
-                        <Label text="Terminal emulator"/>
-                        <Label text=" (?) " textFill="darkgoldenrod">
+                        <Label text="(?) " textFill="darkgoldenrod">
                             <tooltip>
                                 <Tooltip text="The terminal emulator in which the tool will be executed."/>
                             </tooltip>
                         </Label>
+                        <Label text="Terminal emulator"/>
                     </HBox>
                     <ChoiceBox fx:id="cbTerminalEmulator" maxWidth="Infinity"/>
                 </VBox>
                 <VBox HBox.hgrow="SOMETIMES">
                     <HBox>
-                        <Label text="Recognized Java version"/>
-                        <Label text=" (?) " textFill="darkgoldenrod">
+                        <Label text="(?) " textFill="darkgoldenrod">
                             <tooltip>
                                 <Tooltip
                                         text="The version of the java binary that will be used to execute the tool.&#10;Version should be at least Java 17."/>
                             </tooltip>
                         </Label>
+                        <Label text="Recognized Java version"/>
                     </HBox>
                     <TextField fx:id="txtJavaVersion" disable="true"/>
                 </VBox>
