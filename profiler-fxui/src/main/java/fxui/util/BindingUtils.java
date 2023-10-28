@@ -68,17 +68,6 @@ public class BindingUtils {
     );
   }
 
-  public static ObjectBinding<Border> createStringNotEqualsBorderBinding(StringProperty stringProperty, String invalidValue) {
-    return Bindings.createObjectBinding(
-        () -> {
-          if (stringProperty.isNull().get()) return neutralBorder;
-          if (stringProperty.get().equals(invalidValue)) return invalidBorder;
-          else return validBorder;
-        },
-        stringProperty
-    );
-  }
-
   public static BooleanBinding createIsJavaFileBinding(ObjectProperty<File> fileProperty) {
     return Bindings.createBooleanBinding(
         () -> {

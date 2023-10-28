@@ -161,12 +161,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   private void initBorderListeners() {
-    txtMainFile.borderProperty().bind(
-        BindingUtils.createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
-    txtSourcesDir.borderProperty().bind(
-        BindingUtils.createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
-    txtJavaVersion.borderProperty().bind(
-        BindingUtils.createStringNotEqualsBorderBinding(txtJavaVersion.textProperty(), JAVA_VERSION_NOT_RECOGNIZED));
+    txtMainFile.borderProperty().bind(BindingUtils.createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
+    txtSourcesDir.borderProperty().bind(BindingUtils.createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
   }
 
   public void onClearSourcesDir() {

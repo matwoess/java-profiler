@@ -108,11 +108,11 @@
                 </VBox>
                 <VBox HBox.hgrow="SOMETIMES">
                     <HBox>
-                        <Label text="Recognized java version"/>
+                        <Label text="Recognized Java version"/>
                         <Label text=" (?) " textFill="darkgoldenrod">
                             <tooltip>
                                 <Tooltip
-                                        text="The version of the java binary that will be used to execute the tool."/>
+                                        text="The version of the java binary that will be used to execute the tool.&#10;Version should be at least Java 17."/>
                             </tooltip>
                         </Label>
                     </HBox>
