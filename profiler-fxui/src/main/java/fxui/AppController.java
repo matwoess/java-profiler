@@ -72,6 +72,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   private JavaProjectTree projectTree;
   private RecursiveDirectoryWatcher recursiveDirectoryWatcher;
 
+  private final static String JAVA_VERSION_NOT_RECOGNIZED = "Unable to determine";
+
   public AppController() {
     parameters = new Parameters();
   }
@@ -159,8 +161,12 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   private void initBorderListeners() {
-    txtMainFile.borderProperty().bind(BindingUtils.createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
-    txtSourcesDir.borderProperty().bind(BindingUtils.createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
+    txtMainFile.borderProperty().bind(
+        BindingUtils.createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
+    txtSourcesDir.borderProperty().bind(
+        BindingUtils.createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
+    txtJavaVersion.borderProperty().bind(
+        BindingUtils.createStringNotEqualsBorderBinding(txtJavaVersion.textProperty(), JAVA_VERSION_NOT_RECOGNIZED));
   }
 
   public void onClearSourcesDir() {
@@ -201,14 +207,13 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   private void initRecognizedJavaVersionControl() {
     Platform.runLater(() -> {
       String[] command = new String[]{"java", "-version"};
-      String result = null;
+      String result = JAVA_VERSION_NOT_RECOGNIZED;
       try {
         String[] output = Util.runCommandAndGetOutput(parameters.projectRoot.get(), command);
         if (output.length > 0) {
           result = output[0];
         }
-      } catch (Exception e) {
-        result = "Unable to determine";
+      } catch (Exception ignored) {
       }
       txtJavaVersion.textProperty().set(result);
     });
