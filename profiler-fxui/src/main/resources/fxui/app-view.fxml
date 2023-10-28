@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxui.AppController">
     <HBox>
         <TreeView fx:id="treeProjectDir" prefHeight="1200.0" prefWidth="300.0"/>
@@ -27,7 +27,7 @@
                             </tooltip>
                         </Label>
                     </HBox>
-                    <ChoiceBox fx:id="cbRunMode" prefHeight="26.0" prefWidth="769.0"/>
+                    <ChoiceBox fx:id="cbRunMode" maxWidth="Infinity"/>
                 </VBox>
                 <VBox fx:id="boxSourcesDir">
                     <HBox>
@@ -84,22 +84,7 @@
                     </HBox>
                     <TextField fx:id="txtProgramArgs" HBox.hgrow="ALWAYS"/>
                 </VBox>
-                <VBox VBox.vgrow="SOMETIMES"/>
-                <HBox>
-                    <VBox>
-                        <HBox>
-                            <Label text="Terminal emulator"/>
-                            <Label text=" (?) " textFill="darkgoldenrod">
-                                <tooltip>
-                                    <Tooltip text="The terminal emulator in which the tool will be executed."/>
-                                </tooltip>
-                            </Label>
-                        </HBox>
-                        <ChoiceBox fx:id="cbTerminalEmulator"/>
-                    </VBox>
-                </HBox>
-                <HBox fx:id="boxSyncCounters" alignment="CENTER_LEFT">
-                    <HBox HBox.hgrow="ALWAYS"/>
+                <HBox fx:id="boxSyncCounters">
                     <CheckBox fx:id="cbSyncCounters" text="Synchronized counters"/>
                     <Label text=" (?) " textFill="darkgoldenrod">
                         <tooltip>
@@ -108,6 +93,31 @@
                         </tooltip>
                     </Label>
                 </HBox>
+                <VBox VBox.vgrow="SOMETIMES"/>
+                <Separator/>
+                <VBox>
+                    <HBox>
+                        <Label text="Terminal emulator"/>
+                        <Label text=" (?) " textFill="darkgoldenrod">
+                            <tooltip>
+                                <Tooltip text="The terminal emulator in which the tool will be executed."/>
+                            </tooltip>
+                        </Label>
+                    </HBox>
+                    <ChoiceBox fx:id="cbTerminalEmulator" maxWidth="Infinity"/>
+                </VBox>
+                <VBox HBox.hgrow="SOMETIMES">
+                    <HBox>
+                        <Label text="Recognized java version"/>
+                        <Label text=" (?) " textFill="darkgoldenrod">
+                            <tooltip>
+                                <Tooltip
+                                        text="The version of the java binary that will be used to execute the tool."/>
+                            </tooltip>
+                        </Label>
+                    </HBox>
+                    <TextField fx:id="txtJavaVersion" disable="true"/>
+                </VBox>
                 <HBox>
                     <HBox HBox.hgrow="ALWAYS"/>
                     <Button fx:id="btnOpenReport" onAction="#onOpenReport" text="Open report">
