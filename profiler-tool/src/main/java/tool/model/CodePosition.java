@@ -9,4 +9,9 @@ public record CodePosition(int line, int pos) implements Serializable, Comparabl
     if (lineComparison != 0) return lineComparison;
     return Integer.compare(this.pos, other.pos);
   }
+
+  @Override
+  public String toString() {
+    return "[l=%d,p=%d]".formatted(line, pos);
+  }
 }
