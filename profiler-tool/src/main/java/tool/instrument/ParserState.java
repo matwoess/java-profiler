@@ -202,7 +202,7 @@ public class ParserState {
   boolean validCodeRegionStartToken(Token nextToken) {
     //if (curMeth == null) return false;
     if (curBlock.blockType.hasNoCounter()) return false;
-    return !nextToken.val.equals("else");
+    return !nextToken.val.equals("else") && !nextToken.val.equals("catch");
   }
 
   private void endCodeRegion() {
