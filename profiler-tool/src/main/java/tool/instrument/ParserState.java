@@ -52,11 +52,14 @@ public class ParserState {
   }
 
   private void registerJumpInOuterBlocks(JumpStatement jumpStatement) {
-    for (Block block = curBlock; block.parentBlock != null; block = block.parentBlock) {
+    if (jumpStatement.stopPropagationAt(curBlock)) {
+      return; // do not propagate at all if the `curBlock` is catching the jump immediately (e.g. switch case with break)
+    }
+    for (Block block = curBlock.parentBlock; block != null; block = block.parentBlock) {
+      block.registerInnerJumpBlock(curBlock);
       if (jumpStatement.stopPropagationAt(block)) {
         break;
       }
-      block.registerInnerJumpBlock(curBlock);
     }
   }
 
