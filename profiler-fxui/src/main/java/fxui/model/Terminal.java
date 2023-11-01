@@ -9,10 +9,10 @@ public enum Terminal {
       return "cmd.exe";
     }
   },
-  WINDOWS_TERMINAL {
+  WINDOWS_POWERSHELL {
     @Override
     String getExecutable() {
-      return "wt.exe";
+      return "powershell.exe";
     }
   },
   GNOME_TERMINAL {
@@ -49,10 +49,10 @@ public enum Terminal {
           "/c",
           "start %s /c \"%s && pause || pause\"".formatted(getExecutable(), cmdString)
       };
-      case WINDOWS_TERMINAL -> new String[]{
+      case WINDOWS_POWERSHELL -> new String[]{
           "cmd.exe",
           "/c",
-          "%s \"%s && pause || pause\"".formatted(getExecutable(), cmdString)
+          "start %s -Command \" %s ; pause \"".formatted(getExecutable(), cmdString.replace("\"", "'"))
       };
       case GNOME_TERMINAL, GNOME_CONSOLE -> new String[]{
           "/bin/sh",
@@ -76,7 +76,7 @@ public enum Terminal {
 
   public static Terminal[] getSystemTerminalOptions() {
     return switch (Util.getOS()) {
-      case WINDOWS -> new Terminal[]{WINDOWS_CMD, WINDOWS_TERMINAL};
+      case WINDOWS -> new Terminal[]{WINDOWS_CMD, WINDOWS_POWERSHELL};
       case LINUX -> new Terminal[]{GNOME_TERMINAL, KDE_KONSOLE, GNOME_CONSOLE};
       case MAC -> new Terminal[]{MACOS_TERMINAL};
       case SOLARIS -> throw new RuntimeException("unsupported operating system");
@@ -91,7 +91,7 @@ public enum Terminal {
   public String toString() {
     return switch (this) {
       case WINDOWS_CMD -> "Windows Command Prompt";
-      case WINDOWS_TERMINAL -> "Windows Terminal";
+      case WINDOWS_POWERSHELL -> "Windows PowerShell";
       case GNOME_TERMINAL -> "GNOME Terminal";
       case GNOME_CONSOLE -> "GNOME Console";
       case KDE_KONSOLE -> "KDE Konsole";

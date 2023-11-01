@@ -66,7 +66,7 @@ public class SystemUtils {
     if (!commonJar.equals(toolJar)) {
       classPath += Util.getOS().pathSeparator() + commonJar;
     }
-    String[] toolMainCmd = {"java", "-cp", classPath, "tool.Main"};
+    String[] toolMainCmd = {"java", "-cp", '"' + classPath + '"', "tool.Main"};
     String[] fullCmd = Util.prependToArray(toolArguments, toolMainCmd);
     return String.join(" ", fullCmd);
   }
