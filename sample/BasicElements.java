@@ -30,6 +30,8 @@ public class BasicElements {
       if (x == 1) {
         ++x;
         ++(x);
+      } else if (x == 2) {
+        x += 0;
       } else {
         break;
       }
