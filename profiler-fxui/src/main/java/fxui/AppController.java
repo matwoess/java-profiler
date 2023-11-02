@@ -216,6 +216,11 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   @FXML
+  protected void onRebuildTree() {
+    projectTree = new JavaProjectTree(parameters, treeProjectDir);
+  }
+
+  @FXML
   protected void onSaveParameters() {
     parameters.exportParameters();
   }

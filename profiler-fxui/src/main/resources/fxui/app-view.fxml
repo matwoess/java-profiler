@@ -4,16 +4,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxui.AppController">
     <HBox>
         <TreeView fx:id="treeProjectDir" prefHeight="1200.0" prefWidth="300.0"/>
         <VBox>
             <ToolBar>
+                <Button onAction="#onRebuildTree" text="Rebuild tree"/>
                 <Button onAction="#onSaveParameters" text="Save current parameters"/>
                 <Button fx:id="btnRestoreParameters" onAction="#onRestoreParameters" text="Restore saved parameters"/>
             </ToolBar>
-            <VBox prefHeight="1200.0" prefWidth="500.0" spacing="16.0">
+            <VBox prefHeight="1200.0" prefWidth="600.0" spacing="16.0">
                 <padding>
                     <Insets bottom="16.0" left="16.0" right="16.0" top="16.0"/>
                 </padding>
