@@ -15,7 +15,7 @@ import static common.IO.getUIParametersPath;
 import static fxui.model.RunMode.DEFAULT;
 import static fxui.model.RunMode.REPORT_ONLY;
 
-public class Parameters {
+public class AppState {
   public ObjectProperty<Path> projectRoot = new SimpleObjectProperty<>(null);
 
   public ObjectProperty<RunMode> runMode = new SimpleObjectProperty<>(DEFAULT);
@@ -32,7 +32,7 @@ public class Parameters {
   public BooleanBinding metadataFileExists;
   public BooleanBinding countsFileExists;
 
-  public Parameters() {
+  public AppState() {
     initializeAdditionalProperties();
   }
 

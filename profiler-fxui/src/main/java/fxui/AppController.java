@@ -2,7 +2,7 @@ package fxui;
 
 import common.IO;
 import common.Util;
-import fxui.model.Parameters;
+import fxui.model.AppState;
 import fxui.model.RunMode;
 import fxui.model.Terminal;
 import fxui.tree.JavaProjectTree;
@@ -67,7 +67,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   @FXML
   private Button btnRestoreParameters;
 
-  private final Parameters parameters;
+  private final AppState appState;
 
   private JavaProjectTree projectTree;
   private RecursiveDirectoryWatcher recursiveDirectoryWatcher;
@@ -75,7 +75,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   private final static String JAVA_VERSION_NOT_RECOGNIZED = "Unable to determine";
 
   public AppController() {
-    parameters = new Parameters();
+    appState = new AppState();
   }
 
   @FXML
@@ -97,11 +97,11 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
 
   public void setProjectDirectory(Path projectRootPath) {
     IO.outputDir = projectRootPath.resolve(IO.DEFAULT_OUT_DIR);
-    parameters.projectRoot.set(projectRootPath);
+    appState.projectRoot.set(projectRootPath);
     applicationStage.setTitle(applicationStage.getTitle() + " - " + projectRootPath);
     btnRestoreParameters.visibleProperty().set(IO.getUIParametersPath().toFile().exists());
     btnOpenReport.visibleProperty().set(IO.getReportIndexPath().toFile().exists());
-    projectTree = new JavaProjectTree(parameters, treeProjectDir);
+    projectTree = new JavaProjectTree(appState, treeProjectDir);
     initDirectoryWatcher(projectRootPath);
   }
 
@@ -117,48 +117,48 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   private void bindParameters() {
-    txtMainFile.textProperty().bindBidirectional(parameters.mainFile, BindingUtils.pathStringConverter);
-    txtProgramArgs.textProperty().bindBidirectional(parameters.programArgs);
-    txtSourcesDir.textProperty().bindBidirectional(parameters.sourcesDir, BindingUtils.pathStringConverter);
-    cbSyncCounters.selectedProperty().bindBidirectional(parameters.syncCounters);
+    txtMainFile.textProperty().bindBidirectional(appState.mainFile, BindingUtils.pathStringConverter);
+    txtProgramArgs.textProperty().bindBidirectional(appState.programArgs);
+    txtSourcesDir.textProperty().bindBidirectional(appState.sourcesDir, BindingUtils.pathStringConverter);
+    cbSyncCounters.selectedProperty().bindBidirectional(appState.syncCounters);
   }
 
   private void initRunModeControl() {
     cbRunMode.getItems().setAll(RunMode.values());
-    cbRunMode.valueProperty().bindBidirectional(parameters.runMode);
+    cbRunMode.valueProperty().bindBidirectional(appState.runMode);
   }
 
   private void initTerminalEmulatorControl() {
     cbTerminalEmulator.getItems().setAll(Terminal.getSystemTerminalOptions());
-    cbTerminalEmulator.valueProperty().bindBidirectional(parameters.terminal);
+    cbTerminalEmulator.valueProperty().bindBidirectional(appState.terminal);
   }
 
   private void initDisabledPropertiesByMode() {
-    boxMainFile.visibleProperty().bind(parameters.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
-    boxProgramArgs.visibleProperty().bind(parameters.runMode.isEqualTo(RunMode.DEFAULT));
+    boxMainFile.visibleProperty().bind(appState.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
+    boxProgramArgs.visibleProperty().bind(appState.runMode.isEqualTo(RunMode.DEFAULT));
     boxProgramArgs.managedProperty().bind(boxProgramArgs.visibleProperty());
-    boxSourcesDir.visibleProperty().bind(parameters.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
-    boxSyncCounters.visibleProperty().bind(parameters.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
-    requiredHintMainFile.visibleProperty().bind(parameters.runMode.isEqualTo(RunMode.DEFAULT));
+    boxSourcesDir.visibleProperty().bind(appState.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
+    boxSyncCounters.visibleProperty().bind(appState.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
+    requiredHintMainFile.visibleProperty().bind(appState.runMode.isEqualTo(RunMode.DEFAULT));
     requiredHintMainFile.managedProperty().bind(requiredHintMainFile.visibleProperty());
   }
 
   private void initButtonDisabledProperties() {
-    btnClearSourcesDir.visibleProperty().bind(parameters.sourcesDir.isNotNull());
+    btnClearSourcesDir.visibleProperty().bind(appState.sourcesDir.isNotNull());
     btnClearSourcesDir.managedProperty().bind(btnClearSourcesDir.visibleProperty());
-    btnClearMainFile.visibleProperty().bind(parameters.mainFile.isNotNull());
+    btnClearMainFile.visibleProperty().bind(appState.mainFile.isNotNull());
     btnClearMainFile.managedProperty().bind(btnClearMainFile.visibleProperty());
-    BooleanBinding anyPathInvalid = parameters.invalidMainFilePath.or(parameters.invalidSourcesDirPath);
-    BooleanBinding instrumentWithoutTarget = parameters.runMode
+    BooleanBinding anyPathInvalid = appState.invalidMainFilePath.or(appState.invalidSourcesDirPath);
+    BooleanBinding instrumentWithoutTarget = appState.runMode
         .isNotEqualTo(RunMode.REPORT_ONLY)
-        .and(parameters.mainFile.isNull())
-        .and(parameters.sourcesDir.isNull());
-    BooleanBinding runWithoutMainFile = parameters.runMode
+        .and(appState.mainFile.isNull())
+        .and(appState.sourcesDir.isNull());
+    BooleanBinding runWithoutMainFile = appState.runMode
         .isEqualTo(RunMode.DEFAULT)
-        .and(parameters.mainFile.isNull());
-    BooleanBinding generateWithMissingData = parameters.runMode
+        .and(appState.mainFile.isNull());
+    BooleanBinding generateWithMissingData = appState.runMode
         .isEqualTo(RunMode.REPORT_ONLY)
-        .and(parameters.metadataFileExists.not().or(parameters.countsFileExists.not()));
+        .and(appState.metadataFileExists.not().or(appState.countsFileExists.not()));
     btnRunTool.disableProperty().bind(
         anyPathInvalid.or(instrumentWithoutTarget).or(runWithoutMainFile).or(generateWithMissingData)
     );
@@ -166,21 +166,21 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   private void initBorderListeners() {
-    txtMainFile.borderProperty().bind(BindingUtils.createBorderBinding(parameters.mainFile, parameters.invalidMainFilePath));
-    txtSourcesDir.borderProperty().bind(BindingUtils.createBorderBinding(parameters.sourcesDir, parameters.invalidSourcesDirPath));
+    txtMainFile.borderProperty().bind(BindingUtils.createBorderBinding(appState.mainFile, appState.invalidMainFilePath));
+    txtSourcesDir.borderProperty().bind(BindingUtils.createBorderBinding(appState.sourcesDir, appState.invalidSourcesDirPath));
   }
 
   public void onClearSourcesDir() {
-    parameters.sourcesDir.set(null);
+    appState.sourcesDir.set(null);
   }
 
   public void onClearMainFile() {
-    parameters.mainFile.set(null);
+    appState.mainFile.set(null);
   }
 
   @FXML
   protected void onExecuteTool() {
-    int exitCode = SystemUtils.executeToolWithParameters(parameters);
+    int exitCode = SystemUtils.executeToolWithParameters(appState);
     if (exitCode != 0) {
       throw new RuntimeException("error executing tool");
     }
@@ -201,7 +201,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     cmdStage.initModality(Modality.APPLICATION_MODAL);
     CommandController cmdController = fxmlLoader.getController();
     cmdController.initUI(cmdStage);
-    cmdController.setCommand(SystemUtils.getTerminalCommand(parameters));
+    cmdController.setCommand(SystemUtils.getTerminalCommand(appState));
     cmdStage.showAndWait();
   }
 
@@ -210,7 +210,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
       String[] command = new String[]{"java", "-version"};
       String result = JAVA_VERSION_NOT_RECOGNIZED;
       try {
-        String[] output = Util.runCommandAndGetOutput(parameters.projectRoot.get(), command);
+        String[] output = Util.runCommandAndGetOutput(appState.projectRoot.get(), command);
         if (output.length > 0) {
           result = output[0];
         }
@@ -222,17 +222,17 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
 
   @FXML
   protected void onRebuildTree() {
-    projectTree = new JavaProjectTree(parameters, treeProjectDir);
+    projectTree = new JavaProjectTree(appState, treeProjectDir);
   }
 
   @FXML
   protected void onSaveParameters() {
-    parameters.exportParameters();
+    appState.exportParameters();
   }
 
   @FXML
   protected void onRestoreParameters() {
-    parameters.importParameters();
+    appState.importParameters();
   }
 
   @Override
@@ -246,8 +246,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     } else if (path.equals(IO.getOutputDir())) { // needed because child event might not be reported
       btnRestoreParameters.setVisible(IO.getUIParametersPath().toFile().exists());
     }
-    parameters.metadataFileExists.invalidate();
-    parameters.countsFileExists.invalidate();
+    appState.metadataFileExists.invalidate();
+    appState.countsFileExists.invalidate();
   }
 
   @Override
@@ -262,7 +262,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     if (path.equals(IO.getUIParametersPath()) || IO.isChildPath(IO.getUIParametersPath(), path)) {
       btnRestoreParameters.setVisible(false);
     }
-    parameters.metadataFileExists.invalidate();
-    parameters.countsFileExists.invalidate();
+    appState.metadataFileExists.invalidate();
+    appState.countsFileExists.invalidate();
   }
 }

@@ -2,7 +2,7 @@ package fxui.util;
 
 import common.IO;
 import common.Util;
-import fxui.model.Parameters;
+import fxui.model.AppState;
 import javafx.beans.property.ObjectProperty;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -49,14 +49,14 @@ public class SystemUtils {
     });
   }
 
-  public static int executeToolWithParameters(Parameters parameters) {
-    String[] terminalCommand = getTerminalCommand(parameters);
-    return Util.runCommand(parameters.projectRoot.get(), terminalCommand);
+  public static int executeToolWithParameters(AppState appState) {
+    String[] terminalCommand = getTerminalCommand(appState);
+    return Util.runCommand(appState.projectRoot.get(), terminalCommand);
   }
 
-  public static String[] getTerminalCommand(Parameters parameters) {
-    String javaCommand = getJavaRunCommand(parameters.getProgramArguments());
-    return parameters.terminal.get().wrapWithTerminalCommand(javaCommand);
+  public static String[] getTerminalCommand(AppState appState) {
+    String javaCommand = getJavaRunCommand(appState.getProgramArguments());
+    return appState.terminal.get().wrapWithTerminalCommand(javaCommand);
   }
 
   public static String getJavaRunCommand(String[] toolArguments) {

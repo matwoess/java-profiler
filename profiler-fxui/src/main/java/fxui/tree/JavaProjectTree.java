@@ -1,6 +1,6 @@
 package fxui.tree;
 
-import fxui.model.Parameters;
+import fxui.model.AppState;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TreeItem;
@@ -11,18 +11,18 @@ import java.io.File;
 import java.nio.file.Path;
 
 public class JavaProjectTree {
-  private final Parameters parameters;
+  private final AppState appState;
 
   ObjectProperty<TreeItem<File>> selectedDirNode = new SimpleObjectProperty<>();
   ObjectProperty<TreeItem<File>> selectedMainNode = new SimpleObjectProperty<>();
 
-  public JavaProjectTree(Parameters parameters, TreeView<File> treeProjectDir) {
-    this.parameters = parameters;
+  public JavaProjectTree(AppState appState, TreeView<File> treeProjectDir) {
+    this.appState = appState;
     initTreeView(treeProjectDir);
   }
 
   private void initTreeView(TreeView<File> treeProjectDir) {
-    File rootDir = parameters.projectRoot.get().toFile();
+    File rootDir = appState.projectRoot.get().toFile();
     TreeItem<File> root = populateTree(rootDir);
     treeProjectDir.setRoot(root);
     treeProjectDir.setShowRoot(false);
@@ -38,7 +38,7 @@ public class JavaProjectTree {
         }
       }
     });
-    treeProjectDir.setCellFactory(tv -> new SelectableTreeCell(parameters));
+    treeProjectDir.setCellFactory(tv -> new SelectableTreeCell(appState));
   }
 
   public TreeItem<File> populateTree(File directory) {
@@ -59,13 +59,13 @@ public class JavaProjectTree {
   }
 
   private void setSourcesDir(Path dir) {
-    Path relPath = parameters.projectRoot.get().relativize(dir);
-    parameters.sourcesDir.set(relPath);
+    Path relPath = appState.projectRoot.get().relativize(dir);
+    appState.sourcesDir.set(relPath);
   }
 
   private void setMainFile(Path jFile) {
-    Path relPath = parameters.projectRoot.get().relativize(jFile);
-    parameters.mainFile.set(relPath);
+    Path relPath = appState.projectRoot.get().relativize(jFile);
+    appState.mainFile.set(relPath);
   }
 
 }

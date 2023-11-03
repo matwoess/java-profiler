@@ -1,7 +1,7 @@
 package fxui.tree;
 
 import common.IO;
-import fxui.model.Parameters;
+import fxui.model.AppState;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.TreeCell;
@@ -29,30 +29,30 @@ class SelectableTreeCell extends TreeCell<File> {
   static final Background mainFileSelColor = Background.fill(Color.color(.1, .5, .1, .3));
 
 
-  public SelectableTreeCell(Parameters parameters) {
+  public SelectableTreeCell(AppState appState) {
     BooleanBinding isSelectedDir = Bindings.createBooleanBinding(
         () -> {
-          Path srcDir = parameters.sourcesDir.get();
+          Path srcDir = appState.sourcesDir.get();
           if (srcDir == null) return false;
           TreeItem<File> item = this.getTreeItem();
           if (item == null) return false;
           File dir = item.getValue();
           if (dir == null) return false;
-          return parameters.projectRoot.get().resolve(srcDir).equals(dir.toPath());
+          return appState.projectRoot.get().resolve(srcDir).equals(dir.toPath());
         },
-        treeItemProperty(), parameters.sourcesDir
+        treeItemProperty(), appState.sourcesDir
     );
     BooleanBinding isSelectedMain = Bindings.createBooleanBinding(
         () -> {
-          Path mainFile = parameters.mainFile.get();
+          Path mainFile = appState.mainFile.get();
           if (mainFile == null) return false;
           TreeItem<File> item = this.getTreeItem();
           if (item == null) return false;
           File file = item.getValue();
           if (file == null) return false;
-          return parameters.projectRoot.get().resolve(mainFile).equals(file.toPath());
+          return appState.projectRoot.get().resolve(mainFile).equals(file.toPath());
         },
-        treeItemProperty(), parameters.mainFile
+        treeItemProperty(), appState.mainFile
     );
     graphicProperty().bind(Bindings.createObjectBinding(
             this::getItemGraphic,
@@ -60,7 +60,7 @@ class SelectableTreeCell extends TreeCell<File> {
         )
     );
     backgroundProperty().bind(Bindings.createObjectBinding(
-        () -> getItemBackgroundColor(parameters.projectRoot.get(), isSelectedDir.get(), isSelectedMain.get()),
+        () -> getItemBackgroundColor(appState.projectRoot.get(), isSelectedDir.get(), isSelectedMain.get()),
         isSelectedDir, isSelectedMain, selectedProperty(), itemProperty()
     ));
   }
