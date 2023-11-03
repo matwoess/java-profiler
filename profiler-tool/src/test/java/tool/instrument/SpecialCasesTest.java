@@ -102,8 +102,14 @@ public class SpecialCasesTest {
                           return c < 10;
                         }).sum();
                         case 3 -> {
-                          if (ch == 3) yield 3;
-                          else yield -1;
+                          try {
+                            if (ch == 3) yield 3;
+                            else yield -1;
+                          }
+                          catch (Exception ignore) {}
+                          finally {
+                            System.out.println("leaving try");
+                          }
                         }
                         case 4 -> {
                           yield switch (ch) {
@@ -154,37 +160,40 @@ public class SpecialCasesTest {
                 jSsBlock(BLOCK, 20, 20, 339, 368)
             ),
             jClass(ANONYMOUS, null,
-                jMethod("compare", 56, 65, 1457, 1706,
-                    jBlock(SWITCH_EXPR, 57, 63, 1495, 1663),
-                    jSsBlock(ARROW_CASE, 58, 58, 1523, 1526),
-                    jBlock(ARROW_CASE, 59, 61, 1557, 1607).withJump(YIELD),
-                    jSsBlock(ARROW_CASE, 62, 62, 1636, 1645)
+                jMethod("compare", 62, 71, 1654, 1903,
+                    jBlock(SWITCH_EXPR, 63, 69, 1692, 1860),
+                    jSsBlock(ARROW_CASE, 64, 64, 1720, 1723),
+                    jBlock(ARROW_CASE, 65, 67, 1754, 1804).withJump(YIELD),
+                    jSsBlock(ARROW_CASE, 68, 68, 1833, 1842)
                 ).withJump(RETURN)
             ),
-            jMethod("method", 23, 75, 398, 1921,
-                jBlock(BLOCK, 25, 71, 443, 1876),
-                jSsBlock(LOOP, 26, 70, 489, 1870),
-                jBlock(SWITCH_STMT, 27, 70, 516, 1870),
+            jMethod("method", 23, 81, 398, 2118,
+                jBlock(BLOCK, 25, 77, 443, 2073),
+                jSsBlock(LOOP, 26, 76, 489, 2067),
+                jBlock(SWITCH_STMT, 27, 76, 516, 2067),
                 jBlock(COLON_CASE, 28, 29, 534, 569).noIncOffset(),
-                jBlock(COLON_CASE, 30, 51, 587, 1246).noIncOffset(),
-                jBlock(LAMBDA, 31, 51, 621, 1208).withJump(RETURN),
-                jBlock(SWITCH_EXPR, 32, 50, 656, 1193),
+                jBlock(COLON_CASE, 30, 57, 587, 1443).noIncOffset(),
+                jBlock(LAMBDA, 31, 57, 621, 1405).withJump(RETURN),
+                jBlock(SWITCH_EXPR, 32, 56, 656, 1390),
                 jBlock(ARROW_CASE, 33, 35, 684, 729).withJump(YIELD),
                 jSsBlock(ARROW_CASE, 36, 36, 755, 762),
                 jSsBlock(ARROW_CASE, 37, 39, 788, 887),
                 // TODO: missing lambda blocks!1
-                jBlock(ARROW_CASE, 40, 43, 915, 1006),
-                jSsBlock(BLOCK, 41, 41, 946, 955).withJump(YIELD),
-                jSsBlock(BLOCK, 42, 42, 978, 988).withJump(YIELD),
-                jBlock(ARROW_CASE, 44, 48, 1034, 1146).withJump(YIELD),
-                jBlock(SWITCH_EXPR, 45, 47, 1072, 1127),
-                jSsBlock(ARROW_CASE, 46, 46, 1103, 1107),
-                jSsBlock(ARROW_CASE, 49, 49, 1173, 1177),
-                jSsBlock(LAMBDA, 51, 51, 1222, 1244),
-                jBlock(COLON_CASE, 52, 67, 1264, 1794).noIncOffset(),
-                jSsBlock(BLOCK, 67, 67, 1758, 1794),
-                jBlock(COLON_CASE, 68, 69, 1813, 1860).noIncOffset(),
-                jBlock(BLOCK, 72, 74, 1903, 1917)
+                jBlock(ARROW_CASE, 40, 49, 915, 1203),
+                jBlock(TRY, 41, 44, 939, 1036),
+                jSsBlock(BLOCK, 42, 42, 972, 981).withJump(YIELD),
+                jSsBlock(BLOCK, 43, 43, 1006, 1016).withJump(YIELD),
+                jBlock(BLOCK, 45, 45, 1081, 1082),
+                jBlock(BLOCK, 46, 48, 1110, 1185),
+                jBlock(ARROW_CASE, 50, 54, 1231, 1343).withJump(YIELD),
+                jBlock(SWITCH_EXPR, 51, 53, 1269, 1324),
+                jSsBlock(ARROW_CASE, 52, 52, 1300, 1304),
+                jSsBlock(ARROW_CASE, 55, 55, 1370, 1374),
+                jSsBlock(LAMBDA, 57, 57, 1419, 1441),
+                jBlock(COLON_CASE, 58, 73, 1461, 1991).noIncOffset(),
+                jSsBlock(BLOCK, 73, 73, 1955, 1991),
+                jBlock(COLON_CASE, 74, 75, 2010, 2057).noIncOffset(),
+                jBlock(BLOCK, 78, 80, 2100, 2114)
             )
         )
     );

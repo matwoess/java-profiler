@@ -42,8 +42,14 @@ class NestedBlockTypes {
                   return c < 10;
                 }).sum();
                 case '3' -> {
-                  if (ch == 3) yield 3;
-                  else yield -1;
+                  try {
+                    if (ch == 3) yield 3;
+                    else yield -1;
+                  }
+                  catch (Exception ignore) {}
+                  finally {
+                    System.out.println("leaving try");
+                  }
                 }
                 case '4' -> {
                   yield switch (ch) {
