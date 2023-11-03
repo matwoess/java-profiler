@@ -111,4 +111,14 @@ public class BindingUtils {
         parentDirProperty
     );
   }
+
+  public static BooleanBinding creatRelativeFileExistsBinding(ObjectProperty<Path> parentDirProperty, Path relFilePath) {
+    return Bindings.createBooleanBinding(
+        () -> {
+          if (parentDirProperty.isNull().get()) return false;
+          return parentDirProperty.get().resolve(relFilePath).toFile().exists();
+        },
+        parentDirProperty
+    );
+  }
 }

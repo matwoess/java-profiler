@@ -96,8 +96,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   public void setProjectDirectory(Path projectRootPath) {
-    parameters.projectRoot.set(projectRootPath);
     IO.outputDir = projectRootPath.resolve(IO.DEFAULT_OUT_DIR);
+    parameters.projectRoot.set(projectRootPath);
     applicationStage.setTitle(applicationStage.getTitle() + " - " + projectRootPath);
     btnRestoreParameters.visibleProperty().set(IO.getUIParametersPath().toFile().exists());
     btnOpenReport.visibleProperty().set(IO.getReportIndexPath().toFile().exists());
@@ -156,7 +156,12 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     BooleanBinding runWithoutMainFile = parameters.runMode
         .isEqualTo(RunMode.DEFAULT)
         .and(parameters.mainFile.isNull());
-    btnRunTool.disableProperty().bind(anyPathInvalid.or(instrumentWithoutTarget).or(runWithoutMainFile));
+    BooleanBinding generateWithMissingData = parameters.runMode
+        .isEqualTo(RunMode.REPORT_ONLY)
+        .and(parameters.metadataFileExists.not().or(parameters.countsFileExists.not()));
+    btnRunTool.disableProperty().bind(
+        anyPathInvalid.or(instrumentWithoutTarget).or(runWithoutMainFile).or(generateWithMissingData)
+    );
     btnCommandPreview.disableProperty().bind(btnRunTool.disableProperty());
   }
 
@@ -241,6 +246,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     } else if (path.equals(IO.getOutputDir())) { // needed because child event might not be reported
       btnRestoreParameters.setVisible(IO.getUIParametersPath().toFile().exists());
     }
+    parameters.metadataFileExists.invalidate();
+    parameters.countsFileExists.invalidate();
   }
 
   @Override
@@ -255,5 +262,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     if (path.equals(IO.getUIParametersPath()) || IO.isChildPath(IO.getUIParametersPath(), path)) {
       btnRestoreParameters.setVisible(false);
     }
+    parameters.metadataFileExists.invalidate();
+    parameters.countsFileExists.invalidate();
   }
 }

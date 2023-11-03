@@ -2,6 +2,7 @@ package fxui.model;
 
 import common.IO;
 import fxui.util.BindingUtils;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 
 import java.io.*;
@@ -28,6 +29,9 @@ public class Parameters {
   public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
   public BooleanProperty invalidSourcesDirPath = new SimpleBooleanProperty(false);
 
+  public BooleanBinding metadataFileExists;
+  public BooleanBinding countsFileExists;
+
   public Parameters() {
     initializeAdditionalProperties();
   }
@@ -35,6 +39,8 @@ public class Parameters {
   public void initializeAdditionalProperties() {
     invalidMainFilePath.bind(mainFile.isNotNull().and(BindingUtils.creatRelativeIsJavaFileBinding(projectRoot, mainFile).not()));
     invalidSourcesDirPath.bind(sourcesDir.isNotNull().and(BindingUtils.createRelativeIsDirectoryBinding(projectRoot, sourcesDir).not()));
+    metadataFileExists = BindingUtils.creatRelativeFileExistsBinding(projectRoot, IO.getMetadataPath());
+    countsFileExists = BindingUtils.creatRelativeFileExistsBinding(projectRoot, IO.getCountsPath());
   }
 
   public String[] getProgramArguments() {
