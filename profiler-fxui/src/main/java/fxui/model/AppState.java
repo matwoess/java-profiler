@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static common.IO.getUIParametersPath;
 import static fxui.model.RunMode.DEFAULT;
 import static fxui.model.RunMode.REPORT_ONLY;
 
@@ -85,7 +84,7 @@ public class AppState {
   }
 
   public void exportParameters() {
-    Path parametersPath = getUIParametersPath();
+    Path parametersPath = IO.getUIParametersPath();
     IO.createDirectoriesIfNotExists(parametersPath);
     try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(parametersPath.toFile()))) {
       oos.writeInt(runMode.get().ordinal());
@@ -100,7 +99,7 @@ public class AppState {
   }
 
   public void importParameters() {
-    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(getUIParametersPath().toFile()))) {
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(IO.getUIParametersPath().toFile()))) {
       runMode.set(RunMode.values()[ois.readInt()]);
       String sourcesDirVal = ois.readUTF();
       sourcesDir.set(sourcesDirVal.isBlank() ? null : Path.of(sourcesDirVal));
