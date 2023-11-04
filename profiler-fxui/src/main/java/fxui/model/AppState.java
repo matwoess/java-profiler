@@ -26,9 +26,10 @@ public class AppState {
   public BooleanProperty syncCounters = new SimpleBooleanProperty(false);
   public ObjectProperty<Terminal> terminal = new SimpleObjectProperty<>(Terminal.getDefaultSystemTerminal());
 
-  public BooleanProperty invalidMainFilePath = new SimpleBooleanProperty(false);
-  public BooleanProperty invalidSourcesDirPath = new SimpleBooleanProperty(false);
-
+  public BooleanBinding invalidMainFilePath;
+  public BooleanBinding invalidSourcesDirPath;
+  public BooleanBinding reportIndexFileExists;
+  public BooleanBinding parametersFileExists;
   public BooleanBinding metadataFileExists;
   public BooleanBinding countsFileExists;
 
@@ -37,10 +38,19 @@ public class AppState {
   }
 
   public void initializeAdditionalProperties() {
-    invalidMainFilePath.bind(mainFile.isNotNull().and(BindingUtils.creatRelativeIsJavaFileBinding(projectRoot, mainFile).not()));
-    invalidSourcesDirPath.bind(sourcesDir.isNotNull().and(BindingUtils.createRelativeIsDirectoryBinding(projectRoot, sourcesDir).not()));
+    invalidMainFilePath = mainFile.isNotNull().and(BindingUtils.creatRelativeIsJavaFileBinding(projectRoot, mainFile).not());
+    invalidSourcesDirPath = sourcesDir.isNotNull().and(BindingUtils.createRelativeIsDirectoryBinding(projectRoot, sourcesDir).not());
+    reportIndexFileExists = BindingUtils.creatRelativeFileExistsBinding(projectRoot, IO.getReportIndexPath());
+    parametersFileExists = BindingUtils.creatRelativeFileExistsBinding(projectRoot, IO.getUIParametersPath());
     metadataFileExists = BindingUtils.creatRelativeFileExistsBinding(projectRoot, IO.getMetadataPath());
     countsFileExists = BindingUtils.creatRelativeFileExistsBinding(projectRoot, IO.getCountsPath());
+  }
+
+  public void invalidateFileBindings() {
+    reportIndexFileExists.invalidate();
+    metadataFileExists.invalidate();
+    countsFileExists.invalidate();
+    parametersFileExists.invalidate();
   }
 
   public String[] getProgramArguments() {

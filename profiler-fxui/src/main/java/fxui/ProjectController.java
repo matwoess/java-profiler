@@ -2,9 +2,8 @@ package fxui;
 
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
-import javafx.beans.property.BooleanProperty;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -22,7 +21,7 @@ public class ProjectController {
   @FXML
   private Button btnOpenProject;
 
-  public BooleanProperty invalidProjectRootPath = new SimpleBooleanProperty(false);
+  public BooleanBinding invalidProjectRootPath;
 
   public void initUI(Stage stage) {
     projectStage = stage;
@@ -32,11 +31,12 @@ public class ProjectController {
 
   void initProperties(ObjectProperty<Path> projectRootProperty) {
     txtProjectRoot.textProperty().bindBidirectional(projectRootProperty, BindingUtils.pathStringConverter);
-    invalidProjectRootPath.bind(txtProjectRoot.textProperty().isNotEmpty()
-        .and(BindingUtils.createIsDirectoryBinding(projectRootProperty).not())
-    );
+    invalidProjectRootPath = txtProjectRoot.textProperty()
+        .isNotEmpty()
+        .and(BindingUtils.createIsDirectoryBinding(projectRootProperty).not());
     btnProjectRoot.setOnAction(event -> onPickProjectRoot(projectRootProperty));
-    txtProjectRoot.borderProperty().bind(BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));
+    txtProjectRoot.borderProperty().bind(
+        BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));
     btnOpenProject.disableProperty().bind(txtProjectRoot.textProperty().isEmpty().or(invalidProjectRootPath));
   }
 

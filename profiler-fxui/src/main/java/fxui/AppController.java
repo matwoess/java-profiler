@@ -84,7 +84,8 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     initRunModeControl();
     initTerminalEmulatorControl();
     initDisabledPropertiesByMode();
-    initButtonDisabledProperties();
+    initButtonProperties();
+    initRunToolButton();
     initBorderListeners();
     initRecognizedJavaVersionControl();
   }
@@ -99,8 +100,6 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     IO.outputDir = projectRootPath.resolve(IO.DEFAULT_OUT_DIR);
     appState.projectRoot.set(projectRootPath);
     applicationStage.setTitle(applicationStage.getTitle() + " - " + projectRootPath);
-    btnRestoreParameters.visibleProperty().set(IO.getUIParametersPath().toFile().exists());
-    btnOpenReport.visibleProperty().set(IO.getReportIndexPath().toFile().exists());
     projectTree = new JavaProjectTree(appState, treeProjectDir);
     initDirectoryWatcher(projectRootPath);
   }
@@ -143,11 +142,16 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     requiredHintMainFile.managedProperty().bind(requiredHintMainFile.visibleProperty());
   }
 
-  private void initButtonDisabledProperties() {
+  private void initButtonProperties() {
     btnClearSourcesDir.visibleProperty().bind(appState.sourcesDir.isNotNull());
     btnClearSourcesDir.managedProperty().bind(btnClearSourcesDir.visibleProperty());
     btnClearMainFile.visibleProperty().bind(appState.mainFile.isNotNull());
     btnClearMainFile.managedProperty().bind(btnClearMainFile.visibleProperty());
+    btnRestoreParameters.visibleProperty().bind(appState.parametersFileExists);
+    btnOpenReport.visibleProperty().bind(appState.reportIndexFileExists);
+  }
+
+  private void initRunToolButton() {
     BooleanBinding anyPathInvalid = appState.invalidMainFilePath.or(appState.invalidSourcesDirPath);
     BooleanBinding instrumentWithoutTarget = appState.runMode
         .isNotEqualTo(RunMode.REPORT_ONLY)
@@ -237,17 +241,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
 
   @Override
   public void onFileCreated(Path path) {
-    if (path.equals(IO.getReportIndexPath())) {
-      btnOpenReport.setVisible(true);
-    } else if (path.equals(IO.getReportDir())) { // needed because child event might not be reported
-      btnOpenReport.setVisible(IO.getReportIndexPath().toFile().exists());
-    } else if (path.equals(IO.getUIParametersPath())) {
-      btnRestoreParameters.setVisible(true);
-    } else if (path.equals(IO.getOutputDir())) { // needed because child event might not be reported
-      btnRestoreParameters.setVisible(IO.getUIParametersPath().toFile().exists());
-    }
-    appState.metadataFileExists.invalidate();
-    appState.countsFileExists.invalidate();
+    appState.invalidateFileBindings();
   }
 
   @Override
@@ -256,13 +250,6 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
 
   @Override
   public void onFileDeleted(Path path) {
-    if (path.equals(IO.getReportIndexPath()) || IO.isChildPath(IO.getReportIndexPath(), path)) {
-      btnOpenReport.setVisible(false);
-    }
-    if (path.equals(IO.getUIParametersPath()) || IO.isChildPath(IO.getUIParametersPath(), path)) {
-      btnRestoreParameters.setVisible(false);
-    }
-    appState.metadataFileExists.invalidate();
-    appState.countsFileExists.invalidate();
+    appState.invalidateFileBindings();
   }
 }

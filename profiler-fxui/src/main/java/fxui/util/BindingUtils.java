@@ -3,14 +3,12 @@ package fxui.util;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 
-import java.io.File;
 import java.nio.file.Path;
 
 public class BindingUtils {
@@ -44,37 +42,27 @@ public class BindingUtils {
     }
   };
 
-  public static ObjectBinding<Border> createBorderBinding(StringProperty textProperty, BooleanProperty invalidityProperty) {
+  public static ObjectBinding<Border> createBorderBinding(StringProperty textProperty, BooleanBinding invalidityBinding) {
     return Bindings.createObjectBinding(
         () -> {
           if (textProperty.isEmpty().get()) return neutralBorder;
-          if (invalidityProperty.get()) return invalidBorder;
+          if (invalidityBinding.get()) return invalidBorder;
           else return validBorder;
         },
         textProperty,
-        invalidityProperty
+        invalidityBinding
     );
   }
 
-  public static ObjectBinding<Border> createBorderBinding(ObjectProperty<Path> fileProperty, BooleanProperty invalidityProperty) {
+  public static ObjectBinding<Border> createBorderBinding(ObjectProperty<Path> fileProperty, BooleanBinding invalidityBinding) {
     return Bindings.createObjectBinding(
         () -> {
           if (fileProperty.isNull().get()) return neutralBorder;
-          if (invalidityProperty.get()) return invalidBorder;
+          if (invalidityBinding.get()) return invalidBorder;
           else return validBorder;
         },
         fileProperty,
-        invalidityProperty
-    );
-  }
-
-  public static BooleanBinding createIsJavaFileBinding(ObjectProperty<File> fileProperty) {
-    return Bindings.createBooleanBinding(
-        () -> {
-          if (fileProperty.isNull().get()) return false;
-          return common.Util.isJavaFile(fileProperty.get().toPath());
-        },
-        fileProperty
+        invalidityBinding
     );
   }
 
