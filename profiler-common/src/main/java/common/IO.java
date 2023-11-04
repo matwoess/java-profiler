@@ -71,6 +71,10 @@ public class IO {
     return getOutputDir().resolve("parameters.dat");
   }
 
+  public static Path lastProjectPath() {
+    return Path.of("lastProjectRootDirectory.txt");
+  }
+
   public static boolean isChildPath(Path child, Path parent) {
     return child.toAbsolutePath().startsWith(parent.toAbsolutePath());
   }
@@ -125,5 +129,4 @@ public class IO {
       throw new RuntimeException(e);
     }
   }
-
 }

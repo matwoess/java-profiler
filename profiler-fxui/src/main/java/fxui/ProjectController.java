@@ -1,5 +1,6 @@
 package fxui;
 
+import common.IO;
 import fxui.util.BindingUtils;
 import fxui.util.SystemUtils;
 import javafx.beans.binding.BooleanBinding;
@@ -9,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ProjectController {
@@ -38,6 +41,7 @@ public class ProjectController {
     txtProjectRoot.borderProperty().bind(
         BindingUtils.createBorderBinding(txtProjectRoot.textProperty(), invalidProjectRootPath));
     btnOpenProject.disableProperty().bind(txtProjectRoot.textProperty().isEmpty().or(invalidProjectRootPath));
+    restoreLastProjectPath();
   }
 
   private void onPickProjectRoot(ObjectProperty<Path> projectRootProperty) {
@@ -45,6 +49,26 @@ public class ProjectController {
   }
 
   public void onOpenProject() {
+    exportProjectPath();
     projectStage.close();
+  }
+
+  private void exportProjectPath() {
+    try {
+      Files.writeString(common.IO.lastProjectPath(), txtProjectRoot.textProperty().get());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void restoreLastProjectPath() {
+    if (!IO.lastProjectPath().toFile().exists()) return;
+    try {
+      String lastProjectPathStr = Files.readString(common.IO.lastProjectPath());
+      txtProjectRoot.textProperty().set(lastProjectPathStr);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
   }
 }
