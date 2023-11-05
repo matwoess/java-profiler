@@ -55,16 +55,26 @@ class SelectableTreeCell extends TreeCell<File> {
         },
         treeItemProperty(), appState.mainFile
     );
+    BooleanBinding isOutDir = Bindings.createBooleanBinding(
+        () -> {
+          TreeItem<File> item = this.getTreeItem();
+          if (item == null) return false;
+          File file = item.getValue();
+          if (file == null) return false;
+          return appState.projectRoot.get().resolve(IO.getOutputDir()).equals(file.toPath());
+        },
+        treeItemProperty()
+    );
     graphicProperty().bind(Bindings.createObjectBinding(
             this::getItemGraphic,
             itemProperty()
         )
     );
     backgroundProperty().bind(Bindings.createObjectBinding(
-        () -> getItemBackgroundColor(appState.projectRoot.get(), isSelectedDir.get(), isSelectedMain.get()),
+        () -> getItemBackgroundColor(isOutDir.get(), isSelectedDir.get(), isSelectedMain.get()),
         isSelectedDir, isSelectedMain, selectedProperty(), itemProperty()
     ));
-    borderProperty().bind(BindingUtils.createSelectedTreeItemBorderBinding(isSelectedDir, isSelectedMain));
+    borderProperty().bind(BindingUtils.createSelectedTreeItemBorderBinding(isOutDir, isSelectedDir, isSelectedMain));
   }
 
   @Override
@@ -80,10 +90,9 @@ class SelectableTreeCell extends TreeCell<File> {
     return null;
   }
 
-  public Background getItemBackgroundColor(Path projectRoot, boolean isSelectedDir, boolean isSelectedMain) {
+  public Background getItemBackgroundColor(boolean isOutDir, boolean isSelectedDir, boolean isSelectedMain) {
     if (itemProperty().isNotNull().get()) {
-      Path itemPath = itemProperty().get().toPath();
-      if (itemPath.equals(projectRoot.resolve(IO.getOutputDir()))) {
+      if (isOutDir) {
         return isSelected() ? outDirSelColor : outDirColor;
       }
     }
