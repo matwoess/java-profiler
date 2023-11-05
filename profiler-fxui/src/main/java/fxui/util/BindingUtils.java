@@ -28,6 +28,15 @@ public class BindingUtils {
           BorderWidths.DEFAULT
       )
   );
+  private static final Border srcDirBorder = new Border(
+      new BorderStroke(
+          Color.BLUE,
+          BorderStrokeStyle.SOLID,
+          CornerRadii.EMPTY,
+          BorderWidths.DEFAULT
+      )
+  );
+  private static final Border mainFileBorder = validBorder;
   private static final Border neutralBorder = null;
 
   public static final StringConverter<Path> pathStringConverter = new StringConverter<>() {
@@ -107,6 +116,14 @@ public class BindingUtils {
           return parentDirProperty.get().resolve(relFilePath).toFile().exists();
         },
         parentDirProperty
+    );
+  }
+
+  public static ObjectBinding<Border> createSelectedTreeItemBorderBinding(BooleanBinding isSelectedDir, BooleanBinding isSelectedMain) {
+    return Bindings.createObjectBinding(
+        () -> isSelectedDir.get() ? srcDirBorder : isSelectedMain.get() ? mainFileBorder : neutralBorder,
+        isSelectedDir,
+        isSelectedMain
     );
   }
 }

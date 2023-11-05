@@ -2,6 +2,7 @@ package fxui.tree;
 
 import common.IO;
 import fxui.model.AppState;
+import fxui.util.BindingUtils;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.TreeCell;
@@ -63,6 +64,7 @@ class SelectableTreeCell extends TreeCell<File> {
         () -> getItemBackgroundColor(appState.projectRoot.get(), isSelectedDir.get(), isSelectedMain.get()),
         isSelectedDir, isSelectedMain, selectedProperty(), itemProperty()
     ));
+    borderProperty().bind(BindingUtils.createSelectedTreeItemBorderBinding(isSelectedDir, isSelectedMain));
   }
 
   @Override
