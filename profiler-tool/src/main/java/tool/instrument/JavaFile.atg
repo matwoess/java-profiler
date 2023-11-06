@@ -1,4 +1,4 @@
-COMPILER Instrumenter
+COMPILER JavaFile
     ParserState state = new ParserState(this);
 
 CHARACTERS
@@ -60,7 +60,7 @@ IGNORE tab + cr + lf
 
 PRODUCTIONS
 
-Instrumenter =
+JavaFile =
     [PackageDecl]
     {   AnnotationType
         | Annotation
@@ -188,4 +188,4 @@ Block<BlockType blockType> =                (. state.enterBlock(blockType); .)
     "}"
 .
 
-END Instrumenter.
+END JavaFile.
