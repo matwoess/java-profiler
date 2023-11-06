@@ -21,6 +21,7 @@ public class Block implements Serializable, Component {
 
   transient public int hits;
   public transient List<Block> innerJumpBlocks = new ArrayList<>();
+  public List<Block> inheritedJumpBlocks = new ArrayList<>();
 
   public Block(BlockType type) {
     blockType = type;
@@ -44,6 +45,8 @@ public class Block implements Serializable, Component {
 
   public void setParentBlock(Block block) {
     parentBlock = block;
+    this.inheritedJumpBlocks.addAll(parentBlock.innerJumpBlocks);
+    this.inheritedJumpBlocks.addAll(parentBlock.inheritedJumpBlocks);
   }
 
   public void registerInnerJumpBlock(Block jumpBlock) {

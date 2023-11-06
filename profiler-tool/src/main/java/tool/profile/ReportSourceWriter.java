@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import common.IO;
 
@@ -164,7 +165,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     String minusBlocks = null;
     if (region != null) {
       regionDescr = region.toString();
-      minusBlocks = region.minusBlocks.stream().map(b -> "m" + b.id).collect(Collectors.joining(" "));
+      minusBlocks = getMinusBlockClasses(region);
     }
     int hits = (region != null) ? region.getHitCount() : block.hits;
     String coverageClass = hits > 0 ? "c" : "nc";
@@ -179,6 +180,11 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       }
     }
     return String.format("<span class=\"%s %s\" title=\"%s\">", coverageClass, classes, title);
+  }
+
+  private static String getMinusBlockClasses(CodeRegion region) {
+    Stream<Block> minusBlocks = Stream.concat(region.minusBlocks.stream(), region.block.inheritedJumpBlocks.stream());
+    return minusBlocks.distinct().map(b -> "m" + b.id).collect(Collectors.joining(" "));
   }
 
   private List<Block> getActiveBlocksAtCharPosition(int chPos) {
