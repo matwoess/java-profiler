@@ -36,7 +36,9 @@ public class JumpStatements {
           }
           System.out.println("counting...");
         }
+        System.out.println("loop 2");
       }
+      System.out.println("looop 1");
     }
     System.out.println("finished with x=" + counter);
     if (counter == 35) {
