@@ -91,10 +91,8 @@ class SelectableTreeCell extends TreeCell<File> {
   }
 
   public Background getItemBackgroundColor(boolean isOutDir, boolean isSelectedDir, boolean isSelectedMain) {
-    if (itemProperty().isNotNull().get()) {
-      if (isOutDir) {
-        return isSelected() ? outDirSelColor : outDirColor;
-      }
+    if (isOutDir) {
+      return isSelected() ? outDirSelColor : outDirColor;
     }
     if (isSelectedDir) {
       return isSelected() ? srcDirSelColor : srcDirColor;
