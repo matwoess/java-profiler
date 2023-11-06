@@ -50,6 +50,7 @@ class NestedBlockTypes {
                   finally {
                     System.out.println("leaving try");
                   }
+                  yield -1;
                 }
                 case '4' -> {
                   yield switch (ch) {
