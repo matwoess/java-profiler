@@ -92,7 +92,7 @@ public class Block implements Serializable, Component {
         blockType.toString(),
         isSingleStatement ? ", SS" : "",
         method == null ? " [class-level]" : "",
-        jumpStatement != null ? " [" + jumpStatement.name() + "]" : ""
+        jumpStatement != null ? " [" + jumpStatement + "]" : ""
     );
   }
 

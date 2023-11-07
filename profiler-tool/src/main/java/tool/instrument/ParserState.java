@@ -58,7 +58,7 @@ public class ParserState {
       jumpStatement = JumpStatement.fromToken(parser.t.val);
     }
     curBlock.jumpStatement = jumpStatement;
-    logger.log("> found jump statement: %s", jumpStatement.name());
+    logger.log("> found jump statement: %s", jumpStatement);
     registerJumpInOuterBlocks(jumpStatement);
   }
 

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static tool.model.JumpStatement.Kind.THROW;
+
 public class Instrumenter {
   JavaFile[] javaFiles;
   int blockCounter;
@@ -97,7 +99,7 @@ public class Instrumenter {
       } else {
         inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc%s(%d);", incRefAdd, blockCounter++)));
       }
-      if (block.isSingleStatement && block.isSwitchExpressionCase() && block.jumpStatement != JumpStatement.THROW) {
+      if (block.isSingleStatement && block.isSwitchExpressionCase() && block.jumpStatement.kind() != THROW) {
         inserts.add(new CodeInsert(block.getIncInsertPos(), "yield "));
       }
       if (block.isSingleStatement && block.blockType != BlockType.LAMBDA) {

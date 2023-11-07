@@ -1,14 +1,19 @@
 package tool.model;
 
-import static tool.model.BlockType.*;
+import java.io.Serializable;
 
-public enum JumpStatement {
-  BREAK, CONTINUE, RETURN, YIELD, THROW;
-  String label = null;
+import static tool.model.BlockType.*;
+import static tool.model.JumpStatement.Kind.*;
+
+public record JumpStatement(Kind kind, String label) implements Serializable {
+
+  public enum Kind {
+    BREAK, CONTINUE, RETURN, YIELD, THROW;
+  }
 
   public boolean stopPropagationAt(Block block) {
     boolean matchesLabelOrNone = label == null || block.labels.contains(label);
-    return switch (this) {
+    return switch (kind) {
       case BREAK -> block.blockType == LOOP && matchesLabelOrNone || block.isSwitchStatementCase();
       case CONTINUE -> block.blockType == LOOP && matchesLabelOrNone;
       case YIELD -> block.isSwitchExpressionCase();
@@ -18,24 +23,29 @@ public enum JumpStatement {
   }
 
   public static JumpStatement fromToken(String tokenValue) {
-    return switch (tokenValue) {
-      case "break" -> JumpStatement.BREAK;
-      case "continue" -> JumpStatement.CONTINUE;
-      case "return" -> JumpStatement.RETURN;
-      case "yield" -> JumpStatement.YIELD;
-      case "throw" -> JumpStatement.THROW;
+    Kind type = switch (tokenValue) {
+      case "break" -> BREAK;
+      case "continue" -> CONTINUE;
+      case "return" -> RETURN;
+      case "yield" -> YIELD;
+      case "throw" -> THROW;
       default -> throw new RuntimeException("unknown jump statement '" + tokenValue + "'");
     };
+    return new JumpStatement(type, null);
   }
 
   public static JumpStatement fromTokenWithLabel(String tokenValue, String label) {
     assert tokenValue.equals("break") || tokenValue.equals("continue");
-    JumpStatement jumpStatement = switch (tokenValue) {
-      case "break" -> JumpStatement.BREAK;
-      case "continue" -> JumpStatement.CONTINUE;
+    Kind type = switch (tokenValue) {
+      case "break" -> BREAK;
+      case "continue" -> CONTINUE;
       default -> throw new RuntimeException("unknown jump statement '" + tokenValue + "'");
     };
-    jumpStatement.label = label;
-    return jumpStatement;
+    return new JumpStatement(type, label);
+  }
+
+  @Override
+  public String toString() {
+    return kind.name() + (label == null ? "" : " " + label);
   }
 }

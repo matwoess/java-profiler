@@ -42,11 +42,12 @@ public class Logger {
     if (comp instanceof Method meth) return meth + "()";
     if (comp instanceof Block block) {
       return String.format(
-          "%s%s [%d]%s",
+          "%s%s%s [%d]%s",
+          block.labels.isEmpty() ? "" : String.join(": ", block.labels) + ": ",
           block.blockType,
           block.isSingleStatement ? ", SS" : "",
           leave ? block.end.pos() : block.beg.pos(),
-          block.jumpStatement == null ? "" : " (" + block.jumpStatement.name() + ")"
+          block.jumpStatement == null ? "" : " (" + block.jumpStatement + ")"
       );
     }
     if (comp instanceof CodeRegion region) {
