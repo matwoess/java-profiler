@@ -7,7 +7,7 @@ import tool.model.JavaFile;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.*;
-import static tool.model.JumpStatement.RETURN;
+import static tool.model.JumpStatement.Kind.RETURN;
 
 public class EnumsTest {
   @Test

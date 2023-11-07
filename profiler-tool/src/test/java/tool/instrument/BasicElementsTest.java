@@ -1,13 +1,13 @@
 package tool.instrument;
 
-import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
+import tool.model.JavaFile;
 
 import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.*;
-import static tool.model.JumpStatement.*;
+import static tool.model.JumpStatement.Kind.*;
 
 public class BasicElementsTest {
   @Test
@@ -278,8 +278,8 @@ public class BasicElementsTest {
             jMethod("main", 2, 16, 62, 220,
                 jBlock(LOOP, 5, 14, 99, 215),
                 jBlock(LOOP, 6, 13, 123, 213),
-                jBlock(BLOCK, 7, 10, 141, 177).withJump(BREAK),
-                jBlock(BLOCK, 10, 12, 184, 209).withJump(BREAK)
+                jBlock(BLOCK, 7, 10, 141, 177).withJump(BREAK, "inner"),
+                jBlock(BLOCK, 10, 12, 184, 209).withJump(BREAK, "outer")
             )
         )
     );

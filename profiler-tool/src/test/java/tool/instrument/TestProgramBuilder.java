@@ -17,15 +17,22 @@ public class TestProgramBuilder {
   }
 
   public record BuilderMethod(Method element) implements BuilderComponent {
-    public BuilderMethod withJump(JumpStatement jumpStatement) {
-      element.getMethodBlock().jumpStatement = jumpStatement;
+    public BuilderMethod withJump(JumpStatement.Kind kind) {
+      return withJump(kind, null);
+    }
+
+    public BuilderMethod withJump(JumpStatement.Kind kind, String label) {
+      element.getMethodBlock().jumpStatement = new JumpStatement(kind, label);
       return this;
     }
   }
 
   public record BuilderBlock(Block element) implements BuilderComponent {
-    public BuilderBlock withJump(JumpStatement jumpStatement) {
-      element.jumpStatement = jumpStatement;
+    public BuilderBlock withJump(JumpStatement.Kind kind) {
+      return withJump(kind, null);
+    }
+    public BuilderBlock withJump(JumpStatement.Kind kind, String label) {
+      element.jumpStatement = new JumpStatement(kind, label);
       return this;
     }
 

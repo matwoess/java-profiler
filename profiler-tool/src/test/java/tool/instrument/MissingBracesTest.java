@@ -7,7 +7,7 @@ import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.*;
-import static tool.model.JumpStatement.*;
+import static tool.model.JumpStatement.Kind.*;
 
 public class MissingBracesTest {
   @Test
@@ -203,7 +203,7 @@ public class MissingBracesTest {
                 jSsBlock(LOOP, 4, 8, 97, 160),
                 jSsBlock(LOOP, 4, 8, 109, 160),
                 jSsBlock(BLOCK, 5, 6, 121, 134).withJump(RETURN),
-                jSsBlock(BLOCK, 7, 8, 142, 160).withJump(BREAK)
+                jSsBlock(BLOCK, 7, 8, 142, 160).withJump(BREAK, "outer")
             )
         )
     );

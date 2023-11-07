@@ -8,7 +8,7 @@ import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestProgramBuilder.jMethod;
 import static tool.model.BlockType.BLOCK;
-import static tool.model.JumpStatement.RETURN;
+import static tool.model.JumpStatement.Kind.RETURN;
 
 public class StringsTest {
   @Test
