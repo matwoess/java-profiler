@@ -117,10 +117,10 @@ Statement =
     | "do" BlockOrSingleStatement<LOOP> "while" ParExpr ";"
     | "for" ParExpr BlockOrSingleStatement<LOOP>
     | "try" [ParExpr] Block<TRY> {"catch" ParExpr Block<BLOCK>} ["finally" Block<BLOCK>]
-    | ("break" | "continue") (. state.registerJumpStatement(); .) {ANY} ";"
+    | ("break" | "continue") (. state.registerJumpStatement(); .) [ident] ";"
     | ("return" | "yield") (. state.registerJumpStatement(); .) (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
     | "throw" (. state.registerJumpStatement(); .) {ANY} ";"
-    | IF(state.isLabel()) ident ":"
+    | IF(state.isLabel()) (. state.registerLabel(); .) ident ":"
     | Annotation
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
     | IF(state.thisAndLPar()) this ParExpr ";" (. state.markEndOfSuperCall(); .)

@@ -15,6 +15,7 @@ public class Block implements Serializable, Component {
   public BlockType blockType;
   public boolean isSingleStatement;
   public JumpStatement jumpStatement = null;
+  public List<String> labels = new ArrayList<>();
   public List<CodeRegion> codeRegions = new ArrayList<>();
 
   public int incInsertPosition;
@@ -79,7 +80,8 @@ public class Block implements Serializable, Component {
   }
 
   public String toString() {
-    return String.format("%s%s: {%d[%s%s]-%s[%s]} (%s%s)%s%s",
+    return String.format("%s%s%s: {%d[%s%s]-%s[%s]} (%s%s)%s%s",
+        labels.isEmpty() ? "" : String.join(": ", labels) + ": ",
         clazz.name,
         method != null ? ("." + method.name) : "",
         beg.line(),

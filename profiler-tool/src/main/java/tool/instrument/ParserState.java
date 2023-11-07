@@ -29,6 +29,8 @@ public class ParserState {
   int curBlockId = 0;
   CodeRegion curCodeRegion;
 
+  List<String> curLabels = new ArrayList<>();
+
   public ParserState(Parser p) {
     parser = p;
     logger = new Logger(p);
@@ -44,8 +46,17 @@ public class ParserState {
     curBlock.incInsertPosition = endOfToken(parser.t);
   }
 
+  void registerLabel() {
+    curLabels.add(parser.la.val);
+  }
+
   void registerJumpStatement() {
-    JumpStatement jumpStatement = JumpStatement.fromToken(parser.t.val);
+    JumpStatement jumpStatement;
+    if ((parser.t.val.equals("break") || parser.t.val.equals("continue")) && parser.la.kind == Parser._ident) {
+      jumpStatement = JumpStatement.fromTokenWithLabel(parser.t.val, parser.la.val);
+    } else {
+      jumpStatement = JumpStatement.fromToken(parser.t.val);
+    }
     curBlock.jumpStatement = jumpStatement;
     logger.log("> found jump statement: %s", jumpStatement.name());
     registerJumpInOuterBlocks(jumpStatement);
@@ -141,6 +152,10 @@ public class ParserState {
       endCodeRegion();
       blockStack.push(curBlock);
       newBlock.setParentBlock(curBlock);
+    }
+    if (!curLabels.isEmpty()) {
+      newBlock.labels.addAll(curLabels);
+      curLabels.clear();
     }
     logger.enter(newBlock);
     curBlock = newBlock;

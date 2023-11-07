@@ -12,9 +12,9 @@ public class JumpStatements {
 
   private static void loopWithLabels() {
     int counter = 0;
-    loop1: while (true) {
+    loop1: outerLoop: while (true) {
       loop2: while (true) {
-        loop3: while (true) {
+        loop3: innerLoop: while (true) {
           counter++;
           if (counter <= 5) {
             continue;
@@ -22,7 +22,7 @@ public class JumpStatements {
           counter++;
           if (counter == 5_000_000) {
             if (true) {
-              break;
+              break innerLoop;
             }
           }
           counter--;
