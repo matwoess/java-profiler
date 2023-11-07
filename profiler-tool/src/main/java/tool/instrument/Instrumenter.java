@@ -99,7 +99,7 @@ public class Instrumenter {
       } else {
         inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc%s(%d);", incRefAdd, blockCounter++)));
       }
-      if (block.isSingleStatement && block.isSwitchExpressionCase() && block.jumpStatement.kind() != THROW) {
+      if (block.isSingleStatement && block.isSwitchExpressionCase() && (block.jumpStatement == null || block.jumpStatement.kind() != THROW)) {
         inserts.add(new CodeInsert(block.getIncInsertPos(), "yield "));
       }
       if (block.isSingleStatement && block.blockType != BlockType.LAMBDA) {
