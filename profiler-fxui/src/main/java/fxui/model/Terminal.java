@@ -67,13 +67,15 @@ public enum Terminal {
           "%s -e bash -c \"%s; echo Done - Press enter to exit; read\"".formatted(getExecutable(), cmdString)
       };
       case MACOS_TERMINAL -> new String[]{
-          "/usr/bin/osascript", "-e",
-          String.format(
-              "'tell app \"%s\" to activate & do script \"cd %s; %s; echo Done - Press enter to exit; read; exit\"",
-              getExecutable(),
-              pwd,
-              cmdString.replace("\"", "")
-          )
+          "/bin/sh",
+          "-c",
+          "/usr/bin/osascript -e " +
+              String.format(
+                  "'tell app \"%s\" to activate & do script \"cd %s; %s; echo Done - Press enter to exit; read; exit\"'",
+                  getExecutable(),
+                  pwd,
+                  cmdString.replace("\"", "")
+              )
       };
     };
   }
