@@ -2,6 +2,8 @@ package fxui.model;
 
 import common.Util;
 
+import java.nio.file.Path;
+
 public enum Terminal {
   WINDOWS_CMD {
     @Override
@@ -42,7 +44,7 @@ public enum Terminal {
 
   abstract String getExecutable();
 
-  public String[] wrapWithTerminalCommand(String cmdString) {
+  public String[] wrapWithTerminalCommand(String cmdString, Path pwd) {
     return switch (this) {
       case WINDOWS_CMD -> new String[]{
           "cmd.exe",
@@ -64,12 +66,13 @@ public enum Terminal {
           "-c",
           "%s -e bash -c \"%s; echo Done - Press enter to exit; read\"".formatted(getExecutable(), cmdString)
       };
-      case MACOS_TERMINAL -> new String[]{ // TODO: check
+      case MACOS_TERMINAL -> new String[]{
           "osascript", "-e", """
           'tell app "%s"
-              do script "%s"
+              activate
+              do script "cd %s; %s; echo Done - Press enter to exit; read; exit"
           end tell'
-          """.formatted(getExecutable(), cmdString)
+          """.formatted(getExecutable(), pwd, cmdString)
       };
     };
   }

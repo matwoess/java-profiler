@@ -56,7 +56,7 @@ public class SystemUtils {
 
   public static String[] getTerminalCommand(AppState appState) {
     String javaCommand = getJavaRunCommand(appState.getProgramArguments());
-    return appState.terminal.get().wrapWithTerminalCommand(javaCommand);
+    return appState.terminal.get().wrapWithTerminalCommand(javaCommand, appState.projectRoot.get());
   }
 
   public static String getJavaRunCommand(String[] toolArguments) {
