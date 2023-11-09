@@ -25,6 +25,11 @@ public class TestProgramBuilder {
       element.getMethodBlock().jumpStatement = new JumpStatement(kind, label);
       return this;
     }
+
+    public BuilderMethod incOffset(int offset) {
+      element.getMethodBlock().incInsertOffset = offset;
+      return this;
+    }
   }
 
   public record BuilderBlock(Block element) implements BuilderComponent {

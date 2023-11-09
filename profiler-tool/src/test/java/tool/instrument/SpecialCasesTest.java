@@ -154,11 +154,10 @@ public class SpecialCasesTest {
             jBlock(ARROW_CASE, 7, 9, 138, 162),
             jBlock(BLOCK, 11, 13, 178, 233),
             jSsBlock(LAMBDA, 12, 12, 213, 219),
-            jMethod("BlockTypeClass",
-                jBlock(CONSTRUCTOR, 16, 21, 265, 372, 265 + 14),
+            jConstructor("BlockTypeClass", 16, 21, 265, 372,
                 jBlock(BLOCK, 18, 20, 296, 334),
                 jSsBlock(BLOCK, 20, 20, 339, 368)
-            ),
+            ).incOffset("{\n    super();".length()),
             jClass(ANONYMOUS, null,
                 jMethod("compare", 62, 71, 1653, 1903,
                     jBlock(SWITCH_EXPR, 63, 69, 1691, 1860),
