@@ -169,7 +169,6 @@ public class TestProgramBuilder {
     builder.append("\n)");
   }
 
-  // TODO: also generate withJump calls
   public static void getBuilderCode(Method method, StringBuilder builder) {
     builder.append(",\n ");
     if (!method.isAbstract() && method.getMethodBlock().blockType == BlockType.CONSTRUCTOR) {
@@ -187,23 +186,39 @@ public class TestProgramBuilder {
     List<Block> blocks = method.blocks;
     if (blocks.size() == 1) {
       builder.append(")");
-      return;
     }
-    for (int i = 1; i < blocks.size(); i++) { // skip method block
-      Block block = blocks.get(i);
-      getBuilderCode(block, builder);
+    else {
+      for (int i = 1; i < blocks.size(); i++) { // skip method block
+        Block block = blocks.get(i);
+        getBuilderCode(block, builder);
+      }
+      builder.append("\n)");
     }
-    builder.append("\n)");
+    appendBuilderBlockSuffixes(methBlock, builder);
   }
 
-  // TODO: also generate withJump calls
   public static void getBuilderCode(Block block, StringBuilder builder) {
-    builder.append(",\n jBlock(");
-    int begPos = block.isSingleStatement ? block.beg.pos() : block.beg.pos() + 1;
+    builder.append(",\n ").append(block.isSingleStatement ? "jSsBlock" : "jBlock").append("(");
+    int begPos = block.isSingleStatement || block.blockType == BlockType.COLON_CASE ? block.beg.pos() : block.beg.pos() + 1;
     builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg.line(), block.end.line(), begPos, block.end.pos()));
     if (block.incInsertPosition != 0 && block.incInsertPosition != begPos) {
       builder.append(", ").append(block.incInsertPosition - begPos);
     }
     builder.append(")");
+    appendBuilderBlockSuffixes(block, builder);
+  }
+
+  public static void appendBuilderBlockSuffixes(Block block, StringBuilder builder) {
+    if (block.jumpStatement != null) {
+      builder.append(".withJump(").append(block.jumpStatement.kind().name());
+      String label = block.jumpStatement.label();
+      if (label != null) {
+        builder.append(", ").append(label);
+      }
+      builder.append(")");
+    }
+    if (block.blockType == BlockType.COLON_CASE) {
+      builder.append(".noIncOffset()");
+    }
   }
 }
