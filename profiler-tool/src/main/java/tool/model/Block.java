@@ -18,7 +18,7 @@ public class Block implements Serializable, Component {
   public List<String> labels = new ArrayList<>();
   public List<CodeRegion> codeRegions = new ArrayList<>();
 
-  public int incInsertPosition;
+  public int incInsertOffset;
 
   transient public int hits;
   public transient List<Block> innerJumpBlocks = new ArrayList<>();
@@ -72,7 +72,7 @@ public class Block implements Serializable, Component {
   }
 
   public int getIncInsertPos() {
-    return (incInsertPosition != 0) ? incInsertPosition : beg.pos();
+    return beg.pos() + incInsertOffset;
   }
 
   public boolean isActiveInLine(int lineNr) {
@@ -86,7 +86,7 @@ public class Block implements Serializable, Component {
         method != null ? ("." + method.name) : "",
         beg.line(),
         beg.pos(),
-        incInsertPosition != 0 ? "(" + incInsertPosition + ")" : "",
+        incInsertOffset != 0 ? "(+" + incInsertOffset + ")" : "",
         end != null ? end.line() : "?",
         end != null ? end.pos() : "?",
         blockType.toString(),
@@ -103,7 +103,7 @@ public class Block implements Serializable, Component {
     Block block = (Block) o;
     if (!Objects.equals(beg, block.beg)) return false;
     if (!Objects.equals(end, block.end)) return false;
-    if (incInsertPosition != block.incInsertPosition) return false;
+    if (incInsertOffset != block.incInsertOffset) return false;
     if (!clazz.equals(block.clazz)) return false;
     if (!Objects.equals(method, block.method)) return false;
     if (!Objects.equals(jumpStatement, block.jumpStatement)) return false;
@@ -117,7 +117,7 @@ public class Block implements Serializable, Component {
     result = 31 * result + beg.hashCode();
     result = 31 * result + end.hashCode();
     result = 31 * result + blockType.hashCode();
-    result = 31 * result + incInsertPosition;
+    result = 31 * result + incInsertOffset;
     result = 31 * result + (jumpStatement != null ? jumpStatement.hashCode() : 0);
     return result;
   }

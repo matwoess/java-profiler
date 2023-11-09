@@ -43,7 +43,7 @@ public class ParserState {
 
   void markEndOfSuperCall() {
     assert curClass != null && curMeth != null && curBlock.blockType == BlockType.CONSTRUCTOR;
-    curBlock.incInsertPosition = endOfToken(parser.t);
+    curBlock.incInsertOffset = endOfToken(parser.t) - curBlock.beg.pos();
   }
 
   void registerLabel() {
@@ -146,7 +146,7 @@ public class ParserState {
     newBlock.setParentClass(curClass);
     newBlock.isSingleStatement = blockType != BlockType.COLON_CASE && missingBraces;
     newBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
-    newBlock.incInsertPosition = Util.getIncInsertPos(parser, blockType, missingBraces);
+    newBlock.incInsertOffset = Util.getIncInsertOffset(parser, blockType, missingBraces);
     allBlocks.add(newBlock);
     if (curBlock != null) {
       endCodeRegion();
