@@ -31,14 +31,18 @@ public class TestProgramBuilder {
     public BuilderBlock withJump(JumpStatement.Kind kind) {
       return withJump(kind, null);
     }
+
     public BuilderBlock withJump(JumpStatement.Kind kind, String label) {
       element.jumpStatement = new JumpStatement(kind, label);
       return this;
     }
 
     public BuilderBlock noIncOffset() {
-      element.incInsertPosition = 0;
-      element.beg = new CodePosition(element.beg.line(), element.beg.pos() + 1);
+      return incOffset(0);
+    }
+
+    public BuilderBlock incOffset(int offset) {
+      element.incInsertOffset = offset;
       return this;
     }
   }
@@ -120,9 +124,9 @@ public class TestProgramBuilder {
     return new BuilderBlock(b);
   }
 
-  public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos, int incInsertPosOffset) {
+  public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos, int incInsertPos) {
     BuilderBlock block = jBlock(type, beg, end, begPos, endPos);
-    block.element.incInsertPosition += incInsertPosOffset;
+    block.element.incInsertOffset = incInsertPos - begPos;
     return block;
   }
 
@@ -186,8 +190,7 @@ public class TestProgramBuilder {
     List<Block> blocks = method.blocks;
     if (blocks.size() == 1) {
       builder.append(")");
-    }
-    else {
+    } else {
       for (int i = 1; i < blocks.size(); i++) { // skip method block
         Block block = blocks.get(i);
         getBuilderCode(block, builder);
@@ -199,11 +202,11 @@ public class TestProgramBuilder {
 
   public static void getBuilderCode(Block block, StringBuilder builder) {
     builder.append(",\n ").append(block.isSingleStatement ? "jSsBlock" : "jBlock").append("(");
-    int begPos = block.isSingleStatement || block.blockType == BlockType.COLON_CASE ? block.beg.pos() : block.beg.pos() + 1;
-    builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg.line(), block.end.line(), begPos, block.end.pos()));
-    if (block.incInsertPosition != 0 && block.incInsertPosition != begPos) {
-      builder.append(", ").append(block.incInsertPosition - begPos);
+    int begPos = block.beg.pos();
+    if (!block.isSingleStatement && block.blockType != BlockType.COLON_CASE) {
+      block.incInsertOffset = 1; // length of '{'
     }
+    builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg.line(), block.end.line(), begPos, block.end.pos()));
     builder.append(")");
     appendBuilderBlockSuffixes(block, builder);
   }
@@ -219,6 +222,8 @@ public class TestProgramBuilder {
     }
     if (block.blockType == BlockType.COLON_CASE) {
       builder.append(".noIncOffset()");
+    } else if (block.incInsertOffset > 1) { // set and not just length of '{'
+      builder.append(".incOffset(").append(block.incInsertOffset).append(")");
     }
   }
 }
