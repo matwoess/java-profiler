@@ -118,8 +118,8 @@ public class TestProgramBuilder {
 
   public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
     Block b = new Block(type);
-    b.incInsertPosition = begPos;
-    b.beg = new CodePosition(beg, begPos - 1); // minus length of '{'
+    b.beg = new CodePosition(beg, begPos);
+    b.incInsertOffset = 1; // + length of '{'
     b.end = new CodePosition(end, endPos);
     return new BuilderBlock(b);
   }
