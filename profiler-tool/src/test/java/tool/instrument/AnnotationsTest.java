@@ -21,7 +21,7 @@ public class AnnotationsTest {
         """;
     JavaFile expected = jFile(
         jClass("Annotations",
-            jMethod("main", 4, 5, 112, 116)
+            jMethod("main", 4, 5, 111, 116)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -39,7 +39,7 @@ public class AnnotationsTest {
         """;
     JavaFile expected = jFile(
         jClass("Annotations",
-            jMethod("main", 4, 5, 128, 132)
+            jMethod("main", 4, 5, 127, 132)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -55,7 +55,7 @@ public class AnnotationsTest {
         """;
     JavaFile expected = jFile(
         jClass("Annotations",
-            jMethod("main", 2, 3, 95, 99)
+            jMethod("main", 2, 3, 94, 99)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -75,7 +75,7 @@ public class AnnotationsTest {
         """;
     JavaFile expected = jFile(
         jClass("Annotations",
-            jMethod("main", 2, 7, 69, 206)
+            jMethod("main", 2, 7, 68, 206)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -97,7 +97,7 @@ public class AnnotationsTest {
         """;
     JavaFile expected = jFile(
         jClass("Annotations",
-            jMethod("main", 8, 9, 161, 165)
+            jMethod("main", 8, 9, 160, 165)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -139,8 +139,8 @@ public class AnnotationsTest {
     JavaFile expected = jFile("complexAnnotations", 27,
         jClass("Annotations",
             jClass("RuntimeRetentionPolicy"),
-            jMethod("equals", 24, 26, 682, 716).withJump(RETURN),
-            jMethod("main", 27, 28, 759, 763)
+            jMethod("equals", 24, 26, 681, 716).withJump(RETURN),
+            jMethod("main", 27, 28, 758, 763)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -172,9 +172,9 @@ public class AnnotationsTest {
     System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("AnnotationTests",
-            jMethod("bothNullOrReversed", 8, 18, 260, 552,
-                jBlock(BLOCK, 9, 11, 288, 319),
-                jBlock(BLOCK, 11, 17, 326, 548)
+            jMethod("bothNullOrReversed", 8, 18, 259, 552,
+                jBlock(BLOCK, 9, 11, 287, 319),
+                jBlock(BLOCK, 11, 17, 325, 548)
             )
         )
     );

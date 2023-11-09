@@ -46,17 +46,17 @@ public class AnonymousClassesTest {
          """);
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 4, 62, 71),
-            jMethod("firstJavaFile", 5, 31, 118, 715,
-                jBlock(BLOCK, 26, 28, 653, 685).withJump(RETURN),
-                jBlock(BLOCK, 28, 30, 692, 713).withJump(RETURN)
+            jMethod("main", 2, 4, 61, 71),
+            jMethod("firstJavaFile", 5, 31, 117, 715,
+                jBlock(BLOCK, 26, 28, 652, 685).withJump(RETURN),
+                jBlock(BLOCK, 28, 30, 691, 713).withJump(RETURN)
             ),
             jClass(ANONYMOUS, null,
-                jMethod("accept", 10, 13, 289, 361).withJump(RETURN),
+                jMethod("accept", 10, 13, 288, 361).withJump(RETURN),
                 jClass("X",
-                    jMethod("methodInX", 16, 18, 408, 503)
+                    jMethod("methodInX", 16, 18, 407, 503)
                 ),
-                jMethod("returnTrue", 21, 24, 544, 590).withJump(RETURN)
+                jMethod("returnTrue", 21, 24, 543, 590).withJump(RETURN)
             )
         )
     );
@@ -85,11 +85,11 @@ public class AnonymousClassesTest {
         """);
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 4, 62, 71),
-            jMethod("getSortedIntegers", 5, 17, 140, 380).withJump(RETURN),
+            jMethod("main", 2, 4, 61, 71),
+            jMethod("getSortedIntegers", 5, 17, 139, 380).withJump(RETURN),
             jClass(ANONYMOUS, null,
-                jMethod("compare", 8, 14, 261, 352,
-                    jBlock(BLOCK, 9, 11, 288, 314).withJump(RETURN)
+                jMethod("compare", 8, 14, 260, 352,
+                    jBlock(BLOCK, 9, 11, 287, 314).withJump(RETURN)
                 ).withJump(RETURN)
             )
         )
@@ -110,9 +110,9 @@ public class AnonymousClassesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 10, 62, 158),
+            jMethod("main", 2, 10, 61, 158),
             jClass(ANONYMOUS, null,
-                jMethod("hashCode", 5, 7, 117, 150).withJump(RETURN)
+                jMethod("hashCode", 5, 7, 116, 150).withJump(RETURN)
             )
         )
     );

@@ -17,7 +17,7 @@ public class MissingBracesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 5, 62, 97,
+            jMethod("main", 2, 5, 61, 97,
                 jSsBlock(BLOCK, 3, 3, 85, 92).withJump(RETURN)
             )
         )
@@ -33,7 +33,7 @@ public class MissingBracesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 6, 62, 112,
+            jMethod("main", 2, 6, 61, 112,
                 jSsBlock(BLOCK, 3, 3, 85, 92).withJump(BREAK),
                 jSsBlock(BLOCK, 4, 4, 97, 107).withJump(CONTINUE)
             )
@@ -51,7 +51,7 @@ public class MissingBracesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 7, 62, 143,
+            jMethod("main", 2, 7, 61, 143,
                 jSsBlock(BLOCK, 3, 3, 85, 92).withJump(BREAK),
                 jSsBlock(BLOCK, 4, 4, 115, 123).withJump(RETURN),
                 jSsBlock(BLOCK, 5, 5, 128, 138).withJump(CONTINUE)
@@ -79,11 +79,11 @@ public class MissingBracesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 16, 62, 269,
+            jMethod("main", 2, 16, 61, 269,
                 jSsBlock(BLOCK, 4, 5, 94, 104),
-                jBlock(BLOCK, 6, 8, 127, 139),
+                jBlock(BLOCK, 6, 8, 126, 139),
                 jSsBlock(BLOCK, 9, 9, 144, 189).withJump(THROW),
-                jBlock(BLOCK, 11, 13, 204, 241),
+                jBlock(BLOCK, 11, 13, 203, 241),
                 jSsBlock(BLOCK, 12, 12, 219, 227).withJump(RETURN),
                 jSsBlock(BLOCK, 12, 12, 232, 239)
             )
@@ -104,7 +104,7 @@ public class MissingBracesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 10, 62, 147,
+            jMethod("main", 2, 10, 61, 147,
                 jSsBlock(LOOP, 4, 8, 91, 142),
                 jSsBlock(LOOP, 4, 8, 103, 142),
                 jSsBlock(BLOCK, 5, 6, 114, 126).withJump(RETURN),
@@ -126,7 +126,7 @@ public class MissingBracesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 9, 62, 129,
+            jMethod("main", 2, 9, 61, 129,
                 jSsBlock(LOOP, 4, 4, 80, 86),
                 jSsBlock(LOOP, 5, 6, 102, 110)
             )
@@ -145,7 +145,7 @@ public class MissingBracesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 8, 62, 188,
+            jMethod("main", 2, 8, 61, 188,
                 jSsBlock(LOOP, 4, 5, 120, 136),
                 jSsBlock(LOOP, 6, 6, 158, 183)
             )
@@ -174,10 +174,10 @@ public class MissingBracesTest {
          """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 18, 62, 228,
-                jBlock(SWITCH_STMT, 4, 16, 90, 223),
+            jMethod("main", 2, 18, 61, 228,
+                jBlock(SWITCH_STMT, 4, 16, 89, 223),
                 jBlock(COLON_CASE, 5, 8, 100, 129).noIncOffset(),
-                jBlock(BLOCK, 5, 8, 102, 129).withJump(BREAK),
+                jBlock(BLOCK, 5, 8, 101, 129).withJump(BREAK),
                 jBlock(COLON_CASE, 10, 12, 157, 182).noIncOffset(),
                 jBlock(COLON_CASE, 13, 14, 192, 203).noIncOffset().withJump(BREAK),
                 jBlock(COLON_CASE, 15, 15, 214, 221).noIncOffset().withJump(BREAK)
@@ -199,7 +199,7 @@ public class MissingBracesTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 10, 62, 165,
+            jMethod("main", 2, 10, 61, 165,
                 jSsBlock(LOOP, 4, 8, 97, 160),
                 jSsBlock(LOOP, 4, 8, 109, 160),
                 jSsBlock(BLOCK, 5, 6, 121, 134).withJump(RETURN),

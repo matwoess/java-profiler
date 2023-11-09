@@ -44,9 +44,9 @@ public class SpecialCasesTest {
     int lengthOfPackageDeclaration = "package name.Of._the_.pkg ;".length();
     JavaFile expected = jFile("name.Of._the_.pkg", lengthOfPackageDeclaration,
         jClass("Empty",
-            jMethod("meth", 5, 6, 122, 126),
+            jMethod("meth", 5, 6, 121, 126),
             jClass("InEmpty",
-                jMethod("innerMeth", 8, 9, 167, 173)
+                jMethod("innerMeth", 8, 9, 166, 173)
             )
         )
     );
@@ -147,53 +147,53 @@ public class SpecialCasesTest {
         """;
     JavaFile expected = jFile(null, 0,
         jClass("BlockTypeClass",
-            jBlock(STATIC, 4, 14, 50, 237),
+            jBlock(STATIC, 4, 14, 49, 237),
             jSsBlock(BLOCK, 5, 10, 70, 168),
-            jBlock(SWITCH_STMT, 5, 10, 88, 168),
+            jBlock(SWITCH_STMT, 5, 10, 87, 168),
             jSsBlock(ARROW_CASE, 6, 6, 109, 116),
-            jBlock(ARROW_CASE, 7, 9, 139, 162),
-            jBlock(BLOCK, 11, 13, 179, 233),
+            jBlock(ARROW_CASE, 7, 9, 138, 162),
+            jBlock(BLOCK, 11, 13, 178, 233),
             jSsBlock(LAMBDA, 12, 12, 213, 219),
             jMethod("BlockTypeClass",
-                jBlock(CONSTRUCTOR, 16, 21, 266, 372, 13),
-                jBlock(BLOCK, 18, 20, 297, 334),
+                jBlock(CONSTRUCTOR, 16, 21, 265, 372, 265 + 14),
+                jBlock(BLOCK, 18, 20, 296, 334),
                 jSsBlock(BLOCK, 20, 20, 339, 368)
             ),
             jClass(ANONYMOUS, null,
-                jMethod("compare", 62, 71, 1654, 1903,
-                    jBlock(SWITCH_EXPR, 63, 69, 1692, 1860),
+                jMethod("compare", 62, 71, 1653, 1903,
+                    jBlock(SWITCH_EXPR, 63, 69, 1691, 1860),
                     jSsBlock(ARROW_CASE, 64, 64, 1720, 1723),
-                    jBlock(ARROW_CASE, 65, 67, 1754, 1804).withJump(YIELD),
+                    jBlock(ARROW_CASE, 65, 67, 1753, 1804).withJump(YIELD),
                     jSsBlock(ARROW_CASE, 68, 68, 1833, 1842)
                 ).withJump(RETURN)
             ),
-            jMethod("method", 23, 81, 398, 2118,
-                jBlock(BLOCK, 25, 77, 443, 2073),
+            jMethod("method", 23, 81, 397, 2118,
+                jBlock(BLOCK, 25, 77, 442, 2073),
                 jSsBlock(LOOP, 26, 76, 489, 2067),
-                jBlock(SWITCH_STMT, 27, 76, 516, 2067),
+                jBlock(SWITCH_STMT, 27, 76, 515, 2067),
                 jBlock(COLON_CASE, 28, 29, 534, 569).noIncOffset(),
                 jBlock(COLON_CASE, 30, 57, 587, 1443).noIncOffset(),
-                jBlock(LAMBDA, 31, 57, 621, 1405).withJump(RETURN),
-                jBlock(SWITCH_EXPR, 32, 56, 656, 1390),
-                jBlock(ARROW_CASE, 33, 35, 684, 729).withJump(YIELD),
+                jBlock(LAMBDA, 31, 57, 620, 1405).withJump(RETURN),
+                jBlock(SWITCH_EXPR, 32, 56, 655, 1390),
+                jBlock(ARROW_CASE, 33, 35, 683, 729).withJump(YIELD),
                 jSsBlock(ARROW_CASE, 36, 36, 755, 762),
                 jSsBlock(ARROW_CASE, 37, 39, 788, 887),
                 // TODO: missing lambda blocks!1
-                jBlock(ARROW_CASE, 40, 49, 915, 1203),
-                jBlock(TRY, 41, 44, 939, 1036),
+                jBlock(ARROW_CASE, 40, 49, 914, 1203),
+                jBlock(TRY, 41, 44, 938, 1036),
                 jSsBlock(BLOCK, 42, 42, 972, 981).withJump(YIELD),
                 jSsBlock(BLOCK, 43, 43, 1006, 1016).withJump(YIELD),
-                jBlock(BLOCK, 45, 45, 1081, 1082),
-                jBlock(BLOCK, 46, 48, 1110, 1185),
-                jBlock(ARROW_CASE, 50, 54, 1231, 1343).withJump(YIELD),
-                jBlock(SWITCH_EXPR, 51, 53, 1269, 1324),
+                jBlock(BLOCK, 45, 45, 1080, 1082),
+                jBlock(BLOCK, 46, 48, 1109, 1185),
+                jBlock(ARROW_CASE, 50, 54, 1230, 1343).withJump(YIELD),
+                jBlock(SWITCH_EXPR, 51, 53, 1268, 1324),
                 jSsBlock(ARROW_CASE, 52, 52, 1300, 1304),
                 jSsBlock(ARROW_CASE, 55, 55, 1370, 1374),
                 jSsBlock(LAMBDA, 57, 57, 1419, 1441),
                 jBlock(COLON_CASE, 58, 73, 1461, 1991).noIncOffset(),
                 jSsBlock(BLOCK, 73, 73, 1955, 1991),
                 jBlock(COLON_CASE, 74, 75, 2010, 2057).noIncOffset(),
-                jBlock(BLOCK, 78, 80, 2100, 2114)
+                jBlock(BLOCK, 78, 80, 2099, 2114)
             )
         )
     );
@@ -240,18 +240,18 @@ public class SpecialCasesTest {
         jClass("MixedClasses",
             jClass("Inner"),
             jClass(ANONYMOUS, null,
-                jMethod("run", 10, 11, 188, 196)
+                jMethod("run", 10, 11, 187, 196)
             ),
             jClass(LOCAL, "Local1"),
             jClass(ANONYMOUS, null,
                 jClass(LOCAL, "Local2"),
-                jMethod("run", 17, 20, 305, 346)
+                jMethod("run", 17, 20, 304, 346)
             ),
             jClass(LOCAL, "Local3"),
             jClass(ANONYMOUS, null,
-                jMethod("run", 28, 29, 466, 472)
+                jMethod("run", 28, 29, 465, 472)
             ),
-            jMethod("main", 7, 24, 111, 386)
+            jMethod("main", 7, 24, 110, 386)
         )
     );
     JavaFile actual = parseJavaFile(fileContent);
@@ -297,8 +297,8 @@ public class SpecialCasesTest {
     System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile("dev.matwoess.classes", 29,
         jClass("DotClass",
-            jMethod("addClass", 4, 10, 113, 295,
-                jBlock(BLOCK, 7, 9, 247, 291)
+            jMethod("addClass", 4, 10, 112, 295,
+                jBlock(BLOCK, 7, 9, 246, 291)
             )
         )
     );

@@ -28,8 +28,8 @@ public class LocalClassesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jClass(LOCAL, "StatusCode"),
-            jMethod("main", 2, 11, 62, 262,
-                jBlock(BLOCK, 7, 9, 214, 257).withJump(THROW)
+            jMethod("main", 2, 11, 61, 262,
+                jBlock(BLOCK, 7, 9, 213, 257).withJump(THROW)
             )
         )
     );
@@ -59,14 +59,14 @@ public class LocalClassesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jClass(LOCAL, "IGreeter",
-                jMethod("greet", 5, 7, 140, 188),
+                jMethod("greet", 5, 7, 139, 188),
                 jMethod("greetPerson")
             ),
             jClass(ANONYMOUS, null,
-                jMethod("greetPerson", 12, 14, 326, 394)
+                jMethod("greetPerson", 12, 14, 325, 394)
             ),
-            jMethod("main", 2, 20, 62, 463,
-                jBlock(BLOCK, 3, 17, 90, 440),
+            jMethod("main", 2, 20, 61, 463,
+                jBlock(BLOCK, 3, 17, 89, 440),
                 jSsBlock(BLOCK, 18, 18, 450, 458).withJump(RETURN)
             )
         )
@@ -96,11 +96,11 @@ public class LocalClassesTest {
         jClass("Main",
             jClass(ANONYMOUS, null,
                 jClass(LOCAL, "CompHelper",
-                    jMethod("comp", 7, 9, 250, 300).withJump(RETURN)
+                    jMethod("comp", 7, 9, 249, 300).withJump(RETURN)
                 ),
-                jMethod("compare", 5, 14, 188, 409).withJump(RETURN)
+                jMethod("compare", 5, 14, 187, 409).withJump(RETURN)
             ),
-            jMethod("main", 2, 18, 62, 460)
+            jMethod("main", 2, 18, 61, 460)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

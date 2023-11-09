@@ -38,7 +38,7 @@ public class InterfacesTest {
         }""";
     JavaFile expected = jFile(
         jClass("InitBlocks",
-            jMethod("doNothing", 9, 9, 275, 276)
+            jMethod("doNothing", 9, 9, 274, 276)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -61,9 +61,9 @@ public class InterfacesTest {
         }""";
     JavaFile expected = jFile(
         jClass("DefaultStatic",
-            jMethod("getName", 3, 5, 67, 91).withJump(RETURN),
-            jMethod("getAge", 6, 8, 133, 160).withJump(RETURN),
-            jMethod("printInfo", 9, 11, 212, 266)
+            jMethod("getName", 3, 5, 66, 91).withJump(RETURN),
+            jMethod("getAge", 6, 8, 132, 160).withJump(RETURN),
+            jMethod("printInfo", 9, 11, 211, 266)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -97,13 +97,13 @@ public class InterfacesTest {
     JavaFile expected = jFile(
         jClass("Interfaces",
             jClass("SubInterface",
-                jMethod("get", 6, 8, 174, 225).withJump(RETURN),
+                jMethod("get", 6, 8, 173, 225).withJump(RETURN),
                 jClass(CLASS, "SubClass",
-                    jMethod("getXPlus1", 11, 13, 278, 308).withJump(RETURN)
+                    jMethod("getXPlus1", 11, 13, 277, 308).withJump(RETURN)
                 )
             ),
             jClass("X",
-                jMethod("callGet", 18, 20, 376, 395)
+                jMethod("callGet", 18, 20, 375, 395)
             )
         )
     );
@@ -132,9 +132,9 @@ public class InterfacesTest {
     JavaFile expected = jFile(
         jClass("WithMain",
             jClass("X",
-                jMethod("get", 6, 8, 110, 132).withJump(RETURN)
+                jMethod("get", 6, 8, 109, 132).withJump(RETURN)
             ),
-            jMethod("main", 11, 15, 180, 268)
+            jMethod("main", 11, 15, 179, 268)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -152,7 +152,7 @@ public class InterfacesTest {
         }""";
     JavaFile expected = jFile(
         jClass("InferredPublic",
-            jMethod("main", 2, 6, 69, 157)
+            jMethod("main", 2, 6, 68, 157)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

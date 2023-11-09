@@ -32,7 +32,7 @@ public class BasicElementsTest {
         """;
     JavaFile expected = jFile(
         jClass("HelloWorld",
-            jMethod("main", 2, 4, 68, 112)
+            jMethod("main", 2, 4, 67, 112)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -51,7 +51,7 @@ public class BasicElementsTest {
         """;
     JavaFile expected = jFile(
         jClass("Static",
-            jBlock(STATIC, 4, 6, 49, 64)
+            jBlock(STATIC, 4, 6, 48, 64)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -75,10 +75,10 @@ public class BasicElementsTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 16, 62, 244,
-                jBlock(LOOP, 5, 13, 136, 211),
-                jBlock(BLOCK, 7, 9, 165, 178),
-                jBlock(BLOCK, 10, 12, 194, 209).withJump(BREAK)
+            jMethod("main", 2, 16, 61, 244,
+                jBlock(LOOP, 5, 13, 135, 211),
+                jBlock(BLOCK, 7, 9, 164, 178),
+                jBlock(BLOCK, 10, 12, 193, 209).withJump(BREAK)
             )
         )
     );
@@ -99,9 +99,9 @@ public class BasicElementsTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 12, 62, 188,
-                jBlock(LOOP, 4, 9, 95, 153),
-                jBlock(LOOP, 6, 8, 113, 129)
+            jMethod("main", 2, 12, 61, 188,
+                jBlock(LOOP, 4, 9, 94, 153),
+                jBlock(LOOP, 6, 8, 112, 129)
             )
         )
     );
@@ -126,11 +126,11 @@ public class BasicElementsTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 15, 62, 336,
-                jBlock(TRY, 4, 6, 84, 99),
-                jBlock(BLOCK, 6, 8, 132, 185),
-                jBlock(BLOCK, 8, 10, 215, 279),
-                jBlock(BLOCK, 10, 12, 289, 301)
+            jMethod("main", 2, 15, 61, 336,
+                jBlock(TRY, 4, 6, 83, 99),
+                jBlock(BLOCK, 6, 8, 131, 185),
+                jBlock(BLOCK, 8, 10, 214, 279),
+                jBlock(BLOCK, 10, 12, 288, 301)
             )
         )
     );
@@ -162,12 +162,12 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("TryWithResource",
             jClass("MyClosable",
-                jMethod("open", 3, 5, 108, 163),
-                jMethod("close", 7, 9, 207, 262)
+                jMethod("open", 3, 5, 107, 163),
+                jMethod("close", 7, 9, 206, 262)
             ),
-            jMethod("main", 12, 18, 310, 459,
-                jBlock(TRY, 13, 15, 361, 390),
-                jBlock(BLOCK, 15, 17, 412, 455).withJump(THROW)
+            jMethod("main", 12, 18, 309, 459,
+                jBlock(TRY, 13, 15, 360, 390),
+                jBlock(BLOCK, 15, 17, 411, 455).withJump(THROW)
             )
         )
     );
@@ -197,8 +197,8 @@ public class BasicElementsTest {
          """);
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 10, 62, 284),
-            jMethod("getTempString", 18, 20, 625, 680).withJump(RETURN)
+            jMethod("main", 2, 10, 61, 284),
+            jMethod("getTempString", 18, 20, 624, 680).withJump(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -212,7 +212,7 @@ public class BasicElementsTest {
          """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 6, 62, 117)
+            jMethod("main", 2, 6, 61, 117)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -231,10 +231,10 @@ public class BasicElementsTest {
         """);
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 8, 62, 121,
-                jBlock(BLOCK, 3, 5, 79, 93).withJump(RETURN)
+            jMethod("main", 2, 8, 61, 121,
+                jBlock(BLOCK, 3, 5, 78, 93).withJump(RETURN)
             ).withJump(RETURN),
-            jMethod("doNothing", 9, 9, 150, 151)
+            jMethod("doNothing", 9, 9, 149, 151)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -251,7 +251,7 @@ public class BasicElementsTest {
          """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 9, 62, 227)
+            jMethod("main", 2, 9, 61, 227)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -275,11 +275,11 @@ public class BasicElementsTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 16, 62, 220,
-                jBlock(LOOP, 5, 14, 99, 215),
-                jBlock(LOOP, 6, 13, 123, 213),
-                jBlock(BLOCK, 7, 10, 141, 177).withJump(BREAK, "inner"),
-                jBlock(BLOCK, 10, 12, 184, 209).withJump(BREAK, "outer")
+            jMethod("main", 2, 16, 61, 220,
+                jBlock(LOOP, 5, 14, 98, 215),
+                jBlock(LOOP, 6, 13, 122, 213),
+                jBlock(BLOCK, 7, 10, 140, 177).withJump(BREAK, "inner"),
+                jBlock(BLOCK, 10, 12, 183, 209).withJump(BREAK, "outer")
             )
         )
     );
@@ -302,10 +302,10 @@ public class BasicElementsTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 14, 62, 170,
-                jBlock(LOOP, 4, 12, 92, 165),
-                jBlock(BLOCK, 5, 9, 108, 141),
-                jBlock(BLOCK, 9, 11, 148, 163).withJump(BREAK)
+            jMethod("main", 2, 14, 61, 170,
+                jBlock(LOOP, 4, 12, 91, 165),
+                jBlock(BLOCK, 5, 9, 107, 141),
+                jBlock(BLOCK, 9, 11, 147, 163).withJump(BREAK)
             )
         )
     );
@@ -328,8 +328,8 @@ public class BasicElementsTest {
         }""";
     JavaFile expected = jFile(
         jClass("GenericInstantiation",
-            jMethod("fill", 3, 7, 123, 236),
-            jMethod("main", 8, 10, 279, 322)
+            jMethod("fill", 3, 7, 122, 236),
+            jMethod("main", 8, 10, 278, 322)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -345,7 +345,7 @@ public class BasicElementsTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 8, 62, 183,
+            jMethod("main", 2, 8, 61, 183,
                 jSsBlock(LAMBDA, 5, 5, 128, 135)
             )
         )
@@ -369,11 +369,11 @@ public class BasicElementsTest {
         """, "");
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 14, 62, 349,
-                jBlock(TRY, 3, 5, 72, 91),
-                jBlock(BLOCK, 5, 12, 114, 344).withJump(THROW),
-                jBlock(BLOCK, 6, 8, 157, 197).withJump(THROW),
-                jBlock(BLOCK, 8, 10, 250, 273).withJump(THROW)
+            jMethod("main", 2, 14, 61, 349,
+                jBlock(TRY, 3, 5, 71, 91),
+                jBlock(BLOCK, 5, 12, 113, 344).withJump(THROW),
+                jBlock(BLOCK, 6, 8, 156, 197).withJump(THROW),
+                jBlock(BLOCK, 8, 10, 249, 273).withJump(THROW)
             )
         )
     );
@@ -404,8 +404,8 @@ public class BasicElementsTest {
         """;
     JavaFile expected = jFile(
         jClass("GenArrays",
-            jMethod("main", 7, 13, 227, 456),
-            jMethod("getFirstEntry", 15, 17, 504, 532).withJump(RETURN)
+            jMethod("main", 7, 13, 226, 456),
+            jMethod("getFirstEntry", 15, 17, 503, 532).withJump(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -448,17 +448,17 @@ public class BasicElementsTest {
         """;
     JavaFile expected = jFile(
         jClass("SyncBlocks",
-            jMethod("syncMethod", 2, 19, 52, 364,
-                jBlock(BLOCK, 4, 12, 97, 272),
-                jBlock(BLOCK, 7, 11, 188, 266),
-                jBlock(BLOCK, 8, 10, 215, 258),
-                jBlock(BLOCK, 13, 17, 289, 346),
-                jBlock(BLOCK, 14, 16, 314, 340).withJump(RETURN)
+            jMethod("syncMethod", 2, 19, 51, 364,
+                jBlock(BLOCK, 4, 12, 96, 272),
+                jBlock(BLOCK, 7, 11, 187, 266),
+                jBlock(BLOCK, 8, 10, 214, 258),
+                jBlock(BLOCK, 13, 17, 288, 346),
+                jBlock(BLOCK, 14, 16, 313, 340).withJump(RETURN)
             ).withJump(RETURN),
-            jMethod("getSyncValue", 20, 27, 390, 526,
-                jBlock(BLOCK, 23, 25, 463, 490)
+            jMethod("getSyncValue", 20, 27, 389, 526,
+                jBlock(BLOCK, 23, 25, 462, 490)
             ).withJump(RETURN),
-            jMethod("main", 28, 30, 569, 630)
+            jMethod("main", 28, 30, 568, 630)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
