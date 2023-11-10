@@ -5,7 +5,6 @@ import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
 
 import static tool.instrument.TestProgramBuilder.*;
-import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.BLOCK;
 import static tool.model.ClassType.ANONYMOUS;
@@ -15,35 +14,39 @@ import static tool.model.JumpStatement.Kind.RETURN;
 public class AnonymousClassesTest {
   @Test
   public void testAsArgumentInClassLevelMethod() {
-    String fileContent = String.format(baseTemplate, "", """
-        static File firstJavaFile(Path directory) {
-          File[] allJavaFiles = directory.toFile().listFiles(new FilenameFilter() {
-            boolean isTrue = false;
-             
-            @Override
-            public boolean accept(File file, String name) {
-              isTrue = returnTrue();
-              return name.endsWith(".java");
-            }
-             
-            class X {
-              static void methodInX() {
-                System.out.println("Hello from inside a nested class in an anonymous class.");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            static File firstJavaFile(Path directory) {
+              File[] allJavaFiles = directory.toFile().listFiles(new FilenameFilter() {
+                boolean isTrue = false;
+                 
+                @Override
+                public boolean accept(File file, String name) {
+                  isTrue = returnTrue();
+                  return name.endsWith(".java");
+                }
+                 
+                class X {
+                  static void methodInX() {
+                    System.out.println("Hello from inside a nested class in an anonymous class.");
+                  }
+                }
+                 
+                public boolean returnTrue() {
+                  X.methodInX();
+                  return true;
+                }
+              });
+              if (allJavaFiles != null && allJavaFiles.length > 0) {
+                return allJavaFiles[0];
+              } else {
+                return null;
               }
             }
-             
-            public boolean returnTrue() {
-              X.methodInX();
-              return true;
-            }
-          });
-          if (allJavaFiles != null && allJavaFiles.length > 0) {
-            return allJavaFiles[0];
-          } else {
-            return null;
           }
         }
-         """);
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 4, 61, 71),
@@ -68,21 +71,25 @@ public class AnonymousClassesTest {
 
   @Test
   public void testAs2ndArgumentInClassLevelMethodWithGenericType() {
-    String fileContent = String.format(baseTemplate, "", """
-        static List<Integer> getSortedIntegers(List<Integer> arrayList) {
-          Collections.sort(arrayList, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer i1, Integer i2) {
-              if (i1.equals(i2)) {
-                return 0;
-              }
-             
-              return i1 < i2 ? -1 : 1;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            static List<Integer> getSortedIntegers(List<Integer> arrayList) {
+              Collections.sort(arrayList, new Comparator<Integer>() {
+                @Override
+                public int compare(Integer i1, Integer i2) {
+                  if (i1.equals(i2)) {
+                    return 0;
+                  }
+                 
+                  return i1 < i2 ? -1 : 1;
+                }
+              });
+              return arrayList;
             }
-          });
-          return arrayList;
+          }
         }
-        """);
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 4, 61, 71),
@@ -100,17 +107,21 @@ public class AnonymousClassesTest {
 
   @Test
   public void testAsStatementStartInMethod() {
-    String fileContent = String.format(baseTemplate, """
-        new Main() {
-          @Override
-          public int hashCode() {
-            return super.hashCode();
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            new Main() {
+              @Override
+              public int hashCode() {
+                return super.hashCode();
+              }
+            };
           }
-        };
-        """, "");
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 10, 61, 158),
+            jMethod("main", 2, 10, 61, 157),
             jClass(ANONYMOUS, null,
                 jMethod("hashCode", 5, 7, 116, 150).withJump(RETURN)
             )

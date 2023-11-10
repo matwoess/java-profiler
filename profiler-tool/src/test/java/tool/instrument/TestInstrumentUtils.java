@@ -13,14 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class TestInstrumentUtils {
-  public static final String baseTemplate = """
-      public class Main {
-        public static void main(String[] args) {
-          %s
-        }
-         %s
-      }
-      """;
 
   private static Path createTempFileWithContent(String content) {
     try {

@@ -4,7 +4,6 @@ import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
 
 import static tool.instrument.TestProgramBuilder.*;
-import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.*;
 import static tool.model.JumpStatement.Kind.RETURN;
@@ -12,11 +11,15 @@ import static tool.model.JumpStatement.Kind.RETURN;
 public class LambdaExpressionsTest {
   @Test
   public void testSimpleForEach() {
-    String fileContent = String.format(baseTemplate, """
-        "xyz".chars().forEach(ch -> {
-          System.out.println(ch);
-        });
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            "xyz".chars().forEach(ch -> {
+              System.out.println(ch);
+            });
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 61, 131,
@@ -29,11 +32,15 @@ public class LambdaExpressionsTest {
 
   @Test
   public void testAnonymousFunction() {
-    String fileContent = String.format(baseTemplate, """
-        Function<Integer, Integer> doubleFn = (num) -> { return num*2; };
-        int result = doubleFn.apply(5);
-        System.out.println(result);
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            Function<Integer, Integer> doubleFn = (num) -> { return num*2; };
+            int result = doubleFn.apply(5);
+            System.out.println(result);
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 61, 197,
@@ -46,12 +53,16 @@ public class LambdaExpressionsTest {
 
   @Test
   public void testAnonymousSupplier() {
-    String fileContent = String.format(baseTemplate, """
-        Supplier<String> getHello = () -> {
-          return "Hello";
-        };
-        System.out.println(getHello.get());
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            Supplier<String> getHello = () -> {
+              return "Hello";
+            };
+            System.out.println(getHello.get());
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 61, 164,
@@ -64,11 +75,15 @@ public class LambdaExpressionsTest {
 
   @Test
   public void testLambdaStatementWithMissingBraces() {
-    String fileContent = String.format(baseTemplate, """
-        Function<Integer, Double> divideBy3 = num -> num / 3.0;
-        double result = divideBy3.apply(7);
-        System.out.println(result);
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            Function<Integer, Double> divideBy3 = num -> num / 3.0;
+            double result = divideBy3.apply(7);
+            System.out.println(result);
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 61, 191,
@@ -81,11 +96,15 @@ public class LambdaExpressionsTest {
 
   @Test
   public void testLambdaWithParameterListAndBracesAroundStatement() {
-    String fileContent = String.format(baseTemplate, """
-        BiFunction<Float, Float, Float> addTogether = (x, y) -> (x + y);
-        double result = addTogether.apply(7f, 5.6f);
-        System.out.println(result);
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            BiFunction<Float, Float, Float> addTogether = (x, y) -> (x + y);
+            double result = addTogether.apply(7f, 5.6f);
+            System.out.println(result);
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 61, 209,
@@ -98,13 +117,17 @@ public class LambdaExpressionsTest {
 
   @Test
   public void testMoreComplexLambdasWithoutBlocks() {
-    String fileContent = String.format(baseTemplate, """
-        BiFunction<String, Predicate<String>, Integer> parseIntIf
-            = (num, pred) -> pred.test(num) ? Integer.parseInt(num) : -1;
-        Predicate<String> isNotBlank = (String str) -> !str.isBlank();
-        int result = parseIntIf.apply("234", isNotBlank);
-        System.out.println(result);
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            BiFunction<String, Predicate<String>, Integer> parseIntIf
+                = (num, pred) -> pred.test(num) ? Integer.parseInt(num) : -1;
+            Predicate<String> isNotBlank = (String str) -> !str.isBlank();
+            int result = parseIntIf.apply("234", isNotBlank);
+            System.out.println(result);
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 9, 61, 336,
@@ -118,15 +141,19 @@ public class LambdaExpressionsTest {
 
   @Test
   public void testChainedStreamsWithLambdasAsParameter() {
-    String fileContent = String.format(baseTemplate, """
-        int[] array = new int[]{1, 2, 3, 4, 5, 6};
-        Arrays.stream(array)
-            .map(x -> x*2)
-            .peek(x -> System.out.printf("%d ", x))
-            .filter(x -> (x > 5))
-            .reduce((acc, x) -> ((acc) + (x)))
-            .ifPresent(possibleResult -> System.out.println("\\nRes: " + possibleResult));
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int[] array = new int[]{1, 2, 3, 4, 5, 6};
+            Arrays.stream(array)
+                .map(x -> x*2)
+                .peek(x -> System.out.printf("%d ", x))
+                .filter(x -> (x > 5))
+                .reduce((acc, x) -> ((acc) + (x)))
+                .ifPresent(possibleResult -> System.out.println("\\nRes: " + possibleResult));
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 11, 61, 345,

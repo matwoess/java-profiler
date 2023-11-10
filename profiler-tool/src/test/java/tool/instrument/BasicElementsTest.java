@@ -3,7 +3,6 @@ package tool.instrument;
 import org.junit.jupiter.api.Test;
 import tool.model.JavaFile;
 
-import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.*;
@@ -59,20 +58,24 @@ public class BasicElementsTest {
 
   @Test
   public void testForLoopWithIfs() {
-    String fileContent = String.format(baseTemplate, """
-        String output = "finished";
-        int x = 0;
-        for (int i = 0; i < 10; i++) {
-          x = 0;
-          if (i % 2 == 0) {
-            x++;
-          }
-          if (x > 10) {
-            break;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            String output = "finished";
+            int x = 0;
+            for (int i = 0; i < 10; i++) {
+              x = 0;
+              if (i % 2 == 0) {
+                x++;
+              }
+              if (x > 10) {
+                break;
+              }
+            }
+            System.out.println(output);
           }
         }
-        System.out.println(output);
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 16, 61, 244,
@@ -87,16 +90,20 @@ public class BasicElementsTest {
 
   @Test
   public void testWhileAndDoWhileLoop() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 100;
-        while (x > 0) {
-          x -= 10;
-          do {
-            x += 3;
-          } while ((x % 2) != 0);
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 100;
+            while (x > 0) {
+              x -= 10;
+              do {
+                x += 3;
+              } while ((x % 2) != 0);
+            }
+            System.out.println("x=" + x);
+          }
         }
-        System.out.println("x=" + x);
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 12, 61, 188,
@@ -111,19 +118,23 @@ public class BasicElementsTest {
 
   @Test
   public void testTryCatchFinally() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 50;
-        try {
-          x = x / 0;
-        } catch (ArithmeticException ex) {
-          System.out.println("Error: " + ex.getMessage());
-        } catch (RuntimeException ex) {
-          System.out.println("Unexpected error: " + ex.getMessage());
-        } finally {
-          x /= 2;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 50;
+            try {
+              x = x / 0;
+            } catch (ArithmeticException ex) {
+              System.out.println("Error: " + ex.getMessage());
+            } catch (RuntimeException ex) {
+              System.out.println("Unexpected error: " + ex.getMessage());
+            } finally {
+              x /= 2;
+            }
+            System.out.println("x=" + x);
+          }
         }
-        System.out.println("x=" + x);
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 15, 61, 336,
@@ -176,25 +187,28 @@ public class BasicElementsTest {
 
   @Test
   public void testComments() {
-    String fileContent = String.format(baseTemplate, """
-        // Testing comments
-        /* begin comment /* no nested multi-line comments
-        // but single line ones possible
-        // Block comments start with "/*", end with "*" followed by "/".
-        end comments */
-        String s = getTempString(1);
-         """, """
-         /**
-         This is a docstring:<br/>
-         Method returns a string containing a given number.<br>
-         Is called by the {@link #main(String[]) main} method in class {@link Main Main}.
-         @param number the number which should be contained in the returned string.
-         @returns a new string containing the number.
-         */
-        static String getTempString(int number) {
-          return String.format("The number was %d", number);
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            // Testing comments
+            /* begin comment /* no nested multi-line comments
+            // but single line ones possible
+            // Block comments start with "/*", end with "*" followed by "/".
+            end comments */
+            String s = getTempString(1);
+          }
+          /**
+          This is a docstring:<br/>
+          Method returns a string containing a given number.<br>
+          Is called by the {@link #main(String[]) main} method in class {@link Main Main}.
+          @param number the number which should be contained in the returned string.
+          @returns a new string containing the number.
+          */
+          static String getTempString(int number) {
+            return String.format("The number was %d", number);
+          }
         }
-         """);
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 10, 61, 284),
@@ -206,10 +220,14 @@ public class BasicElementsTest {
 
   @Test
   public void testStatementBeginningWithStringLiteral() {
-    String fileContent = String.format(baseTemplate, """
-        // ignoring result
-        "Some string.".split(" ");
-         """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            // ignoring result
+            "Some string.".split(" ");
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 6, 61, 117)
@@ -221,14 +239,17 @@ public class BasicElementsTest {
 
   @Test
   public void testTernaryOperatorInReturn() {
-    String fileContent = String.format(baseTemplate, """
-        if (false) {
-          return 0;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            if (false) {
+              return 0;
+            }
+            return false ? -1 : 0;
+          }
+          public void doNothing() {}
         }
-        return false ? -1 : 0;
-        """, """
-        public void doNothing() {}
-        """);
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 61, 121,
@@ -242,13 +263,17 @@ public class BasicElementsTest {
 
   @Test
   public void testTernaryOperator() {
-    String fileContent = String.format(baseTemplate, """
-        int number = 6;
-        String msg = (number % 2 == 0)
-            ? "Dividable by 2"
-            : "Not dividable by 2";
-        System.out.println(msg.contains("2") ? "2 appears" : "");
-         """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int number = 6;
+            String msg = (number % 2 == 0)
+                ? "Dividable by 2"
+                : "Not dividable by 2";
+            System.out.println(msg.contains("2") ? "2 appears" : "");
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 9, 61, 227)
@@ -259,20 +284,24 @@ public class BasicElementsTest {
 
   @Test
   public void testLabels() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 1;
-        outer:
-        while (true) {
-          inner: while (true) {
-            if (x == 1) {
-              x++;
-              break inner;
-            } else {
-              break outer;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 1;
+            outer:
+            while (true) {
+              inner: while (true) {
+                if (x == 1) {
+                  x++;
+                  break inner;
+                } else {
+                  break outer;
+                }
+              }
             }
           }
         }
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 16, 61, 220,
@@ -288,18 +317,22 @@ public class BasicElementsTest {
 
   @Test
   public void testIncrementAndDecrement() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 1;
-        while (true) {
-          if (x == 1) {
-            --x;
-            ++x;
-            ++(x);
-          } else {
-            break;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 1;
+            while (true) {
+              if (x == 1) {
+                --x;
+                ++x;
+                ++(x);
+              } else {
+                break;
+              }
+            }
           }
         }
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 14, 61, 170,
@@ -337,12 +370,16 @@ public class BasicElementsTest {
 
   @Test
   public void testAssertStatement() {
-    String fileContent = baseTemplate.formatted("""
-        int x = 1;
-        assert x == 1;
-        int sum = "Hello".chars().map(ch -> ch + 2).sum();
-        assert sum > 0 : "sum is: " + sum;
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 1;
+            assert x == 1;
+            int sum = "Hello".chars().map(ch -> ch + 2).sum();
+            assert sum > 0 : "sum is: " + sum;
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 61, 183,
@@ -355,18 +392,22 @@ public class BasicElementsTest {
 
   @Test
   public void testThrowWithClassCastAndInstanceOf() {
-    String fileContent = baseTemplate.formatted("""
-        try {
-          int i = 5 / 0;
-        } catch (Exception ex) {
-          if (ex instanceof ArithmeticException) {
-            throw (ArithmeticException) ex;
-          } else if (ex instanceof ClassCastException classEx) {
-            throw classEx;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            try {
+              int i = 5 / 0;
+            } catch (Exception ex) {
+              if (ex instanceof ArithmeticException) {
+                throw (ArithmeticException) ex;
+              } else if (ex instanceof ClassCastException classEx) {
+                throw classEx;
+              }
+              throw new RuntimeException("Other exception: " + ex.getMessage());
+            }
           }
-          throw new RuntimeException("Other exception: " + ex.getMessage());
         }
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 14, 61, 349,

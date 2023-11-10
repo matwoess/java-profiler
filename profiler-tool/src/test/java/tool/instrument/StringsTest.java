@@ -3,7 +3,6 @@ package tool.instrument;
 import org.junit.jupiter.api.Test;
 import tool.model.JavaFile;
 
-import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestProgramBuilder.jMethod;
@@ -13,17 +12,21 @@ import static tool.model.JumpStatement.Kind.RETURN;
 public class StringsTest {
   @Test
   public void testEscapedCharLiterals() {
-    String fileContent = String.format(baseTemplate, """
-        // ignoring result
-        char c = '\\"'; c = '\\'';
-        c = '\\n'; c = '\\r'; c = '\\t';
-        c = '\\\\';
-        c = '\\b'; c = '\\s'; c = '\\f';
-        c = '\\0'; c = '\\1'; c = '\\2'; c = '\\3';
-        c = '\\6'; c = '\\67';
-        c = '\\uFF1A'; c = '\\uuu231A';
-        c = '\\064'; c = '\\377';
-         """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            // ignoring result
+            char c = '\\"'; c = '\\'';
+            c = '\\n'; c = '\\r'; c = '\\t';
+            c = '\\\\';
+            c = '\\b'; c = '\\s'; c = '\\f';
+            c = '\\0'; c = '\\1'; c = '\\2'; c = '\\3';
+            c = '\\6'; c = '\\67';
+            c = '\\uFF1A'; c = '\\uuu231A';
+            c = '\\064'; c = '\\377';
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 13, 61, 300)
@@ -34,10 +37,14 @@ public class StringsTest {
 
   @Test
   public void testStringLiteralWithEscapedCharacters() {
-    String fileContent = String.format(baseTemplate, """
-        String s = "''''\\"\\"\\"\\r\\n\\t\\"\\f\\b\\s_asdf";
-        s = "\\u42FA_\\uuuADA1_\\1_\\155adsf\\6_\\43_Text";
-         """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            String s = "''''\\"\\"\\"\\r\\n\\t\\"\\f\\b\\s_asdf";
+            s = "\\u42FA_\\uuuADA1_\\1_\\155adsf\\6_\\43_Text";
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 6, 61, 161)
@@ -48,12 +55,16 @@ public class StringsTest {
 
   @Test
   public void testMethodWithDoubleBackslashInString() {
-    String fileContent = String.format(baseTemplate, """
-        boolean b = "Text\\\\".endsWith("\\\\");
-        if (b) {
-          System.out.println("does end with \\\\");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            boolean b = "Text\\\\".endsWith("\\\\");
+            if (b) {
+              System.out.println("does end with \\\\");
+            }
+          }
         }
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 61, 161,
@@ -162,28 +173,32 @@ public class StringsTest {
 
   @Test
   public void testTextBlocksContainingXMLStructure() {
-    String fileContent = baseTemplate.formatted("""
-        System.out.println(""\"
-               <body>
-               <span>  static String startEndWithBSlash = "\\\\\\\\asdf\\\\tqwerty\\\\\\\\";</span>
-               <span>  static String emptyTextBlock = ""\\"</span>
-               <span>  ""\\";</span>
-               <span>  static String withNestedBlock = ""\\"</span>
-               <span>      Text with</span>
-               <span>      multiple (!)</span>
-               <span>      lines!\\\\n</span>
-               <span>      can contain "strings", \\\\"escaped strings\\\\"</span>
-               <span>      and \\\\t""\\\\"</span>
-               <span>      Text blocks!</span>
-               <span>      with ""\\\\\\\\\\\\\\\\"</span>
-               <span>        "nested(!) text blocks",</span>
-               <span>        ""\\\\\\\\\\\\\\\\"</span>
-               <span>      \\\\""\\"</span>
-               <span>      ""\\";</span>
-               <span></span>
-               </body>
-           ""\");
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            System.out.println(""\"
+                   <body>
+                   <span>  static String startEndWithBSlash = "\\\\\\\\asdf\\\\tqwerty\\\\\\\\";</span>
+                   <span>  static String emptyTextBlock = ""\\"</span>
+                   <span>  ""\\";</span>
+                   <span>  static String withNestedBlock = ""\\"</span>
+                   <span>      Text with</span>
+                   <span>      multiple (!)</span>
+                   <span>      lines!\\\\n</span>
+                   <span>      can contain "strings", \\\\"escaped strings\\\\"</span>
+                   <span>      and \\\\t""\\\\"</span>
+                   <span>      Text blocks!</span>
+                   <span>      with ""\\\\\\\\\\\\\\\\"</span>
+                   <span>        "nested(!) text blocks",</span>
+                   <span>        ""\\\\\\\\\\\\\\\\"</span>
+                   <span>      \\\\""\\"</span>
+                   <span>      ""\\";</span>
+                   <span></span>
+                   </body>
+               ""\");
+          }
+        }
+        """;
     System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("Main",

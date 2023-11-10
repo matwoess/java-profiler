@@ -4,7 +4,6 @@ import tool.model.JavaFile;
 import org.junit.jupiter.api.Test;
 
 import static tool.instrument.TestProgramBuilder.*;
-import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.*;
 import static tool.model.JumpStatement.Kind.*;
@@ -12,9 +11,13 @@ import static tool.model.JumpStatement.Kind.*;
 public class MissingBracesTest {
   @Test
   public void testIf() {
-    String fileContent = String.format(baseTemplate, """
-        if (true == false)return;
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            if (true == false)return;
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 5, 61, 97,
@@ -27,10 +30,14 @@ public class MissingBracesTest {
 
   @Test
   public void testIfElse() {
-    String fileContent = String.format(baseTemplate, """
-        if (true == false) break;
-        else continue;
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            if (true == false) break;
+            else continue;
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 6, 61, 112,
@@ -44,11 +51,15 @@ public class MissingBracesTest {
 
   @Test
   public void testIfElseifElse() {
-    String fileContent = String.format(baseTemplate, """
-        if (true == false) break;
-        else if (true == true) return;
-        else continue;
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            if (true == false) break;
+            else if (true == true) return;
+            else continue;
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 61, 143,
@@ -63,20 +74,24 @@ public class MissingBracesTest {
 
   @Test
   public void testMixedIfs() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 50;
-        if (x % 2 == 0)
-          x += 1;
-        else if (x % 2 == 1) {
-          x += 3;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 50;
+            if (x % 2 == 0)
+              x += 1;
+            else if (x % 2 == 1) {
+              x += 3;
+            }
+            else throw new RuntimeException("invalid state");
+                
+            if (x > 51) {
+              if (x == 53) return; else x = 0;
+            }
+            System.out.println(x);
+          }
         }
-        else throw new RuntimeException("invalid state");
-            
-        if (x > 51) {
-          if (x == 53) return; else x = 0;
-        }
-        System.out.println(x);
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 16, 61, 269,
@@ -94,14 +109,18 @@ public class MissingBracesTest {
 
   @Test
   public void testDoubleWhileAndIfElse() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 0;
-        while (false) while(true)
-          if(1==2)
-            return;
-          else
-            x=1;
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 0;
+            while (false) while(true)
+              if(1==2)
+                return;
+              else
+                x=1;
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 10, 61, 147,
@@ -117,13 +136,17 @@ public class MissingBracesTest {
 
   @Test
   public void testDoWhile() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 0;
-        do x+=1; while (x<5);
-        do
-          x+=1;
-        while (x<10);
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 0;
+            do x+=1; while (x<5);
+            do
+              x+=1;
+            while (x<10);
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 9, 61, 129,
@@ -137,12 +160,16 @@ public class MissingBracesTest {
 
   @Test
   public void testForAndForEach() {
-    String fileContent = String.format(baseTemplate, """
-        int[] array = new int[5];
-        for (int i = 0; i < 5; i++)
-          array[i] = i;
-        for (int val : array) System.out.println(val);
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int[] array = new int[5];
+            for (int i = 0; i < 5; i++)
+              array[i] = i;
+            for (int val : array) System.out.println(val);
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 8, 61, 188,
@@ -156,22 +183,26 @@ public class MissingBracesTest {
 
   @Test
   public void testSwitch() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 1;
-        switch (x) {
-          case 1: {
-            x += 3;
-            break;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 1;
+            switch (x) {
+              case 1: {
+                x += 3;
+                break;
+              }
+              case 2: case 3:
+              case 4:
+               x *= 2;
+               x = x - 1;
+              case 5:
+                break;
+              default: break;
+            }
           }
-          case 2: case 3:
-          case 4:
-           x *= 2;
-           x = x - 1;
-          case 5:
-            break;
-          default: break;
         }
-         """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 18, 61, 228,
@@ -189,14 +220,18 @@ public class MissingBracesTest {
 
   @Test
   public void testLabels() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 1;
-        outer: while (true) while(true)
-           if(x==1)
-             return;
-           else
-             break outer;
-        """, "");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 1;
+            outer: while (true) while(true)
+               if(x==1)
+                 return;
+               else
+                 break outer;
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 10, 61, 165,

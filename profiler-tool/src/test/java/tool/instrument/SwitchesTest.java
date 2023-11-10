@@ -3,7 +3,6 @@ package tool.instrument;
 import org.junit.jupiter.api.Test;
 import tool.model.JavaFile;
 
-import static tool.instrument.TestInstrumentUtils.baseTemplate;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.*;
@@ -13,24 +12,28 @@ public class SwitchesTest {
 
   @Test
   public void testSwitchWithExtraBlockBraces() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 1;
-        switch (x) {
-          case 1: {
-            x += 3;
-            break;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 1;
+            switch (x) {
+              case 1: {
+                x += 3;
+                break;
+              }
+              case 2: {}
+              case 3: {
+               x *= 2;
+               x = x - 1;
+              }
+              case 4: {
+                break;
+              }
+              default: { break; }
+            }
           }
-          case 2: {}
-          case 3: {
-           x *= 2;
-           x = x - 1;
-          }
-          case 4: {
-            break;
-          }
-          default: { break; }
         }
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 20, 61, 239,
@@ -53,20 +56,24 @@ public class SwitchesTest {
 
   @Test
   public void testCommaSeparatedCases() {
-    String fileContent = String.format(baseTemplate, """
-        int x = 1;
-        switch (x) {
-          case 1, 2, 3: {
-            x += 3;
-            break;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int x = 1;
+            switch (x) {
+              case 1, 2, 3: {
+                x += 3;
+                break;
+              }
+              case 4, 5: {
+                x *= 2;
+                x = x - 1;
+              }
+              default: { break; }
+            }
           }
-          case 4, 5: {
-            x *= 2;
-            x = x - 1;
-          }
-          default: { break; }
         }
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 16, 61, 210,
@@ -85,21 +92,25 @@ public class SwitchesTest {
 
   @Test
   public void testNewSwitch() {
-    String fileContent = String.format(baseTemplate, """
-        String value = "aBcDe";
-        switch (value) {
-          case "aBcDe" -> {
-            if (value.toUpperCase().equals("ABCDE")) {
-              System.out.println("as expected");
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            String value = "aBcDe";
+            switch (value) {
+              case "aBcDe" -> {
+                if (value.toUpperCase().equals("ABCDE")) {
+                  System.out.println("as expected");
+                }
+              }
+              case "other value" -> System.out.println("unexpected");
+              case "" -> {
+                break;
+              }
+              default -> throw new RuntimeException("should never happen");
             }
           }
-          case "other value" -> System.out.println("unexpected");
-          case "" -> {
-            break;
-          }
-          default -> throw new RuntimeException("should never happen");
         }
-        """, "");
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 17, 61, 384,
@@ -117,25 +128,30 @@ public class SwitchesTest {
 
   @Test
   public void testSwitchExpression() {
-    String fileContent = String.format(baseTemplate, """
-        for (int i = 0; i < 11; i++) {
-          int result = switch (i) {
-            case 5: {
-              yield 2;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            for (int i = 0; i < 11; i++) {
+              int result = switch (i) {
+                case 5: {
+                  yield 2;
+                }
+                case 1: case 2: yield 5;
+                case 11: case 12: throw new RuntimeException();
+                default: {
+                  if (i < 10) {
+                    System.out.println("none of the above");
+                    yield 0;
+                  } else {
+                    yield -1;
+                  }
+                }
+              };
+              System.out.println("result=" + result);
             }
-            case 1: case 2: yield 5;
-            case 11: case 12: throw new RuntimeException();
-            default: {
-              if (i < 10) {
-                System.out.println("none of the above");
-                yield 0;
-              } else {
-                yield -1;
-              }
-            }
-          };
-          System.out.println("result=" + result);
-        }""", "");
+          }
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 21, 61, 442,
@@ -157,24 +173,28 @@ public class SwitchesTest {
 
   @Test
   public void testSwitchExpression_ArrowCases() {
-    String fileContent = String.format(baseTemplate, """
-        int dependingOn = 7;
-        int result = switch (dependingOn) {
-          case 5 -> {
-            yield 2;
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            int dependingOn = 7;
+            int result = switch (dependingOn) {
+              case 5 -> {
+                yield 2;
+              }
+              case 1, 2 -> 5;
+              default -> {
+                if (dependingOn < 10) {
+                  System.out.println("none of the above");
+                  yield 0;
+                } else {
+                  yield -1;
+                }
+              }
+            };
+            System.out.println("result=" + result);
           }
-          case 1, 2 -> 5;
-          default -> {
-            if (dependingOn < 10) {
-              System.out.println("none of the above");
-              yield 0;
-            } else {
-              yield -1;
-            }
-          }
-        };
-        System.out.println("result=" + result);
-        """, "");
+        }
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 20, 61, 364,
@@ -209,7 +229,7 @@ public class SwitchesTest {
         """;
     JavaFile expected = jFile(
         jClass("ClassLevelSwitch",
-            jBlock(SWITCH_EXPR, 2, 8, 86,170),
+            jBlock(SWITCH_EXPR, 2, 8, 86, 170),
             jSsBlock(ARROW_CASE, 3, 3, 105, 108),
             jSsBlock(ARROW_CASE, 4, 4, 125, 128),
             jBlock(ARROW_CASE, 5, 7, 144, 166).withJump(YIELD),
@@ -222,29 +242,32 @@ public class SwitchesTest {
 
   @Test
   public void testSwitchExpressionAsReturn() {
-    String fileContent = String.format(baseTemplate, """
-        System.out.println(StatusCode.getStatusCodeDescription(StatusCode.FORBIDDEN));
-        System.out.println(StatusCode.getStatusCodeDescription(StatusCode.UNAUTHORIZED));
-        """, """
-        static enum StatusCode {
-          OK, UNAUTHORIZED, FORBIDDEN, NOTFOUND;
-          public static String getStatusCodeDescription(StatusCode code) {
-            return switch(code) {
-              case OK -> "everything went great";
-              case NOTFOUND, FORBIDDEN -> "cannot access";
-              case UNAUTHORIZED -> {
-                yield "did you forget to enter your password?";
-              }
-            };
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            System.out.println(StatusCode.getStatusCodeDescription(StatusCode.FORBIDDEN));
+            System.out.println(StatusCode.getStatusCodeDescription(StatusCode.UNAUTHORIZED));
+          }
+          static enum StatusCode {
+            OK, UNAUTHORIZED, FORBIDDEN, NOTFOUND;
+            public static String getStatusCodeDescription(StatusCode code) {
+              return switch(code) {
+                case OK -> "everything went great";
+                case NOTFOUND, FORBIDDEN -> "cannot access";
+                case UNAUTHORIZED -> {
+                  yield "did you forget to enter your password?";
+                }
+              };
+            }
           }
         }
-        """);
+        """;
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 6, 61, 232),
             jClass("StatusCode",
                 jMethod("getStatusCodeDescription", 9, 17, 367, 591,
-                    jBlock(SWITCH_EXPR, 10, 16, 393,586),
+                    jBlock(SWITCH_EXPR, 10, 16, 393, 586),
                     jSsBlock(ARROW_CASE, 11, 11, 411, 436),
                     jSsBlock(ARROW_CASE, 12, 12, 470, 487),
                     jBlock(ARROW_CASE, 13, 15, 515, 580).withJump(YIELD)
