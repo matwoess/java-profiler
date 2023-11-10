@@ -57,6 +57,25 @@ public class BasicElementsTest {
   }
 
   @Test
+  public void testEmptyLoop() {
+    String fileContent = """
+        public class Main {
+          public static void main(String[] args) {
+            for (int i = 0; i < 10; i++) {}
+          }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("Main",
+            jMethod("main", 2, 4, 61, 102,
+                jBlock(LOOP, 3, 3, 96, 98)
+            )
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
   public void testForLoopWithIfs() {
     String fileContent = """
         public class Main {
