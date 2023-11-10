@@ -17,49 +17,49 @@ public class AnonymousClassesTest {
     String fileContent = """
         public class Main {
           public static void main(String[] args) {
-            static File firstJavaFile(Path directory) {
-              File[] allJavaFiles = directory.toFile().listFiles(new FilenameFilter() {
-                boolean isTrue = false;
-                 
-                @Override
-                public boolean accept(File file, String name) {
-                  isTrue = returnTrue();
-                  return name.endsWith(".java");
-                }
-                 
-                class X {
-                  static void methodInX() {
-                    System.out.println("Hello from inside a nested class in an anonymous class.");
-                  }
-                }
-                 
-                public boolean returnTrue() {
-                  X.methodInX();
-                  return true;
-                }
-              });
-              if (allJavaFiles != null && allJavaFiles.length > 0) {
-                return allJavaFiles[0];
-              } else {
-                return null;
+          }
+          static File firstJavaFile(Path directory) {
+            File[] allJavaFiles = directory.toFile().listFiles(new FilenameFilter() {
+              boolean isTrue = false;
+               
+              @Override
+              public boolean accept(File file, String name) {
+                isTrue = returnTrue();
+                return name.endsWith(".java");
               }
+               
+              class X {
+                static void methodInX() {
+                  System.out.println("Hello from inside a nested class in an anonymous class.");
+                }
+              }
+               
+              public boolean returnTrue() {
+                X.methodInX();
+                return true;
+              }
+            });
+            if (allJavaFiles != null && allJavaFiles.length > 0) {
+              return allJavaFiles[0];
+            } else {
+              return null;
             }
           }
         }
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 4, 61, 71),
-            jMethod("firstJavaFile", 5, 31, 117, 715,
-                jBlock(BLOCK, 26, 28, 652, 685).withJump(RETURN),
-                jBlock(BLOCK, 28, 30, 691, 713).withJump(RETURN)
+            jMethod("main", 2, 3, 61, 66),
+            jMethod("firstJavaFile", 4, 30, 111, 755,
+                jBlock(BLOCK, 25, 27, 682, 719).withJump(RETURN),
+                jBlock(BLOCK, 27, 29, 725, 751).withJump(RETURN)
             ),
             jClass(ANONYMOUS, null,
-                jMethod("accept", 10, 13, 288, 361).withJump(RETURN),
                 jClass("X",
-                    jMethod("methodInX", 16, 18, 407, 503)
+                    jMethod("methodInX", 15, 17, 419, 519)
                 ),
-                jMethod("returnTrue", 21, 24, 543, 590).withJump(RETURN)
+                jMethod("accept", 9, 12, 290, 369).withJump(RETURN),
+                jMethod("returnTrue", 20, 23, 563, 616).withJump(RETURN)
             )
         )
     );
@@ -74,7 +74,8 @@ public class AnonymousClassesTest {
     String fileContent = """
         public class Main {
           public static void main(String[] args) {
-            static List<Integer> getSortedIntegers(List<Integer> arrayList) {
+          }
+          static List<Integer> getSortedIntegers(List<Integer> arrayList) {
               Collections.sort(arrayList, new Comparator<Integer>() {
                 @Override
                 public int compare(Integer i1, Integer i2) {
@@ -92,11 +93,11 @@ public class AnonymousClassesTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 4, 61, 71),
-            jMethod("getSortedIntegers", 5, 17, 139, 380).withJump(RETURN),
+            jMethod("main", 2, 3, 61, 66),
+            jMethod("getSortedIntegers", 4, 16, 133, 418).withJump(RETURN),
             jClass(ANONYMOUS, null,
-                jMethod("compare", 8, 14, 260, 352,
-                    jBlock(BLOCK, 9, 11, 287, 314).withJump(RETURN)
+                jMethod("compare", 7, 13, 266, 378,
+                    jBlock(BLOCK, 8, 10, 297, 332).withJump(RETURN)
                 ).withJump(RETURN)
             )
         )
@@ -121,9 +122,9 @@ public class AnonymousClassesTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 10, 61, 157),
+            jMethod("main", 2, 9, 61, 177),
             jClass(ANONYMOUS, null,
-                jMethod("hashCode", 5, 7, 116, 150).withJump(RETURN)
+                jMethod("hashCode", 5, 7, 124, 166).withJump(RETURN)
             )
         )
     );

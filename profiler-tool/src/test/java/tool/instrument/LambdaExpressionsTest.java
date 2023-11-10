@@ -22,8 +22,8 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 7, 61, 131,
-                jBlock(LAMBDA, 3, 5, 95, 124)
+            jMethod("main", 2, 6, 61, 138,
+                jBlock(LAMBDA, 3, 5, 95, 132)
             )
         )
     );
@@ -43,7 +43,7 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 7, 61, 197,
+            jMethod("main", 2, 6, 61, 204,
                 jBlock(LAMBDA, 3, 3, 114, 131).withJump(RETURN)
             )
         )
@@ -65,8 +65,8 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 8, 61, 164,
-                jBlock(LAMBDA, 3, 5, 101, 122).withJump(RETURN)
+            jMethod("main", 2, 7, 61, 175,
+                jBlock(LAMBDA, 3, 5, 101, 130).withJump(RETURN)
             )
         )
     );
@@ -86,7 +86,7 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 7, 61, 191,
+            jMethod("main", 2, 6, 61, 198,
                 jSsBlock(LAMBDA, 3, 3, 111, 121)
             )
         )
@@ -107,7 +107,7 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 7, 61, 209,
+            jMethod("main", 2, 6, 61, 216,
                 jSsBlock(LAMBDA, 3, 3, 122, 130)
             )
         )
@@ -130,9 +130,9 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 9, 61, 336,
-                jSsBlock(LAMBDA, 4, 4, 145, 189),
-                jSsBlock(LAMBDA, 5, 5, 237, 252)
+            jMethod("main", 2, 8, 61, 351,
+                jSsBlock(LAMBDA, 4, 4, 149, 193),
+                jSsBlock(LAMBDA, 5, 5, 245, 260)
             )
         )
     );
@@ -156,12 +156,12 @@ public class LambdaExpressionsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 11, 61, 345,
-                jSsBlock(LAMBDA, 5, 5, 144, 148),
-                jSsBlock(LAMBDA, 6, 6, 164, 192),
-                jSsBlock(LAMBDA, 7, 7, 210, 218),
-                jSsBlock(LAMBDA, 8, 8, 243, 257),
-                jSsBlock(LAMBDA, 9, 9, 291, 338)
+            jMethod("main", 2, 10, 61, 368,
+                jSsBlock(LAMBDA, 5, 5, 152, 156),
+                jSsBlock(LAMBDA, 6, 6, 176, 204),
+                jSsBlock(LAMBDA, 7, 7, 226, 234),
+                jSsBlock(LAMBDA, 8, 8, 263, 277),
+                jSsBlock(LAMBDA, 9, 9, 315, 362)
             )
         )
     );

@@ -29,7 +29,7 @@ public class StringsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 13, 61, 300)
+            jMethod("main", 2, 12, 61, 331)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -47,7 +47,7 @@ public class StringsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 6, 61, 161)
+            jMethod("main", 2, 5, 61, 164)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -67,8 +67,8 @@ public class StringsTest {
         """;
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 8, 61, 161,
-                jBlock(BLOCK, 4, 6, 111, 156)
+            jMethod("main", 2, 7, 61, 172,
+                jBlock(BLOCK, 4, 6, 115, 168)
             )
         )
     );
@@ -202,7 +202,7 @@ public class StringsTest {
     System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("Main",
-            jMethod("main", 2, 24, 61, 841)
+            jMethod("main", 2, 23, 61, 916)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -250,13 +250,13 @@ public class StringsTest {
     JavaFile expected = jFile(
         jClass("TextBlocksWithDifferentEndings",
             jMethod("main", 2, 4, 80, 125),
-            jMethod("printStrings", 6, 34, 158, 663,
+            jMethod("printStrings", 6, 34, 158, 675,
                 jBlock(BLOCK, 7, 10, 164, 214),
                 jBlock(BLOCK, 10, 13, 215, 268),
                 jBlock(BLOCK, 13, 16, 269, 323),
                 jBlock(BLOCK, 16, 20, 324, 400),
                 jBlock(BLOCK, 20, 24, 401, 485),
-                jBlock(BLOCK, 24, 28, 486, 584)
+                jBlock(BLOCK, 24, 28, 486, 596)
             ).withJump(RETURN)
         )
     );
