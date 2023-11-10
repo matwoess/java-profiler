@@ -191,7 +191,7 @@ public class TestProgramBuilder {
       return;
     }
     Block methBlock = method.getMethodBlock();
-    builder.append(String.format(", %d, %d, %d, %d", methBlock.beg.line(), methBlock.end.line(), methBlock.beg.pos() + 1, methBlock.end.pos()));
+    builder.append(String.format(", %d, %d, %d, %d", methBlock.beg.line(), methBlock.end.line(), methBlock.beg.pos(), methBlock.end.pos()));
     List<Block> blocks = method.blocks;
     if (blocks.size() == 1) {
       builder.append(")");
@@ -221,7 +221,7 @@ public class TestProgramBuilder {
       builder.append(".withJump(").append(block.jumpStatement.kind().name());
       String label = block.jumpStatement.label();
       if (label != null) {
-        builder.append(", ").append(label);
+        builder.append(", ").append("\"").append(label).append("\"");
       }
       builder.append(")");
     }
