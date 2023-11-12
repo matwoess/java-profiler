@@ -45,6 +45,7 @@ public class Block implements Serializable, Component {
   }
 
   public void setParentBlock(Block block) {
+    if (block == null) return;
     parentBlock = block;
     this.inheritedJumpBlocks.addAll(parentBlock.innerJumpBlocks);
     this.inheritedJumpBlocks.addAll(parentBlock.inheritedJumpBlocks);
@@ -77,6 +78,10 @@ public class Block implements Serializable, Component {
 
   public boolean isActiveInLine(int lineNr) {
     return beg.line() <= lineNr && end.line() >= lineNr;
+  }
+
+  public boolean hasNoBraces() {
+    return isSingleStatement || blockType.hasNoBraces();
   }
 
   public String toString() {

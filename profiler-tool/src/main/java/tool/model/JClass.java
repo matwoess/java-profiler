@@ -20,6 +20,7 @@ public class JClass implements Serializable, Component {
   }
 
   public void setParentClass(JClass parentClass) {
+    if (parentClass == null) return;
     if (name == null) {
       long nextAnonymousClass = parentClass.innerClasses.stream().filter(c -> c.classType == ClassType.ANONYMOUS).count() + 1;
       this.name = String.valueOf(nextAnonymousClass);

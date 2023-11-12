@@ -31,4 +31,6 @@ public enum BlockType {
   public boolean hasNoCounter() {
     return isSwitch();
   }
+
+  public boolean hasNoBraces() { return this == COLON_CASE; }
 }

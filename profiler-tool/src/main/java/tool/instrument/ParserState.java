@@ -19,10 +19,8 @@ public class ParserState {
   String packageName = null;
 
   List<JClass> topLevelClasses = new ArrayList<>();
-  Stack<JClass> classStack = new Stack<>();
   List<Block> allBlocks = new ArrayList<>();
-  Stack<Block> blockStack = new Stack<>();
-  Stack<Method> methodStack = new Stack<>();
+  Stack<Block> blockBackupStack = new Stack<>();
   JClass curClass = null;
   Method curMeth = null;
   Block curBlock = null;
@@ -76,23 +74,21 @@ public class ParserState {
 
 
   void enterClass(ClassType classType) {
+    endCodeRegion();
     String className = null;
-    if (classType == ClassType.ANONYMOUS) {
-      endCodeRegion();
-    } else {
+    if (classType != ClassType.ANONYMOUS) {
       className = parser.la.val;
     }
     JClass newClass = new JClass(className, classType);
     newClass.packageName = packageName;
-    if (curMeth != null) {
-      methodStack.push(curMeth);
-      curMeth = null;
-    }
-    if (curClass != null) {
-      classStack.push(curClass);
-      newClass.setParentClass(curClass);
-    } else {
+    newClass.setParentClass(curClass);
+    if (curClass == null) {
       topLevelClasses.add(newClass);
+    }
+    if (curBlock != null) {
+      blockBackupStack.push(curBlock);
+      curBlock = null;
+      curMeth = null;
     }
     logger.enter(newClass);
     curClass = newClass;
@@ -100,15 +96,14 @@ public class ParserState {
 
   void leaveClass() {
     logger.leave(curClass);
-    if (!methodStack.empty() && (curClass.classType == ClassType.ANONYMOUS || curClass.classType == ClassType.LOCAL)) {
-      curMeth = methodStack.pop();
-      //reenterBlock(curBlock.blockType, curBlock.isSingleStatement || curBlock.blockType == BlockType.COLON_CASE);
+    if (curClass.classType == ClassType.ANONYMOUS || curClass.classType == ClassType.LOCAL) {
+      if (!blockBackupStack.isEmpty()) {
+        curBlock = blockBackupStack.pop();
+        curMeth = curBlock.method;
+        reenterBlock(curBlock.blockType, curBlock.hasNoBraces());
+      }
     }
-    if (classStack.empty()) {
-      curClass = null;
-    } else {
-      curClass = classStack.pop();
-    }
+    curClass = curClass.parentClass;
   }
 
   void enterMethod() {
@@ -140,6 +135,7 @@ public class ParserState {
 
   void enterBlock(BlockType blockType, boolean missingBraces) {
     assert curClass != null;
+    endCodeRegion();
     Block newBlock = new Block(blockType);
     newBlock.id = curBlockId++;
     newBlock.setParentMethod(curMeth);
@@ -147,12 +143,8 @@ public class ParserState {
     newBlock.isSingleStatement = blockType != BlockType.COLON_CASE && missingBraces;
     newBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
     newBlock.incInsertOffset = Util.getIncInsertOffset(parser, blockType, missingBraces);
+    newBlock.setParentBlock(curBlock);
     allBlocks.add(newBlock);
-    if (curBlock != null) {
-      endCodeRegion();
-      blockStack.push(curBlock);
-      newBlock.setParentBlock(curBlock);
-    }
     if (!curLabels.isEmpty()) {
       newBlock.labels.addAll(curLabels);
       curLabels.clear();
@@ -174,11 +166,7 @@ public class ParserState {
     curBlock.end = tokenEndPosition(missingBraces ? parser.t : parser.la);
     logger.leave(curBlock);
     endCodeRegion();
-    if (blockStack.empty()) {
-      curBlock = null;
-    } else {
-      curBlock = blockStack.pop();
-    }
+    curBlock = curBlock.parentBlock;
     if (blockType == BlockType.METHOD) {
       leaveMethod();
     }
@@ -215,18 +203,15 @@ public class ParserState {
   }
 
   boolean validCodeRegionStartToken(Token nextToken) {
-    //if (curMeth == null) return false;
     if (curBlock.blockType.hasNoCounter()) return false;
     return !nextToken.val.equals("else") && !nextToken.val.equals("catch") && !nextToken.val.equals("finally");
   }
 
   private void endCodeRegion() {
-    if (curCodeRegion == null) {
-      return;
-    }
+    if (curCodeRegion == null) return;
     curCodeRegion.end = tokenEndPosition(parser.t);
     logger.leave(curCodeRegion);
-    assert curCodeRegion.end != curCodeRegion.beg;
+    // assert !curCodeRegion.end.equals(curCodeRegion.beg); // TODO: remove, true for empty block "{}"
     curBlock.addCodeRegion(curCodeRegion);
     curCodeRegion = null;
   }
