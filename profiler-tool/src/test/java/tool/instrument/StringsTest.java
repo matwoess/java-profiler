@@ -250,13 +250,13 @@ public class StringsTest {
     JavaFile expected = jFile(
         jClass("TextBlocksWithDifferentEndings",
             jMethod("main", 2, 4, 80, 125),
-            jMethod("printStrings", 6, 34, 158, 675,
+            jMethod("printStrings", 6, 34, 158, 663,
                 jBlock(BLOCK, 7, 10, 164, 214),
                 jBlock(BLOCK, 10, 13, 215, 268),
                 jBlock(BLOCK, 13, 16, 269, 323),
                 jBlock(BLOCK, 16, 20, 324, 400),
                 jBlock(BLOCK, 20, 24, 401, 485),
-                jBlock(BLOCK, 24, 28, 486, 596)
+                jBlock(BLOCK, 24, 28, 486, 584)
             ).withJump(RETURN)
         )
     );
