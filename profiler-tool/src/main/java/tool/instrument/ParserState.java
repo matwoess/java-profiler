@@ -73,12 +73,8 @@ public class ParserState {
   }
 
 
-  void enterClass(ClassType classType) {
+  void enterClass(ClassType classType, String className) {
     endCodeRegion();
-    String className = null;
-    if (classType != ClassType.ANONYMOUS) {
-      className = parser.la.val;
-    }
     JClass newClass = new JClass(className, classType);
     newClass.packageName = packageName;
     newClass.setParentClass(curClass);
@@ -100,7 +96,7 @@ public class ParserState {
       if (!blockBackupStack.isEmpty()) {
         curBlock = blockBackupStack.pop();
         curMeth = curBlock.method;
-        reenterBlock(curBlock.blockType, curBlock.hasNoBraces());
+        reenterBlock(curBlock.blockType, true); // always true, because leaveClass is called after '}'
       }
     }
     curClass = curClass.parentClass;

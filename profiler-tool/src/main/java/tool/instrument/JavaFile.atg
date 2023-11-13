@@ -78,13 +78,14 @@ PackageDecl = "package"     (. ArrayList<String> packageName = new ArrayList<>()
 AnnotationType = "@interface" ident BraceExpr.
 Annotation = "@" ident {"." ident} [ParExpr].
 Class<ClassType classType> =
-    (class | "interface" | ident/*"record"*/)    (. state.enterClass(classType); .)
-    ident {ANY} "{"
-    ClassBody                           (. state.leaveClass(); .)
+    (class | "interface" | ident/*"record"*/) ident (. String className = t.val; .)
+    {ANY}                               (. state.enterClass(classType, className); .)
+    "{" ClassBody                       (. state.leaveClass(); .)
 .
 Enum<ClassType classType> =
-    "enum"                              (. state.enterClass(classType); .)
-    ident {ANY} "{"
+    "enum" ident                        (. String className = t.val; .)
+    {ANY}                               (. state.enterClass(classType, className); .)
+    "{"
     { [Annotation] ident [ParExpr] ["{" ClassBody] [","]}
     (   ";" ClassBody                   // class body can follow only after a ";"
         | "}"
@@ -179,9 +180,8 @@ SSArrowBody<BlockType blockType> =                      (. state.enterSSArrowBlo
 Instantiation = "new" ident {["."] ident} [AngleBracketExpr] (ArrayInitRest | ClassInitRest).
 ArrayInitRest = BracketExpr [BraceExpr].
 ClassInitRest = ParExpr [ClassExtension].
-ClassExtension =
-    "{"                                     (. state.enterClass(ANONYMOUS); .)
-    ClassBody                               (. state.leaveClass();.)
+ClassExtension =                            (. state.enterClass(ANONYMOUS, null); .)
+    "{" ClassBody                           (. state.leaveClass();.)
 .
 Block<BlockType blockType> =                (. state.enterBlock(blockType); .)
     "{" {Statement}                         (. state.leaveBlock(blockType); .)
