@@ -1,6 +1,7 @@
 package fxui.tree;
 
 import fxui.model.AppState;
+import fxui.util.DirectoryBeforeFileComparator;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -10,8 +11,11 @@ import javafx.scene.input.KeyCode;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class JavaProjectTree {
+  private static final Comparator<File> treeComparator = new DirectoryBeforeFileComparator();
   private final AppState appState;
 
   public JavaProjectTree(AppState appState, TreeView<File> treeProjectDir) {
@@ -53,6 +57,7 @@ public class JavaProjectTree {
     File[] itemsInDir = directory.listFiles();
     TreeItem<File> folder = new TreeItem<>(directory);
     if (itemsInDir == null) return folder;
+    Arrays.sort(itemsInDir, treeComparator);
     for (File item : itemsInDir) {
       if (item.isDirectory()) {
         TreeItem<File> subFolder = populateTree(item);
