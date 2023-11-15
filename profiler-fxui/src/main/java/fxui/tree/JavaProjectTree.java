@@ -1,8 +1,9 @@
 package fxui.tree;
 
 import fxui.model.AppState;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.binding.Bindings;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
@@ -12,9 +13,6 @@ import java.nio.file.Path;
 
 public class JavaProjectTree {
   private final AppState appState;
-
-  ObjectProperty<TreeItem<File>> selectedDirNode = new SimpleObjectProperty<>();
-  ObjectProperty<TreeItem<File>> selectedMainNode = new SimpleObjectProperty<>();
 
   public JavaProjectTree(AppState appState, TreeView<File> treeProjectDir) {
     this.appState = appState;
@@ -27,18 +25,28 @@ public class JavaProjectTree {
     treeProjectDir.setRoot(root);
     treeProjectDir.setShowRoot(false);
     treeProjectDir.setOnKeyPressed(event -> {
-      TreeItem<File> selected = treeProjectDir.getSelectionModel().getSelectedItem();
-      if (selected != null && event.getCode() == KeyCode.ENTER) {
-        if (selected.getValue().isDirectory()) {
-          setSourcesDir(selected.getValue().toPath());
-          selectedDirNode.set(selected);
-        } else {
-          setMainFile(selected.getValue().toPath());
-          selectedMainNode.set(selected);
-        }
+      if (event.getCode() == KeyCode.ENTER) {
+        selectTreeItem(treeProjectDir.getSelectionModel().getSelectedItem());
       }
     });
+    initContextMenu(treeProjectDir);
     treeProjectDir.setCellFactory(tv -> new SelectableTreeCell(appState));
+  }
+
+  private void initContextMenu(TreeView<File> treeProjectDir) {
+    ContextMenu contextMenu = new ContextMenu();
+    MenuItem selectItem = new MenuItem();
+    selectItem.setOnAction(event -> selectTreeItem(treeProjectDir.getSelectionModel().getSelectedItem()));
+    selectItem.textProperty().bind(Bindings.createStringBinding(
+        () -> {
+          TreeItem<File> item = treeProjectDir.getSelectionModel().getSelectedItem();
+          if (item == null) return "";
+          return item.getValue().isDirectory() ? "Select as sources root" : "Select as main file";
+        },
+        treeProjectDir.getSelectionModel().selectedItemProperty()
+    ));
+    contextMenu.getItems().add(selectItem);
+    treeProjectDir.setContextMenu(contextMenu);
   }
 
   public TreeItem<File> populateTree(File directory) {
@@ -58,14 +66,15 @@ public class JavaProjectTree {
     return folder;
   }
 
-  private void setSourcesDir(Path dir) {
-    Path relPath = appState.projectRoot.get().relativize(dir);
-    appState.sourcesDir.set(relPath);
-  }
-
-  private void setMainFile(Path jFile) {
-    Path relPath = appState.projectRoot.get().relativize(jFile);
-    appState.mainFile.set(relPath);
+  private void selectTreeItem(TreeItem<File> selected) {
+    if (selected == null) return;
+    File value = selected.getValue();
+    Path relPath = appState.projectRoot.get().relativize(value.toPath());
+    if (value.isDirectory()) {
+      appState.sourcesDir.set(relPath);
+    } else {
+      appState.mainFile.set(relPath);
+    }
   }
 
 }
