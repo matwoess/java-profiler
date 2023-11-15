@@ -205,7 +205,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     cmdStage.initModality(Modality.APPLICATION_MODAL);
     CommandController cmdController = fxmlLoader.getController();
     cmdController.initUI(cmdStage);
-    cmdController.setCommand(SystemUtils.getTerminalCommand(appState));
+    cmdController.setRunCommand(SystemUtils.getJavaRunCommand(appState.getProgramArguments()));
     cmdStage.showAndWait();
   }
 

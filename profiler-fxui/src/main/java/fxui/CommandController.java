@@ -38,8 +38,8 @@ public class CommandController {
     });
   }
 
-  public void setCommand(String[] runCommand) {
-    txtRunCommand.textProperty().set(String.join(" ", runCommand));
+  public void setRunCommand(String runCommand) {
+    txtRunCommand.textProperty().set(runCommand);
   }
 
   @FXML

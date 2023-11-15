@@ -103,7 +103,7 @@
                                 <Tooltip text="The terminal emulator in which the tool will be executed."/>
                             </tooltip>
                         </Label>
-                        <Label text="Terminal emulator"/>
+                        <Label text="Terminal"/>
                     </HBox>
                     <ChoiceBox fx:id="cbTerminalEmulator" maxWidth="Infinity"/>
                 </VBox>
