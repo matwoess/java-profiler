@@ -76,7 +76,7 @@ PackageDecl = "package"     (. ArrayList<String> packageName = new ArrayList<>()
     ";"                     (. state.setPackageName(packageName); .)
 .
 AnnotationType = "@interface" ident BraceExpr.
-Annotation = "@" ident {"." ident} [ParExpr].
+Annotation = "@" QualIdent [ParExpr].
 Class<ClassType classType> =
     (class | "interface" | ident/*"record"*/) ident (. String className = t.val; .)
     {ANY}                               (. state.enterClass(classType, className); .)
@@ -163,6 +163,7 @@ ParExpr = "(" {ParExpr | ANY} ")".
 BraceExpr = "{" {BraceExpr | ANY} "}".
 BracketExpr = "[" {ANY} "]".
 AngleBracketExpr = "<" {AngleBracketExpr | ANY} ">".
+QualIdent = ident {"." ident}.
 ArrowExpression<BlockType blockType> =
     "->" (Block<blockType> | SSArrowBody<blockType>)
 .
@@ -177,7 +178,7 @@ SSArrowBody<BlockType blockType> =                      (. state.enterSSArrowBlo
     {ANY | ParExpr}                                     (. if (!inSwitch) { state.leaveSingleStatement(blockType); return; } .)
     (")" | ";")                                         (. state.leaveSingleStatement(blockType); .)
 .
-Instantiation = "new" ident {["."] ident} [AngleBracketExpr] (ArrayInitRest | ClassInitRest).
+Instantiation = "new" QualIdent [AngleBracketExpr] (ArrayInitRest | ClassInitRest).
 ArrayInitRest = BracketExpr [BraceExpr].
 ClassInitRest = ParExpr [ClassExtension].
 ClassExtension =                            (. state.enterClass(ANONYMOUS, null); .)
