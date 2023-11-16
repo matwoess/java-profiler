@@ -31,6 +31,9 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         table {
           border-collapse: collapse;
         }
+        td {
+          padding: 0;
+        }
         td.lNr {
           text-align: right;
           background-color: #dedede;
