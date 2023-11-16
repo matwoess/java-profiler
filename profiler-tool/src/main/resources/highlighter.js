@@ -4,7 +4,7 @@ const notCoveredBlockColor = `rgba(255, 182, 193, 0.2)`;
 const notCoveredRegionColor = `rgba(255, 162, 173, 0.4)`;
 const hoverBlockColor = `rgba(245, 222, 179, 0.5)`;
 const hoverRegionColor = `rgba(245, 222, 130, 1)`;
-const minusBlockColor = `rgba(105, 202, 254, 0.2)`;
+const minusBlockColor = `rgba(215, 192, 149, 0.5)`;
 const isCovered = 'c';
 const isNotCovered = 'nc';
 const blockPrefix = 'b';
@@ -26,6 +26,7 @@ function setCoverageBackground(span) {
     }
   }
   setColor(span, backgroundColor)
+  setFontWeight(span, null)
 }
 
 function setColor(elems, color) {
@@ -56,6 +57,7 @@ function highlightSelection() {
       setColor($('span.' + preLastClass), hoverBlockColor);
     }
     setColor($('span.' + lastClass), hoverRegionColor);
+    setFontWeight($('span.' + lastClass), 'bold');
   } else if (lastClass.startsWith(blockPrefix)) {
     setColor($('span.' + lastClass), hoverBlockColor);
   }
@@ -63,6 +65,7 @@ function highlightSelection() {
     if (cls.startsWith(minusPrefix)) {
       const blockClass = cls.replace('m', 'b');
       setColor($('span.' + blockClass), minusBlockColor);
+      setFontWeight($('span.' + blockClass), 'bold');
     }
   })
 }
