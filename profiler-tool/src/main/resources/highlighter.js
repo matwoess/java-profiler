@@ -37,6 +37,14 @@ function setColor(elems, color) {
   }
 }
 
+function setFontWeight(elems, weight) {
+  if (weight == null) {
+    elems.css({'font-weight': ''});
+  } else {
+    elems.css({'font-weight': weight});
+  }
+}
+
 function resetColors() {
   $('span.c,span.nc').each(function () {
     setCoverageBackground($(this));
