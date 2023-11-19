@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -70,6 +71,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       }
       builder.append(sourceCode.substring(prevIdx));
       String annotatedCode = builder.toString();
+      annotatedCode = postProcessAnnotatedCode(annotatedCode);
       String tabledCode = getCodeTable(annotatedCode);
       content.append(tabledCode);
     } catch (IOException e) {
@@ -98,6 +100,18 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     }
     builder.append("</table>\n");
     return builder.toString();
+  }
+
+  static final String spanPatternStr = "<span class=\"[^\"]*\" title=\"[^\"]*\">";
+  static final Pattern emptySpanPattern = Pattern.compile(spanPatternStr + "</span>", Pattern.MULTILINE);
+  static final Pattern blankStartSpanBeforeSpanPattern = Pattern.compile(
+      "^%s(\\s+)</span>(%s)(.*)".formatted(spanPatternStr, spanPatternStr),
+      Pattern.MULTILINE);
+
+  private String postProcessAnnotatedCode(String code) {
+    code = blankStartSpanBeforeSpanPattern.matcher(code).replaceAll("$2$1$3");
+    code = emptySpanPattern.matcher(code).replaceAll("");
+    return code;
   }
 
   private List<CodeInsert> getTagInserts(String sourceCode) {
