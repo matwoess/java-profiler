@@ -1,7 +1,8 @@
 package tool.profile;
 
-import tool.model.CodeInsert;
+import common.IO;
 import tool.model.Block;
+import tool.model.CodeInsert;
 import tool.model.CodeRegion;
 import tool.model.JavaFile;
 
@@ -9,12 +10,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import common.IO;
 
 public class ReportSourceWriter extends AbstractHtmlWriter {
   JavaFile javaFile;
@@ -197,8 +197,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   }
 
   private static String getMinusBlockClasses(CodeRegion region) {
-    Stream<Block> minusBlocks = Stream.concat(region.minusBlocks.stream(), region.block.inheritedJumpBlocks.stream());
-    return minusBlocks.distinct().map(b -> "m" + b.id).collect(Collectors.joining(" "));
+    return region.minusBlocks.stream().distinct().map(b -> "m" + b.id).collect(Collectors.joining(" "));
   }
 
   private List<Block> getActiveBlocksAtCharPosition(int chPos) {
