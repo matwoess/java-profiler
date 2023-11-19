@@ -179,7 +179,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   private String codeSpan(List<Block> activeBlocks, Block block, CodeRegion region) {
     int hits = (region != null) ? region.getHitCount() : block.hits;
     String coverageClass = hits > 0 ? "c" : "nc";
-    title = String.valueOf(hits);
+    title = hits + " hit" + (hits == 1 ? "" : "s");
     String classes = activeBlocks.stream().map(b -> "b" + b.id).collect(Collectors.joining(" "));
     if (region != null) {
       classes += " r" + activeBlocks.get(activeBlocks.size() - 1).id + "_" + region.id;
