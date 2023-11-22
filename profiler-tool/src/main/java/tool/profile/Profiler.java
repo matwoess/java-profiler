@@ -8,6 +8,7 @@ import tool.model.JavaFile;
 import tool.model.Metadata;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,6 +36,9 @@ public class Profiler {
     Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile.relativePath));
     String filePath = mainFile.toString();
     String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
+    if (File.separatorChar == '\\') {
+      classFilePath = filePath.replace("\\", "/");
+    }
     System.out.println("Program output:");
     String[] command = Util.prependToArray(programArgs, "java", classFilePath);
     int exitCode = Util.runCommand(IO.getInstrumentDir(), command);
