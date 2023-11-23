@@ -116,6 +116,6 @@ public class Instrumenter {
 
 
   public static void copyAuxiliaryFiles() {
-    IO.copyResource(Instrumenter.class, "auxiliary/__Counter.class", IO.getAuxiliaryCounterClassPath());
+    IO.copyResource(Instrumenter.class, "auxiliary/__Counter.class", IO.getAuxiliaryCounterInstrumentPath());
   }
 }

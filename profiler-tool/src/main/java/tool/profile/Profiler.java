@@ -25,11 +25,19 @@ public class Profiler {
   }
 
   public void compileInstrumented() {
-    Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile.relativePath));
-    int exitCode = Util.runCommand(IO.getInstrumentDir(), "javac", mainFile.toString());
+    copyAuxiliaryFiles();
+    Path mainFile = IO.getInstrumentedFilePath(mainJavaFile.relativePath);
+    int exitCode = Util.runCommand(null,
+        "javac",
+        "-cp", IO.getInstrumentDir().toString(),
+        "-d", IO.getClassesDir().toString(),
+        mainFile.toString());
     if (exitCode != 0) {
       throw new RuntimeException("Error compiling instrumented file: " + mainFile);
     }
+  }
+  public static void copyAuxiliaryFiles() {
+    IO.copyResource(Profiler.class, "auxiliary/__Counter.class", IO.getAuxiliaryCounterClassPath());
   }
 
   public void profile(String[] programArgs) {
@@ -37,11 +45,11 @@ public class Profiler {
     String filePath = mainFile.toString();
     String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
     if (File.separatorChar == '\\') {
-      classFilePath = filePath.replace("\\", "/");
+      classFilePath = classFilePath.replace("\\", "/");
     }
     System.out.println("Program output:");
-    String[] command = Util.prependToArray(programArgs, "java", classFilePath);
-    int exitCode = Util.runCommand(IO.getInstrumentDir(), command);
+    String[] command = Util.prependToArray(programArgs, "java", "-cp", IO.getClassesDir().toString(), classFilePath);
+    int exitCode = Util.runCommand(null, command);
     if (exitCode != 0) {
       throw new RuntimeException("Error executing compiled class: " + classFilePath);
     }

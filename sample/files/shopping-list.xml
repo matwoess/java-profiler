@@ -1,0 +1,5 @@
+<shopping-list>
+    <item amount="1" price="2.39">Bread</item>
+    <item amount="10" price="0.21">Eggs</item>
+    <item amount="1" price="1.29">Milk</item>
+</shopping-list>

@@ -29,8 +29,10 @@ public class Util {
   public static int runCommand(Path cwd, String... command) {
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
-        .directory(cwd.toFile())
         .command(command);
+    if (cwd != null) {
+      builder.directory(cwd.toFile());
+    }
     try {
       Process process = builder.start();
       return process.waitFor();
