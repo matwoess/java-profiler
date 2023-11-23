@@ -22,12 +22,20 @@ public class IO {
     return getOutputDir().resolve("instrumented");
   }
 
+  public static Path getClassesDir() {
+    return getOutputDir().resolve("classes");
+  }
+
   public static Path getInstrumentedFilePath(Path relativePath) {
     return getInstrumentDir().resolve(relativePath);
   }
 
-  public static Path getAuxiliaryCounterClassPath() {
+  public static Path getAuxiliaryCounterInstrumentPath() {
     return getInstrumentDir().resolve("auxiliary").resolve("__Counter.class");
+  }
+
+  public static Path getAuxiliaryCounterClassPath() {
+    return getClassesDir().resolve("auxiliary").resolve("__Counter.class");
   }
 
   public static Path getMetadataPath() {

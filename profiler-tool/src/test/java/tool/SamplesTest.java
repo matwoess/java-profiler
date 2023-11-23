@@ -4,6 +4,8 @@ import common.IO;
 import common.Util;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -193,6 +195,15 @@ public class SamplesTest {
   @Test
   public void testJumpStatementsSample_Folder() {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "JumpStatements.java");
+  }
+
+  @Test
+  public void testLocalFilesSample() throws IOException {
+    Path mainFile = samplesFolder.resolve("LocalFiles.java");
+    Path priceTotalFile = samplesFolder.resolve("files").resolve("total.txt");
+    TestUtils.instrumentAndProfileWithArgs(mainFile.toString(), priceTotalFile.toString());
+    assertTrue(priceTotalFile.toFile().exists());
+    assertEquals(Double.parseDouble(Files.readString(priceTotalFile)), 5.78, 0.001);
   }
 
   @Test
