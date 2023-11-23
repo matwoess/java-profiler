@@ -99,16 +99,18 @@ public class IO {
     }
   }
 
-  public static void clearDirectoryIfExists(Path directory) {
+  public static void clearDirectoryContents(Path directory) {
     if (Files.exists(directory)) {
       try (Stream<Path> walk = Files.walk(directory)) {
-        walk.sorted(Comparator.reverseOrder()).forEach(file -> {
-          try {
-            Files.delete(file);
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        });
+        walk.sorted(Comparator.reverseOrder())
+            .filter(p -> !p.equals(directory))
+            .forEach(file -> {
+              try {
+                Files.delete(file);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            });
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
