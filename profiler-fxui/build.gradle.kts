@@ -4,8 +4,8 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
-group = "dev.matwoess"
-version = "0.8.1"
+group = property("group") ?: ""
+version = property("commonVersion") ?: "unknown"
 
 repositories {
     mavenCentral()

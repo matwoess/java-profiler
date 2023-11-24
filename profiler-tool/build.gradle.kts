@@ -2,8 +2,8 @@ plugins {
     java
 }
 
-group = "dev.matwoess"
-version = "0.8.1"
+group = property("group") ?: ""
+version = property("commonVersion") ?: "unknown"
 
 repositories {
     mavenCentral()
