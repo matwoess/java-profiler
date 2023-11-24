@@ -1,0 +1,94 @@
+name: Build Artifacts and Draft a New Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_draft_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Generate Scanner and Parser Files
+        shell: bash
+        run: |
+          ./scripts/generate-parser.sh
+
+      - name: Extract Project Version from Properties
+        run: |
+          echo "COMMON_VERSION=$(grep -Po 'commonVersion=\K.*' gradle.properties)" >> $GITHUB_ENV
+          echo "Current Project version is: ${{ env.COMMON_VERSION }}"
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build with Gradle
+        run: |
+          gradle :profiler-tool:fatJar
+          gradle :profiler-fxui:distZip -Pos=win
+          gradle :profiler-fxui:distZip -Pos=linux
+          gradle :profiler-fxui:distZip -Pos=mac
+          echo "created tool libraries":
+          ls -l ./profiler-tool/build/libs/
+          echo "created FxUI distributions:"
+          ls -l ./profiler-fxui/build/distributions/
+
+      - name: Create Release Draft
+        id: create_release_draft
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.COMMON_VERSION }}
+          release_name: v${{ env.COMMON_VERSION }}
+          body: "Whats new: ..."
+          draft: true
+          prerelease: true
+
+      - name: Upload Tool Jar to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release_draft.outputs.upload_url }}
+          asset_path: ./profiler-tool/build/libs/profiler-tool-${{ env.COMMON_VERSION }}-all.jar
+          asset_name: profiler-${{ env.COMMON_VERSION }}.jar
+          asset_content_type: application/zip
+
+      - name: Upload Linux FxUI Artifact to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release_draft.outputs.upload_url }}
+          asset_path: ./profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-linux.zip
+          asset_name: profiler-fxui-${{ env.COMMON_VERSION }}-linux.zip
+          asset_content_type: application/zip
+
+      - name: Upload Windows FxUI Artifact to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release_draft.outputs.upload_url }}
+          asset_path: ./profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-win.zip
+          asset_name: profiler-fxui-${{ env.COMMON_VERSION }}-win.zip
+          asset_content_type: application/zip
+
+      - name: Upload MacOS FxUI Artifact to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release_draft.outputs.upload_url }}
+          asset_path: ./profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-mac.zip
+          asset_name: profiler-fxui-${{ env.COMMON_VERSION }}-mac.zip
+          asset_content_type: application/zip
+
