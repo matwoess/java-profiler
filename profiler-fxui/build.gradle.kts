@@ -45,3 +45,20 @@ tasks {
         from(sourcesMain.output)
     }
 }
+
+fun getOsSuffix(osName: String): String = when {
+    osName.contains("win") -> "win"
+    osName.contains("mac") -> "mac"
+    osName.contains("nux") || osName.contains("nix") -> "linux"
+    else -> "unknown"
+}
+
+tasks.named<Zip>("distZip") {
+    val osParam = project.findProperty("os") as String?
+    if (osParam != null) {
+        javafx.setPlatform(osParam)
+    }
+    val osName = System.getProperty("os.name").lowercase()
+    val osSuffix = osParam ?: getOsSuffix(osName)
+    archiveFileName.set("${project.name}-$version-$osSuffix.zip")
+}
