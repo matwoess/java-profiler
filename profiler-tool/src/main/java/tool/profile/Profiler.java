@@ -27,7 +27,7 @@ public class Profiler {
   public void compileInstrumented() {
     copyAuxiliaryFiles();
     Path mainFile = IO.getInstrumentedFilePath(mainJavaFile.relativePath);
-    int exitCode = Util.runCommand(null,
+    int exitCode = Util.runCommand(
         "javac",
         "-cp", IO.getInstrumentDir().toString(),
         "-d", IO.getClassesDir().toString(),
@@ -49,7 +49,7 @@ public class Profiler {
     }
     System.out.println("Program output:");
     String[] command = Util.prependToArray(programArgs, "java", "-cp", IO.getClassesDir().toString(), classFilePath);
-    int exitCode = Util.runCommand(null, command);
+    int exitCode = Util.runCommand(command);
     if (exitCode != 0) {
       throw new RuntimeException("Error executing compiled class: " + classFilePath);
     }

@@ -51,7 +51,7 @@ public class SystemUtils {
 
   public static int executeToolWithParameters(AppState appState) {
     String[] terminalCommand = getTerminalCommand(appState);
-    return Util.runCommand(appState.projectRoot.get(), terminalCommand);
+    return Util.runCommandInDir(appState.projectRoot.get(), terminalCommand);
   }
 
   public static String[] getTerminalCommand(AppState appState) {

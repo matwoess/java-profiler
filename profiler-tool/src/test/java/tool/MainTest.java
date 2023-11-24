@@ -109,7 +109,11 @@ public class MainTest {
   @Test
   public void testInstrumentManualCompileThenCreateReportOnly() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
-    int exitCode = Util.runCommand(IO.getInstrumentDir(), "javac", simpleExampleFile.getFileName().toString());
+    String filename = simpleExampleFile.getFileName().toString();
+    String instrDir = IO.getInstrumentDir().toString();
+    int exitCode = Util.runCommand("javac", "-cp", instrDir, "-d", instrDir, IO.getInstrumentDir().resolve(filename).toString());
+    assertEquals(0, exitCode);
+    exitCode = Util.runCommand("java", "-cp", instrDir, filename.replace(".java", ""));
     assertEquals(0, exitCode);
     Main.main(new String[]{"-r"});
   }

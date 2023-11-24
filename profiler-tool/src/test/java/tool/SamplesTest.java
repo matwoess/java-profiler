@@ -221,8 +221,7 @@ public class SamplesTest {
   @Test
   public void testParallelSumSample_noCounters() {
     Path mainFile = samplesFolder.resolve("ParallelSum.java");
-    Path cwd = Path.of(".");
-    Util.runCommand(cwd, "javac", mainFile.toString(), "-d", IO.getInstrumentDir().toString());
-    Util.runCommand(IO.getInstrumentDir(), "java", "ParallelSum", String.valueOf(5_000_000), "4");
+    Util.runCommand("javac", mainFile.toString(), "-d", IO.getInstrumentDir().toString());
+    Util.runCommand("java", "-cp", IO.getInstrumentDir().toString(), "ParallelSum", String.valueOf(5_000_000), "4");
   }
 }

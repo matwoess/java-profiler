@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Util {
+
   @SafeVarargs
   public static <T> T[] prependToArray(T[] array, T... prependValues) {
     T[] extendedArray = Arrays.copyOf(prependValues, prependValues.length + array.length);
@@ -26,7 +27,11 @@ public class Util {
     }
   }
 
-  public static int runCommand(Path cwd, String... command) {
+  public static int runCommand(String... command) {
+    return runCommandInDir(null, command);
+  }
+
+  public static int runCommandInDir(Path cwd, String... command) {
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
         .command(command);
