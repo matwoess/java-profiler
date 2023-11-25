@@ -24,11 +24,18 @@ public class ProjectsTest {
     Path sourcesRoot = projectsRoot.resolve("CocoR").resolve("src");
     Path cocoAtg = sourcesRoot.resolve("Coco.atg");
     TestUtils.instrumentFolder(sourcesRoot);
-    String[] command = "javac -source 7 -target 7 -d . Trace.java Scanner.java Tab.java DFA.java ParserGen.java Parser.java Coco.java".split(" ");
-    int compileResult = Util.runCommand(IO.getInstrumentDir(), command);
+    int compileResult = Util.runCommandInDir(IO.getInstrumentDir(),
+        "javac",
+        "-d", ".",
+        "-source", "7",
+        "-target", "7",
+        "Trace.java", "Scanner.java", "Tab.java", "DFA.java", "ParserGen.java", "Parser.java", "Coco.java");
     assertEquals(0, compileResult);
-    command = new String[]{"java", "Coco/Coco", IO.getInstrumentDir().relativize(cocoAtg).toString()};
-    int runResult = Util.runCommand(IO.getInstrumentDir(), command);
+    int runResult = Util.runCommand(
+        "java",
+        "-cp", IO.getInstrumentDir().toString(),
+        "Coco/Coco",
+        cocoAtg.toString());
     assertEquals(0, runResult);
     TestUtils.generateReport();
   }
