@@ -173,16 +173,4 @@ public class MainTest {
     Main.main(new String[]{"-v", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
   }
 
-  @Test
-  public void testCustomOutDir_CompileAndExecute() throws IOException {
-    Path tempDir = Files.createTempDirectory(null);
-    Main.main(new String[]{"-o", tempDir.toString(), lambdaExampleFile.toString()});
-    Main.main(new String[]{"--verbose", "--out-directory", tempDir.toString(), "-s", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
-    assertTrue(tempDir.resolve(IO.getMetadataPath().getFileName()).toFile().exists());
-    assertTrue(tempDir.resolve(IO.getCountsPath().getFileName()).toFile().exists());
-    Path tmpReportDir = tempDir.resolve(IO.getReportDir().getFileName());
-    assertTrue(tmpReportDir.resolve("index_Simple.html").toFile().exists());
-    assertTrue(tmpReportDir.resolve("source").resolve("Simple.html").toFile().exists());
-    assertTrue(tmpReportDir.resolve("source").resolve(Path.of("at", "jku", "classes", "DeepPackage.html")).toFile().exists());
-  }
 }

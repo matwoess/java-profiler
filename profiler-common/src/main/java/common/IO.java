@@ -1,21 +1,20 @@
 package common;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class IO {
   public static final Path DEFAULT_OUT_DIR = Path.of(".profiler");
-  public static Path outputDir;
 
   public static Path getOutputDir() {
-    return Objects.requireNonNullElse(outputDir, DEFAULT_OUT_DIR);
+    return DEFAULT_OUT_DIR;
   }
 
   public static Path getInstrumentDir() {
