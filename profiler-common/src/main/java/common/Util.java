@@ -62,42 +62,4 @@ public class Util {
     return output.toArray(String[]::new);
   }
 
-  public enum OS {
-    WINDOWS, LINUX, MAC, SOLARIS;
-
-    public String lineSeparator() {
-      if (this == WINDOWS) {
-        return "\r\n";
-      } else {
-        return "\n";
-      }
-    }
-
-    public String pathSeparator() {
-      if (this == WINDOWS) {
-        return ";";
-      } else {
-        return ":";
-      }
-    }
-  }
-
-  private static OS os = null;
-
-  public static OS getOS() {
-    if (os == null) {
-      String osName = System.getProperty("os.name").toLowerCase();
-      if (osName.contains("win")) {
-        os = OS.WINDOWS;
-      } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
-        os = OS.LINUX;
-      } else if (osName.contains("mac")) {
-        os = OS.MAC;
-      } else if (osName.contains("sunos")) {
-        os = OS.SOLARIS;
-      }
-    }
-    return os;
-  }
-
 }

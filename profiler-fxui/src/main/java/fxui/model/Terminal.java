@@ -1,6 +1,6 @@
 package fxui.model;
 
-import common.Util;
+import common.OS;
 
 import java.nio.file.Path;
 
@@ -81,7 +81,7 @@ public enum Terminal {
   }
 
   public static Terminal[] getSystemTerminalOptions() {
-    return switch (Util.getOS()) {
+    return switch (OS.getOS()) {
       case WINDOWS -> new Terminal[]{WINDOWS_CMD, WINDOWS_POWERSHELL};
       case LINUX -> new Terminal[]{GNOME_TERMINAL, KDE_KONSOLE, GNOME_CONSOLE};
       case MAC -> new Terminal[]{MACOS_TERMINAL};
