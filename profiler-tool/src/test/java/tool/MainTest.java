@@ -172,8 +172,8 @@ public class MainTest {
 
   @Test
   public void testVerbose_MissingArguments() {
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"-s"}));
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"--synchronized"}));
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"-v"}));
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"--verbose"}));
   }
 
   @Test
