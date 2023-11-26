@@ -1,6 +1,8 @@
 package tool.profile;
 
 import common.IO;
+import common.JCompilerCommand;
+import common.JavaCommand;
 import common.Util;
 import tool.model.Block;
 import tool.model.JClass;
@@ -27,15 +29,16 @@ public class Profiler {
   public void compileInstrumented() {
     copyAuxiliaryFiles();
     Path mainFile = IO.getInstrumentedFilePath(mainJavaFile.relativePath);
-    int exitCode = Util.runCommand(
-        "javac",
-        "-cp", IO.getInstrumentDir().toString(),
-        "-d", IO.getClassesDir().toString(),
-        mainFile.toString());
+    int exitCode = Util.runCommand(new JCompilerCommand()
+        .setClassPath(IO.getInstrumentDir())
+        .setDirectory(IO.getClassesDir())
+        .addSourceFile(mainFile)
+        .build());
     if (exitCode != 0) {
       throw new RuntimeException("Error compiling instrumented file: " + mainFile);
     }
   }
+
   public static void copyAuxiliaryFiles() {
     IO.copyResource(Profiler.class, "auxiliary/__Counter.class", IO.getAuxiliaryCounterClassPath());
   }
@@ -48,8 +51,11 @@ public class Profiler {
       classFilePath = classFilePath.replace("\\", "/");
     }
     System.out.println("Program output:");
-    String[] command = Util.prependToArray(programArgs, "java", "-cp", IO.getClassesDir().toString(), classFilePath);
-    int exitCode = Util.runCommand(command);
+    int exitCode = Util.runCommand(new JavaCommand()
+        .setClassPath(IO.getClassesDir())
+        .setMainClass(classFilePath)
+        .addArgs(programArgs)
+        .build());
     if (exitCode != 0) {
       throw new RuntimeException("Error executing compiled class: " + classFilePath);
     }

@@ -1,6 +1,8 @@
 package tool;
 
 import common.IO;
+import common.JCompilerCommand;
+import common.JavaCommand;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import common.Util;
@@ -24,18 +26,26 @@ public class ProjectsTest {
     Path sourcesRoot = projectsRoot.resolve("CocoR").resolve("src");
     Path cocoAtg = sourcesRoot.resolve("Coco.atg");
     TestUtils.instrumentFolder(sourcesRoot);
-    int compileResult = Util.runCommandInDir(IO.getInstrumentDir(),
-        "javac",
-        "-d", ".",
-        "-source", "7",
-        "-target", "7",
-        "Trace.java", "Scanner.java", "Tab.java", "DFA.java", "ParserGen.java", "Parser.java", "Coco.java");
+    Path instrDir = IO.getInstrumentDir();
+    int compileResult = Util.runCommand(new JCompilerCommand()
+        .setDirectory(instrDir)
+        .setClassPath(instrDir)
+        .addCompileArg("-source", "7")
+        .addCompileArg("-target", "7")
+        .addSourceFile(instrDir.resolve("Trace.java"))
+        .addSourceFile(instrDir.resolve("Scanner.java"))
+        .addSourceFile(instrDir.resolve("Tab.java"))
+        .addSourceFile(instrDir.resolve("DFA.java"))
+        .addSourceFile(instrDir.resolve("ParserGen.java"))
+        .addSourceFile(instrDir.resolve("Parser.java"))
+        .addSourceFile(instrDir.resolve("Coco.java"))
+        .build());
     assertEquals(0, compileResult);
-    int runResult = Util.runCommand(
-        "java",
-        "-cp", IO.getInstrumentDir().toString(),
-        "Coco/Coco",
-        cocoAtg.toString());
+    int runResult = Util.runCommand(new JavaCommand()
+        .setClassPath(IO.getInstrumentDir())
+        .setMainClass("Coco/Coco")
+        .addArgs(cocoAtg.toString())
+        .build());
     assertEquals(0, runResult);
     TestUtils.generateReport();
   }

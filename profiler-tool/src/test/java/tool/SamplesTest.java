@@ -1,6 +1,8 @@
 package tool;
 
 import common.IO;
+import common.JCompilerCommand;
+import common.JavaCommand;
 import common.Util;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +34,8 @@ public class SamplesTest {
   public void testBasicElementsSample_Folder() {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "BasicElements.java");
   }
-   @Test
+
+  @Test
   public void testStringsSample() {
     TestUtils.instrumentAndProfile(samplesFolder.resolve("Strings.java"));
   }
@@ -221,7 +224,14 @@ public class SamplesTest {
   @Test
   public void testParallelSumSample_noCounters() {
     Path mainFile = samplesFolder.resolve("ParallelSum.java");
-    Util.runCommand("javac", mainFile.toString(), "-d", IO.getInstrumentDir().toString());
-    Util.runCommand("java", "-cp", IO.getInstrumentDir().toString(), "ParallelSum", String.valueOf(5_000_000), "4");
+    Util.runCommand(new JCompilerCommand()
+        .setDirectory(IO.getInstrumentDir())
+        .addSourceFile(mainFile)
+        .build());
+    Util.runCommand(new JavaCommand()
+        .setClassPath(IO.getInstrumentDir())
+        .setMainClass("ParallelSum")
+        .addArgs(String.valueOf(5_000_000), "4")
+        .build());
   }
 }

@@ -1,6 +1,8 @@
 package tool;
 
 import common.IO;
+import common.JavaCommand;
+import common.JCompilerCommand;
 import common.Util;
 import org.junit.jupiter.api.Test;
 
@@ -110,10 +112,17 @@ public class MainTest {
   public void testInstrumentManualCompileThenCreateReportOnly() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
     String filename = simpleExampleFile.getFileName().toString();
-    String instrDir = IO.getInstrumentDir().toString();
-    int exitCode = Util.runCommand("javac", "-cp", instrDir, "-d", instrDir, IO.getInstrumentDir().resolve(filename).toString());
+    Path instrDir = IO.getInstrumentDir();
+    int exitCode = Util.runCommand(new JCompilerCommand()
+        .setClassPath(instrDir)
+        .setDirectory(instrDir)
+        .addSourceFile(IO.getInstrumentDir().resolve(filename))
+        .build());
     assertEquals(0, exitCode);
-    exitCode = Util.runCommand("java", "-cp", instrDir, filename.replace(".java", ""));
+    exitCode = Util.runCommand(new JavaCommand()
+        .setClassPath(instrDir)
+        .setMainClass(filename.replace(".java", ""))
+        .build());
     assertEquals(0, exitCode);
     Main.main(new String[]{"-r"});
   }
