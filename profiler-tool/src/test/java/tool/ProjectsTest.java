@@ -3,9 +3,9 @@ package tool;
 import common.IO;
 import common.JCompilerCommand;
 import common.JavaCommand;
+import common.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import common.Util;
 import org.junit.jupiter.api.extension.*;
 
 import java.io.IOException;
@@ -47,6 +47,7 @@ public class ProjectsTest {
       String localFolder = annotation.destinationFolder();
       String repositoryUrl = annotation.repositoryName();
       if (!projectsRoot.resolve(localFolder).toFile().exists()) {
+        projectsRoot.toFile().mkdirs();
         Path zip = TestUtils.downloadGithubRepoZip(projectsRoot, localFolder, repositoryUrl);
         if (zip != null) {
           TestUtils.unzipRepo(zip, projectsRoot, localFolder);
