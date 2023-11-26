@@ -1,32 +1,37 @@
 package tool;
 
 import common.IO;
-import common.Util;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class TestUtils {
   static void instrumentAndProfile(Path mainFile) {
-    String[] args = new String[]{"-v", mainFile.toString()};
+    String[] args = new String[]{mainFile.toString()};
     Main.main(args);
   }
 
   static void instrumentAndProfileWithArgs(String... programArgs) {
-    Main.main(Util.prependToArray(programArgs, "-v"));
+    Main.main(programArgs);
   }
 
   static void instrumentFolderAndProfile(Path sourcesDir, String mainFile) {
-    String[] args = new String[]{"-v", "-d", sourcesDir.toString(), sourcesDir.resolve(mainFile).toString()};
+    String[] args = new String[]{"-d", sourcesDir.toString(), sourcesDir.resolve(mainFile).toString()};
     Main.main(args);
   }
 
   static void instrumentFolder(Path sourcesDir) {
-    Main.main(new String[]{"-v", "-i", sourcesDir.toString()});
+    Main.main(new String[]{"-i", sourcesDir.toString()});
   }
 
   static void generateReport() {
-    Main.main(new String[]{"-v", "-r"});
+    Main.main(new String[]{"-r"});
   }
 
   static void createMockCounterData() {
