@@ -1,9 +1,13 @@
 package tool;
 
 import common.IO;
+import common.JCompilerCommand;
+import common.JavaCommand;
 import common.Util;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +34,8 @@ public class SamplesTest {
   public void testBasicElementsSample_Folder() {
     TestUtils.instrumentFolderAndProfile(samplesFolder, "BasicElements.java");
   }
-   @Test
+
+  @Test
   public void testStringsSample() {
     TestUtils.instrumentAndProfile(samplesFolder.resolve("Strings.java"));
   }
@@ -196,6 +201,15 @@ public class SamplesTest {
   }
 
   @Test
+  public void testLocalFilesSample() throws IOException {
+    Path mainFile = samplesFolder.resolve("LocalFiles.java");
+    Path priceTotalFile = samplesFolder.resolve("files").resolve("total.txt");
+    TestUtils.instrumentAndProfileWithArgs(mainFile.toString(), priceTotalFile.toString());
+    assertTrue(priceTotalFile.toFile().exists());
+    assertEquals(Double.parseDouble(Files.readString(priceTotalFile)), 5.78, 0.001);
+  }
+
+  @Test
   public void testParallelSumSample() {
     Path mainFile = samplesFolder.resolve("ParallelSum.java");
     TestUtils.instrumentAndProfileWithArgs(mainFile.toString(), String.valueOf(5_000_000), "4");
@@ -210,8 +224,14 @@ public class SamplesTest {
   @Test
   public void testParallelSumSample_noCounters() {
     Path mainFile = samplesFolder.resolve("ParallelSum.java");
-    Path cwd = Path.of(".");
-    Util.runCommand(cwd, "javac", mainFile.toString(), "-d", IO.getInstrumentDir().toString());
-    Util.runCommand(IO.getInstrumentDir(), "java", "ParallelSum", String.valueOf(5_000_000), "4");
+    Util.runCommand(new JCompilerCommand()
+        .setDirectory(IO.getInstrumentDir())
+        .addSourceFile(mainFile)
+        .build());
+    Util.runCommand(new JavaCommand()
+        .setClassPath(IO.getInstrumentDir())
+        .setMainClass("ParallelSum")
+        .addArgs(String.valueOf(5_000_000), "4")
+        .build());
   }
 }

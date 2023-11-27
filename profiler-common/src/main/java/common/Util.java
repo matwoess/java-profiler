@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Util {
+
   @SafeVarargs
   public static <T> T[] prependToArray(T[] array, T... prependValues) {
     T[] extendedArray = Arrays.copyOf(prependValues, prependValues.length + array.length);
@@ -26,11 +27,17 @@ public class Util {
     }
   }
 
-  public static int runCommand(Path cwd, String... command) {
+  public static int runCommand(String... command) {
+    return runCommandInDir(null, command);
+  }
+
+  public static int runCommandInDir(Path cwd, String... command) {
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
-        .directory(cwd.toFile())
         .command(command);
+    if (cwd != null) {
+      builder.directory(cwd.toFile());
+    }
     try {
       Process process = builder.start();
       return process.waitFor();
@@ -53,44 +60,6 @@ public class Util {
       throw new RuntimeException(e);
     }
     return output.toArray(String[]::new);
-  }
-
-  public enum OS {
-    WINDOWS, LINUX, MAC, SOLARIS;
-
-    public String lineSeparator() {
-      if (this == WINDOWS) {
-        return "\r\n";
-      } else {
-        return "\n";
-      }
-    }
-
-    public String pathSeparator() {
-      if (this == WINDOWS) {
-        return ";";
-      } else {
-        return ":";
-      }
-    }
-  }
-
-  private static OS os = null;
-
-  public static OS getOS() {
-    if (os == null) {
-      String osName = System.getProperty("os.name").toLowerCase();
-      if (osName.contains("win")) {
-        os = OS.WINDOWS;
-      } else if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
-        os = OS.LINUX;
-      } else if (osName.contains("mac")) {
-        os = OS.MAC;
-      } else if (osName.contains("sunos")) {
-        os = OS.SOLARIS;
-      }
-    }
-    return os;
   }
 
 }

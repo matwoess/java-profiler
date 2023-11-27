@@ -5,8 +5,8 @@ import java.util.function.Supplier;
 
 public class __Counter {
   static {
-    init("../metadata.dat");
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> save(("../counts.dat"))));
+    init(".profiler/metadata.dat");
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> save((".profiler/counts.dat"))));
   }
 
   private static int[] blockCounts;

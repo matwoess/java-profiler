@@ -1,8 +1,7 @@
 package tool;
 
-import tool.instrument.Instrumenter;
-import common.IO;
 import common.Util;
+import tool.instrument.Instrumenter;
 import tool.model.JavaFile;
 import tool.profile.Profiler;
 
@@ -12,7 +11,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static common.IO.DEFAULT_OUT_DIR;
 import static common.Util.assertJavaSourceFile;
 import static common.Util.isJavaFile;
 
@@ -21,7 +19,6 @@ public class Main {
     if (args.length == 0) {
       invalidUsage();
     }
-    IO.outputDir = DEFAULT_OUT_DIR;
     boolean instrumentOnly = false, reportOnly = false, syncCounters = false, verboseOutput = false;
     Path sourcesDir = null;
     int i = 0;
@@ -38,11 +35,6 @@ public class Main {
         case "-v", "--verbose" -> verboseOutput = true;
         case "-i", "--instrument-only" -> instrumentOnly = true;
         case "-r", "--generate-report" -> reportOnly = true;
-        case "-o", "--out-directory" -> {
-          if (i + 1 >= args.length) invalidUsage();
-          IO.outputDir = Path.of(args[++i]);
-          assert IO.outputDir.toFile().isDirectory() : "not a directory: " + sourcesDir;
-        }
         case "-d", "--sources-directory" -> {
           if (i + 1 >= args.length) invalidUsage();
           sourcesDir = Path.of(args[++i]);
@@ -131,8 +123,6 @@ public class Main {
           -s, --synchronized                instrument using synchronized counters increments
           -v, --verbose                     output verbose info about instrumentation of each file
           -d, --sources-directory <dir>     directory containing java files to additionally instrument
-          -o, --out-directory <dir>         directory where the tool stores instrumented files, metadata and results
-                                            (default = "./.profiler")
         Run mode (exclusive):
           -i, --instrument-only <file|dir>  only instrument a single file or directory of java files and exit
           -r, --generate-report             only generate the report from existing metadata and counts

@@ -1,6 +1,8 @@
 package tool.profile;
 
 import common.IO;
+import common.JCompilerCommand;
+import common.JavaCommand;
 import common.Util;
 import tool.model.Block;
 import tool.model.JClass;
@@ -25,11 +27,20 @@ public class Profiler {
   }
 
   public void compileInstrumented() {
-    Path mainFile = IO.getInstrumentDir().relativize(IO.getInstrumentedFilePath(mainJavaFile.relativePath));
-    int exitCode = Util.runCommand(IO.getInstrumentDir(), "javac", mainFile.toString());
+    copyAuxiliaryFiles();
+    Path mainFile = IO.getInstrumentedFilePath(mainJavaFile.relativePath);
+    int exitCode = Util.runCommand(new JCompilerCommand()
+        .setClassPath(IO.getInstrumentDir())
+        .setDirectory(IO.getClassesDir())
+        .addSourceFile(mainFile)
+        .build());
     if (exitCode != 0) {
       throw new RuntimeException("Error compiling instrumented file: " + mainFile);
     }
+  }
+
+  public static void copyAuxiliaryFiles() {
+    IO.copyResource(Profiler.class, "auxiliary/__Counter.class", IO.getAuxiliaryCounterClassPath());
   }
 
   public void profile(String[] programArgs) {
@@ -37,11 +48,14 @@ public class Profiler {
     String filePath = mainFile.toString();
     String classFilePath = filePath.substring(0, filePath.lastIndexOf("."));
     if (File.separatorChar == '\\') {
-      classFilePath = filePath.replace("\\", "/");
+      classFilePath = classFilePath.replace("\\", "/");
     }
     System.out.println("Program output:");
-    String[] command = Util.prependToArray(programArgs, "java", classFilePath);
-    int exitCode = Util.runCommand(IO.getInstrumentDir(), command);
+    int exitCode = Util.runCommand(new JavaCommand()
+        .setClassPath(IO.getClassesDir())
+        .setMainClass(classFilePath)
+        .addArgs(programArgs)
+        .build());
     if (exitCode != 0) {
       throw new RuntimeException("Error executing compiled class: " + classFilePath);
     }
@@ -55,7 +69,7 @@ public class Profiler {
       allJavaFiles = Metadata.importMetadata().javaFiles();
     }
     addHitCountToJavaFileBlocks(allJavaFiles);
-    IO.clearDirectoryIfExists(IO.getReportDir());
+    IO.clearDirectoryContents(IO.getReportDir());
     new ReportClassIndexWriter(allJavaFiles).write();
     for (JavaFile jFile : allJavaFiles) {
       if (jFile.foundBlocks.isEmpty()) {

@@ -1,7 +1,7 @@
 package tool.instrument;
 
-import common.Util;
-import tool.model.*;
+import common.OS;
+import tool.model.JavaFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +16,7 @@ public class TestInstrumentUtils {
 
   private static Path createTempFileWithContent(String content) {
     try {
-      List<String> fileContent = Arrays.asList(content.split(Util.getOS().lineSeparator()));
+      List<String> fileContent = Arrays.asList(content.split(OS.getOS().lineSeparator()));
       Path tempFile = Files.createTempFile(null, null);
       Files.write(tempFile, fileContent);
       return tempFile;

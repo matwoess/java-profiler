@@ -81,9 +81,6 @@ profiler -d src/main/java/ src/main/java/subfolder/Main.java
 
 Using this option, all `.java` files inside `src/main/java/` will be parsed, instrumented and copied (relative) to the "instrumented" directory.
 
-#### output-directory
-By specifying the `-o` or `--output-directory` option, the default `.profiler/` output directory can be overridden. This might be useful for scripts where the current, executing working directory should not be cluttered with generated profiler files.
-
 #### synchronized
 When adding `-s` or `--synchronized` as a option, all inserted counters will be incremented atomically. This might be useful for multi-threaded programs, where a few methods or blocks are constantly executed in parallel.
 It will ensure that hit counts are correct, but runtime performance will be impacted.

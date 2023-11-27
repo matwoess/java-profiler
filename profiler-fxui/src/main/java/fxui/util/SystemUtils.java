@@ -1,6 +1,7 @@
 package fxui.util;
 
 import common.IO;
+import common.OS;
 import common.Util;
 import fxui.model.AppState;
 import javafx.beans.property.ObjectProperty;
@@ -51,7 +52,7 @@ public class SystemUtils {
 
   public static int executeToolWithParameters(AppState appState) {
     String[] terminalCommand = getTerminalCommand(appState);
-    return Util.runCommand(appState.projectRoot.get(), terminalCommand);
+    return Util.runCommandInDir(appState.projectRoot.get(), terminalCommand);
   }
 
   public static String[] getTerminalCommand(AppState appState) {
@@ -64,7 +65,7 @@ public class SystemUtils {
     String commonJar = Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String classPath = toolJar;
     if (!commonJar.equals(toolJar)) {
-      classPath += Util.getOS().pathSeparator() + commonJar;
+      classPath += OS.getOS().pathSeparator() + commonJar;
     }
     String[] toolMainCmd = {"java", "-cp", '"' + classPath + '"', "tool.Main"};
     String[] fullCmd = Util.prependToArray(toolArguments, toolMainCmd);

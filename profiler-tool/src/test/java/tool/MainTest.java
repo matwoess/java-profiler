@@ -1,6 +1,8 @@
 package tool;
 
 import common.IO;
+import common.JavaCommand;
+import common.JCompilerCommand;
 import common.Util;
 import org.junit.jupiter.api.Test;
 
@@ -109,7 +111,18 @@ public class MainTest {
   @Test
   public void testInstrumentManualCompileThenCreateReportOnly() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
-    int exitCode = Util.runCommand(IO.getInstrumentDir(), "javac", simpleExampleFile.getFileName().toString());
+    String filename = simpleExampleFile.getFileName().toString();
+    Path instrDir = IO.getInstrumentDir();
+    int exitCode = Util.runCommand(new JCompilerCommand()
+        .setClassPath(instrDir)
+        .setDirectory(instrDir)
+        .addSourceFile(IO.getInstrumentDir().resolve(filename))
+        .build());
+    assertEquals(0, exitCode);
+    exitCode = Util.runCommand(new JavaCommand()
+        .setClassPath(instrDir)
+        .setMainClass(filename.replace(".java", ""))
+        .build());
     assertEquals(0, exitCode);
     Main.main(new String[]{"-r"});
   }
@@ -159,8 +172,8 @@ public class MainTest {
 
   @Test
   public void testVerbose_MissingArguments() {
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"-s"}));
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"--synchronized"}));
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"-v"}));
+    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"--verbose"}));
   }
 
   @Test
@@ -169,16 +182,4 @@ public class MainTest {
     Main.main(new String[]{"-v", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
   }
 
-  @Test
-  public void testCustomOutDir_CompileAndExecute() throws IOException {
-    Path tempDir = Files.createTempDirectory(null);
-    Main.main(new String[]{"-o", tempDir.toString(), lambdaExampleFile.toString()});
-    Main.main(new String[]{"--verbose", "--out-directory", tempDir.toString(), "-s", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
-    assertTrue(tempDir.resolve(IO.getMetadataPath().getFileName()).toFile().exists());
-    assertTrue(tempDir.resolve(IO.getCountsPath().getFileName()).toFile().exists());
-    Path tmpReportDir = tempDir.resolve(IO.getReportDir().getFileName());
-    assertTrue(tmpReportDir.resolve("index_Simple.html").toFile().exists());
-    assertTrue(tmpReportDir.resolve("source").resolve("Simple.html").toFile().exists());
-    assertTrue(tmpReportDir.resolve("source").resolve(Path.of("at", "jku", "classes", "DeepPackage.html")).toFile().exists());
-  }
 }

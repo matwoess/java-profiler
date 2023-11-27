@@ -1,33 +1,40 @@
 package common;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class IO {
-  public static final Path DEFAULT_OUT_DIR = Path.of(".profiler");
-  public static Path outputDir;
+  private static final Path OUTPUT_DIR = Path.of(".profiler");
 
   public static Path getOutputDir() {
-    return Objects.requireNonNullElse(outputDir, DEFAULT_OUT_DIR);
+    return OUTPUT_DIR;
   }
 
   public static Path getInstrumentDir() {
     return getOutputDir().resolve("instrumented");
   }
 
+  public static Path getClassesDir() {
+    return getOutputDir().resolve("classes");
+  }
+
   public static Path getInstrumentedFilePath(Path relativePath) {
     return getInstrumentDir().resolve(relativePath);
   }
 
-  public static Path getAuxiliaryCounterClassPath() {
+  public static Path getAuxiliaryCounterInstrumentPath() {
     return getInstrumentDir().resolve("auxiliary").resolve("__Counter.class");
+  }
+
+  public static Path getAuxiliaryCounterClassPath() {
+    return getClassesDir().resolve("auxiliary").resolve("__Counter.class");
   }
 
   public static Path getMetadataPath() {
@@ -91,16 +98,18 @@ public class IO {
     }
   }
 
-  public static void clearDirectoryIfExists(Path directory) {
+  public static void clearDirectoryContents(Path directory) {
     if (Files.exists(directory)) {
       try (Stream<Path> walk = Files.walk(directory)) {
-        walk.sorted(Comparator.reverseOrder()).forEach(file -> {
-          try {
-            Files.delete(file);
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        });
+        walk.sorted(Comparator.reverseOrder())
+            .filter(p -> !p.equals(directory))
+            .forEach(file -> {
+              try {
+                Files.delete(file);
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            });
       } catch (IOException e) {
         throw new RuntimeException(e);
       }

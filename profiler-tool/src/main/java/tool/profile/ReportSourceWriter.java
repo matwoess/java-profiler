@@ -45,6 +45,9 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         td.hits {
           background-color: #eee;
         }
+        pre {
+          tab-size: 2;
+        }
         """;
     bodyScripts = new String[]{
         IO.getReportSourceFilePath(javaFile.relativePath).getParent().relativize(IO.getReportHighlighterPath()).toString()
