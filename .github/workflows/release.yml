@@ -1,4 +1,4 @@
-name: Build Artifacts and Draft a New Release
+name: Build artifacts and draft a new release
 
 on:
   workflow_dispatch:
@@ -16,12 +16,12 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      - name: Generate Scanner and Parser Files
+      - name: Generate Scanner and Parser files
         shell: bash
         run: |
           ./scripts/generate-parser.sh
 
-      - name: Extract Project Version from Properties
+      - name: Extract project version from properties
         run: |
           echo "COMMON_VERSION=$(grep -Po 'commonVersion=\K.*' gradle.properties)" >> $GITHUB_ENV
           echo "Current Project version is: ${{ env.COMMON_VERSION }}"
@@ -40,7 +40,7 @@ jobs:
           echo "created FxUI distributions:"
           ls -l ./profiler-fxui/build/distributions/
 
-      - name: Create Release Draft
+      - name: Create release draft
         id: create_release_draft
         uses: actions/create-release@v1
         env:
@@ -52,7 +52,7 @@ jobs:
           draft: true
           prerelease: true
 
-      - name: Upload Tool Jar to Release
+      - name: Upload tol jar to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
           asset_name: profiler-${{ env.COMMON_VERSION }}.jar
           asset_content_type: application/zip
 
-      - name: Upload Linux FxUI Artifact to Release
+      - name: Upload Linux FxUI artifact to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,7 +72,7 @@ jobs:
           asset_name: profiler-fxui-${{ env.COMMON_VERSION }}-linux.zip
           asset_content_type: application/zip
 
-      - name: Upload Windows FxUI Artifact to Release
+      - name: Upload Windows FxUI artifact to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +82,7 @@ jobs:
           asset_name: profiler-fxui-${{ env.COMMON_VERSION }}-win.zip
           asset_content_type: application/zip
 
-      - name: Upload MacOS FxUI Artifact to Release
+      - name: Upload MacOS FxUI artifact to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
