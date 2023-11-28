@@ -321,18 +321,12 @@ public class ClassesTest {
         }""";
     JavaFile expected = jFile(
         jClass("Dog",
-            jMethod("Dog",
-                jBlock(CONSTRUCTOR, 4, 7, 73, 120)
-            ),
+            jConstructor("Dog", 4, 7, 73, 120),
             jMethod("speak", 8, 10, 138, 162).withJump(RETURN)
         ),
         jClass("SmallDog",
-            jMethod("SmallDog",
-                jBlock(CONSTRUCTOR, 14, 18, 253, 319).incOffset("{\n    super(name, age);".length())
-            ),
-            jMethod("SmallDog",
-                jBlock(CONSTRUCTOR, 19, 22, 375, 422).incOffset("{\n    this(name, age);".length())
-            ),
+            jConstructor("SmallDog", 14, 18, 253, 319).incOffset("{\n    super(name, age);".length()),
+            jConstructor("SmallDog", 19, 22, 375, 422).incOffset("{\n    this(name, age);".length()),
             jMethod("speak", 24, 30, 452, 544,
                 jBlock(BLOCK, 25, 27, 471, 499).withJump(RETURN),
                 jBlock(BLOCK, 27, 29, 505, 540).withJump(RETURN)

@@ -64,9 +64,7 @@ public class RecordsTest {
             jConstructor("LenWidth", 2, 6, 58, 206,
                 jBlock(BLOCK, 3, 5, 93, 202).withJump(THROW)
             ),
-            jMethod("LenWidth",
-                jBlock(CONSTRUCTOR, 7, 9, 250, 323).incOffset(thisCallOffset)
-            )
+            jConstructor("LenWidth", 7, 9, 250, 323).incOffset(thisCallOffset)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
