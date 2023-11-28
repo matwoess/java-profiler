@@ -169,7 +169,6 @@ public class AnnotationsTest {
           }
         }
         """;
-    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("AnnotationTests",
             jMethod("bothNullOrReversed", 8, 18, 259, 552,
