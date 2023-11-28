@@ -42,7 +42,7 @@ public class Block implements Serializable, Component {
   public void setParentClass(JClass clazz) {
     assert this.clazz == null;
     this.clazz = clazz;
-    if (method == null) {
+    if (method == null && parentBlock == null) {
       clazz.classBlocks.add(this);
     }
   }

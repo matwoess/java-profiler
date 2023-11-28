@@ -134,12 +134,12 @@ public class ParserState {
     endCodeRegion();
     Block newBlock = new Block(blockType);
     newBlock.id = curBlockId++;
+    newBlock.setParentBlock(curBlock);
     newBlock.setParentMethod(curMeth);
     newBlock.setParentClass(curClass);
     newBlock.isSingleStatement = blockType != BlockType.COLON_CASE && missingBraces;
     newBlock.beg = Util.getBlockBegPos(parser, blockType, missingBraces);
     newBlock.incInsertOffset = Util.getIncInsertOffset(parser, blockType, missingBraces);
-    newBlock.setParentBlock(curBlock);
     allBlocks.add(newBlock);
     if (!curLabels.isEmpty()) {
       newBlock.labels.addAll(curLabels);

@@ -77,6 +77,7 @@ public class JClass implements Serializable, Component {
   public List<Block> getBlocksRecursive() {
     List<Block> allBlocks = new ArrayList<>();
     allBlocks.addAll(classBlocks);
+    allBlocks.addAll(classBlocks.stream().flatMap(block -> block.getInnerBlocksRecursive().stream()).toList());
     allBlocks.addAll(methods.stream().flatMap(method -> method.getBlocksRecursive().stream()).toList());
     for (JClass clazz : innerClasses) {
       allBlocks.addAll(clazz.getBlocksRecursive());
