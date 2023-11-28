@@ -60,25 +60,24 @@ public class JClass implements Serializable, Component {
 
   public List<Method> getMethodsRecursive() {
     List<Method> allMethods = new ArrayList<>(methods);
-    if (innerClasses.size() > 0) {
-      for (JClass clazz : innerClasses) {
-        allMethods.addAll(clazz.getMethodsRecursive());
-      }
+    for (JClass clazz : innerClasses) {
+      allMethods.addAll(clazz.getMethodsRecursive());
     }
     return allMethods;
   }
 
   public int getAggregatedMethodBlockCounts() {
     return getMethodsRecursive().stream()
-        .flatMap(method -> method.blocks.stream())
-        .filter(b -> b.blockType == BlockType.METHOD || b.blockType == BlockType.CONSTRUCTOR)
+        .filter(m -> !m.isAbstract())
+        .map(Method::getMethodBlock)
         .mapToInt(b -> b.hits)
         .sum();
   }
 
   public List<Block> getBlocksRecursive() {
-    List<Block> allBlocks = new ArrayList<>(classBlocks);
-    allBlocks.addAll(methods.stream().flatMap(method -> method.blocks.stream()).toList());
+    List<Block> allBlocks = new ArrayList<>();
+    allBlocks.addAll(classBlocks);
+    allBlocks.addAll(methods.stream().flatMap(method -> method.getBlocksRecursive().stream()).toList());
     for (JClass clazz : innerClasses) {
       allBlocks.addAll(clazz.getBlocksRecursive());
     }

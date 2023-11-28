@@ -14,6 +14,8 @@ public class Block implements Serializable, Component {
   public CodePosition end;
   public BlockType blockType;
   public boolean isSingleStatement;
+  public List<Block> innerBlocks = new ArrayList<>();
+
   public JumpStatement jumpStatement = null;
   public List<String> labels = new ArrayList<>();
   public List<CodeRegion> codeRegions = new ArrayList<>();
@@ -31,7 +33,9 @@ public class Block implements Serializable, Component {
     assert this.method == null;
     if (method != null) {
       this.method = method;
-      method.blocks.add(this);
+      if (blockType.isMethod()) {
+        method.setMethodBlock(this);
+      }
     }
   }
 
@@ -46,6 +50,7 @@ public class Block implements Serializable, Component {
   public void setParentBlock(Block block) {
     if (block == null) return;
     parentBlock = block;
+    parentBlock.innerBlocks.add(this);
   }
 
   public void registerInnerJumpBlock(Block jumpBlock) {
@@ -55,6 +60,15 @@ public class Block implements Serializable, Component {
   public void addCodeRegion(CodeRegion region) {
     region.id = codeRegions.size();
     codeRegions.add(region);
+  }
+
+  public List<Block> getInnerBlocksRecursive() {
+    List<Block> blocks = new ArrayList<>();
+    for (Block b : innerBlocks) {
+      blocks.add(b);
+      blocks.addAll(b.getInnerBlocksRecursive());
+    }
+    return blocks;
   }
 
   public boolean isSwitchStatementCase() {
