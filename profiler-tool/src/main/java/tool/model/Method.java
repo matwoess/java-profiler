@@ -7,7 +7,7 @@ import java.util.List;
 public class Method implements Serializable, Component {
   public String name;
   public JClass parentClass;
-  public List<Block> blocks = new ArrayList<>();
+  public Block methodBlock = null;
 
   public Method(String name) {
     this.name = name;
@@ -19,14 +19,25 @@ public class Method implements Serializable, Component {
     parentClass.methods.add(this);
   }
 
-  public boolean isAbstract() {
-    return blocks.size() == 0;
+  public void setMethodBlock(Block block) {
+    assert methodBlock == null && block.blockType.isMethod();
+    methodBlock = block;
   }
 
   public Block getMethodBlock() {
-    Block methodBlock = blocks.get(0);
-    assert methodBlock.blockType == BlockType.METHOD || methodBlock.blockType == BlockType.CONSTRUCTOR;
     return methodBlock;
+  }
+
+  public List<Block> getBlocksRecursive() {
+    if (isAbstract()) return List.of();
+    List<Block> blocks = new ArrayList<>();
+    blocks.add(methodBlock);
+    blocks.addAll(methodBlock.getInnerBlocksRecursive());
+    return blocks;
+  }
+
+  public boolean isAbstract() {
+    return methodBlock == null;
   }
 
   @Override

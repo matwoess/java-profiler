@@ -28,6 +28,8 @@ public enum BlockType {
     return this == COLON_CASE || this == ARROW_CASE;
   }
 
+  public boolean isMethod() { return this == METHOD || this == CONSTRUCTOR; }
+
   public boolean hasNoCounter() {
     return isSwitch();
   }
