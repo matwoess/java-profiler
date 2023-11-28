@@ -77,9 +77,10 @@ public class TestProgramBuilder {
       if (child instanceof BuilderClass innerClass) {
         innerClass.element.setParentClass(clazz);
       } else if (child instanceof BuilderMethod method) {
-        method.element.setParentClass(clazz);
         method.element.getBlocksRecursive().forEach(block -> block.setParentClass(clazz));
+        method.element.setParentClass(clazz);
       } else if (child instanceof BuilderBlock classLevelBlock) {
+        classLevelBlock.element.getInnerBlocksRecursive().forEach(block -> block.setParentClass(clazz));
         classLevelBlock.element.setParentClass(clazz);
       } else {
         throw new RuntimeException("invalid child of class");
@@ -100,12 +101,11 @@ public class TestProgramBuilder {
 
   public static BuilderMethod jMethod(String name, int beg, int end, int begPos, int endPos, BuilderBlock... blocks) {
     Method method = new Method(name);
-    BuilderBlock methodBlock = jBlock(BlockType.METHOD, beg, end, begPos, endPos);
-    methodBlock.element.setParentMethod(method);
-    for (BuilderBlock bb : blocks) {
-      bb.element.setParentBlock(methodBlock.element);
-      bb.element.setParentMethod(method);
+    BuilderBlock methodBlock = jBlock(BlockType.METHOD, beg, end, begPos, endPos, blocks);
+    for (Block b : methodBlock.element.getInnerBlocksRecursive()) {
+      b.setParentMethod(method);
     }
+    methodBlock.element.setParentMethod(method);
     return new BuilderMethod(method);
   }
 
