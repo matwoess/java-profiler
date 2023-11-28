@@ -96,7 +96,7 @@ public class Block implements Serializable, Component {
   }
 
   public String toString() {
-    return String.format("%s%s%s: {%d[%s%s]-%s[%s]} (%s%s)%s%s",
+    return String.format("%s%s%s: {%d[%s%s]-%s[%s]} (%s%s)%s%s%s",
         labels.isEmpty() ? "" : String.join(": ", labels) + ": ",
         clazz.name,
         method != null ? ("." + method.name) : "",
@@ -108,7 +108,8 @@ public class Block implements Serializable, Component {
         blockType.toString(),
         isSingleStatement ? ", SS" : "",
         method == null ? " [class-level]" : "",
-        jumpStatement != null ? " [" + jumpStatement + "]" : ""
+        jumpStatement != null ? " [" + jumpStatement + "]" : "",
+        parentBlock == null ? "" : " (in " + parentBlock + ")"
     );
   }
 
@@ -123,6 +124,7 @@ public class Block implements Serializable, Component {
     if (!clazz.equals(block.clazz)) return false;
     if (!Objects.equals(method, block.method)) return false;
     if (!Objects.equals(jumpStatement, block.jumpStatement)) return false;
+    if (!Objects.equals(parentBlock, block.parentBlock)) return false;
     return blockType == block.blockType;
   }
 
@@ -135,6 +137,7 @@ public class Block implements Serializable, Component {
     result = 31 * result + blockType.hashCode();
     result = 31 * result + incInsertOffset;
     result = 31 * result + (jumpStatement != null ? jumpStatement.hashCode() : 0);
+    result = 31 * result + (parentBlock != null ? parentBlock.hashCode() : 0);
     return result;
   }
 }
