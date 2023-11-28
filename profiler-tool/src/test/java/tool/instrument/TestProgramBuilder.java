@@ -190,12 +190,11 @@ public class TestProgramBuilder {
     }
     Block methBlock = method.getMethodBlock();
     builder.append(String.format(", %d, %d, %d, %d", methBlock.beg.line(), methBlock.end.line(), methBlock.beg.pos(), methBlock.end.pos()));
-    List<Block> blocks = method.blocks;
-    if (blocks.size() == 1) {
+    List<Block> blocks = method.methodBlock.innerBlocks;
+    if (blocks.isEmpty()) {
       builder.append(")");
     } else {
-      for (int i = 1; i < blocks.size(); i++) { // skip method block
-        Block block = blocks.get(i);
+      for (Block block : blocks) {
         getBuilderCode(block, builder);
       }
       builder.append("\n)");
@@ -206,10 +205,10 @@ public class TestProgramBuilder {
   public static void getBuilderCode(Block block, StringBuilder builder) {
     builder.append(",\n ").append(block.isSingleStatement ? "jSsBlock" : "jBlock").append("(");
     int begPos = block.beg.pos();
-    if (!block.isSingleStatement && block.blockType != BlockType.COLON_CASE) {
-      block.incInsertOffset = 1; // length of '{'
-    }
     builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg.line(), block.end.line(), begPos, block.end.pos()));
+    for (Block innerBlock : block.innerBlocks) {
+      getBuilderCode(innerBlock, builder);
+    }
     builder.append(")");
     appendBuilderBlockSuffixes(block, builder);
   }
