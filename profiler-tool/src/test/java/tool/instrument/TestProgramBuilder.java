@@ -206,10 +206,14 @@ public class TestProgramBuilder {
     builder.append(",\n ").append(block.isSingleStatement ? "jSsBlock" : "jBlock").append("(");
     int begPos = block.beg.pos();
     builder.append(String.format("%s, %d, %d, %d, %d", block.blockType.name(), block.beg.line(), block.end.line(), begPos, block.end.pos()));
-    for (Block innerBlock : block.innerBlocks) {
-      getBuilderCode(innerBlock, builder);
+    if (block.innerBlocks.isEmpty()) {
+      builder.append(")");
+    } else {
+      for (Block innerBlock : block.innerBlocks) {
+        getBuilderCode(innerBlock, builder);
+      }
+      builder.append("\n)");
     }
-    builder.append(")");
     appendBuilderBlockSuffixes(block, builder);
   }
 
