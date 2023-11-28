@@ -72,9 +72,10 @@ public class ClassesTest {
         jClass("Classes",
             jBlock(STATIC, 4, 6, 49, 65),
             jMethod("main", 8, 21, 108, 471,
-                jBlock(LOOP, 12, 20, 233, 467),
-                jBlock(BLOCK, 14, 16, 284, 352),
-                jBlock(BLOCK, 16, 18, 358, 427)
+                jBlock(LOOP, 12, 20, 233, 467,
+                    jBlock(BLOCK, 14, 16, 284, 352),
+                    jBlock(BLOCK, 16, 18, 358, 427)
+                )
             ),
             jClass("PetFarm",
                 jBlock(STATIC, 26, 28, 560, 590)

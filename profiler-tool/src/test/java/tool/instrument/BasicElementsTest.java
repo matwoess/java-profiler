@@ -98,9 +98,10 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 15, 61, 287,
-                jBlock(LOOP, 5, 13, 143, 251),
-                jBlock(BLOCK, 7, 9, 180, 202),
-                jBlock(BLOCK, 10, 12, 221, 245).withJump(BREAK)
+                jBlock(LOOP, 5, 13, 143, 251,
+                    jBlock(BLOCK, 7, 9, 180, 202),
+                    jBlock(BLOCK, 10, 12, 221, 245).withJump(BREAK)
+                )
             )
         )
     );
@@ -126,8 +127,9 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 11, 61, 215,
-                jBlock(LOOP, 4, 9, 98, 177),
-                jBlock(LOOP, 6, 8, 124, 149)
+                jBlock(LOOP, 4, 9, 98, 177,
+                    jBlock(LOOP, 6, 8, 124, 149)
+                )
             )
         )
     );
@@ -324,10 +326,12 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 15, 61, 263,
-                jBlock(LOOP, 5, 14, 106, 259),
-                jBlock(LOOP, 6, 13, 134, 253),
-                jBlock(BLOCK, 7, 10, 156, 205).withJump(BREAK, "inner"),
-                jBlock(BLOCK, 10, 12, 211, 245).withJump(BREAK, "outer")
+                jBlock(LOOP, 5, 14, 106, 259,
+                    jBlock(LOOP, 6, 13, 134, 253,
+                        jBlock(BLOCK, 7, 10, 156, 205).withJump(BREAK, "inner"),
+                        jBlock(BLOCK, 10, 12, 211, 245).withJump(BREAK, "outer")
+                    )
+                )
             )
         )
     );
@@ -355,9 +359,10 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 13, 61, 205,
-                jBlock(LOOP, 4, 12, 95, 201),
-                jBlock(BLOCK, 5, 9, 115, 165),
-                jBlock(BLOCK, 9, 11, 171, 195).withJump(BREAK)
+                jBlock(LOOP, 4, 12, 95, 201,
+                    jBlock(BLOCK, 5, 9, 115, 165),
+                    jBlock(BLOCK, 9, 11, 171, 195).withJump(BREAK)
+                )
             )
         )
     );
@@ -431,9 +436,10 @@ public class BasicElementsTest {
         jClass("Main",
             jMethod("main", 2, 13, 61, 384,
                 jBlock(TRY, 3, 5, 71, 99),
-                jBlock(BLOCK, 5, 12, 121, 380).withJump(THROW),
-                jBlock(BLOCK, 6, 8, 168, 217).withJump(THROW),
-                jBlock(BLOCK, 8, 10, 269, 301).withJump(THROW)
+                jBlock(BLOCK, 5, 12, 121, 380,
+                    jBlock(BLOCK, 6, 8, 168, 217).withJump(THROW),
+                    jBlock(BLOCK, 8, 10, 269, 301).withJump(THROW)
+                ).withJump(THROW)
             )
         )
     );
@@ -509,11 +515,14 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("SyncBlocks",
             jMethod("syncMethod", 2, 19, 51, 364,
-                jBlock(BLOCK, 4, 12, 96, 272),
-                jBlock(BLOCK, 7, 11, 187, 266),
-                jBlock(BLOCK, 8, 10, 214, 258),
-                jBlock(BLOCK, 13, 17, 288, 346),
-                jBlock(BLOCK, 14, 16, 313, 340).withJump(RETURN)
+                jBlock(BLOCK, 4, 12, 96, 272,
+                    jBlock(BLOCK, 7, 11, 187, 266,
+                        jBlock(BLOCK, 8, 10, 214, 258)
+                    )
+                ),
+                jBlock(BLOCK, 13, 17, 288, 346,
+                    jBlock(BLOCK, 14, 16, 313, 340).withJump(RETURN)
+                )
             ).withJump(RETURN),
             jMethod("getSyncValue", 20, 27, 389, 526,
                 jBlock(BLOCK, 23, 25, 462, 490)

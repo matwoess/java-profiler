@@ -150,9 +150,10 @@ public class EnumsTest {
     JavaFile expected = jFile(
         jClass("WithMain",
             jMethod("main", 5, 13, 79, 222,
-                jBlock(SWITCH_STMT, 7, 12, 118,218),
-                jBlock(COLON_CASE, 8, 9, 133, 158).noIncOffset(),
-                jBlock(COLON_CASE, 10, 11, 173, 212).noIncOffset()
+                jBlock(SWITCH_STMT, 7, 12, 118, 218,
+                    jBlock(COLON_CASE, 8, 9, 133, 158).noIncOffset(),
+                    jBlock(COLON_CASE, 10, 11, 173, 212).noIncOffset()
+                )
             )
         )
     );
