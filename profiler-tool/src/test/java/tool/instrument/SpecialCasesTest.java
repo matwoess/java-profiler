@@ -196,7 +196,6 @@ public class SpecialCasesTest {
             )
         )
     );
-    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
   }
 
@@ -293,7 +292,6 @@ public class SpecialCasesTest {
           }
         }
         """;
-    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile("dev.matwoess.classes", 29,
         jClass("DotClass",
             jMethod("addClass", 4, 10, 112, 295,

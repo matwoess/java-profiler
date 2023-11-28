@@ -35,6 +35,7 @@ public class TestInstrumentUtils {
 
   public static JavaFile parseJavaFile(String content) {
     Instrumenter instrumenter = analyzeStringContent(content);
+    System.out.println(TestProgramBuilder.getBuilderCode(instrumenter.javaFiles[0]));
     return instrumenter.javaFiles[0];
   }
 

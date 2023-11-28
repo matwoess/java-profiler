@@ -237,7 +237,6 @@ public class LambdaExpressionsTest {
               ifPresent(System.out::println);
         }
         """;
-    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("A",
             jSsBlock(LAMBDA, 2, 3, 73, 143)

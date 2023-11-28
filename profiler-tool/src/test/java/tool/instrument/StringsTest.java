@@ -127,7 +127,6 @@ public class StringsTest {
           }
         }
         """;
-    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("TextBlocksAndSubStrings",
             jMethod("main", 6, 13, 192, 315,
@@ -201,7 +200,6 @@ public class StringsTest {
           }
         }
         """;
-    System.out.println(getBuilderCode(parseJavaFile(fileContent)));
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 23, 61, 916)
