@@ -1,6 +1,5 @@
 package tool.instrument;
 
-import common.Util;
 import tool.model.*;
 import tool.model.JClass;
 
@@ -79,7 +78,7 @@ public class TestProgramBuilder {
         innerClass.element.setParentClass(clazz);
       } else if (child instanceof BuilderMethod method) {
         method.element.setParentClass(clazz);
-        method.element.blocks.forEach(block -> block.clazz = clazz);
+        method.element.getBlocksRecursive().forEach(block -> block.setParentClass(clazz));
       } else if (child instanceof BuilderBlock classLevelBlock) {
         classLevelBlock.element.setParentClass(clazz);
       } else {
@@ -95,44 +94,43 @@ public class TestProgramBuilder {
     return clazz;
   }
 
-  public static BuilderMethod jMethod(String name, BuilderBlock... blocks) {
+  public static BuilderMethod jMethod(String name) {
+    return new BuilderMethod(new Method(name));
+  }
+
+  public static BuilderMethod jMethod(String name, int beg, int end, int begPos, int endPos, BuilderBlock... blocks) {
     Method method = new Method(name);
-    for (BuilderBlock block : blocks) {
-      block.element.setParentMethod(method);
+    BuilderBlock methodBlock = jBlock(BlockType.METHOD, beg, end, begPos, endPos);
+    methodBlock.element.setParentMethod(method);
+    for (BuilderBlock bb : blocks) {
+      bb.element.setParentBlock(methodBlock.element);
+      bb.element.setParentMethod(method);
     }
     return new BuilderMethod(method);
   }
 
-  public static BuilderMethod jMethod(String name, int beg, int end, int begPos, int endPos, BuilderBlock... blocks) {
-    BuilderBlock methodBlock = jBlock(BlockType.METHOD, beg, end, begPos, endPos);
-    return jMethod(name, Util.prependToArray(blocks, methodBlock));
-  }
-
   public static BuilderMethod jConstructor(String name, int beg, int end, int begPos, int endPos, BuilderBlock... blocks) {
-    BuilderBlock constructorBlock = jBlock(BlockType.CONSTRUCTOR, beg, end, begPos, endPos);
-    return jMethod(name, Util.prependToArray(blocks, constructorBlock));
+    BuilderMethod builderMethod = jMethod(name, beg, end, begPos, endPos, blocks);
+    builderMethod.element.methodBlock.blockType = BlockType.CONSTRUCTOR;
+    return builderMethod;
   }
 
-  public static BuilderBlock jSsBlock(BlockType type, int beg, int end, int begPos, int endPos) {
-    Block b = new Block(type);
-    b.isSingleStatement = true;
-    b.beg = new CodePosition(beg, begPos);
-    b.end = new CodePosition(end, endPos);
-    return new BuilderBlock(b);
+  public static BuilderBlock jSsBlock(BlockType type, int beg, int end, int begPos, int endPos, BuilderBlock... innerBlocks) {
+    BuilderBlock bb = jBlock(type, beg, end, begPos, endPos, innerBlocks);
+    bb.element.isSingleStatement = true;
+    bb.element.incInsertOffset = 0;
+    return bb;
   }
 
-  public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos) {
+  public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos, BuilderBlock... innerBlocks) {
     Block b = new Block(type);
     b.beg = new CodePosition(beg, begPos);
     b.incInsertOffset = 1; // + length of '{'
     b.end = new CodePosition(end, endPos);
+    for (BuilderBlock bb : innerBlocks) {
+      bb.element.setParentBlock(b);
+    }
     return new BuilderBlock(b);
-  }
-
-  public static BuilderBlock jBlock(BlockType type, int beg, int end, int begPos, int endPos, int incInsertPos) {
-    BuilderBlock block = jBlock(type, beg, end, begPos, endPos);
-    block.element.incInsertOffset = incInsertPos - begPos;
-    return block;
   }
 
   /* DSL-generation methods */
