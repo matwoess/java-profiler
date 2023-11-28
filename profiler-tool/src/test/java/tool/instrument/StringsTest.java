@@ -3,6 +3,8 @@ package tool.instrument;
 import org.junit.jupiter.api.Test;
 import tool.model.JavaFile;
 
+import java.nio.charset.StandardCharsets;
+
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestProgramBuilder.jMethod;
@@ -210,7 +212,7 @@ public class StringsTest {
 
   @Test
   public void testTextBlocksWithDifferentEndings() {
-    String fileContent = """
+    String fileContent = new String("""
         class TextBlocksWithDifferentEndings {
           public static void main(String[] args) {
             System.out.println(printStrings());
@@ -246,7 +248,7 @@ public class StringsTest {
                 ""\";
           }
         }
-        """;
+        """.getBytes(), StandardCharsets.UTF_8);
     JavaFile expected = jFile(
         jClass("TextBlocksWithDifferentEndings",
             jMethod("main", 2, 4, 80, 125),
