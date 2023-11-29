@@ -1,8 +1,6 @@
 name: Run JUnit tests and upload report
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
