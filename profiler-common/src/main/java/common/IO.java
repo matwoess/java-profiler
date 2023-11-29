@@ -11,10 +11,10 @@ import java.util.stream.Stream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class IO {
-  private static final Path OUTPUT_DIR = Path.of(".profiler");
+  public static Path outputDir = Path.of(".profiler");
 
   public static Path getOutputDir() {
-    return OUTPUT_DIR;
+    return outputDir;
   }
 
   public static Path getInstrumentDir() {

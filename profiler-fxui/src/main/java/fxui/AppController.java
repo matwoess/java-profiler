@@ -97,6 +97,7 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   public void setProjectDirectory(Path projectRootPath) {
+    IO.outputDir = projectRootPath.resolve(IO.outputDir);
     appState.projectRoot.set(projectRootPath);
     applicationStage.setTitle(applicationStage.getTitle() + " - " + projectRootPath);
     projectTree = new JavaProjectTree(appState, treeProjectDir);
