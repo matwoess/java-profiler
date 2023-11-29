@@ -94,7 +94,7 @@ public class BasicElements {
       }
     }
     if (i > 0) {
-      synchronized (i) {
+      synchronized (this) {
         return i;
       }
     }
