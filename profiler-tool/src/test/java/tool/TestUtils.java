@@ -105,7 +105,11 @@ public class TestUtils {
         System.out.printf("Renaming directory %s to %s...\n", extractedFolderName, renameRootFolderTo);
         Files.move(destDirectory.resolve(extractedFolderName), destDirectory.resolve(renameRootFolderTo));
       }
-      System.out.println("Deleting zip file...");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    System.out.println("Deleting zip file...");
+    try {
       Files.delete(zipPath);
     } catch (IOException e) {
       throw new RuntimeException(e);

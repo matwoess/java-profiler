@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(ProjectsTest.ExtensionContextParameterResolver.class)
 public class ProjectsTest {
-  private static final Path projectsRoot = Path.of("..", "..");
+  private static final Path projectsRoot = Path.of("..", "projects");
 
   /**
    * Custom annotation to specify a GitHub repo needed for a project test.
