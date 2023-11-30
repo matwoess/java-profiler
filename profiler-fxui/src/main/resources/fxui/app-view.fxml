@@ -41,7 +41,8 @@
                         <Label text="Sources directory"/>
                     </HBox>
                     <HBox prefWidth="Infinity">
-                        <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS" disable="true"/>
+                        <TextField fx:id="txtSourcesDir" HBox.hgrow="ALWAYS" disable="true"
+                                   promptText="Select using tree view"/>
                         <Button fx:id="btnClearSourcesDir" text="X" onAction="#onClearSourcesDir">
                             <HBox.margin>
                                 <Insets left="8.0"/>
@@ -65,7 +66,8 @@
                         </Label>
                     </HBox>
                     <HBox prefWidth="Infinity">
-                        <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS" disable="true"/>
+                        <TextField fx:id="txtMainFile" HBox.hgrow="ALWAYS" disable="true"
+                                   promptText="Select using tree view"/>
                         <Button fx:id="btnClearMainFile" text="X" onAction="#onClearMainFile">
                             <HBox.margin>
                                 <Insets left="8.0"/>
