@@ -26,7 +26,6 @@ public class Annotations {
   }
 
   @SuppressWarnings({"unused", "unchecked"})
-  @Deprecated
   public static void main(String[] args) {
     @SuppressWarnings("ParseError")
     Integer i1 = Integer.parseInt("000555");
@@ -49,6 +48,7 @@ public class Annotations {
       date = "01.03.2020",
       comments = {"Important!", "Is documented\n"}
   )
+  @Deprecated
   public boolean equals(@SuppressWarnings("null") Object obj) {
     return super.equals(obj);
   }
