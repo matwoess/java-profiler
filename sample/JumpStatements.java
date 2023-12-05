@@ -115,10 +115,15 @@ public class JumpStatements {
     for (int i = -1; i < 3; i++) {
       try {
         result = Result.fromInt(i);
+        if (result == null) {
+          return;
+        }
       } catch (IllegalArgumentException e) {
         System.out.println("argument was invalid.");
       } catch (RuntimeException e) {
         System.out.println("other error: " + e.getMessage());
+      } finally {
+        System.out.println("finally");
       }
     }
     if (result != Result.OK) {
@@ -132,6 +137,7 @@ public class JumpStatements {
         if (result == null) throw new RuntimeException("error getting result.");
         result = Result.fromString("never reached");
       } catch (Exception e) {
+        System.out.println("change result to NOK");
         result = Result.NOK;
       }
       if (result == null) {
