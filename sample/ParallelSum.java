@@ -1,3 +1,4 @@
+import java.util.Scanner;
 import java.util.Vector;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -7,11 +8,20 @@ public class ParallelSum {
   static int[] numbersArray;
 
   public static void main(String[] args) {
-    if (args.length != 2) {
-      throw new IllegalArgumentException("Please specify 'nNumbers' and 'nThreads'");
+    Scanner userInput = new Scanner(System.in);
+    int nNumbers, nThreads;
+    if (args.length > 0) {
+      nNumbers = Integer.parseInt(args[0]);
+    } else {
+      System.out.println("How many sequential numbers should be added?: ");
+      nNumbers = Integer.parseInt(userInput.next());
     }
-    int nNumbers = Integer.parseInt(args[0]);
-    int nThreads = Integer.parseInt(args[1]);
+    if (args.length > 1) {
+      nThreads = Integer.parseInt(args[0]);
+    } else {
+      System.out.println("How many threads should be used?: ");
+      nThreads = Integer.parseInt(userInput.next());
+    }
     numbersArray = IntStream.rangeClosed(1, nNumbers).toArray();
     ExecutorService pool = Executors.newFixedThreadPool(nThreads);
     Vector<Future<Long>> result = new Vector<>(nThreads);
