@@ -517,10 +517,35 @@ class SmallDog extends Dog {
 }
 ```
 
+## Current Limitations
+
+- Imperfect grammar:
+  - The ATG is kept minimal, with the drawback that not every construct can be recognized correctly
+  - e.g.: blocks like lambdas inside `ParExpr` are over-read
+  - return or yield of new class instance with body is currently over-read
+- No support for Java 21 pattern matching in switch cases yet
+- Methods cannot be called `yield`
+- Region propagation of `throw` always stops at `try` even if there is no appropriate catch block
+- Stream lambda chains will lead to code regions for every chaining method
+
 ## Dependencies
 
-// TODO
+- [OpenJDK 17](https://openjdk.org/projects/jdk/17/)
+- [Coco/R](https://ssw.jku.at/Research/Projects/Coco/#Java)
+- [Gradle](https://gradle.org/)
+- [jQuery](https://jquery.com/)
+- [JavaFX](https://openjfx.io/)
+- [AtlantaFX](https://github.com/mkpaz/atlantafx)
 
 ## Future work and ideas
 
-// TODO
+- VSCode plugin (TypeScript)
+- IntelliJ IDEA plugin (Java)
+- Gradle task plugin (Java)
+- Additional report statistics and sort orders
+- Report syntax highlighting for Java keyword
+- Introduce package grouping level for report
+- Be compatible with build tools like ant / gradle / maven
+- Windows shortcut to report `index.html` instead of symlink
+- JavaFX GUI improvements: theme / usability
+- ...
