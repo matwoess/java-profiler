@@ -12,10 +12,10 @@ public record JumpStatement(Kind kind, String label) implements Serializable {
   }
 
   public boolean stopPropagationAt(Block block) {
-    boolean matchesLabelOrNone = label == null || block.labels.contains(label);
+    if (label != null) return block.labels.contains(label);
     return switch (kind) {
-      case BREAK -> block.blockType == LOOP && matchesLabelOrNone || block.isSwitchStatementCase();
-      case CONTINUE -> block.blockType == LOOP && matchesLabelOrNone;
+      case BREAK -> block.blockType == LOOP || block.isSwitchStatementCase();
+      case CONTINUE -> block.blockType == LOOP;
       case YIELD -> block.isSwitchExpressionCase();
       case RETURN -> block.blockType == METHOD || block.blockType == LAMBDA;
       case THROW -> block.blockType == METHOD || block.blockType == TRY;
