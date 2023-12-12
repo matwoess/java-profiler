@@ -8,13 +8,19 @@ public class JumpStatements {
     lambdasWithReturn();
     switchesWithBreaksAndReturns("param");
     tryBlocksWithThrow();
+    breakOutOfNonLoopBlocks();
   }
 
   private static void loopWithLabels() {
     int counter = 0;
-    loop1: outerLoop: while (true) {
-      loop2: while (true) {
-        loop3: innerLoop: while (true) {
+    loop1:
+    outerLoop:
+    while (true) {
+      loop2:
+      while (true) {
+        loop3:
+        innerLoop:
+        while (true) {
           counter++;
           if (counter <= 5) {
             continue;
@@ -183,7 +189,7 @@ public class JumpStatements {
             throw new RuntimeException("something went wrong...");
           }
           code = 5;
-        } catch(Exception e) {
+        } catch (Exception e) {
           System.out.println(e.getMessage());
         }
       }
@@ -194,5 +200,38 @@ public class JumpStatements {
         return null;
       }
     }
+  }
+
+  private static void breakOutOfNonLoopBlocks() {
+    int i = 0;
+    outer:
+    {
+      while (true) {
+        inner:
+        {
+          i++;
+          while (true) {
+            if (i == 4) {
+              System.out.println("i is " + i);
+              break outer;
+            } else if (i == 3) {
+              System.out.println("i is " + i);
+              break inner;
+            }
+            System.out.println("inc i");
+            i++;
+          }
+        }
+        System.out.println("i is still " + i);
+      }
+    }
+    System.out.println("broke out of loops.");
+    endif:
+    if (i == 4) {
+      if (i % 2 == 0) break endif;
+      else System.out.println("strange..");
+      System.out.println("didn't print this!");
+    }
+    System.out.println("done.");
   }
 }
