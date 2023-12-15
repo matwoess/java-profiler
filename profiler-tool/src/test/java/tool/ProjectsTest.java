@@ -1,8 +1,8 @@
 package tool;
 
 import common.IO;
-import common.JCompilerCommand;
-import common.JavaCommand;
+import common.JCompilerCommandBuilder;
+import common.JavaCommandBuilder;
 import common.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +67,7 @@ public class ProjectsTest {
     // re-generate Parser and Scanner once before instrumentation
     // Coco removes the copyright notice when (re-)creating its own Parser and Scanner
     // leading to suddenly 27 lines less and mismatching metadata
-    int genScannerParserResult = Util.runCommand(new JavaCommand()
+    int genScannerParserResult = Util.runCommand(new JavaCommandBuilder()
         .setClassPath(Path.of("..", "lib", "Coco.jar")) // should be present, use script 'generate-parser.sh' if not
         .setMainClass("Coco/Coco")
         .addArgs(cocoAtg.toString())
@@ -77,7 +77,7 @@ public class ProjectsTest {
     TestUtils.instrumentFolder(sourcesRoot);
     // manual compile, because we need the legacy -source and -target parameters with the Java 17 compiler
     Path instrDir = IO.getInstrumentDir();
-    int compileResult = Util.runCommand(new JCompilerCommand()
+    int compileResult = Util.runCommand(new JCompilerCommandBuilder()
         .setDirectory(instrDir)
         .setClassPath(instrDir)
         .addCompileArg("-source", "7")
@@ -92,7 +92,7 @@ public class ProjectsTest {
         .build());
     assertEquals(0, compileResult);
     // run Coco on Coco with the Coco ATG
-    int runResult = Util.runCommand(new JavaCommand()
+    int runResult = Util.runCommand(new JavaCommandBuilder()
         .setClassPath(IO.getInstrumentDir())
         .setMainClass("Coco/Coco")
         .addArgs(cocoAtg.toString())

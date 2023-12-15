@@ -1,8 +1,8 @@
 package tool.profile;
 
 import common.IO;
-import common.JCompilerCommand;
-import common.JavaCommand;
+import common.JCompilerCommandBuilder;
+import common.JavaCommandBuilder;
 import common.Util;
 import tool.model.Block;
 import tool.model.JClass;
@@ -29,7 +29,7 @@ public class Profiler {
   public void compileInstrumented() {
     copyAuxiliaryFiles();
     Path mainFile = IO.getInstrumentedFilePath(mainJavaFile.relativePath);
-    int exitCode = Util.runCommand(new JCompilerCommand()
+    int exitCode = Util.runCommand(new JCompilerCommandBuilder()
         .setClassPath(IO.getInstrumentDir())
         .setDirectory(IO.getClassesDir())
         .addSourceFile(mainFile)
@@ -51,7 +51,7 @@ public class Profiler {
       classFilePath = classFilePath.replace("\\", "/");
     }
     System.out.println("Program output:");
-    int exitCode = Util.runCommand(new JavaCommand()
+    int exitCode = Util.runCommand(new JavaCommandBuilder()
         .setClassPath(IO.getClassesDir())
         .setMainClass(classFilePath)
         .addArgs(programArgs)

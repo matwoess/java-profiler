@@ -1,8 +1,8 @@
 package tool;
 
 import common.IO;
-import common.JavaCommand;
-import common.JCompilerCommand;
+import common.JavaCommandBuilder;
+import common.JCompilerCommandBuilder;
 import common.Util;
 import org.junit.jupiter.api.Test;
 
@@ -113,13 +113,13 @@ public class MainTest {
     Main.main(new String[]{"-i", samplesFolder.toString()});
     String filename = simpleExampleFile.getFileName().toString();
     Path instrDir = IO.getInstrumentDir();
-    int exitCode = Util.runCommand(new JCompilerCommand()
+    int exitCode = Util.runCommand(new JCompilerCommandBuilder()
         .setClassPath(instrDir)
         .setDirectory(instrDir)
         .addSourceFile(IO.getInstrumentDir().resolve(filename))
         .build());
     assertEquals(0, exitCode);
-    exitCode = Util.runCommand(new JavaCommand()
+    exitCode = Util.runCommand(new JavaCommandBuilder()
         .setClassPath(instrDir)
         .setMainClass(filename.replace(".java", ""))
         .build());

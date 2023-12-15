@@ -1,8 +1,8 @@
 package tool;
 
 import common.IO;
-import common.JCompilerCommand;
-import common.JavaCommand;
+import common.JCompilerCommandBuilder;
+import common.JavaCommandBuilder;
 import common.Util;
 import org.junit.jupiter.api.Test;
 
@@ -224,11 +224,11 @@ public class SamplesTest {
   @Test
   public void testParallelSumSample_noCounters() {
     Path mainFile = samplesFolder.resolve("ParallelSum.java");
-    Util.runCommand(new JCompilerCommand()
+    Util.runCommand(new JCompilerCommandBuilder()
         .setDirectory(IO.getInstrumentDir())
         .addSourceFile(mainFile)
         .build());
-    Util.runCommand(new JavaCommand()
+    Util.runCommand(new JavaCommandBuilder()
         .setClassPath(IO.getInstrumentDir())
         .setMainClass("ParallelSum")
         .addArgs(String.valueOf(5_000_000), "4")

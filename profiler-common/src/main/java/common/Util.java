@@ -8,8 +8,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Provides utility methods for all modules to use.
+ */
 public class Util {
 
+  /**
+   * Extend an array by prepending a number of values with the same type to it.
+   * <p>
+   * First an array is created with the size of the combined lengths.
+   * Then the prepend-values are copied to it, followed by copying the original array values.
+   *
+   * @param array         the original array to be extended
+   * @param prependValues vararg array of values that will be prepended to it
+   * @param <T>           the common type of both arrays
+   * @return the extended array containing the <code>prependValues</code> followed by the original array values
+   */
   @SafeVarargs
   public static <T> T[] prependToArray(T[] array, T... prependValues) {
     T[] extendedArray = Arrays.copyOf(prependValues, prependValues.length + array.length);
@@ -17,20 +31,48 @@ public class Util {
     return extendedArray;
   }
 
+  /**
+   * Checks whether a file path has a ".java" extension and is a file (not a directory).
+   *
+   * @param path the path to be checked
+   * @return whether the specified path is a regular file and has a ".java" extension
+   */
   public static boolean isJavaFile(Path path) {
     return path.toString().endsWith(".java") && path.toFile().isFile();
   }
 
+  /**
+   * Throws a <code>RuntimeException</code> if the given path is not a valid java file.
+   *
+   * @param filePath the path to be checked
+   */
   public static void assertJavaSourceFile(Path filePath) {
     if (!Util.isJavaFile(filePath)) {
       throw new RuntimeException(String.format("'%s' is not a java source file!", filePath));
     }
   }
 
+  /**
+   * Run a generic command using the system command line.
+   * <p>
+   * The {@link ProcessBuilder} class will be used to execute it.
+   *
+   * @param command an array of strings forming a command by joining it with <code>" "</code>
+   * @return the exit code of the executed command
+   */
   public static int runCommand(String... command) {
     return runCommandInDir(null, command);
   }
 
+  /**
+   * Runs a command line in a specified working directory.
+   * <p>
+   * like {@link #runCommand} but with a directory to execute from.
+   *
+   * @param cwd     the current working directory that will be passed to the <code>ProcessBuilder</code>
+   * @param command the array of strings forming the command
+   * @return the exit code of the executed command
+   */
   public static int runCommandInDir(Path cwd, String... command) {
     ProcessBuilder builder = new ProcessBuilder()
         .inheritIO()
@@ -46,6 +88,12 @@ public class Util {
     }
   }
 
+  /**
+   * Run a command line in a specified directory and get the string output as a return value.
+   * @param cwd the current working directory that will be passed to the <code>ProcessBuilder</code>
+   * @param command the array of strings forming the command
+   * @return an array of strings representing the output of the executed command
+   */
   public static String[] runCommandAndGetOutput(Path cwd, String... command) {
     ProcessBuilder builder = new ProcessBuilder().directory(cwd.toFile()).command(command);
     List<String> output = new ArrayList<>();

@@ -1,10 +1,17 @@
 package common;
 
+/**
+ * Helper enum class for operating system dependent get actions.
+ */
 public enum OS {
   WINDOWS, LINUX, MAC, SOLARIS;
 
+  // persist OS in variable for faster access next time
   private static OS os = null;
 
+  /**
+   * {@return the operating system's default line separator characters}
+   */
   public String lineSeparator() {
     if (this == WINDOWS) {
       return "\r\n";
@@ -13,6 +20,9 @@ public enum OS {
     }
   }
 
+  /**
+   * {@return the operating system's default class path separator character}
+   */
   public String pathSeparator() {
     if (this == WINDOWS) {
       return ";";
@@ -21,6 +31,11 @@ public enum OS {
     }
   }
 
+  /**
+   * Use the system property <code>os.name</code> to determine the current operating system.
+   *
+   * @return the enum value associated to the system that the program is run on
+   */
   public static OS getOS() {
     if (os == null) {
       String osName = System.getProperty("os.name").toLowerCase();

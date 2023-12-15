@@ -4,6 +4,10 @@ import common.OS;
 
 import java.nio.file.Path;
 
+/**
+ * A class enumerating all supported terminal applications.
+ * Each terminal has its own way to wrap commands and how to call it.
+ */
 public enum Terminal {
   WINDOWS_CMD {
     @Override
@@ -44,6 +48,15 @@ public enum Terminal {
 
   abstract String getExecutable();
 
+  /**
+   * Wraps the given <code>cmdString</code> into an OS and terminal dependent command line.
+   * The result can be passed to a {@link ProcessBuilder} to open a terminal and run the command,
+   * allowing user input and showing process output.
+   *
+   * @param cmdString the command to be executed in the terminal
+   * @param pwd       the directory the terminal should run in
+   * @return the array of strings forming the final executed command by the terminal
+   */
   public String[] wrapWithTerminalCommand(String cmdString, Path pwd) {
     return switch (this) {
       case WINDOWS_CMD -> new String[]{
@@ -80,6 +93,11 @@ public enum Terminal {
     };
   }
 
+  /**
+   * Gets the available terminal application options, depending on the current OS.
+   *
+   * @return the array of available terminal applications
+   */
   public static Terminal[] getSystemTerminalOptions() {
     return switch (OS.getOS()) {
       case WINDOWS -> new Terminal[]{WINDOWS_CMD, WINDOWS_POWERSHELL};
@@ -89,10 +107,18 @@ public enum Terminal {
     };
   }
 
+  /**
+   * Returns the default terminal application for the current operating system.
+   *
+   * @return the first entry of the available terminal applications
+   */
   public static Terminal getDefaultSystemTerminal() {
     return getSystemTerminalOptions()[0];
   }
 
+  /**
+   * {@return the string representation name of the terminal application}
+   */
   @Override
   public String toString() {
     return switch (this) {
