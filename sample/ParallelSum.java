@@ -17,7 +17,7 @@ public class ParallelSum {
       nNumbers = Integer.parseInt(userInput.next());
     }
     if (args.length > 1) {
-      nThreads = Integer.parseInt(args[0]);
+      nThreads = Integer.parseInt(args[1]);
     } else {
       System.out.println("How many threads should be used?: ");
       nThreads = Integer.parseInt(userInput.next());
