@@ -10,5 +10,6 @@ module fxui {
   opens fxui to javafx.fxml;
   exports fxui;
   exports fxui.tree;
+  exports fxui.model;
   opens fxui.tree to javafx.fxml;
 }

@@ -6,7 +6,6 @@ import common.Util;
 import fxui.model.AppState;
 import javafx.beans.property.ObjectProperty;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.swing.*;
