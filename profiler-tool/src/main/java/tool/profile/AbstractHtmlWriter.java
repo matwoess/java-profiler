@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public abstract class AbstractHtmlWriter {
-  StringBuilder content = new StringBuilder();
+  final StringBuilder content = new StringBuilder();
   public String title;
   public String[] includeScripts;
   public String[] bodyScripts;

@@ -14,10 +14,10 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MainTest {
-  Path samplesFolder = Path.of("..", "sample");
-  Path simpleExampleFile = samplesFolder.resolve("Simple.java");
-  Path lambdaExampleFile = samplesFolder.resolve("Lambdas.java");
-  Path fibonacciExampleFile = samplesFolder.resolve("Fibonacci.java");
+  final Path samplesFolder = Path.of("..", "sample");
+  final Path simpleExampleFile = samplesFolder.resolve("Simple.java");
+  final Path lambdaExampleFile = samplesFolder.resolve("Lambdas.java");
+  final Path fibonacciExampleFile = samplesFolder.resolve("Fibonacci.java");
 
   @Test
   public void testShowUsage_NoError() {
@@ -127,6 +127,7 @@ public class MainTest {
     Main.main(new String[]{"-r"});
   }
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   public void testReportOnly_MissingMetadataOrCounts() {
     File metadataFile = IO.getMetadataPath().toFile();

@@ -1,9 +1,6 @@
 package tool.instrument;
 
-import tool.model.JClass;
 import tool.model.*;
-import tool.model.BlockType;
-import tool.model.Method;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,22 +9,22 @@ import java.util.Stack;
 import static tool.instrument.Util.*;
 
 public class ParserState {
-  Parser parser;
-  Logger logger;
+  final Parser parser;
+  final Logger logger;
 
   int beginOfImports = 0;
   String packageName = null;
 
-  List<JClass> topLevelClasses = new ArrayList<>();
-  List<Block> allBlocks = new ArrayList<>();
-  Stack<Block> blockBackupStack = new Stack<>();
+  final List<JClass> topLevelClasses = new ArrayList<>();
+  final List<Block> allBlocks = new ArrayList<>();
+  final Stack<Block> blockBackupStack = new Stack<>();
   JClass curClass = null;
   Method curMeth = null;
   Block curBlock = null;
   int curBlockId = 0;
   CodeRegion curCodeRegion;
 
-  List<String> curLabels = new ArrayList<>();
+  final List<String> curLabels = new ArrayList<>();
 
   public ParserState(Parser p) {
     parser = p;

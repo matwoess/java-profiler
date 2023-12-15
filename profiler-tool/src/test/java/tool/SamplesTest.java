@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SamplesTest {
-  Path samplesFolder = Path.of("..", "sample");
+  final Path samplesFolder = Path.of("..", "sample");
 
   @Test
   public void testSimpleSample() {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Method implements Serializable, Component {
-  public String name;
+  public final String name;
   public JClass parentClass;
   public Block methodBlock = null;
 

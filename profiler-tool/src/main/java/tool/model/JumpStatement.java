@@ -7,9 +7,7 @@ import static tool.model.JumpStatement.Kind.*;
 
 public record JumpStatement(Kind kind, String label) implements Serializable {
 
-  public enum Kind {
-    BREAK, CONTINUE, RETURN, YIELD, THROW;
-  }
+  public enum Kind {BREAK, CONTINUE, RETURN, YIELD, THROW}
 
   public boolean stopPropagationAt(Block block) {
     if (label != null) return block.labels.contains(label);

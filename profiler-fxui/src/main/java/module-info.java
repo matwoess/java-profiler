@@ -2,9 +2,9 @@ module fxui {
   requires javafx.controls;
   requires javafx.fxml;
   requires atlantafx.base;
-  requires tool;
   requires java.desktop;
   requires common;
+  requires tool;
 
 
   opens fxui to javafx.fxml;

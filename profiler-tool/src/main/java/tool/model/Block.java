@@ -14,16 +14,16 @@ public class Block implements Serializable, Component {
   public CodePosition end;
   public BlockType blockType;
   public boolean isSingleStatement;
-  public List<Block> innerBlocks = new ArrayList<>();
+  public final List<Block> innerBlocks = new ArrayList<>();
 
   public JumpStatement jumpStatement = null;
-  public List<String> labels = new ArrayList<>();
-  public List<CodeRegion> codeRegions = new ArrayList<>();
+  public final List<String> labels = new ArrayList<>();
+  public final List<CodeRegion> codeRegions = new ArrayList<>();
 
   public int incInsertOffset;
 
   transient public int hits;
-  public transient List<Block> innerJumpBlocks = new ArrayList<>();
+  public final transient List<Block> innerJumpBlocks = new ArrayList<>();
 
   public Block(BlockType type) {
     blockType = type;
@@ -89,10 +89,6 @@ public class Block implements Serializable, Component {
 
   public boolean isActiveInLine(int lineNr) {
     return beg.line() <= lineNr && end.line() >= lineNr;
-  }
-
-  public boolean hasNoBraces() {
-    return isSingleStatement || blockType.hasNoBraces();
   }
 
   public String toString() {

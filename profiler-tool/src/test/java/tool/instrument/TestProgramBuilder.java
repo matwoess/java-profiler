@@ -1,7 +1,6 @@
 package tool.instrument;
 
 import tool.model.*;
-import tool.model.JClass;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

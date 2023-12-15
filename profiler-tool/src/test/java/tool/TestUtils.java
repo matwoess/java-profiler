@@ -94,6 +94,7 @@ public class TestUtils {
       while (entry != null) {
         Path destPath = destDirectory.resolve(entry.getName());
         if (entry.isDirectory()) {
+          //noinspection ResultOfMethodCallIgnored
           destPath.toFile().mkdirs();
         } else {
           Files.copy(zipIn, destPath, StandardCopyOption.REPLACE_EXISTING);

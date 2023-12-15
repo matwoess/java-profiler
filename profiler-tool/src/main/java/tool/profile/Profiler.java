@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.PrimitiveIterator;
 
 public class Profiler {
-  JavaFile mainJavaFile;
-  JavaFile[] additionalJavaFiles;
+  final JavaFile mainJavaFile;
+  final JavaFile[] additionalJavaFiles;
 
   public Profiler(JavaFile mainJavaFile, JavaFile... additionalJavaFiles) {
     this.mainJavaFile = mainJavaFile;

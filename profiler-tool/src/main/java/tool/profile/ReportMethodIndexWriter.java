@@ -11,8 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ReportMethodIndexWriter extends AbstractHtmlWriter {
-  JClass clazz;
-  Path reportSourceFile;
+  final JClass clazz;
+  final Path reportSourceFile;
 
   public ReportMethodIndexWriter(JClass clazz, JavaFile javaFile) {
     this.clazz = clazz;

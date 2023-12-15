@@ -15,15 +15,15 @@ import static fxui.model.RunMode.DEFAULT;
 import static fxui.model.RunMode.REPORT_ONLY;
 
 public class AppState {
-  public ObjectProperty<Path> projectRoot = new SimpleObjectProperty<>(null);
+  public final ObjectProperty<Path> projectRoot = new SimpleObjectProperty<>(null);
 
-  public ObjectProperty<RunMode> runMode = new SimpleObjectProperty<>(DEFAULT);
+  public final ObjectProperty<RunMode> runMode = new SimpleObjectProperty<>(DEFAULT);
 
-  public ObjectProperty<Path> mainFile = new SimpleObjectProperty<>(null);
-  public StringProperty programArgs = new SimpleStringProperty("");
-  public ObjectProperty<Path> sourcesDir = new SimpleObjectProperty<>(null);
-  public BooleanProperty syncCounters = new SimpleBooleanProperty(false);
-  public ObjectProperty<Terminal> terminal = new SimpleObjectProperty<>(Terminal.getDefaultSystemTerminal());
+  public final ObjectProperty<Path> mainFile = new SimpleObjectProperty<>(null);
+  public final StringProperty programArgs = new SimpleStringProperty("");
+  public final ObjectProperty<Path> sourcesDir = new SimpleObjectProperty<>(null);
+  public final BooleanProperty syncCounters = new SimpleBooleanProperty(false);
+  public final ObjectProperty<Terminal> terminal = new SimpleObjectProperty<>(Terminal.getDefaultSystemTerminal());
 
   public BooleanBinding invalidMainFilePath;
   public BooleanBinding invalidSourcesDirPath;

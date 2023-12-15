@@ -1,10 +1,7 @@
 package tool.instrument;
 
-import tool.model.CodeInsert;
 import common.IO;
 import tool.model.*;
-import tool.model.BlockType;
-import tool.model.JavaFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

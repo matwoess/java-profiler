@@ -16,16 +16,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class SystemUtils {
-  public static void chooseFile(ObjectProperty<Path> fileProperty) {
-    FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Choose File");
-    fileChooser.setInitialDirectory(fileProperty.get().toFile());
-    File filePath = fileChooser.showOpenDialog(new Stage());
-    if (filePath != null) {
-      fileProperty.set(filePath.toPath());
-    }
-  }
-
   public static void chooseDirectory(ObjectProperty<Path> dirProperty) {
     DirectoryChooser dirChooser = new DirectoryChooser();
     dirChooser.setTitle("Choose Directory");
@@ -62,7 +52,7 @@ public class SystemUtils {
 
   public static String getJavaRunCommand(String[] toolArguments) {
     String toolJar = tool.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    String commonJar = Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    String commonJar = common.Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String classPath = toolJar;
     if (!commonJar.equals(toolJar)) {
       classPath += OS.getOS().pathSeparator() + commonJar;

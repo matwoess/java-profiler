@@ -10,9 +10,9 @@ public class JClass implements Serializable, Component {
   public ClassType classType;
   public String packageName;
   public JClass parentClass;
-  public List<JClass> innerClasses = new ArrayList<>();
-  public List<Method> methods = new ArrayList<>();
-  public List<Block> classBlocks = new ArrayList<>();
+  public final List<JClass> innerClasses = new ArrayList<>();
+  public final List<Method> methods = new ArrayList<>();
+  public final List<Block> classBlocks = new ArrayList<>();
 
   public JClass(String name, ClassType type) {
     this.name = name;

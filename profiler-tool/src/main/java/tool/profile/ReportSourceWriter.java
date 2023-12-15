@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ReportSourceWriter extends AbstractHtmlWriter {
-  JavaFile javaFile;
+  final JavaFile javaFile;
 
   public ReportSourceWriter(JavaFile javaFile) {
     this.javaFile = javaFile;

@@ -56,7 +56,7 @@ After cloning or downloading the repository, the `Scanner.java` and `Parser.java
 be generated using the [Coco/R library](https://ssw.jku.at/Research/Projects/Coco/Java/Coco.jar).
 
 This can be done automatically by running the provided `generate-parser.sh`  bash script, 
-or the `generate-parser.ps1` PowerShell script in the [scripts/](scripts/) folder. 
+or the `generate-parser.ps1` PowerShell script in the [scripts/](scripts) folder. 
 
 Both should automatically download the library and execute it on the project's [ATG file](profiler-tool/src/main/java/tool/instrument/JavaFile.atg).
 

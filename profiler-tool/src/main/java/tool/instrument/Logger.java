@@ -10,7 +10,7 @@ public class Logger {
   public static final String BRIGHT = "\u001B[97m";
   public static final String RESET = "\u001B[0m";
 
-  Parser parser;
+  final Parser parser;
   public static int indent = 1;
   public boolean active;
 

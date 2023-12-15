@@ -10,7 +10,7 @@ public class CodeRegion implements Serializable, Component {
   public CodePosition beg;
   public CodePosition end;
   public Block block;
-  public List<Block> minusBlocks = new ArrayList<>();
+  public final List<Block> minusBlocks = new ArrayList<>();
 
   public int getHitCount() {
     return block.hits - minusBlocks.stream().mapToInt(b -> b.hits).sum();

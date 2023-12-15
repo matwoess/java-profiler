@@ -81,10 +81,9 @@ public class RecursiveDirectoryWatcher {
             }
           }
           listener.onFileCreated(child);
-        } else if (kind.equals(ENTRY_DELETE)) {
+        }
+        else if (kind.equals(ENTRY_DELETE)) {
           listener.onFileDeleted(child);
-        } else if (kind.equals(ENTRY_MODIFY)) {
-          listener.onFileModified(child);
         }
       }
       boolean valid = key.reset();
@@ -99,8 +98,6 @@ public class RecursiveDirectoryWatcher {
 
   public interface FileEventListener {
     void onFileCreated(Path path);
-
-    void onFileModified(Path path);
 
     void onFileDeleted(Path path);
   }

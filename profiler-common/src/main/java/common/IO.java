@@ -182,10 +182,6 @@ public class IO {
     return Path.of("lastProjectRootDirectory.txt");
   }
 
-  public static boolean isChildPath(Path child, Path parent) {
-    return child.toAbsolutePath().startsWith(parent.toAbsolutePath());
-  }
-
   /**
    * Extract a copy of a resource file from the project directory or the .jar file.
    *

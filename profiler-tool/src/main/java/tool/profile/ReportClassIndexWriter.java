@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class ReportClassIndexWriter extends AbstractHtmlWriter {
-  JavaFile[] allJavaFiles;
+  final JavaFile[] allJavaFiles;
 
   public ReportClassIndexWriter(JavaFile[] allJavaFiles) {
     this.allJavaFiles = allJavaFiles;

@@ -47,6 +47,7 @@ public class ProjectsTest {
       String localFolder = annotation.destinationFolder();
       String repositoryUrl = annotation.repositoryName();
       if (!projectsRoot.resolve(localFolder).toFile().exists()) {
+        //noinspection ResultOfMethodCallIgnored
         projectsRoot.toFile().mkdirs();
         Path zip = TestUtils.downloadGithubRepoZip(projectsRoot, localFolder, repositoryUrl);
         if (zip != null) {

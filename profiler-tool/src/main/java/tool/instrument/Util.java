@@ -30,7 +30,7 @@ public class Util {
 
   public static int getIncInsertOffset(Parser parser, BlockType blockType, boolean isSingleStatement) {
     if (!isSingleStatement && blockType != BlockType.COLON_CASE) { // la == '{'
-      return endOfToken(parser.la) - getBlockBegPos(parser, blockType, isSingleStatement).pos();
+      return endOfToken(parser.la) - getBlockBegPos(parser, blockType, false).pos();
     } else {
       return 0;
     }

@@ -245,10 +245,6 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
   }
 
   @Override
-  public void onFileModified(Path path) {
-  }
-
-  @Override
   public void onFileDeleted(Path path) {
     appState.invalidateFileBindings();
   }
