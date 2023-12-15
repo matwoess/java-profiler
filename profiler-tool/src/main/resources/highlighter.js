@@ -64,16 +64,18 @@ function highlightSelection() {
     if (preLastClass.startsWith(blockPrefix)) {
       setColor($('span.' + preLastClass), hoverBlockColor);
     }
-    setColor($('span.' + lastClass), hoverRegionColor);
-    setFontWeight($('span.' + lastClass), 'bold');
+    const hoverRegionSpans = $('span.' + lastClass);
+    setColor(hoverRegionSpans, hoverRegionColor);
+    setFontWeight(hoverRegionSpans, 'bold');
   } else if (lastClass.startsWith(blockPrefix)) {
     setColor($('span.' + lastClass), hoverBlockColor);
   }
   classList.forEach(function (cls) {
     if (cls.startsWith(minusPrefix)) {
-      const blockClass = cls.replace('m', 'b');
-      setColor($('span.' + blockClass), minusBlockColor);
-      setFontWeight($('span.' + blockClass), 'bold');
+      const blockClass = cls.replace(minusPrefix, blockPrefix);
+      const minusBlockSpans = $('span.' + blockClass);
+      setColor(minusBlockSpans, minusBlockColor);
+      setFontWeight(minusBlockSpans, 'bold');
     }
   })
 }
