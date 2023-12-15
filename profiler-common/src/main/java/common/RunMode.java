@@ -1,4 +1,4 @@
-package fxui.model;
+package common;
 
 /**
  * The possible run modes of the tool.

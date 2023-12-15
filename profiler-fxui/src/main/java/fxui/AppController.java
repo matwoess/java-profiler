@@ -3,7 +3,7 @@ package fxui;
 import common.IO;
 import common.Util;
 import fxui.model.AppState;
-import fxui.model.RunMode;
+import common.RunMode;
 import fxui.model.Terminal;
 import fxui.tree.JavaProjectTree;
 import fxui.util.BindingUtils;

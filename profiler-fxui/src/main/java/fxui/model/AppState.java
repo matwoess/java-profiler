@@ -1,6 +1,7 @@
 package fxui.model;
 
 import common.IO;
+import common.RunMode;
 import fxui.util.BindingUtils;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
@@ -11,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static fxui.model.RunMode.DEFAULT;
-import static fxui.model.RunMode.REPORT_ONLY;
+import static common.RunMode.DEFAULT;
+import static common.RunMode.REPORT_ONLY;
 
 public class AppState {
   public final ObjectProperty<Path> projectRoot = new SimpleObjectProperty<>(null);

@@ -1,5 +1,6 @@
 package tool;
 
+import common.RunMode;
 import common.Util;
 import tool.instrument.Instrumenter;
 import tool.model.JavaFile;
@@ -19,7 +20,8 @@ public class Main {
     if (args.length == 0) {
       invalidUsage();
     }
-    boolean instrumentOnly = false, reportOnly = false, syncCounters = false, verboseOutput = false;
+    RunMode runMode = RunMode.DEFAULT;
+    boolean syncCounters = false, verboseOutput = false;
     Path sourcesDir = null;
     int i = 0;
     for (; i < args.length; i++) {
@@ -33,8 +35,14 @@ public class Main {
         }
         case "-s", "--synchronized" -> syncCounters = true;
         case "-v", "--verbose" -> verboseOutput = true;
-        case "-i", "--instrument-only" -> instrumentOnly = true;
-        case "-r", "--generate-report" -> reportOnly = true;
+        case "-i", "--instrument-only" -> {
+          if (runMode != RunMode.DEFAULT) invalidUsage();
+          runMode = RunMode.INSTRUMENT_ONLY;
+        }
+        case "-r", "--generate-report" -> {
+          if (runMode != RunMode.DEFAULT) invalidUsage();
+          runMode = RunMode.REPORT_ONLY;
+        }
         case "-d", "--sources-directory" -> {
           if (i + 1 >= args.length) invalidUsage();
           sourcesDir = Path.of(args[++i]);
@@ -47,20 +55,26 @@ public class Main {
       }
     }
     args = Arrays.copyOfRange(args, i, args.length);
-    if (instrumentOnly && reportOnly) invalidUsage();
-    if (reportOnly) {
-      if (args.length > 0) invalidUsage();
-      generateReportOnly();
-    } else if (instrumentOnly) {
-      if (args.length != 1) invalidUsage();
-      Path target = Path.of(args[0]);
-      instrumentOnly(target, syncCounters, verboseOutput);
-    } else {
-      if (args.length == 0) invalidUsage();
-      Path mainFile = Path.of(args[0]);
-      assertJavaSourceFile(mainFile);
-      String[] programArgs = Arrays.copyOfRange(args, 1, args.length);
-      instrumentCompileAndRun(sourcesDir, mainFile, programArgs, syncCounters, verboseOutput);
+    Path targetPath = null;
+    if (args.length > 0) {
+      targetPath = Path.of(args[0]);
+    }
+    switch (runMode) {
+      case REPORT_ONLY -> {
+        if (args.length > 0) invalidUsage();
+        generateReportOnly();
+      }
+      case INSTRUMENT_ONLY -> {
+        if (args.length != 1) invalidUsage();
+        assert targetPath != null;
+        instrumentOnly(targetPath, syncCounters, verboseOutput);
+      }
+      case DEFAULT ->  {
+        if (args.length == 0) invalidUsage();
+        assertJavaSourceFile(targetPath);
+        String[] programArgs = Arrays.copyOfRange(args, 1, args.length);
+        instrumentCompileAndRun(sourcesDir, targetPath, programArgs, syncCounters, verboseOutput);
+      }
     }
   }
 
