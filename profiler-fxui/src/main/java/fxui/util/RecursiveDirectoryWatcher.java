@@ -81,8 +81,7 @@ public class RecursiveDirectoryWatcher {
             }
           }
           listener.onFileCreated(child);
-        }
-        else if (kind.equals(ENTRY_DELETE)) {
+        } else if (kind.equals(ENTRY_DELETE)) {
           listener.onFileDeleted(child);
         }
       }
@@ -97,8 +96,8 @@ public class RecursiveDirectoryWatcher {
   }
 
   public interface FileEventListener {
-    void onFileCreated(Path path);
+    void onFileCreated(@SuppressWarnings("unused") Path path);
 
-    void onFileDeleted(Path path);
+    void onFileDeleted(@SuppressWarnings("unused") Path path);
   }
 }

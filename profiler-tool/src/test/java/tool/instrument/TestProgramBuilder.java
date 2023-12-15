@@ -225,7 +225,7 @@ public class TestProgramBuilder {
       }
       builder.append(")");
     }
-    if (block.blockType == BlockType.COLON_CASE) {
+    if (block.blockType.hasNoBraces()) {
       builder.append(".noIncOffset()");
     } else if (block.incInsertOffset > 1) { // set and not just length of '{'
       builder.append(".incOffset(").append(block.incInsertOffset).append(")");
