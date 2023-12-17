@@ -395,7 +395,7 @@ public class ParserState {
     Token nextToken = missingBraces ? parser.la : parser.scanner.Peek();
     if (validCodeRegionStartToken(nextToken)) {
       startCodeRegion(blockType, missingBraces);
-      curCodeRegion.minusBlocks.addAll(curBlock.innerJumpBlocks);
+      curCodeRegion.dependantJumps.addAll(curBlock.innerJumpBlocks);
     }
   }
 

@@ -154,7 +154,7 @@ public class Instrumenter {
    * Exports the metadata file.
    */
   public void exportMetadata() {
-    new Metadata(blockCounter, javaFiles).exportMetadata();
+    new Metadata(blockCounter, javaFiles).exportMetadata(IO.getMetadataPath());
   }
 
   /**

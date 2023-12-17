@@ -186,10 +186,10 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     String classes = activeBlocks.stream().map(b -> "b" + b.id).collect(Collectors.joining(" "));
     if (region != null) {
       classes += " r" + activeBlocks.get(activeBlocks.size() - 1).id + "_" + region.id;
-      if (!region.minusBlocks.isEmpty()) {
+      if (!region.dependantJumps.isEmpty()) {
         title += " ("
             + region.block.hits + " - "
-            + region.minusBlocks.stream()
+            + region.dependantJumps.stream()
             .map(b -> String.valueOf(b.hits))
             .collect(Collectors.joining(" - "))
             + ")";
@@ -200,7 +200,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   }
 
   private static String getMinusBlockClasses(CodeRegion region) {
-    return region.minusBlocks.stream().distinct().map(b -> "m" + b.id).collect(Collectors.joining(" "));
+    return region.dependantJumps.stream().distinct().map(b -> "m" + b.id).collect(Collectors.joining(" "));
   }
 
   private List<Block> getActiveBlocksAtCharPosition(int chPos) {

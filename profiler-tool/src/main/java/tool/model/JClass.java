@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class is used to store information about a java class.
+ * <p>
+ * Contains information about its name, the package, the parent class and the inner classes.
+ * <p>
+ * It also contains a list of methods and a list of class-level blocks.
+ */
 public class JClass implements Serializable, Component {
   public String name;
   public ClassType classType;
@@ -14,11 +21,22 @@ public class JClass implements Serializable, Component {
   public final List<Method> methods = new ArrayList<>();
   public final List<Block> classBlocks = new ArrayList<>();
 
+  /**
+   * Creates a new JClass with the given name and class type.
+   * @param name the name of the class
+   * @param type the class type (one of {@link ClassType})
+   */
   public JClass(String name, ClassType type) {
     this.name = name;
     this.classType = type;
   }
 
+  /**
+   * Registers this class as a nested inner class of the given parent class.
+   * <p>
+   * If the name is empty, it will be assigned a number based on the number of already registered anonymous classes.
+   * @param parentClass the containing parent class
+   */
   public void setParentClass(JClass parentClass) {
     if (parentClass == null) return;
     if (name == null) {
@@ -29,6 +47,11 @@ public class JClass implements Serializable, Component {
     parentClass.innerClasses.add(this);
   }
 
+  /**
+   * Returns the name of this class, including the parent class name if it is an inner class,
+   * separated by a <code>$</code>.
+   * @return the name of this class
+   */
   public String getName() {
     if (parentClass != null) {
       return parentClass.getName() + "$" + name;
@@ -37,6 +60,10 @@ public class JClass implements Serializable, Component {
     }
   }
 
+  /**
+   * Returns the full name of this class, including the package name.
+   * @return the full name of this class
+   */
   public String getFullName() {
     if (packageName == null) {
       return getName();
@@ -50,6 +77,10 @@ public class JClass implements Serializable, Component {
     return this.getName();
   }
 
+  /**
+   * Returns a list of all inner classes recursively.
+   * @return the list of child classes
+   */
   public List<JClass> getClassesRecursive() {
     List<JClass> allClasses = new ArrayList<>(innerClasses);
     for (JClass clazz : innerClasses) {
@@ -58,6 +89,10 @@ public class JClass implements Serializable, Component {
     return allClasses;
   }
 
+  /**
+   * Returns a list of all methods in this class and all inner classes recursively.
+   * @return all methods in this class and all inner classes
+   */
   public List<Method> getMethodsRecursive() {
     List<Method> allMethods = new ArrayList<>(methods);
     for (JClass clazz : innerClasses) {
@@ -66,6 +101,10 @@ public class JClass implements Serializable, Component {
     return allMethods;
   }
 
+  /**
+   * Returns the sum of hits for all method blocks in this class and all inner classes recursively.
+   * @return the total number of hits for any method is this top-level class
+   */
   public int getAggregatedMethodBlockCounts() {
     return getMethodsRecursive().stream()
         .filter(m -> !m.isAbstract())
@@ -74,6 +113,10 @@ public class JClass implements Serializable, Component {
         .sum();
   }
 
+  /**
+   * Returns a list of all blocks in this class and all inner classes recursively.
+   * @return the list of all blocks contained inside this class
+   */
   public List<Block> getBlocksRecursive() {
     List<Block> allBlocks = new ArrayList<>();
     allBlocks.addAll(classBlocks);

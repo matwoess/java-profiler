@@ -6,6 +6,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model class representing a java file.
+ * <p>
+ * Stores the package name, the top level classes and the found blocks.
+ * <p>
+ * It also stores the source file path and the relative path to the sources root.
+ */
 public class JavaFile implements Serializable {
   public int beginOfImports = 0;
   public String packageName;
@@ -14,16 +21,30 @@ public class JavaFile implements Serializable {
   public transient Path sourceFile;
   public transient Path relativePath;
 
+  /**
+   * Creates a new JavaFile with the given source file and sources root.
+   * <p>
+   * The relative path is calculated based on the sources root.
+   * @param sourceFile the source file
+   * @param sourcesRoot the top-level sources root directory
+   */
   public JavaFile(Path sourceFile, Path sourcesRoot) {
     this.sourceFile = sourceFile;
     this.relativePath = sourcesRoot.relativize(sourceFile);
   }
 
+  /**
+   * Like {@link JavaFile#JavaFile(Path, Path)} but relative to the current working directory.
+   */
   public JavaFile(Path sourceFile) {
     this.sourceFile = sourceFile;
     this.relativePath = sourceFile.getFileName();
   }
 
+  /**
+   * Returns a list of all classes in this file, including inner classes recursively.
+   * @return the list of all classes in this file
+   */
   public List<JClass> getClassesRecursive() {
     List<JClass> allClasses = new ArrayList<>(topLevelClasses);
     for (JClass clazz : topLevelClasses) {
@@ -32,6 +53,11 @@ public class JavaFile implements Serializable {
     return allClasses;
   }
 
+  /**
+   * Custom serialization method, storing paths as strings.
+   * @param oos the output stream
+   * @throws IOException if any IO error occurs
+   */
   @Serial
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.defaultWriteObject();
@@ -39,6 +65,12 @@ public class JavaFile implements Serializable {
     oos.writeUTF(relativePath.toString());
   }
 
+  /**
+   * Custom deserialization method, reading paths from strings.
+   * @param ois the input stream
+   * @throws IOException if any IO error occurs
+   * @throws ClassNotFoundException if any class cannot be found
+   */
   @Serial
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();

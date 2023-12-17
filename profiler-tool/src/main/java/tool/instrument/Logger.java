@@ -99,7 +99,7 @@ public class Logger {
       );
     }
     if (comp instanceof CodeRegion region) {
-      List<String> minusBlockLineNrs = region.minusBlocks.stream()
+      List<String> minusBlockLineNrs = region.dependantJumps.stream()
           .map(b -> String.valueOf(b.beg.line()))
           .toList();
       return String.format(

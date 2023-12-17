@@ -66,7 +66,7 @@ public class Profiler {
     if (mainJavaFile != null) {
       allJavaFiles = Util.prependToArray(additionalJavaFiles, mainJavaFile);
     } else {
-      allJavaFiles = Metadata.importMetadata().javaFiles();
+      allJavaFiles = Metadata.importMetadata(IO.getMetadataPath()).javaFiles();
     }
     addHitCountToJavaFileBlocks(allJavaFiles);
     IO.clearDirectoryContents(IO.getReportDir());
