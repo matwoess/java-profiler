@@ -8,17 +8,34 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 import static tool.model.JumpStatement.Kind.THROW;
 
+/**
+ * This class is used to instrument the source files of a Java project.
+ * <p>
+ * It uses the {@link Parser} to parse the source files and find all code blocks.
+ * <p>
+ * It then inserts code to increment the counter for each code block.
+ * <p>
+ * Finally, it writes the instrumented source files to the instrumented directory.
+ */
 public class Instrumenter {
   JavaFile[] javaFiles;
   int blockCounter;
   public String incRefAdd;
   boolean verboseOutput;
 
+  /**
+   * Creates a new Instrumenter with the given source files.
+   *
+   * @param syncCounters  whether the counters should be incremented in a synchronized way
+   * @param verboseOutput whether the parser should print verbose output
+   * @param javaFiles     the source files to instrument
+   */
   public Instrumenter(boolean syncCounters, boolean verboseOutput, JavaFile... javaFiles) {
     assert javaFiles.length > 0;
     this.verboseOutput = verboseOutput;
@@ -26,12 +43,20 @@ public class Instrumenter {
     this.javaFiles = javaFiles;
   }
 
+  /**
+   * Parses all source files and find all code blocks.
+   */
   public void analyzeFiles() {
-    for (JavaFile javaFile : javaFiles) {
-      analyze(javaFile);
-    }
+    Arrays.stream(javaFiles).forEach(this::analyze);
   }
 
+  /**
+   * Parses the given source file and finds all code blocks.
+   * <p>
+   * The found code blocks and additional metadata are stored in the given JavaFile object.
+   *
+   * @param javaFile the source file to parse
+   */
   void analyze(JavaFile javaFile) {
     System.out.println("Parsing file: \"" + javaFile.sourceFile + "\"");
     Parser parser = new Parser(new Scanner(javaFile.sourceFile.toString()));
@@ -47,6 +72,11 @@ public class Instrumenter {
     javaFile.topLevelClasses = parser.state.topLevelClasses;
   }
 
+  /**
+   * Instruments all source files.
+   * <p>
+   * The instrumented copy of each source file is then written to the instrumented directory.
+   */
   public void instrumentFiles() {
     IO.clearDirectoryContents(IO.getInstrumentDir());
     blockCounter = 0;
@@ -62,6 +92,12 @@ public class Instrumenter {
     System.out.println("Total code block found: " + blockCounter);
   }
 
+  /**
+   * Instruments the given source file and writes the instrumented copy to the instrumented directory.
+   *
+   * @param javaFile the source file to instrument
+   * @throws IOException if the source file or instrumented file cannot be read or written
+   */
   void instrument(JavaFile javaFile) throws IOException {
     List<CodeInsert> codeInserts = getCodeInserts(javaFile);
     String fileContent = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
@@ -78,6 +114,13 @@ public class Instrumenter {
     Files.writeString(instrumentedFilePath, builder.toString());
   }
 
+  /**
+   * Returns a list of <code>CodeInsert</code> objects
+   * that represent the code to be inserted into the given source file.
+   *
+   * @param javaFile the source file to instrument
+   * @return a list of CodeInsert objects that represent the code to be inserted into the given source file
+   */
   List<CodeInsert> getCodeInserts(JavaFile javaFile) {
     List<CodeInsert> inserts = new ArrayList<>();
     inserts.add(new CodeInsert(javaFile.beginOfImports, "import auxiliary.__Counter;"));
@@ -107,11 +150,18 @@ public class Instrumenter {
     return inserts;
   }
 
+  /**
+   * Exports the metadata file.
+   */
   public void exportMetadata() {
     new Metadata(blockCounter, javaFiles).exportMetadata();
   }
 
-
+  /**
+   * Copies the auxiliary files into the auxiliary directory.
+   * <p>
+   * Specifically, it copies the <code>__Counter.class</code> file to the auxiliary directory.
+   */
   public static void copyAuxiliaryFiles() {
     IO.copyResource(Instrumenter.class, "auxiliary/__Counter.class", IO.getAuxiliaryCounterInstrumentPath());
   }
