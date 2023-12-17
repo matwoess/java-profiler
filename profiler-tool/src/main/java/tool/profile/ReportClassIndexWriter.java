@@ -7,9 +7,18 @@ import tool.model.JavaFile;
 import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * The writer class for the class index overview page.
+ * This is the main page of the report.
+ */
 public class ReportClassIndexWriter extends AbstractHtmlWriter {
-  final JavaFile[] allJavaFiles;
+  private final JavaFile[] allJavaFiles;
 
+  /**
+   * Creates a new {@link ReportClassIndexWriter} object.
+   *
+   * @param allJavaFiles the list of all java files contained in the project
+   */
   public ReportClassIndexWriter(JavaFile[] allJavaFiles) {
     this.allJavaFiles = allJavaFiles;
     title = "Classes";
@@ -36,11 +45,17 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         """;
   }
 
+  /**
+   * Generates the main content of the HTML document by calling {@link #sortedClassTable}.
+   */
   @Override
   public void body() {
     sortedClassTable();
   }
 
+  /**
+   * Appends a table of all classes sorted by the number of method invocations to the internal <code>content</code>.
+   */
   public void sortedClassTable() {
     Map<JClass, JavaFile> fileByClass = new HashMap<>();
     for (JavaFile jFile : allJavaFiles) {
@@ -72,6 +87,10 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     content.append("</table>\n");
   }
 
+  /**
+   * Defines the output path for the generated HTML document as {@link IO#getReportIndexPath}.
+   * @return
+   */
   @Override
   public Path getFileOutputPath() {
     return IO.getReportIndexPath();

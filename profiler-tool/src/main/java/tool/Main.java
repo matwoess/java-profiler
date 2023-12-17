@@ -15,7 +15,17 @@ import java.util.stream.Stream;
 import static common.Util.assertJavaSourceFile;
 import static common.Util.isJavaFile;
 
+/**
+ * Main class of the profiler tool.
+ * <p>
+ * Parses the command line arguments and calls the appropriate methods.
+ */
 public class Main {
+  /**
+   * Main entry point of the profiler tool.
+   *
+   * @param args the command line arguments specifying options and the main file to profile
+   */
   public static void main(String[] args) throws IllegalArgumentException {
     if (args.length == 0) {
       invalidUsage();
@@ -117,7 +127,7 @@ public class Main {
     profiler.createSymLinkForReport();
   }
 
-  public static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path exceptFor) {
+  private static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path exceptFor) {
     try (Stream<Path> walk = Files.walk(sourcesFolder)) {
       return walk
           .filter(path -> Files.isRegularFile(path) && !path.equals(exceptFor) && isJavaFile(path))
@@ -128,7 +138,7 @@ public class Main {
     }
   }
 
-  static void printUsage() {
+  private static void printUsage() {
     System.out.println("""
         Usage: profiler [options] <main file> [program args]
         Or   : profiler [options] <run mode>
@@ -148,7 +158,7 @@ public class Main {
         """);
   }
 
-  static void invalidUsage() throws IllegalArgumentException {
+  private static void invalidUsage() throws IllegalArgumentException {
     printUsage();
     throw new IllegalArgumentException("invalid arguments");
   }

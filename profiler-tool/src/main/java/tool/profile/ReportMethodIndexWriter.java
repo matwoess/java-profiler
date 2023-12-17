@@ -10,10 +10,19 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * The writer class for the method index overview page of a java class.
+ * This page lists all methods of a class sorted by the number of invocations.
+ */
 public class ReportMethodIndexWriter extends AbstractHtmlWriter {
-  final JClass clazz;
-  final Path reportSourceFile;
+  private final JClass clazz;
+  private final Path reportSourceFile;
 
+  /**
+   * Creates a new {@link ReportMethodIndexWriter} object.
+   * @param clazz the java class to write the method index for
+   * @param javaFile the java file containing the class
+   */
   public ReportMethodIndexWriter(JClass clazz, JavaFile javaFile) {
     this.clazz = clazz;
     this.reportSourceFile = IO.getReportSourceFilePath(javaFile.relativePath);
@@ -41,11 +50,17 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         """;
   }
 
+  /**
+   * Generates the main content of the HTML document by calling {@link #sortedMethodTable}.
+   */
   @Override
   public void body() {
     sortedMethodTable();
   }
 
+  /**
+   * Appends a table of all methods sorted by the number of invocations to the internal <code>content</code>.
+   */
   public void sortedMethodTable() {
     List<Method> sortedMethods = clazz.getMethodsRecursive().stream()
         .filter(method -> !method.isAbstract())
@@ -71,6 +86,11 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
     content.append("</table>\n");
   }
 
+  /**
+   * Returns the path to the HTML file
+   * to write to by calling {@link IO#getReportMethodIndexPath(String)} for the current class name.
+   * @return the path to the HTML file to write the method index to
+   */
   @Override
   public Path getFileOutputPath() {
     return IO.getReportMethodIndexPath(clazz.name);
