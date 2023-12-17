@@ -10,6 +10,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the run command preview dialog.
+ */
 public class CommandController {
   Stage dialogStage;
 
@@ -18,6 +21,9 @@ public class CommandController {
   @FXML
   private Button btnCopyToClipboard;
 
+  /**
+   * Border to be set when the copy button is clicked.
+   */
   private static final Border clickedBorder = new Border(
       new BorderStroke(
           Color.GREEN,
@@ -28,6 +34,11 @@ public class CommandController {
   );
 
 
+  /**
+   * Initializes the UI of the dialog.
+   *
+   * @param stage the stage of the dialog
+   */
   public void initUI(Stage stage) {
     this.dialogStage = stage;
     stage.setTitle("Run Command Preview");
@@ -38,10 +49,18 @@ public class CommandController {
     });
   }
 
+  /**
+   * Sets the run command to be displayed in the dialog.
+   *
+   * @param runCommand the run command to be displayed
+   */
   public void setRunCommand(String runCommand) {
     txtRunCommand.textProperty().set(runCommand);
   }
 
+  /**
+   * Copies the shown run command to the system clipboard.
+   */
   @FXML
   private void copyCommandToClipboard() {
     Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -51,6 +70,9 @@ public class CommandController {
     btnCopyToClipboard.borderProperty().set(clickedBorder);
   }
 
+  /**
+   * Closes the dialog by closing the stage.
+   */
   @FXML
   private void closeDialog() {
     dialogStage.close();

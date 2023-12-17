@@ -16,20 +16,30 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 
+/**
+ * Helper class for the JavaProjectTree.
+ * <p>
+ * Provides custom cell rendering for tree items, based on whether they match selected or relevant paths.
+ * Further, it shows custom icons for directories and java files.
+ */
 class SelectableTreeCell extends TreeCell<File> {
 
-  static final Image folderIcon = new Image(Objects.requireNonNull(JavaProjectTree.class.getResourceAsStream("folder-icon.png")));
-  static final Image jFileIcon = new Image(Objects.requireNonNull(JavaProjectTree.class.getResourceAsStream("java-icon.png")));
+  private static final Image folderIcon = new Image(Objects.requireNonNull(JavaProjectTree.class.getResourceAsStream("folder-icon.png")));
+  private static final Image jFileIcon = new Image(Objects.requireNonNull(JavaProjectTree.class.getResourceAsStream("java-icon.png")));
 
-  static final Background selectedItemColor = Background.fill(Color.color(.9, .9, .9, .15));
-  static final Background outDirColor = Background.fill(Color.color(.9, .4, .1, .2));
-  static final Background outDirSelColor = Background.fill(Color.color(.9, .4, .1, .3));
-  static final Background srcDirColor = Background.fill(Color.color(.1, .2, .8, .2));
-  static final Background srcDirSelColor = Background.fill(Color.color(.1, .2, .8, .3));
-  static final Background mainFileColor = Background.fill(Color.color(.1, .5, .1, .2));
-  static final Background mainFileSelColor = Background.fill(Color.color(.1, .5, .1, .3));
+  private static final Background selectedItemColor = Background.fill(Color.color(.9, .9, .9, .15));
+  private static final Background outDirColor = Background.fill(Color.color(.9, .4, .1, .2));
+  private static final Background outDirSelColor = Background.fill(Color.color(.9, .4, .1, .3));
+  private static final Background srcDirColor = Background.fill(Color.color(.1, .2, .8, .2));
+  private static final Background srcDirSelColor = Background.fill(Color.color(.1, .2, .8, .3));
+  private static final Background mainFileColor = Background.fill(Color.color(.1, .5, .1, .2));
+  private static final Background mainFileSelColor = Background.fill(Color.color(.1, .5, .1, .3));
 
 
+  /**
+   * Creates a new SelectableTreeCell and sets up all bindings for the cell.
+   * @param appState the app state used for the bindings
+   */
   public SelectableTreeCell(AppState appState) {
     BooleanBinding isSelectedDir = Bindings.createBooleanBinding(
         () -> {
@@ -77,12 +87,23 @@ class SelectableTreeCell extends TreeCell<File> {
     borderProperty().bind(BindingUtils.createSelectedTreeItemBorderBinding(isOutDir, isSelectedDir, isSelectedMain));
   }
 
+  /**
+   * Updates the item text.
+   * @param item the item to update the text for
+   * @param empty whether the item is empty
+   */
   @Override
   protected void updateItem(File item, boolean empty) {
     super.updateItem(item, empty);
     setText((empty || item == null) ? "" : item.getName());
   }
 
+  /**
+   * Returns the graphic for the tree item.
+   * <p>
+   * The graphic is either a folder icon or a java file icon, depending on the item type.
+   * @return the graphic for the tree item
+   */
   private ImageView getItemGraphic() {
     if (itemProperty().isNotNull().get()) {
       return itemProperty().get().isDirectory() ? new ImageView(folderIcon) : new ImageView(jFileIcon);
@@ -90,7 +111,17 @@ class SelectableTreeCell extends TreeCell<File> {
     return null;
   }
 
-  public Background getItemBackgroundColor(boolean isOutDir, boolean isSelectedDir, boolean isSelectedMain) {
+  /**
+   * Returns the background color for the tree item.
+   * <p>
+   * The background color depends on whether the item is the output directory, the sources directory or the main file.
+   * Further, the background color depends on whether the item is selected.
+   * @param isOutDir whether the item is the output directory
+   * @param isSelectedDir whether the item is the sources directory
+   * @param isSelectedMain whether the item is the main file
+   * @return the background color for the tree item
+   */
+  private Background getItemBackgroundColor(boolean isOutDir, boolean isSelectedDir, boolean isSelectedMain) {
     if (isOutDir) {
       return isSelected() ? outDirSelColor : outDirColor;
     }

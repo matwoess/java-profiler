@@ -14,15 +14,36 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * This class is used to display the project directory as a tree view and interact with it.
+ * It provides the possibility to select the sources directory and the main file as parameters.
+ */
 public class JavaProjectTree {
+  /**
+   * A comparator that sorts files alphabetically with directories before files.
+   */
   private static final Comparator<File> treeComparator = new DirectoryBeforeFileComparator();
   private final AppState appState;
 
+  /**
+   * Creates a new JavaProjectTree.
+   * <p>
+   * The tree will be automatically populated with the project directory contents.
+   * Directories not containing any ".java" files are filtered out, leaf notes are always ".java" files.
+   *
+   * @param appState       the app state to update when selecting files
+   * @param treeProjectDir the FxUI view to render the tree in
+   */
   public JavaProjectTree(AppState appState, TreeView<File> treeProjectDir) {
     this.appState = appState;
     initTreeView(treeProjectDir);
   }
 
+  /**
+   * Initializes the tree view with the project directory contents, sets up the context menu and the keypress listener.
+   *
+   * @param treeProjectDir the FxUI view the tree is rendered in
+   */
   private void initTreeView(TreeView<File> treeProjectDir) {
     File rootDir = appState.projectRoot.get().toFile();
     TreeItem<File> root = populateTree(rootDir);
@@ -37,6 +58,14 @@ public class JavaProjectTree {
     treeProjectDir.setCellFactory(tv -> new SelectableTreeCell(appState));
   }
 
+  /**
+   * Initializes the context menu for the tree view.
+   * <p>
+   * The context menu contains a single item
+   * that allows to choose the selected tree item as the sources directory or the main file.
+   *
+   * @param treeProjectDir the FxUI view the tree is rendered in
+   */
   private void initContextMenu(TreeView<File> treeProjectDir) {
     ContextMenu contextMenu = new ContextMenu();
     MenuItem selectItem = new MenuItem();
@@ -53,7 +82,15 @@ public class JavaProjectTree {
     treeProjectDir.setContextMenu(contextMenu);
   }
 
-  public TreeItem<File> populateTree(File directory) {
+  /**
+   * Populates the tree with the contents of the given directory.
+   * <p>
+   * Directories not containing any ".java" files are filtered out, leaf notes are always ".java" files.
+   *
+   * @param directory the directory to populate the tree with
+   * @return the populated tree
+   */
+  private TreeItem<File> populateTree(File directory) {
     File[] itemsInDir = directory.listFiles();
     TreeItem<File> folder = new TreeItem<>(directory);
     if (itemsInDir == null) return folder;
@@ -71,6 +108,14 @@ public class JavaProjectTree {
     return folder;
   }
 
+  /**
+   * Selects the given tree item as the sources directory or the main file.
+   * <p>
+   * If the selected item is a directory, it is selected as the sources directory.
+   * If the selected item is a file, it is selected as the main file.
+   *
+   * @param selected the selected tree item
+   */
   private void selectTreeItem(TreeItem<File> selected) {
     if (selected == null) return;
     File value = selected.getValue();

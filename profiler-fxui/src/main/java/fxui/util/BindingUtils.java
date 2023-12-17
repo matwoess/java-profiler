@@ -11,6 +11,9 @@ import javafx.util.StringConverter;
 
 import java.nio.file.Path;
 
+/**
+ * This class contains utility methods for creating bindings.
+ */
 public class BindingUtils {
   private static final Border invalidBorder = new Border(
       new BorderStroke(
@@ -47,6 +50,9 @@ public class BindingUtils {
   );
   private static final Border neutralBorder = null;
 
+  /**
+   * This StringConverter is used to convert a Path to a String and vice versa.
+   */
   public static final StringConverter<Path> pathStringConverter = new StringConverter<>() {
     @Override
     public String toString(Path object) {
@@ -59,30 +65,56 @@ public class BindingUtils {
     }
   };
 
-  public static ObjectBinding<Border> createBorderBinding(StringProperty textProperty, BooleanBinding invalidityBinding) {
+  /**
+   * Specialized version of {@link #createBorderBinding(ObjectProperty, BooleanBinding)} for StringProperties.
+   * <p>
+   * The neutral border is returned if the property is empty (not null).
+   */
+  public static ObjectBinding<Border> createBorderBinding(StringProperty stringProperty, BooleanBinding invalidityBinding) {
     return Bindings.createObjectBinding(
         () -> {
-          if (textProperty.isEmpty().get()) return neutralBorder;
+          if (stringProperty.isEmpty().get()) return neutralBorder;
           if (invalidityBinding.get()) return invalidBorder;
           else return validBorder;
         },
-        textProperty,
+        stringProperty,
         invalidityBinding
     );
   }
 
-  public static ObjectBinding<Border> createBorderBinding(ObjectProperty<Path> fileProperty, BooleanBinding invalidityBinding) {
+  /**
+   * Creates a binding that returns a Border depending on the validity of the property.
+   * <p>
+   * If the property is null, the neutral border is returned.
+   * If the invalidity-binding is true, the invalid border is returned.
+   * Otherwise, the valid border is returned.
+   * <p>
+   * The binding is invalidated when the property or the invalidity-binding changes.
+   *
+   * @param property          the property to check
+   * @param invalidityBinding the binding that determines whether the property is invalid
+   * @param <T>               the generic type of the property
+   * @return the created binding
+   */
+  public static <T> ObjectBinding<Border> createBorderBinding(ObjectProperty<T> property, BooleanBinding invalidityBinding) {
     return Bindings.createObjectBinding(
         () -> {
-          if (fileProperty.isNull().get()) return neutralBorder;
+          if (property.isNull().get()) return neutralBorder;
           if (invalidityBinding.get()) return invalidBorder;
           else return validBorder;
         },
-        fileProperty,
+        property,
         invalidityBinding
     );
   }
 
+  /**
+   * Creates a binding for whether the file property is a valid java file, relative to the parent directory property.
+   *
+   * @param parentDirProperty the parent directory property
+   * @param fileProperty      the file property
+   * @return the created binding, telling us whether the file is a valid java file
+   */
   public static BooleanBinding creatRelativeIsJavaFileBinding(ObjectProperty<Path> parentDirProperty, ObjectProperty<Path> fileProperty) {
     return Bindings.createBooleanBinding(
         () -> {
@@ -95,6 +127,13 @@ public class BindingUtils {
     );
   }
 
+  /**
+   * Creates a binding for whether the directory property is a valid directory,
+   * relative to the parent directory property.
+   *
+   * @param dirProperty the directory property
+   * @return the created binding, telling us whether the directory is a valid directory
+   */
   public static BooleanBinding createIsDirectoryBinding(ObjectProperty<Path> dirProperty) {
     return Bindings.createBooleanBinding(
         () -> {
@@ -105,6 +144,13 @@ public class BindingUtils {
     );
   }
 
+  /**
+   * Like {@link #createIsDirectoryBinding(ObjectProperty)}, but relative to the parent directory property.
+   *
+   * @param parentDirProperty the parent directory property
+   * @param dirProperty       the directory property
+   * @return the created binding, telling us whether the directory is a valid directory
+   */
   public static BooleanBinding createRelativeIsDirectoryBinding(ObjectProperty<Path> parentDirProperty, ObjectProperty<Path> dirProperty) {
     return Bindings.createBooleanBinding(
         () -> {
@@ -117,6 +163,13 @@ public class BindingUtils {
     );
   }
 
+  /**
+   * Creates a binding for whether the file path property exists, relative to the parent directory property.
+   *
+   * @param parentDirProperty the parent directory property
+   * @param relFilePath       the relative file path
+   * @return the created binding, telling us whether the file exists
+   */
   public static BooleanBinding creatRelativeFileExistsBinding(ObjectProperty<Path> parentDirProperty, Path relFilePath) {
     return Bindings.createBooleanBinding(
         () -> {
@@ -127,6 +180,17 @@ public class BindingUtils {
     );
   }
 
+  /**
+   * Create the border binding for a <code>SelectableTreeCell</code>.
+   * <p>
+   * Returns a brown border for the output directory,
+   * a blue border for the sources directory and a green border for the main file.
+   *
+   * @param isOutDir       whether the item is the output directory
+   * @param isSelectedDir  whether the item is the selected sources directory
+   * @param isSelectedMain whether the item is the selected main file
+   * @return the border binding depending on the input parameters
+   */
   public static ObjectBinding<Border> createSelectedTreeItemBorderBinding(BooleanBinding isOutDir, BooleanBinding isSelectedDir, BooleanBinding isSelectedMain) {
     return Bindings.createObjectBinding(
         () -> {

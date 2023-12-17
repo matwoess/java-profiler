@@ -15,14 +15,24 @@ import java.util.List;
 import static common.RunMode.DEFAULT;
 import static common.RunMode.REPORT_ONLY;
 
+/**
+ * This class is used to store the state of the main FxUI app window.
+ * <p>
+ * It is used to store parameters like the project root, the run mode,
+ * the sources directory, the main file, program arguments,
+ * whether counters should be inserted synchronized and in which system terminal the tool should be executed in.
+ * <p>
+ * It also contains bindings for the validity of chosen files and the existence of relevant paths like the
+ * report index file, the parameters file, the metadata and the counts file.
+ */
 public class AppState {
   public final ObjectProperty<Path> projectRoot = new SimpleObjectProperty<>(null);
 
   public final ObjectProperty<RunMode> runMode = new SimpleObjectProperty<>(DEFAULT);
 
+  public final ObjectProperty<Path> sourcesDir = new SimpleObjectProperty<>(null);
   public final ObjectProperty<Path> mainFile = new SimpleObjectProperty<>(null);
   public final StringProperty programArgs = new SimpleStringProperty("");
-  public final ObjectProperty<Path> sourcesDir = new SimpleObjectProperty<>(null);
   public final BooleanProperty syncCounters = new SimpleBooleanProperty(false);
   public final ObjectProperty<Terminal> terminal = new SimpleObjectProperty<>(Terminal.getDefaultSystemTerminal());
 
@@ -37,7 +47,10 @@ public class AppState {
     initializeAdditionalProperties();
   }
 
-  public void initializeAdditionalProperties() {
+  /**
+   * Initializes all bindings that depend on the output directory (relative to the project root).
+   */
+  private void initializeAdditionalProperties() {
     invalidMainFilePath = mainFile.isNotNull().and(BindingUtils.creatRelativeIsJavaFileBinding(projectRoot, mainFile).not());
     invalidSourcesDirPath = sourcesDir.isNotNull().and(BindingUtils.createRelativeIsDirectoryBinding(projectRoot, sourcesDir).not());
     reportIndexFileExists = BindingUtils.creatRelativeFileExistsBinding(projectRoot, IO.getReportIndexPath());
@@ -46,6 +59,10 @@ public class AppState {
     countsFileExists = BindingUtils.creatRelativeFileExistsBinding(projectRoot, IO.getCountsPath());
   }
 
+  /**
+   * Invalidates all bindings that depend on the output directory (relative to the project root).
+   * Is called when files are added or removed from the output directory.
+   */
   public void invalidateFileBindings() {
     reportIndexFileExists.invalidate();
     metadataFileExists.invalidate();
@@ -53,6 +70,13 @@ public class AppState {
     parametersFileExists.invalidate();
   }
 
+  /**
+   * Returns the arguments that should be passed to the tool.
+   * <p>
+   * The arguments depend on the run mode and the chosen parameters.
+   *
+   * @return an array of the arguments that will be passed to the tool
+   */
   public String[] getProgramArguments() {
     RunMode mode = runMode.get();
     List<String> arguments = new ArrayList<>();
@@ -84,6 +108,9 @@ public class AppState {
     return arguments.toArray(String[]::new);
   }
 
+  /**
+   * Exports the currently configured parameters to the <code>parameters.dat</code> file (in the output directory).
+   */
   public void exportParameters() {
     Path parametersPath = IO.getUIParametersPath();
     IO.createDirectoriesIfNotExists(parametersPath);
@@ -99,6 +126,9 @@ public class AppState {
     }
   }
 
+  /**
+   * Imports and replaces the currently configured parameters from the <code>parameters.dat</code> file.
+   */
   public void importParameters() {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(IO.getUIParametersPath().toFile()))) {
       runMode.set(RunMode.values()[ois.readInt()]);

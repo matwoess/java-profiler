@@ -14,7 +14,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * This class contains utility methods for interacting with the operating system.
+ */
 public class SystemUtils {
+  /**
+   * Opens a file chooser dialog and sets the chosen path on the given directory path property.
+   *
+   * @param dirProperty the directory path property to set
+   */
   public static void chooseDirectory(ObjectProperty<Path> dirProperty) {
     DirectoryChooser dirChooser = new DirectoryChooser();
     dirChooser.setTitle("Choose Directory");
@@ -29,6 +37,11 @@ public class SystemUtils {
     }
   }
 
+  /**
+   * Opens the specified path with its default desktop application.
+   *
+   * @param path the path to open
+   */
   public static void openWithDesktopApplication(Path path) {
     SwingUtilities.invokeLater(() -> {
       try {
@@ -39,16 +52,31 @@ public class SystemUtils {
     });
   }
 
+  /**
+   * Calls the tool with the given parameters in the system terminal.
+   * @param appState the app state containing the parameters
+   * @return the exit code of execution
+   */
   public static int executeToolWithParameters(AppState appState) {
     String[] terminalCommand = getTerminalCommand(appState);
     return Util.runCommandInDir(appState.projectRoot.get(), terminalCommand);
   }
 
+  /**
+   * Builds an array of strings representing the command to be executed in the system terminal.
+   * @param appState the app state containing the parameters
+   * @return the command that can be executed in a system terminal using {@link ProcessBuilder}
+   */
   public static String[] getTerminalCommand(AppState appState) {
     String javaCommand = getJavaRunCommand(appState.getProgramArguments());
     return appState.terminal.get().wrapWithTerminalCommand(javaCommand, appState.projectRoot.get());
   }
 
+  /**
+   * Builds the java command string to execute the tool with the given arguments.
+   * @param toolArguments the arguments to be passed to the tool
+   * @return the string representation of the java command
+   */
   public static String getJavaRunCommand(String[] toolArguments) {
     String toolJar = tool.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String commonJar = common.Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();

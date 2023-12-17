@@ -24,6 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * The controller for the main application window.
+ */
 public class AppController implements RecursiveDirectoryWatcher.FileEventListener {
 
   private Stage applicationStage;
@@ -74,10 +77,16 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
 
   private final static String JAVA_VERSION_NOT_RECOGNIZED = "Unable to determine";
 
+  /**
+   * Creates a new AppController and initializes the app state.
+   */
   public AppController() {
     appState = new AppState();
   }
 
+  /**
+   * Initializes the UI and control bindings of the main application window.
+   */
   @FXML
   private void initialize() {
     bindParameters();
@@ -90,23 +99,40 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     initRecognizedJavaVersionControl();
   }
 
+  /**
+   * Initializes the stage of the main application window.
+   *
+   * @param stage the stage to initialize
+   */
   void initUI(Stage stage) {
     applicationStage = stage;
     applicationStage.setResizable(false);
     applicationStage.setTitle("Java Profiler");
   }
 
+  /**
+   * Sets the project root path and initializes the project tree.
+   * <p>
+   * Additionally, the directory watcher is initialized.
+   *
+   * @param projectRootPath the project root path of the opened project
+   */
   public void setProjectDirectory(Path projectRootPath) {
     IO.outputDir = projectRootPath.resolve(IO.outputDir);
     appState.projectRoot.set(projectRootPath);
     applicationStage.setTitle(applicationStage.getTitle() + " - " + projectRootPath);
     projectTree = new JavaProjectTree(appState, treeProjectDir);
-    initDirectoryWatcher(projectRootPath);
+    initDirectoryWatcher(projectRootPath, IO.getOutputDir());
   }
 
-  private void initDirectoryWatcher(Path projectRootPath) {
+  /**
+   * Initializes the directory watcher for the given project root path and output directory.
+   * <p>
+   * The project root path is needed in case the output directory is not created yet.
+   */
+  private void initDirectoryWatcher(Path projectRoot, Path outputDir) {
     try {
-      recursiveDirectoryWatcher = new RecursiveDirectoryWatcher(this, projectRootPath, IO.getOutputDir(), IO.getReportDir());
+      recursiveDirectoryWatcher = new RecursiveDirectoryWatcher(this, projectRoot, outputDir);
       Thread watcherThread = new Thread(() -> recursiveDirectoryWatcher.processEvents());
       watcherThread.setDaemon(true);
       watcherThread.start();
@@ -115,6 +141,9 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     }
   }
 
+  /**
+   * Binds the properties of the app state to the UI controls.
+   */
   private void bindParameters() {
     txtMainFile.textProperty().bindBidirectional(appState.mainFile, BindingUtils.pathStringConverter);
     txtProgramArgs.textProperty().bindBidirectional(appState.programArgs);
@@ -122,16 +151,25 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     cbSyncCounters.selectedProperty().bindBidirectional(appState.syncCounters);
   }
 
+  /**
+   * Initializes the run mode control.
+   */
   private void initRunModeControl() {
     cbRunMode.getItems().setAll(RunMode.values());
     cbRunMode.valueProperty().bindBidirectional(appState.runMode);
   }
 
+  /**
+   * Initializes the terminal emulator control.
+   */
   private void initTerminalEmulatorControl() {
     cbTerminalEmulator.getItems().setAll(Terminal.getSystemTerminalOptions());
     cbTerminalEmulator.valueProperty().bindBidirectional(appState.terminal);
   }
 
+  /**
+   * Initializes the disabled state properties for all the UI controls depending on the run mode.
+   */
   private void initDisabledPropertiesByMode() {
     boxMainFile.visibleProperty().bind(appState.runMode.isNotEqualTo(RunMode.REPORT_ONLY));
     boxProgramArgs.visibleProperty().bind(appState.runMode.isEqualTo(RunMode.DEFAULT));
@@ -142,6 +180,9 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     requiredHintMainFile.managedProperty().bind(requiredHintMainFile.visibleProperty());
   }
 
+  /**
+   * Initializes the visibility properties of button controls.
+   */
   private void initButtonProperties() {
     btnClearSourcesDir.visibleProperty().bind(appState.sourcesDir.isNotNull());
     btnClearSourcesDir.managedProperty().bind(btnClearSourcesDir.visibleProperty());
@@ -151,6 +192,9 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     btnOpenReport.visibleProperty().bind(appState.reportIndexFileExists);
   }
 
+  /**
+   * Initializes the "Run tool" and "Preview command" button properties.
+   */
   private void initRunToolButton() {
     BooleanBinding anyPathInvalid = appState.invalidMainFilePath.or(appState.invalidSourcesDirPath);
     BooleanBinding instrumentWithoutTarget = appState.runMode
@@ -169,19 +213,31 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     btnCommandPreview.disableProperty().bind(btnRunTool.disableProperty());
   }
 
+  /**
+   * Init the listeners for the border properties of the main file and sources directory text fields.
+   */
   private void initBorderListeners() {
     txtMainFile.borderProperty().bind(BindingUtils.createBorderBinding(appState.mainFile, appState.invalidMainFilePath));
     txtSourcesDir.borderProperty().bind(BindingUtils.createBorderBinding(appState.sourcesDir, appState.invalidSourcesDirPath));
   }
 
+  /**
+   * Empties the sources directory path property.
+   */
   public void onClearSourcesDir() {
     appState.sourcesDir.set(null);
   }
 
+  /**
+   * Empties the main file path property.
+   */
   public void onClearMainFile() {
     appState.mainFile.set(null);
   }
 
+  /**
+   * Executes the tool with the given parameters (in the system terminal).
+   */
   @FXML
   protected void onExecuteTool() {
     int exitCode = SystemUtils.executeToolWithParameters(appState);
@@ -190,12 +246,20 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     }
   }
 
+  /**
+   * Opens the report index file in the default desktop application.
+   */
   @FXML
   protected void onOpenReport() {
     Path reportPath = IO.getReportIndexPath();
     SystemUtils.openWithDesktopApplication(reportPath);
   }
 
+  /**
+   * Shows and initializes the command preview modal dialog.
+   *
+   * @throws IOException if loading of the FXML fails
+   */
   @FXML
   protected void showRunCommand() throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(ProjectController.class.getResource("command-view.fxml"));
@@ -209,6 +273,9 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     cmdStage.showAndWait();
   }
 
+  /**
+   * Initializes the recognized Java version control.
+   */
   private void initRecognizedJavaVersionControl() {
     Platform.runLater(() -> {
       String[] command = new String[]{"java", "-version"};
@@ -224,26 +291,45 @@ public class AppController implements RecursiveDirectoryWatcher.FileEventListene
     });
   }
 
+  /**
+   * Triggers a full rebuild of the project tree.
+   */
   @FXML
   protected void onRebuildTree() {
     projectTree = new JavaProjectTree(appState, treeProjectDir);
   }
 
+  /**
+   * Export the current parameters to the filesystem.
+   */
   @FXML
   protected void onSaveParameters() {
     appState.exportParameters();
   }
 
+  /**
+   * Import the parameters from the filesystem.
+   */
   @FXML
   protected void onRestoreParameters() {
     appState.importParameters();
   }
 
+  /**
+   * Handles the file creation event of the directory watcher.
+   *
+   * @param path the path to the created file
+   */
   @Override
   public void onFileCreated(Path path) {
     appState.invalidateFileBindings();
   }
 
+  /**
+   * Handles the path deletion event of the directory watcher.
+   *
+   * @param path the path to the deleted file
+   */
   @Override
   public void onFileDeleted(Path path) {
     appState.invalidateFileBindings();
