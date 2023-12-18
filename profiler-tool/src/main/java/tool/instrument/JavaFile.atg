@@ -112,7 +112,7 @@ MethodDecl =
     )
 .
 Statement =
-    "if" ParExpr BlockOrSingleStatement<BLOCK> ["else" BlockOrSingleStatement<BLOCK>]
+    IfStatement
     | SwitchStatement
     | "while" ParExpr BlockOrSingleStatement<LOOP>
     | "do" BlockOrSingleStatement<LOOP> "while" ParExpr ";"
@@ -145,8 +145,9 @@ GenericStatement =
 .
 BlockOrSingleStatement<BlockType blockType> =
     Block<blockType>
-    | (. state.enterSingleStatementBlock(blockType); .) Statement (. state.leaveSingleStatement(blockType); .)
+    | (. state.enterSSBlock(blockType); .) Statement (. state.leaveSSBlock(blockType); .)
 .
+IfStatement = "if" ParExpr BlockOrSingleStatement<BLOCK> ["else" (IfStatement | BlockOrSingleStatement<BLOCK>)].
 SwitchStatement =                       (. BlockType switchType = state.isAssignment() ? SWITCH_EXPR : SWITCH_STMT; .)
     "switch" ParExpr                    (. state.enterBlock(switchType); .)
     "{" {SwitchCase}                    (. state.leaveBlock(switchType); .)

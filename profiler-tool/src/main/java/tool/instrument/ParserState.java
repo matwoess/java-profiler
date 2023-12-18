@@ -301,15 +301,11 @@ public class ParserState {
   /**
    * Enters a single statement block with a given block type.
    * <p>
-   * If the next two tokens are <code>else if</code>, we do not enter a block.
+   * Simply calls the {@link #enterBlock} method with the given block type and <code>true</code> for missing braces.
    *
    * @param blockType the type of the block (one of {@link BlockType})
    */
-  void enterSingleStatementBlock(BlockType blockType) {
-    if (parser.t.val.equals("else") && parser.la.val.equals("if")) {
-      logger.log("else if found. no block.");
-      return;
-    }
+  void enterSSBlock(BlockType blockType) {
     enterBlock(blockType, true);
   }
 
@@ -325,15 +321,12 @@ public class ParserState {
   /**
    * Leaves a single statement block with a given block type.
    * <p>
-   * Only leave the block if it is really a single statement block.
-   * This check is necessary because of <code>else if</code> statements.
+   * Simply calls the {@link #leaveBlock} method with the given block type.
    *
    * @param blockType the type of the block (one of {@link BlockType})
    */
-  void leaveSingleStatement(BlockType blockType) {
-    if (curBlock.isSingleStatement) { // due to else if
-      leaveBlock(blockType);
-    }
+  void leaveSSBlock(BlockType blockType) {
+    leaveBlock(blockType);
   }
 
   /**
