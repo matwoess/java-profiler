@@ -109,7 +109,7 @@ MethodDecl =
     {ANY}
     (   ";"                 (. state.registerAbstractMethod(methName); .)
         |                   (. state.enterMethod(methName); .)
-        Block<METHOD>
+        Block<METHOD>       (. state.leaveMethod(); .)
     )
 .
 Statement =

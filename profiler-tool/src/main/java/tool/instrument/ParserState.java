@@ -303,8 +303,6 @@ public class ParserState {
    * <p>
    * The current code region is ended and the {@link #curBlock} is set to the parent block.
    * The {@link #reenterBlock} method is called to reenter the parent block and start a new code region.
-   * <p>
-   * If the block type is {@link BlockType#METHOD}, the {@link #leaveMethod} method is called.
    *
    * @param blockType     the type of the block (one of {@link BlockType})
    * @param missingBraces whether the block was a single statement block
@@ -314,9 +312,6 @@ public class ParserState {
     logger.leave(curBlock);
     endCodeRegion();
     curBlock = curBlock.parentBlock;
-    if (blockType == BlockType.METHOD) {
-      leaveMethod();
-    }
     reenterBlock(blockType, missingBraces);
   }
 
