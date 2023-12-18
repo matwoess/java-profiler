@@ -205,8 +205,10 @@ public class ParserState {
   /**
    * Enters a block with a given block type.
    * <p>
-   * Used for blocks with curly braces.
-   * Single-statement blocks have their own method {@link #enterSingleStatementBlock}.
+   * Used for common blocks with curly braces.
+   * Single-statement blocks have their own method {@link #enterSSBlock}.
+   * <p>
+   * Simply calls the {@link #enterBlock} method with the given block type and <code>false</code> for missing braces.
    * <p>
    * Contains special handling for detecting constructor blocks.
    *
@@ -222,7 +224,21 @@ public class ParserState {
   }
 
   /**
+   * Enters a single statement block with a given block type.
+   * <p>
+   * Simply calls the {@link #enterBlock} method with the given block type and <code>true</code> for missing braces.
+   *
+   * @param blockType the type of the block (one of {@link BlockType})
+   */
+  void enterSSBlock(BlockType blockType) {
+    enterBlock(blockType, true);
+  }
+
+  /**
    * Called when colon-case switch blocks are entered. They never start with curly braces.
+   * <p>
+   * Simply calls the {@link #enterBlock} method with the <code>COLON_CASE</code> block type
+   * and <code>true</code> for missing braces.
    */
   void enterSwitchColonCase() {
     assert curBlock != null && curBlock.blockType.isSwitch();
@@ -239,7 +255,7 @@ public class ParserState {
    * @param blockType     the type of the block (one of {@link BlockType})
    * @param missingBraces whether the block is a single statement block
    */
-  void enterBlock(BlockType blockType, boolean missingBraces) {
+  private void enterBlock(BlockType blockType, boolean missingBraces) {
     assert curClass != null;
     endCodeRegion();
     Block newBlock = new Block(blockType);
@@ -266,14 +282,7 @@ public class ParserState {
    * @param blockType the type of the block (one of {@link BlockType})
    */
   void leaveBlock(BlockType blockType) {
-    leaveBlock(blockType, curBlock.isSingleStatement);
-  }
-
-  /**
-   * Called when colon-case switch blocks are left. They never end with curly braces.
-   */
-  void leaveSwitchColonCase() {
-    leaveBlock(BlockType.COLON_CASE, true);
+    leaveBlock(blockType, curBlock.hasNoBraces());
   }
 
   /**
@@ -287,7 +296,7 @@ public class ParserState {
    * @param blockType     the type of the block (one of {@link BlockType})
    * @param missingBraces whether the block was a single statement block
    */
-  void leaveBlock(BlockType blockType, boolean missingBraces) {
+  private void leaveBlock(BlockType blockType, boolean missingBraces) {
     curBlock.end = tokenEndPosition(missingBraces ? parser.t : parser.la);
     logger.leave(curBlock);
     endCodeRegion();
@@ -299,37 +308,6 @@ public class ParserState {
   }
 
   /**
-   * Enters a single statement block with a given block type.
-   * <p>
-   * Simply calls the {@link #enterBlock} method with the given block type and <code>true</code> for missing braces.
-   *
-   * @param blockType the type of the block (one of {@link BlockType})
-   */
-  void enterSSBlock(BlockType blockType) {
-    enterBlock(blockType, true);
-  }
-
-  /**
-   * Enters a single statement arrow block with a given block type.
-   *
-   * @param blockType the type of the block (either {@link BlockType#ARROW_CASE} or {@link BlockType#LAMBDA})
-   */
-  void enterSSArrowBlock(BlockType blockType) {
-    enterBlock(blockType, true);
-  }
-
-  /**
-   * Leaves a single statement block with a given block type.
-   * <p>
-   * Simply calls the {@link #leaveBlock} method with the given block type.
-   *
-   * @param blockType the type of the block (one of {@link BlockType})
-   */
-  void leaveSSBlock(BlockType blockType) {
-    leaveBlock(blockType);
-  }
-
-  /**
    * Start a new code region for a given block type and a parameter for whether braces are missing.
    * <p>
    * The region is only started if the next token is a valid code region start token.
@@ -337,7 +315,7 @@ public class ParserState {
    * @param blockType     the type of the block (one of {@link BlockType})
    * @param missingBraces whether the block has missing braces. Used to determine the start token of the code region.
    */
-  void startCodeRegion(BlockType blockType, boolean missingBraces) {
+  private void startCodeRegion(BlockType blockType, boolean missingBraces) {
     assert curCodeRegion == null;
     Token nextToken = getRegionStartToken(parser, blockType, missingBraces);
     if (validCodeRegionStartToken(nextToken)) {
@@ -356,7 +334,7 @@ public class ParserState {
    * @param nextToken the token to check
    * @return whether the given token is a valid code region start token
    */
-  boolean validCodeRegionStartToken(Token nextToken) {
+  private boolean validCodeRegionStartToken(Token nextToken) {
     if (curBlock.blockType.hasNoCounter()) return false;
     return !nextToken.val.equals("else") && !nextToken.val.equals("catch") && !nextToken.val.equals("finally");
   }
@@ -463,7 +441,7 @@ public class ParserState {
    *
    * @return whether a class definition is following
    */
-  public boolean classDefWithNoLeadingDot() {
+  boolean classDefWithNoLeadingDot() {
     parser.scanner.ResetPeek();
     return !parser.t.val.equals(".")
         && (parser.la.val.equals("class")

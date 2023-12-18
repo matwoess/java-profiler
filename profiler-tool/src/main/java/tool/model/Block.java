@@ -139,6 +139,14 @@ public class Block implements Serializable, Component {
   }
 
   /**
+   * Returns whether this block has no curly braces surrounding it.
+   * @return whether it is a single statement or the block type has no braces
+   */
+  public boolean hasNoBraces() {
+    return isSingleStatement || blockType.hasNoBraces();
+  }
+
+  /**
    * Returns whether this block is a switch <b>statement</b> case.
    * <p>
    * True if the block is a switch case and its parent block is a switch statement.

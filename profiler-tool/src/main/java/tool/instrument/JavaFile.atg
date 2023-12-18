@@ -145,7 +145,7 @@ GenericStatement =
 .
 BlockOrSingleStatement<BlockType blockType> =
     Block<blockType>
-    | (. state.enterSSBlock(blockType); .) Statement (. state.leaveSSBlock(blockType); .)
+    | (. state.enterSSBlock(blockType); .) Statement (. state.leaveBlock(blockType); .)
 .
 IfStatement = "if" ParExpr BlockOrSingleStatement<BLOCK> ["else" (IfStatement | BlockOrSingleStatement<BLOCK>)].
 SwitchStatement =                       (. BlockType switchType = state.isAssignment() ? SWITCH_EXPR : SWITCH_STMT; .)
@@ -157,7 +157,7 @@ SwitchCase =
     ("case" | "default") {ANY}
     (   ArrowExpression<ARROW_CASE>
         | ":" {"case" {ANY} ":"}        (. state.enterSwitchColonCase(); .)
-          {Statement}                   (. state.leaveSwitchColonCase(); .)
+          {Statement}                   (. state.leaveBlock(COLON_CASE); .)
     )
 .
 ParExpr = "(" {ParExpr | ANY} ")".
@@ -168,7 +168,7 @@ QualIdent = ident {"." ident}.
 ArrowExpression<BlockType blockType> =
     "->" (Block<blockType> | SSArrowBody<blockType>)
 .
-SSArrowBody<BlockType blockType> =                      (. state.enterSSArrowBlock(blockType); .)
+SSArrowBody<BlockType blockType> =                      (. state.enterSSBlock(blockType); .)
                                                         (. boolean inSwitch = blockType.isSwitchCase(); .)
     (   string | char
         | ParExpr
@@ -176,8 +176,8 @@ SSArrowBody<BlockType blockType> =                      (. state.enterSSArrowBlo
         | "throw"                                       (. state.registerJumpStatement(); .)
         | ANY
     )                                                   // exclude ")" or ";" in lambda blocks with no "Get" for ";"
-    {ANY | ParExpr}                                     (. if (!inSwitch) { state.leaveSingleStatement(blockType); return; } .)
-    (")" | ";")                                         (. state.leaveSingleStatement(blockType); .)
+    {ANY | ParExpr}                                     (. if (!inSwitch) { state.leaveBlock(blockType); return; } .)
+    (")" | ";")                                         (. state.leaveBlock(blockType); .)
 .
 Instantiation = "new" QualIdent [AngleBracketExpr] (ArrayInitRest | ClassInitRest).
 ArrayInitRest = BracketExpr [BraceExpr].
