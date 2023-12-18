@@ -184,13 +184,26 @@ public class ParserState {
   }
 
   /**
-   * Enters the method with the ident value of the current parser position as name.
+   * Creates a new method object with the given name and sets it as the current method.
+   * <p>
+   * The method is also added to the current class's list of methods using {@link Method#setParentClass}.
+   * @param methName the name of the method that is entered
    */
-  void enterMethod() {
+  void enterMethod(String methName) {
     assert curClass != null;
-    curMeth = new Method(parser.t.val);
+    curMeth = new Method(methName);
     curMeth.setParentClass(curClass);
     logger.enter(curMeth);
+  }
+
+  /**
+   * Registers an abstract method with the given name in the current class.
+   * @param methName the name of the abstract method
+   */
+  void registerAbstractMethod(String methName) {
+    assert curClass != null;
+    new Method(methName).setParentClass(curClass);
+    logger.log("> found abstract method: %s", methName);
   }
 
   /**

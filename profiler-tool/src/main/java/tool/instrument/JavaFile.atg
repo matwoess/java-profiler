@@ -105,10 +105,11 @@ ClassBody =
 .
 StaticBlock = "static" Block<STATIC>.
 MethodDecl =
-    ident                   (. state.enterMethod(); .)
+    ident                   (. String methName = t.val; .)
     {ANY}
-    (   ";"                 (. state.leaveMethod(); .)
-        | Block<METHOD>
+    (   ";"                 (. state.registerAbstractMethod(methName); .)
+        |                   (. state.enterMethod(methName); .)
+        Block<METHOD>
     )
 .
 Statement =
