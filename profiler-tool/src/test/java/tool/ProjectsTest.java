@@ -76,7 +76,7 @@ public class ProjectsTest {
     assertEquals(0, genScannerParserResult);
     // only instrument
     TestUtils.instrumentFolder(sourcesRoot);
-    // manual compile, because we need the legacy -source and -target parameters with the Java 17 compiler
+    // manually compile, because we need the legacy "-source" and "-target" parameters with the Java 17 compiler
     Path instrDir = IO.getInstrumentDir();
     int compileResult = Util.runCommand(new JCompilerCommandBuilder()
         .setDirectory(instrDir)
