@@ -38,7 +38,7 @@ public class __Counter {
    *
    * @param fileName the location of the metadata file
    */
-  public static void init(String fileName) {
+  private static void init(@SuppressWarnings("SameParameterValue") String fileName) {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
       int nBlocks = ois.readInt(); // number of blocks is the first value of the metadata file
       blockCounts = new int[nBlocks];
@@ -52,7 +52,7 @@ public class __Counter {
    *
    * @param fileName the location of the file to save the counter-array to
    */
-  public static void save(String fileName) {
+  private static void save(@SuppressWarnings("SameParameterValue") String fileName) {
     try (DataOutputStream dis = new DataOutputStream(new FileOutputStream(fileName))) {
       dis.writeInt(blockCounts.length);
       for (int blockCount : blockCounts) {
