@@ -89,6 +89,10 @@ public class Instrumenter {
     }
     copyAuxiliaryFiles();
     System.out.println();
+    List<JClass> allClasses = Arrays.stream(javaFiles).flatMap(jFile -> jFile.getClassesRecursive().stream()).toList();
+    System.out.println("Total classes found: " + allClasses.size());
+    List<Method> allMethods = allClasses.stream().flatMap(cls -> cls.methods.stream()).toList();
+    System.out.println("Total methods found: " + allMethods.size());
     System.out.println("Total code block found: " + blockCounter);
   }
 
