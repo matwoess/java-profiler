@@ -35,5 +35,20 @@ public class MissingBraces {
         break;
       default: break;
     }
+
+    boolean anyZeros = containsZero(new int[][]{
+      {1, 2, 3},
+      {4, 0, 6},
+      {7, 8, 9}
+    });
+    System.out.println("any zeros?: " + anyZeros);
+  }
+
+  static boolean containsZero(int[][] array) {
+    if (array == null) return false;
+    for (int i = 0; i < array.length; i++)
+      for (int j = 0; j < array[i].length; j++)
+        if (array[i][j] == 0) return true;
+    return false;
   }
 }
