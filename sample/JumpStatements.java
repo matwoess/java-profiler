@@ -9,6 +9,7 @@ public class JumpStatements {
     switchesWithBreaksAndReturns("param");
     tryBlocksWithThrow();
     breakOutOfNonLoopBlocks();
+    nFullRows();
   }
 
   private static void loopWithLabels() {
@@ -233,5 +234,37 @@ public class JumpStatements {
       System.out.println("didn't print this!");
     }
     System.out.println("done.");
+  }
+
+  private static void nFullRows() {
+    char[][] board = {
+        {'x', 'x', 'o', 'x'},
+        {'x', 'x', 'x', 'x'},
+        {' ', 'x', ' ', 'x'},
+        {'o', 'o', 'x', 'o'}
+    };
+    int fullRows = 0, fullXRows = 0;
+    loop1:
+    outerLoop:
+    for (int i = 0; i < board.length; i++) {
+      boolean anyO = false;
+      rowLoop:
+      for (int j = 0; j < board[i].length; j++) {
+        if (board[i][j] == ' ') {
+          System.out.println("non-full row: " + i);
+          continue outerLoop;
+        }
+        if (board[i][j] == 'x') {
+          continue rowLoop;
+        }
+        anyO = true;
+      }
+      fullRows++;
+      if (!anyO) {
+        fullXRows++;
+      }
+    }
+    System.out.println("number of full rows: " + fullRows);
+    System.out.println("number of full 'x' rows: " + fullXRows);
   }
 }
