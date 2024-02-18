@@ -146,17 +146,17 @@ public class Main {
         Or   : profiler [options] <run mode>
         Options:
           -h, --help                        display this message and quit
-          -s, --synchronized                instrument using synchronized counters increments
-          -v, --verbose                     output verbose info about instrumentation of each file
-          -d, --sources-directory <dir>     directory containing java files to additionally instrument
+          -s, --synchronized                instrument using synchronized counter increments
+          -v, --verbose                     output verbose info about instrumentation of files
+          -d, --sources-directory <dir>     directory with additional Java files to instrument
         Run mode (exclusive):
-          -i, --instrument-only <file|dir>  only instrument a single file or directory of java files and exit
-          -r, --generate-report             only generate the report from existing metadata and counts
+          -i, --instrument-only <file|dir>  only instrument a single file or directory and exit
+          -r, --generate-report             only generate the report from metadata and counts
         Main file:
-          The path to the main java file. After instrumentation *it* will be compiled and and executed.
+          The path to the main Java file. It will be compiled and and executed after instrumentation.
           (Must not be specified for the generate-report run mode)
         Program args:
-          Will be passed to the main java class if given
+          Will be passed to the main method if given
         """);
   }
 
