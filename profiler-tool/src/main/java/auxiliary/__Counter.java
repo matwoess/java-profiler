@@ -44,7 +44,11 @@ public class __Counter {
    * @param fileName the location of the metadata file
    */
   private static void init(@SuppressWarnings("SameParameterValue") String fileName) {
-    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
+    File file = new File(fileName);
+    if (!file.exists()) {
+      throw new RuntimeException("Metadata not found at expected path: " + file.getAbsolutePath());
+    }
+    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
       int nBlocks = ois.readInt(); // number of blocks is the first value of the metadata file
       blockCounts = new long[nBlocks];
       atomicBlockCounts = new AtomicLongArray(nBlocks);
