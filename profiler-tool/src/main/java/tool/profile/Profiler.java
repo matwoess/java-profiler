@@ -33,11 +33,12 @@ public class Profiler {
   }
 
   /**
-   * Compiles the main instrumented file.
+   * Compiles the main instrumented file and output it to the <code>classes</code> directory.
    * The <code>javac</code> tool will automatically compile all referenced instrumented java files.
    * The working directory is not changed during this process.
    */
   public void compileInstrumented() {
+    IO.clearDirectoryContents(IO.getClassesDir());
     copyAuxiliaryFiles();
     Path mainFile = IO.getInstrumentedFilePath(mainJavaFile.relativePath);
     int exitCode = Util.runCommand(new JCompilerCommandBuilder()
