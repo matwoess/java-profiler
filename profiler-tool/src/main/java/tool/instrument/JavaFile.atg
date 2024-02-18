@@ -5,7 +5,7 @@ CHARACTERS
     cr = '\r'.
     lf = '\n'.
     tab = '\t'.
-    letter = 'a'..'z' + 'A'..'Z' + '_'.
+    letter = 'a'..'z' + 'A'..'Z' + '_'.  // '$' also allowed for ident but discouraged
     digit  = '0'..'9'.
     bslash = '\\'.
     quote = '"'.
@@ -37,7 +37,7 @@ TOKENS
                     | [quote] [quote] bslash quote
                 }
                 quote quote quote
-            | {
+            | {             // common string literal
                 (   noQuoteNoBSlash
                     | bslash (
                         escapableChar
@@ -48,9 +48,9 @@ TOKENS
             }
             quote
         ).
-    // .. weitere Java-Token einfügen und eventuell die dazu nötigen Zeichenklassen
-    class  = "class".
-    this   = "this".
+    // further Java tokens necessary for special handling
+    class  = "class".  // needed to handle case of "X.class" not being class definition
+    this   = "this".   // for "this" followed by "(" calls to overloaded constructors
     newRef = "::new".  // exclude from being interpreted as Instantiation NTS
 
 COMMENTS FROM "/*" TO "*/"
@@ -77,7 +77,7 @@ PackageDecl = "package"     (. ArrayList<String> packageName = new ArrayList<>()
 .
 AnnotationType = "@interface" ident BraceExpr.
 Annotation = "@" QualIdent [ParExpr].
-Class<ClassType classType> =
+Class<ClassType classType> =            // classDefWithNoLeadingDot() is true
     (class | "interface" | ident/*"record"*/) ident (. String className = t.val; .)
     {ANY}                               (. state.enterClass(classType, className); .)
     "{" ClassBody                       (. state.leaveClass(); .)
@@ -86,19 +86,23 @@ Enum<ClassType classType> =
     "enum" ident                        (. String className = t.val; .)
     {ANY}                               (. state.enterClass(classType, className); .)
     "{"
-    { [Annotation] ident [ParExpr] ["{" ClassBody] [","]}
-    (   ";" ClassBody                   // class body can follow only after a ";"
+    {   [Annotation] ident [ParExpr]    // enum constants with optional parameters
+        ["{" ClassBody]                 // optional enum constant class body
+        [","]                           // separates constants; trailing comma is valid
+    }
+    (   ";" ClassBody                   // enum class body can follow only after a ";"
         | "}"
     )                                   (. state.leaveClass(); .)
 .
 ClassBody =
     {   Enum<CLASS>
         | IF(state.classDefWithNoLeadingDot()) Class<CLASS>
-        | "=" (BraceExpr | {ANY} Statement)
+        | "=" (BraceExpr | {ANY} Statement)          // class-level array or variable initialization
         | IF(state.identAndLPar()) MethodDecl
         | IF(state.classNameAndLBrace()) MethodDecl  // compact record constructor
         | IF(state.staticAndLBrace()) StaticBlock
-        | AnnotationType | Annotation
+        | AnnotationType
+        | Annotation
         | ANY
     }
     "}"
@@ -145,10 +149,13 @@ GenericStatement =
     ";"
 .
 BlockOrSingleStatement<BlockType blockType> =
-    Block<blockType>
+    Block<blockType>                    // common block if next character is "{"
     | (. state.enterSSBlock(blockType); .) Statement (. state.leaveBlock(blockType); .)
 .
-IfStatement = "if" ParExpr BlockOrSingleStatement<BLOCK> ["else" (IfStatement | BlockOrSingleStatement<BLOCK>)].
+IfStatement =
+    "if" ParExpr BlockOrSingleStatement<BLOCK>
+    ["else" (IfStatement | BlockOrSingleStatement<BLOCK>)]
+.
 SwitchStatement =                       (. BlockType switchType = state.isAssignment() ? SWITCH_EXPR : SWITCH_STMT; .)
     "switch" ParExpr                    (. state.enterBlock(switchType); .)
     "{" {SwitchCase}                    (. state.leaveBlock(switchType); .)
@@ -169,16 +176,16 @@ QualIdent = ident {"." ident}.
 ArrowExpression<BlockType blockType> =
     "->" (Block<blockType> | SSArrowBody<blockType>)
 .
-SSArrowBody<BlockType blockType> =                      (. state.enterSSBlock(blockType); .)
-                                                        (. boolean inSwitch = blockType.isSwitchCase(); .)
+SSArrowBody<BlockType blockType> =          (. state.enterSSBlock(blockType); .)
+                                            (. boolean inSwitch = blockType.isSwitchCase(); .)
     (   string | char
         | ParExpr
         | ident
-        | "throw"                                       (. state.registerJumpStatement(); .)
+        | "throw"                           (. state.registerJumpStatement(); .)
         | ANY
-    )                                                   // exclude ")" or ";" in lambda blocks with no "Get" for ";"
-    {ANY | ParExpr}                                     (. if (!inSwitch) { state.leaveBlock(blockType); return; } .)
-    (")" | ";")                                         (. state.leaveBlock(blockType); .)
+    )                                       // exclude closing ")" or ";" after lambda blocks without consuming ";"
+    {ANY | ParExpr}                         (. if (!inSwitch) { state.leaveBlock(blockType); return; } .)
+    (")" | ";")                             (. state.leaveBlock(blockType); .)
 .
 Instantiation = "new" QualIdent [AngleBracketExpr] (ArrayInitRest | ClassInitRest).
 ArrayInitRest = BracketExpr [BraceExpr].
