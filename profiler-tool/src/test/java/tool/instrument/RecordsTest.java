@@ -37,7 +37,7 @@ public class RecordsTest {
     JavaFile expected = jFile(
         jClass("LenWidth",
             jConstructor("LenWidth", 2, 8, 87, 285,
-                jBlock(BLOCK, 3, 5, 122, 231).withJump(THROW)
+                jBlock(BLOCK, 3, 5, 122, 231).withControlBreak(THROW)
             )
         )
     );
@@ -62,7 +62,7 @@ public class RecordsTest {
     JavaFile expected = jFile(null, 0,
         jClass("LenWidth",
             jConstructor("LenWidth", 2, 6, 58, 206,
-                jBlock(BLOCK, 3, 5, 93, 202).withJump(THROW)
+                jBlock(BLOCK, 3, 5, 93, 202).withControlBreak(THROW)
             ),
             jConstructor("LenWidth", 7, 9, 250, 323).incOffset(thisCallOffset)
         )
@@ -88,8 +88,8 @@ public class RecordsTest {
         """;
     JavaFile expected = jFile(
         jClass("Coordinate",
-            jMethod("x", 3, 6, 63, 146).withJump(RETURN),
-            jMethod("y", 8, 11, 176, 259).withJump(RETURN)
+            jMethod("x", 3, 6, 63, 146).withControlBreak(RETURN),
+            jMethod("y", 8, 11, 176, 259).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -119,7 +119,7 @@ public class RecordsTest {
         jClass("Coordinate",
             jBlock(STATIC, 4, 6, 89, 106),
             jMethod("main", 7, 12, 148, 324),
-            jMethod("manhattanDistanceTo", 13, 15, 369, 436).withJump(RETURN)
+            jMethod("manhattanDistanceTo", 13, 15, 369, 436).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -147,7 +147,7 @@ public class RecordsTest {
     JavaFile expected = jFile(
         jClass("Record",
             jMethod("record", 3, 5, 118, 152),
-            jMethod("getRecord", 6, 8, 181, 212).withJump(RETURN),
+            jMethod("getRecord", 6, 8, 181, 212).withControlBreak(RETURN),
             jMethod("main", 9, 14, 254, 399)
         )
     );

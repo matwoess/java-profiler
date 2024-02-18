@@ -264,26 +264,26 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     String classes = activeBlocks.stream().map(b -> "b" + b.id).collect(Collectors.joining(" "));
     if (region != null) {
       classes += " r" + activeBlocks.get(activeBlocks.size() - 1).id + "_" + region.id;
-      if (!region.dependantJumps.isEmpty()) {
+      if (!region.dependentBlocks.isEmpty()) {
         title += " ("
             + region.block.hits + " - "
-            + region.dependantJumps.stream()
+            + region.dependentBlocks.stream()
             .map(b -> String.valueOf(b.hits))
             .collect(Collectors.joining(" - "))
             + ")";
-        classes = getDependentJumpBlockClasses(region) + " " + classes;
+        classes = getDependentBlockClasses(region) + " " + classes;
       }
     }
     return String.format("<span class=\"%s %s\" title=\"%s\">", coverageClass, classes, title);
   }
 
   /**
-   * Returns the classes for all the dependent jump blocks of the given code region.
+   * Returns the classes for all the dependent control breaks of the given code region.
    * @param region the code region
-   * @return the classes for all the dependent jump blocks
+   * @return the classes for all the dependent control breaks
    */
-  private static String getDependentJumpBlockClasses(CodeRegion region) {
-    return region.dependantJumps.stream().distinct().map(b -> "m" + b.id).collect(Collectors.joining(" "));
+  private static String getDependentBlockClasses(CodeRegion region) {
+    return region.dependentBlocks.stream().distinct().map(b -> "m" + b.id).collect(Collectors.joining(" "));
   }
 
   /**

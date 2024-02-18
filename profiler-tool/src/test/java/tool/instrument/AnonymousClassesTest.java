@@ -51,15 +51,15 @@ public class AnonymousClassesTest {
         jClass("Main",
             jMethod("main", 2, 3, 61, 66),
             jMethod("firstJavaFile", 4, 30, 111, 755,
-                jBlock(BLOCK, 25, 27, 682, 719).withJump(RETURN),
-                jBlock(BLOCK, 27, 29, 725, 751).withJump(RETURN)
+                jBlock(BLOCK, 25, 27, 682, 719).withControlBreak(RETURN),
+                jBlock(BLOCK, 27, 29, 725, 751).withControlBreak(RETURN)
             ),
             jClass(ANONYMOUS, null,
                 jClass("X",
                     jMethod("methodInX", 15, 17, 419, 519)
                 ),
-                jMethod("accept", 9, 12, 290, 369).withJump(RETURN),
-                jMethod("returnTrue", 20, 23, 563, 616).withJump(RETURN)
+                jMethod("accept", 9, 12, 290, 369).withControlBreak(RETURN),
+                jMethod("returnTrue", 20, 23, 563, 616).withControlBreak(RETURN)
             )
         )
     );
@@ -94,11 +94,11 @@ public class AnonymousClassesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 3, 61, 66),
-            jMethod("getSortedIntegers", 4, 16, 133, 418).withJump(RETURN),
+            jMethod("getSortedIntegers", 4, 16, 133, 418).withControlBreak(RETURN),
             jClass(ANONYMOUS, null,
                 jMethod("compare", 7, 13, 266, 378,
-                    jBlock(BLOCK, 8, 10, 297, 332).withJump(RETURN)
-                ).withJump(RETURN)
+                    jBlock(BLOCK, 8, 10, 297, 332).withControlBreak(RETURN)
+                ).withControlBreak(RETURN)
             )
         )
     );
@@ -124,7 +124,7 @@ public class AnonymousClassesTest {
         jClass("Main",
             jMethod("main", 2, 9, 61, 177),
             jClass(ANONYMOUS, null,
-                jMethod("hashCode", 5, 7, 124, 166).withJump(RETURN)
+                jMethod("hashCode", 5, 7, 124, 166).withControlBreak(RETURN)
             )
         )
     );

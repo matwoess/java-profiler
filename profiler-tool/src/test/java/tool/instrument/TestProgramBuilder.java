@@ -15,11 +15,11 @@ public class TestProgramBuilder {
   }
 
   public record BuilderMethod(Method element) implements BuilderComponent {
-    public BuilderMethod withJump(ControlBreak.Kind kind) {
-      return withJump(kind, null);
+    public BuilderMethod withControlBreak(ControlBreak.Kind kind) {
+      return withControlBreak(kind, null);
     }
 
-    public BuilderMethod withJump(ControlBreak.Kind kind, String label) {
+    public BuilderMethod withControlBreak(ControlBreak.Kind kind, String label) {
       element.getMethodBlock().controlBreak = new ControlBreak(kind, label);
       return this;
     }
@@ -31,11 +31,11 @@ public class TestProgramBuilder {
   }
 
   public record BuilderBlock(Block element) implements BuilderComponent {
-    public BuilderBlock withJump(ControlBreak.Kind kind) {
-      return withJump(kind, null);
+    public BuilderBlock withControlBreak(ControlBreak.Kind kind) {
+      return withControlBreak(kind, null);
     }
 
-    public BuilderBlock withJump(ControlBreak.Kind kind, String label) {
+    public BuilderBlock withControlBreak(ControlBreak.Kind kind, String label) {
       element.controlBreak = new ControlBreak(kind, label);
       return this;
     }
@@ -218,7 +218,7 @@ public class TestProgramBuilder {
 
   public static void appendBuilderBlockSuffixes(Block block, StringBuilder builder) {
     if (block.controlBreak != null) {
-      builder.append(".withJump(").append(block.controlBreak.kind().name());
+      builder.append(".withControlBreak(").append(block.controlBreak.kind().name());
       String label = block.controlBreak.label();
       if (label != null) {
         builder.append(", ").append("\"").append(label).append("\"");

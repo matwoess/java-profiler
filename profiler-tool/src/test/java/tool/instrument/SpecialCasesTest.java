@@ -166,10 +166,10 @@ public class SpecialCasesTest {
                 jMethod("compare", 62, 71, 1653, 1903,
                     jBlock(SWITCH_EXPR, 63, 69, 1691, 1860,
                         jSsBlock(ARROW_CASE, 64, 64, 1720, 1723),
-                        jBlock(ARROW_CASE, 65, 67, 1753, 1804).withJump(YIELD),
+                        jBlock(ARROW_CASE, 65, 67, 1753, 1804).withControlBreak(YIELD),
                         jSsBlock(ARROW_CASE, 68, 68, 1833, 1842)
                     )
-                ).withJump(RETURN)
+                ).withControlBreak(RETURN)
             ),
             jMethod("method", 23, 81, 397, 2118,
                 jBlock(BLOCK, 25, 77, 442, 2073,
@@ -179,14 +179,14 @@ public class SpecialCasesTest {
                             jBlock(COLON_CASE, 30, 57, 587, 1443,
                                 jBlock(LAMBDA, 31, 57, 620, 1405,
                                     jBlock(SWITCH_EXPR, 32, 56, 655, 1390,
-                                        jBlock(ARROW_CASE, 33, 35, 683, 729).withJump(YIELD),
+                                        jBlock(ARROW_CASE, 33, 35, 683, 729).withControlBreak(YIELD),
                                         jSsBlock(ARROW_CASE, 36, 36, 755, 762),
                                         jSsBlock(ARROW_CASE, 37, 39, 788, 887),
                                         // TODO: missing lambda blocks!!
                                         jBlock(ARROW_CASE, 40, 49, 914, 1203,
                                             jBlock(TRY, 41, 44, 938, 1036,
-                                                jSsBlock(BLOCK, 42, 42, 972, 981).withJump(YIELD),
-                                                jSsBlock(BLOCK, 43, 43, 1006, 1016).withJump(YIELD)
+                                                jSsBlock(BLOCK, 42, 42, 972, 981).withControlBreak(YIELD),
+                                                jSsBlock(BLOCK, 43, 43, 1006, 1016).withControlBreak(YIELD)
                                             ),
                                             jBlock(BLOCK, 45, 45, 1080, 1082),
                                             jBlock(BLOCK, 46, 48, 1109, 1185)
@@ -195,10 +195,10 @@ public class SpecialCasesTest {
                                             jBlock(SWITCH_EXPR, 51, 53, 1268, 1324,
                                                 jSsBlock(ARROW_CASE, 52, 52, 1300, 1304)
                                             )
-                                        ).withJump(YIELD),
+                                        ).withControlBreak(YIELD),
                                         jSsBlock(ARROW_CASE, 55, 55, 1370, 1374)
                                     )
-                                ).withJump(RETURN),
+                                ).withControlBreak(RETURN),
                                 jSsBlock(LAMBDA, 57, 57, 1419, 1441)
                             ).noIncOffset(),
                             jBlock(COLON_CASE, 58, 73, 1461, 1991,

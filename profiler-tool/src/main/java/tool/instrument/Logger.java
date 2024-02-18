@@ -8,7 +8,7 @@ import java.util.List;
  * This class is used to log the parsing process.
  * <p>
  * It is used to print the current entering or exiting of a program component to the console.
- * It also provides methods to log special events (e.g., finding a jump statement).
+ * It also provides methods to log special events (e.g., finding a control flow break).
  */
 public class Logger {
   private static final String GREEN = "\u001B[32m";
@@ -99,7 +99,7 @@ public class Logger {
       );
     }
     if (comp instanceof CodeRegion region) {
-      List<String> minusBlockLineNrs = region.dependantJumps.stream()
+      List<String> minusBlockLineNrs = region.dependentBlocks.stream()
           .map(b -> String.valueOf(b.beg.line()))
           .toList();
       return String.format(

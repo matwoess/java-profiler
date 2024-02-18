@@ -49,11 +49,11 @@ public class Block implements Serializable, Component {
    */
   transient public long hits;
   /**
-   * The list of inner blocks that contain a jump statement.
+   * The list of inner blocks that contain a control break.
    * <p>
    * Used to determine minus blocks for new code regions.
    */
-  public final transient List<Block> innerJumpBlocks = new ArrayList<>();
+  public final transient List<Block> innerControlBreaks = new ArrayList<>();
 
   /**
    * Creates a new Block with the given type.
@@ -109,11 +109,11 @@ public class Block implements Serializable, Component {
   }
 
   /**
-   * Add the given block to the list of inner jump blocks.
-   * @param jumpBlock the block to add
+   * Add the given block to the list of inner control breaks.
+   * @param controlBreakBlock the block containing the control break
    */
-  public void registerInnerJumpBlock(Block jumpBlock) {
-    innerJumpBlocks.add(jumpBlock);
+  public void registerInnerControlBreak(Block controlBreakBlock) {
+    innerControlBreaks.add(controlBreakBlock);
   }
 
   /**

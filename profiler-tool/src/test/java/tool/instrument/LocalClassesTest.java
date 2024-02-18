@@ -32,7 +32,7 @@ public class LocalClassesTest {
         jClass("Main",
             jClass(LOCAL, "StatusCode"),
             jMethod("main", 2, 10, 61, 285,
-                jBlock(BLOCK, 7, 9, 229, 281).withJump(THROW)
+                jBlock(BLOCK, 7, 9, 229, 281).withControlBreak(THROW)
             )
         )
     );
@@ -74,7 +74,7 @@ public class LocalClassesTest {
             ),
             jMethod("main", 2, 19, 61, 522,
                 jBlock(BLOCK, 3, 17, 89, 496),
-                jSsBlock(BLOCK, 18, 18, 510, 518).withJump(RETURN)
+                jSsBlock(BLOCK, 18, 18, 510, 518).withControlBreak(RETURN)
             )
         )
     );
@@ -107,9 +107,9 @@ public class LocalClassesTest {
         jClass("Main",
             jClass(ANONYMOUS, null,
                 jClass(LOCAL, "CompHelper",
-                    jMethod("comp", 7, 9, 265, 324).withJump(RETURN)
+                    jMethod("comp", 7, 9, 265, 324).withControlBreak(RETURN)
                 ),
-                jMethod("compare", 5, 14, 195, 453).withJump(RETURN)
+                jMethod("compare", 5, 14, 195, 453).withControlBreak(RETURN)
             ),
             jMethod("main", 2, 17, 61, 511)
         )

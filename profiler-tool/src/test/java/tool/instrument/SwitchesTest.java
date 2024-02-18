@@ -39,7 +39,7 @@ public class SwitchesTest {
             jMethod("main", 2, 19, 61, 298,
                 jBlock(SWITCH_STMT, 4, 18, 93, 294,
                     jBlock(COLON_CASE, 5, 8, 108, 149,
-                        jBlock(BLOCK, 5, 8, 109, 149).withJump(BREAK)
+                        jBlock(BLOCK, 5, 8, 109, 149).withControlBreak(BREAK)
                     ).noIncOffset(),
                     jBlock(COLON_CASE, 9, 9, 163, 166,
                         jBlock(BLOCK, 9, 9, 164, 166)
@@ -48,10 +48,10 @@ public class SwitchesTest {
                         jBlock(BLOCK, 10, 13, 181, 223)
                     ).noIncOffset(),
                     jBlock(COLON_CASE, 14, 16, 237, 262,
-                        jBlock(BLOCK, 14, 16, 238, 262).withJump(BREAK)
+                        jBlock(BLOCK, 14, 16, 238, 262).withControlBreak(BREAK)
                     ).noIncOffset(),
                     jBlock(COLON_CASE, 17, 17, 277, 288,
-                        jBlock(BLOCK, 17, 17, 278, 288).withJump(BREAK)
+                        jBlock(BLOCK, 17, 17, 278, 288).withControlBreak(BREAK)
                     ).noIncOffset()
                 )
             )
@@ -85,13 +85,13 @@ public class SwitchesTest {
             jMethod("main", 2, 15, 61, 253,
                 jBlock(SWITCH_STMT, 4, 14, 93, 249,
                     jBlock(COLON_CASE, 5, 8, 114, 155,
-                        jBlock(BLOCK, 5, 8, 115, 155).withJump(BREAK)
+                        jBlock(BLOCK, 5, 8, 115, 155).withControlBreak(BREAK)
                     ).noIncOffset(),
                     jBlock(COLON_CASE, 9, 12, 172, 217,
                         jBlock(BLOCK, 9, 12, 173, 217)
                     ).noIncOffset(),
                     jBlock(COLON_CASE, 13, 13, 232, 243,
-                        jBlock(BLOCK, 13, 13, 233, 243).withJump(BREAK)
+                        jBlock(BLOCK, 13, 13, 233, 243).withControlBreak(BREAK)
                     ).noIncOffset()
                 )
             )
@@ -129,8 +129,8 @@ public class SwitchesTest {
                         jBlock(BLOCK, 6, 8, 185, 241)
                     ),
                     jSsBlock(ARROW_CASE, 10, 10, 277, 311),
-                    jBlock(ARROW_CASE, 11, 13, 329, 353).withJump(BREAK),
-                    jSsBlock(ARROW_CASE, 14, 14, 370, 421).withJump(THROW)
+                    jBlock(ARROW_CASE, 11, 13, 329, 353).withControlBreak(BREAK),
+                    jSsBlock(ARROW_CASE, 14, 14, 370, 421).withControlBreak(THROW)
                 )
             )
         )
@@ -170,14 +170,14 @@ public class SwitchesTest {
                 jBlock(LOOP, 3, 20, 96, 506,
                     jBlock(SWITCH_EXPR, 4, 18, 128, 453,
                         jBlock(COLON_CASE, 5, 7, 145, 176,
-                            jBlock(BLOCK, 5, 7, 146, 176).withJump(YIELD)
+                            jBlock(BLOCK, 5, 7, 146, 176).withControlBreak(YIELD)
                         ).noIncOffset(),
-                        jBlock(COLON_CASE, 8, 8, 200, 209).withJump(YIELD).noIncOffset(),
-                        jBlock(COLON_CASE, 9, 9, 235, 265).withJump(THROW).noIncOffset(),
+                        jBlock(COLON_CASE, 8, 8, 200, 209).withControlBreak(YIELD).noIncOffset(),
+                        jBlock(COLON_CASE, 9, 9, 235, 265).withControlBreak(THROW).noIncOffset(),
                         jBlock(COLON_CASE, 10, 17, 282, 445,
                             jBlock(BLOCK, 10, 17, 283, 445,
-                                jBlock(BLOCK, 11, 14, 307, 394).withJump(YIELD),
-                                jBlock(BLOCK, 14, 16, 400, 435).withJump(YIELD)
+                                jBlock(BLOCK, 11, 14, 307, 394).withControlBreak(YIELD),
+                                jBlock(BLOCK, 14, 16, 400, 435).withControlBreak(YIELD)
                             )
                         ).noIncOffset()
                     )
@@ -216,11 +216,11 @@ public class SwitchesTest {
         jClass("Main",
             jMethod("main", 2, 19, 61, 423,
                 jBlock(SWITCH_EXPR, 4, 17, 126, 374,
-                    jBlock(ARROW_CASE, 5, 7, 144, 170).withJump(YIELD),
+                    jBlock(ARROW_CASE, 5, 7, 144, 170).withControlBreak(YIELD),
                     jSsBlock(ARROW_CASE, 8, 8, 189, 192),
                     jBlock(ARROW_CASE, 9, 16, 210, 368,
-                        jBlock(BLOCK, 10, 13, 242, 323).withJump(YIELD),
-                        jBlock(BLOCK, 13, 15, 329, 360).withJump(YIELD)
+                        jBlock(BLOCK, 10, 13, 242, 323).withControlBreak(YIELD),
+                        jBlock(BLOCK, 13, 15, 329, 360).withControlBreak(YIELD)
                     )
                 )
             )
@@ -251,7 +251,7 @@ public class SwitchesTest {
             jBlock(SWITCH_EXPR, 2, 8, 86, 170,
                 jSsBlock(ARROW_CASE, 3, 3, 105, 108),
                 jSsBlock(ARROW_CASE, 4, 4, 125, 128),
-                jBlock(ARROW_CASE, 5, 7, 144, 166).withJump(YIELD)
+                jBlock(ARROW_CASE, 5, 7, 144, 166).withControlBreak(YIELD)
             ),
             jMethod("main", 10, 12, 214, 254)
         )
@@ -289,9 +289,9 @@ public class SwitchesTest {
                     jBlock(SWITCH_EXPR, 9, 15, 401, 606,
                         jSsBlock(ARROW_CASE, 10, 10, 421, 446),
                         jSsBlock(ARROW_CASE, 11, 11, 482, 499),
-                        jBlock(ARROW_CASE, 12, 14, 529, 598).withJump(YIELD)
+                        jBlock(ARROW_CASE, 12, 14, 529, 598).withControlBreak(YIELD)
                     )
-                ).withJump(RETURN)
+                ).withControlBreak(RETURN)
             ),
             jMethod("main", 2, 5, 61, 235)
         )

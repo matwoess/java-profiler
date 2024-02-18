@@ -29,7 +29,7 @@ public class ClassesTest {
         }""";
     JavaFile expected = jFile(
         jClass("Pet",
-            jMethod("toString", 6, 11, 138, 234).withJump(RETURN)
+            jMethod("toString", 6, 11, 138, 234).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -164,15 +164,15 @@ public class ClassesTest {
         }""";
     JavaFile expected = jFile(
         jClass("Pet",
-            jMethod("toString", 6, 11, 138, 234).withJump(RETURN)
+            jMethod("toString", 6, 11, 138, 234).withControlBreak(RETURN)
         ),
         jClass("Dog",
             jConstructor("Dog", 15, 18, 297, 344),
-            jMethod("speak", 19, 19, 372, 391).withJump(RETURN)
+            jMethod("speak", 19, 19, 372, 391).withControlBreak(RETURN)
         ),
         jClass("Cat",
             jConstructor("Cat", 23, 26, 454, 501),
-            jMethod("speak", 27, 27, 529, 548).withJump(RETURN)
+            jMethod("speak", 27, 27, 529, 548).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -279,8 +279,8 @@ public class ClassesTest {
         }""";
     JavaFile expected = jFile(
         jClass("ThrowClass",
-            jMethod("errorCode", 4, 6, 167, 194).withJump(RETURN),
-            jMethod("main", 8, 11, 261, 347).withJump(THROW)
+            jMethod("errorCode", 4, 6, 167, 194).withControlBreak(RETURN),
+            jMethod("main", 8, 11, 261, 347).withControlBreak(THROW)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -323,14 +323,14 @@ public class ClassesTest {
     JavaFile expected = jFile(
         jClass("Dog",
             jConstructor("Dog", 4, 7, 73, 120),
-            jMethod("speak", 8, 10, 138, 162).withJump(RETURN)
+            jMethod("speak", 8, 10, 138, 162).withControlBreak(RETURN)
         ),
         jClass("SmallDog",
             jConstructor("SmallDog", 14, 18, 253, 319).incOffset("{\n    super(name, age);".length()),
             jConstructor("SmallDog", 19, 22, 375, 422).incOffset("{\n    this(name, age);".length()),
             jMethod("speak", 24, 30, 452, 544,
-                jBlock(BLOCK, 25, 27, 471, 499).withJump(RETURN),
-                jBlock(BLOCK, 27, 29, 505, 540).withJump(RETURN)
+                jBlock(BLOCK, 25, 27, 471, 499).withControlBreak(RETURN),
+                jBlock(BLOCK, 27, 29, 505, 540).withControlBreak(RETURN)
             )
         )
     );
@@ -367,7 +367,7 @@ public class ClassesTest {
         jClass("WithRefs",
             jConstructor("WithRefs", 5, 7, 136, 159),
             jMethod("updateRefs", 8, 18, 187, 620),
-            jMethod("getConstructorRef", 19, 21, 662, 693).withJump(RETURN)
+            jMethod("getConstructorRef", 19, 21, 662, 693).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

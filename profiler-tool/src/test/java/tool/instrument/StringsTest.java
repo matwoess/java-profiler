@@ -99,7 +99,7 @@ public class StringsTest {
     JavaFile expected = jFile(
         jClass("TextBlocks",
             jMethod("main", 6, 12, 125, 200),
-            jMethod("getTextBlock", 13, 15, 239, 263).withJump(RETURN)
+            jMethod("getTextBlock", 13, 15, 239, 263).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -129,9 +129,9 @@ public class StringsTest {
     JavaFile expected = jFile(
         jClass("TextBlocksAndSubStrings",
             jMethod("main", 6, 13, 192, 315,
-                jBlock(BLOCK, 10, 12, 282, 311).withJump(RETURN)
+                jBlock(BLOCK, 10, 12, 282, 311).withControlBreak(RETURN)
             ),
-            jMethod("getTextBlock", 14, 16, 354, 378).withJump(RETURN)
+            jMethod("getTextBlock", 14, 16, 354, 378).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -164,7 +164,7 @@ public class StringsTest {
     JavaFile expected = jFile(
         jClass("TextBlocksAndSubTextBlocks",
             jMethod("main", 7, 15, 157, 268),
-            jMethod("getTextBlock", 16, 18, 307, 331).withJump(RETURN)
+            jMethod("getTextBlock", 16, 18, 307, 331).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -256,7 +256,7 @@ public class StringsTest {
                 jBlock(BLOCK, 16, 20, 324, 400),
                 jBlock(BLOCK, 20, 24, 401, 485),
                 jBlock(BLOCK, 24, 28, 486, 584)
-            ).withJump(RETURN)
+            ).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -297,7 +297,7 @@ public class StringsTest {
             jMethod("main", 8, 21, 175, 387,
                 jBlock(BLOCK, 11, 20, 239, 383)
             ),
-            jMethod("getTextBlock", 23, 25, 427, 451).withJump(RETURN)
+            jMethod("getTextBlock", 23, 25, 427, 451).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

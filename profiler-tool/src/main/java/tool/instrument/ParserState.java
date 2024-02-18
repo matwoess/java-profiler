@@ -16,8 +16,8 @@ import static tool.instrument.Util.*;
  * and contains methods to enter and leave parsed program components.
  * Each enter and leave method is responsible for building the metadata model of the parsed Java file.
  * <p>
- * Additionally, it contains methods to register labels and jump statements, setting the package name and all the logic
- * handling the starting end ending of code regions.
+ * Additionally, it contains methods to register labels and control flow breaks,
+ * setting the package name and all the logic handling the starting end ending of code regions.
  */
 public class ParserState {
   /**
@@ -102,9 +102,9 @@ public class ParserState {
 
   /**
    * Registers the imminent control break in the current block and propagates it to the outer blocks
-   * of the current scope as an inner control break using {@link #registerJumpInOuterBlocks}.
+   * of the current scope as an inner control break using {@link #registerControlBreakInOuterBlocks}.
    */
-  void registerJumpStatement() {
+  void registerControlBreak() {
     ControlBreak controlBreak;
     if ((parser.t.val.equals("break") || parser.t.val.equals("continue")) && parser.la.kind == Parser._ident) {
       controlBreak = ControlBreak.fromTokenWithLabel(parser.t.val, parser.la.val);
@@ -113,7 +113,7 @@ public class ParserState {
     }
     curBlock.controlBreak = controlBreak;
     logger.log("> found control break: %s", controlBreak);
-    registerJumpInOuterBlocks(controlBreak);
+    registerControlBreakInOuterBlocks(controlBreak);
   }
 
   /**
@@ -125,12 +125,12 @@ public class ParserState {
    *
    * @param controlBreak the control break to register
    */
-  private void registerJumpInOuterBlocks(ControlBreak controlBreak) {
+  private void registerControlBreakInOuterBlocks(ControlBreak controlBreak) {
     if (controlBreak.stopPropagationAt(curBlock)) {
-      return; // do not propagate at all if the `curBlock` is catching the jump immediately (e.g. switch case with break)
+      return; // do not propagate, if `curBlock` catches the control break immediately (e.g. switch case with break)
     }
     for (Block block = curBlock.parentBlock; block != null; block = block.parentBlock) {
-      block.registerInnerJumpBlock(curBlock);
+      block.registerInnerControlBreak(curBlock);
       if (controlBreak.stopPropagationAt(block)) {
         break;
       }
@@ -374,7 +374,7 @@ public class ParserState {
     Token nextToken = missingBraces ? parser.la : parser.scanner.Peek();
     if (validCodeRegionStartToken(nextToken)) {
       startCodeRegion(blockType, missingBraces);
-      curCodeRegion.dependantJumps.addAll(curBlock.innerJumpBlocks);
+      curCodeRegion.dependentBlocks.addAll(curBlock.innerControlBreaks);
     }
   }
 

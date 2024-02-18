@@ -98,7 +98,7 @@ public class EnumsTest {
         }""";
     JavaFile expected = jFile(
         jClass("Enum",
-            jMethod("lowercase", 4, 6, 90, 133).withJump(RETURN)
+            jMethod("lowercase", 4, 6, 90, 133).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -189,7 +189,7 @@ public class EnumsTest {
                 jMethod("printName", 5, 7, 168, 213)
             ),
             jClass("InterfaceInEnum",
-                jMethod("lowercase", 11, 13, 316, 362).withJump(RETURN)
+                jMethod("lowercase", 11, 13, 316, 362).withControlBreak(RETURN)
             ),
             jMethod("callMethods", 16, 19, 403, 499)
         )
@@ -279,10 +279,10 @@ public class EnumsTest {
     JavaFile expected = jFile(
         jClass("EnumWithInnerAbstractEnum",
             jClass("WithAbstractMethods",
-                jMethod("description", 12, 14, 302, 341).withJump(RETURN),
+                jMethod("description", 12, 14, 302, 341).withControlBreak(RETURN),
                 jBlock(STATIC, 16, 18, 375, 399),
                 jMethod("printDescription", 21, 23, 447, 515),
-                jMethod("description", 27, 29, 579, 609).withJump(RETURN),
+                jMethod("description", 27, 29, 579, 609).withControlBreak(RETURN),
                 jMethod("printDescription", 32, 34, 657, 738),
                 jMethod("description"),
                 jMethod("printDescription")
@@ -313,7 +313,7 @@ public class EnumsTest {
         """;
     JavaFile expected = jFile(
         jClass("AnnotatedEnum",
-            jMethod("getDVal", 10, 12, 208, 231).withJump(RETURN)
+            jMethod("getDVal", 10, 12, 208, 231).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

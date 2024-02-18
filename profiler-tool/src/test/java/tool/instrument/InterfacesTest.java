@@ -61,8 +61,8 @@ public class InterfacesTest {
         }""";
     JavaFile expected = jFile(
         jClass("DefaultStatic",
-            jMethod("getName", 3, 5, 66, 91).withJump(RETURN),
-            jMethod("getAge", 6, 8, 132, 160).withJump(RETURN),
+            jMethod("getName", 3, 5, 66, 91).withControlBreak(RETURN),
+            jMethod("getAge", 6, 8, 132, 160).withControlBreak(RETURN),
             jMethod("printInfo", 9, 11, 211, 266)
         )
     );
@@ -97,9 +97,9 @@ public class InterfacesTest {
     JavaFile expected = jFile(
         jClass("Interfaces",
             jClass("SubInterface",
-                jMethod("get", 6, 8, 173, 225).withJump(RETURN),
+                jMethod("get", 6, 8, 173, 225).withControlBreak(RETURN),
                 jClass(CLASS, "SubClass",
-                    jMethod("getXPlus1", 11, 13, 277, 308).withJump(RETURN)
+                    jMethod("getXPlus1", 11, 13, 277, 308).withControlBreak(RETURN)
                 )
             ),
             jClass("X",
@@ -132,7 +132,7 @@ public class InterfacesTest {
     JavaFile expected = jFile(
         jClass("WithMain",
             jClass("X",
-                jMethod("get", 6, 8, 109, 132).withJump(RETURN)
+                jMethod("get", 6, 8, 109, 132).withControlBreak(RETURN)
             ),
             jMethod("main", 11, 15, 179, 268)
         )

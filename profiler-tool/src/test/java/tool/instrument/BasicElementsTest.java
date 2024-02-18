@@ -100,7 +100,7 @@ public class BasicElementsTest {
             jMethod("main", 2, 15, 61, 287,
                 jBlock(LOOP, 5, 13, 143, 251,
                     jBlock(BLOCK, 7, 9, 180, 202),
-                    jBlock(BLOCK, 10, 12, 221, 245).withJump(BREAK)
+                    jBlock(BLOCK, 10, 12, 221, 245).withControlBreak(BREAK)
                 )
             )
         )
@@ -199,7 +199,7 @@ public class BasicElementsTest {
             ),
             jMethod("main", 12, 18, 309, 459,
                 jBlock(TRY, 13, 15, 360, 390),
-                jBlock(BLOCK, 15, 17, 411, 455).withJump(THROW)
+                jBlock(BLOCK, 15, 17, 411, 455).withControlBreak(THROW)
             )
         )
     );
@@ -233,7 +233,7 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 9, 61, 303),
-            jMethod("getTempString", 17, 19, 649, 709).withJump(RETURN)
+            jMethod("getTempString", 17, 19, 649, 709).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -274,8 +274,8 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 61, 132,
-                jBlock(BLOCK, 3, 5, 78, 101).withJump(RETURN)
-            ).withJump(RETURN),
+                jBlock(BLOCK, 3, 5, 78, 101).withControlBreak(RETURN)
+            ).withControlBreak(RETURN),
             jMethod("doNothing", 8, 8, 159, 161)
         )
     );
@@ -328,8 +328,8 @@ public class BasicElementsTest {
             jMethod("main", 2, 15, 61, 263,
                 jBlock(LOOP, 5, 14, 106, 259,
                     jBlock(LOOP, 6, 13, 134, 253,
-                        jBlock(BLOCK, 7, 10, 156, 205).withJump(BREAK, "inner"),
-                        jBlock(BLOCK, 10, 12, 211, 245).withJump(BREAK, "outer")
+                        jBlock(BLOCK, 7, 10, 156, 205).withControlBreak(BREAK, "inner"),
+                        jBlock(BLOCK, 10, 12, 211, 245).withControlBreak(BREAK, "outer")
                     )
                 )
             )
@@ -361,7 +361,7 @@ public class BasicElementsTest {
             jMethod("main", 2, 13, 61, 205,
                 jBlock(LOOP, 4, 12, 95, 201,
                     jBlock(BLOCK, 5, 9, 115, 165),
-                    jBlock(BLOCK, 9, 11, 171, 195).withJump(BREAK)
+                    jBlock(BLOCK, 9, 11, 171, 195).withControlBreak(BREAK)
                 )
             )
         )
@@ -437,9 +437,9 @@ public class BasicElementsTest {
             jMethod("main", 2, 13, 61, 384,
                 jBlock(TRY, 3, 5, 71, 99),
                 jBlock(BLOCK, 5, 12, 121, 380,
-                    jBlock(BLOCK, 6, 8, 168, 217).withJump(THROW),
-                    jBlock(BLOCK, 8, 10, 269, 301).withJump(THROW)
-                ).withJump(THROW)
+                    jBlock(BLOCK, 6, 8, 168, 217).withControlBreak(THROW),
+                    jBlock(BLOCK, 8, 10, 269, 301).withControlBreak(THROW)
+                ).withControlBreak(THROW)
             )
         )
     );
@@ -471,7 +471,7 @@ public class BasicElementsTest {
     JavaFile expected = jFile(
         jClass("GenArrays",
             jMethod("main", 7, 13, 226, 456),
-            jMethod("getFirstEntry", 15, 17, 503, 532).withJump(RETURN)
+            jMethod("getFirstEntry", 15, 17, 503, 532).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
@@ -521,12 +521,12 @@ public class BasicElementsTest {
                     )
                 ),
                 jBlock(BLOCK, 13, 17, 288, 346,
-                    jBlock(BLOCK, 14, 16, 313, 340).withJump(RETURN)
+                    jBlock(BLOCK, 14, 16, 313, 340).withControlBreak(RETURN)
                 )
-            ).withJump(RETURN),
+            ).withControlBreak(RETURN),
             jMethod("getSyncValue", 20, 27, 389, 526,
                 jBlock(BLOCK, 23, 25, 462, 490)
-            ).withJump(RETURN),
+            ).withControlBreak(RETURN),
             jMethod("main", 28, 30, 568, 630)
         )
     );

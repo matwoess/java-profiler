@@ -139,7 +139,7 @@ public class AnnotationsTest {
     JavaFile expected = jFile("complexAnnotations", 27,
         jClass("Annotations",
             jClass("RuntimeRetentionPolicy"),
-            jMethod("equals", 24, 26, 681, 716).withJump(RETURN),
+            jMethod("equals", 24, 26, 681, 716).withControlBreak(RETURN),
             jMethod("main", 27, 28, 758, 763)
         )
     );

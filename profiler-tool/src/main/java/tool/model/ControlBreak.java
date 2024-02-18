@@ -13,14 +13,14 @@ import static tool.model.ControlBreak.Kind.*;
 public record ControlBreak(Kind kind, String label) implements Serializable {
 
   /**
-   * The kind of jump statement.
+   * The kind of control flow break.
    */
   public enum Kind {BREAK, CONTINUE, RETURN, YIELD, THROW}
 
   /**
-   * Decide when to stop propagating a jump statement at a given parent block.
+   * Decide when to stop propagating a control break at a given parent block.
    * @param block the block to check
-   * @return true if this kind of jump statement should be propagated only until the given block
+   * @return true if this kind of control flow break should be propagated only until the given block
    */
   public boolean stopPropagationAt(Block block) {
     if (label != null) return block.labels.contains(label);
@@ -45,7 +45,7 @@ public record ControlBreak(Kind kind, String label) implements Serializable {
       case "return" -> RETURN;
       case "yield" -> YIELD;
       case "throw" -> THROW;
-      default -> throw new RuntimeException("unknown jump statement '" + tokenValue + "'");
+      default -> throw new RuntimeException("unknown control flow break '" + tokenValue + "'");
     };
     return new ControlBreak(type, null);
   }

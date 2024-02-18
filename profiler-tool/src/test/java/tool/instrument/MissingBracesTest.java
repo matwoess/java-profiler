@@ -21,7 +21,7 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 4, 61, 96,
-                jSsBlock(BLOCK, 3, 3, 85, 92).withJump(RETURN)
+                jSsBlock(BLOCK, 3, 3, 85, 92).withControlBreak(RETURN)
             )
         )
     );
@@ -41,8 +41,8 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 5, 61, 115,
-                jSsBlock(BLOCK, 3, 3, 85, 92).withJump(BREAK),
-                jSsBlock(BLOCK, 4, 4, 101, 111).withJump(CONTINUE)
+                jSsBlock(BLOCK, 3, 3, 85, 92).withControlBreak(BREAK),
+                jSsBlock(BLOCK, 4, 4, 101, 111).withControlBreak(CONTINUE)
             )
         )
     );
@@ -63,9 +63,9 @@ public class MissingBracesTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 6, 61, 150,
-                jSsBlock(BLOCK, 3, 3, 85, 92).withJump(BREAK),
-                jSsBlock(BLOCK, 4, 4, 119, 127).withJump(RETURN),
-                jSsBlock(BLOCK, 5, 5, 136, 146).withJump(CONTINUE)
+                jSsBlock(BLOCK, 3, 3, 85, 92).withControlBreak(BREAK),
+                jSsBlock(BLOCK, 4, 4, 119, 127).withControlBreak(RETURN),
+                jSsBlock(BLOCK, 5, 5, 136, 146).withControlBreak(CONTINUE)
             )
         )
     );
@@ -97,9 +97,9 @@ public class MissingBracesTest {
             jMethod("main", 2, 15, 61, 308,
                 jSsBlock(BLOCK, 4, 5, 98, 112),
                 jBlock(BLOCK, 6, 8, 138, 159),
-                jSsBlock(BLOCK, 9, 9, 168, 213).withJump(THROW),
+                jSsBlock(BLOCK, 9, 9, 168, 213).withControlBreak(THROW),
                 jBlock(BLOCK, 11, 13, 231, 277,
-                    jSsBlock(BLOCK, 12, 12, 251, 259).withJump(RETURN),
+                    jSsBlock(BLOCK, 12, 12, 251, 259).withControlBreak(RETURN),
                     jSsBlock(BLOCK, 12, 12, 264, 271)
                 )
             )
@@ -127,7 +127,7 @@ public class MissingBracesTest {
             jMethod("main", 2, 9, 61, 166,
                 jSsBlock(LOOP, 4, 8, 95, 162,
                     jSsBlock(LOOP, 4, 8, 107, 162,
-                        jSsBlock(BLOCK, 5, 6, 122, 138).withJump(RETURN),
+                        jSsBlock(BLOCK, 5, 6, 122, 138).withControlBreak(RETURN),
                         jSsBlock(BLOCK, 7, 8, 149, 162)
                     )
                 )
@@ -211,11 +211,11 @@ public class MissingBracesTest {
             jMethod("main", 2, 17, 61, 279,
                 jBlock(SWITCH_STMT, 4, 16, 93, 275,
                     jBlock(COLON_CASE, 5, 8, 108, 149,
-                        jBlock(BLOCK, 5, 8, 109, 149).withJump(BREAK)
+                        jBlock(BLOCK, 5, 8, 109, 149).withControlBreak(BREAK)
                     ).noIncOffset(),
                     jBlock(COLON_CASE, 10, 12, 185, 218).noIncOffset(),
-                    jBlock(COLON_CASE, 13, 14, 232, 247).withJump(BREAK).noIncOffset(),
-                    jBlock(COLON_CASE, 15, 15, 262, 269).withJump(BREAK).noIncOffset()
+                    jBlock(COLON_CASE, 13, 14, 232, 247).withControlBreak(BREAK).noIncOffset(),
+                    jBlock(COLON_CASE, 15, 15, 262, 269).withControlBreak(BREAK).noIncOffset()
                 )
             )
         )
@@ -242,8 +242,8 @@ public class MissingBracesTest {
             jMethod("main", 2, 9, 61, 184,
                 jSsBlock(LOOP, 4, 8, 101, 180,
                     jSsBlock(LOOP, 4, 8, 113, 180,
-                        jSsBlock(BLOCK, 5, 6, 129, 146).withJump(RETURN),
-                        jSsBlock(BLOCK, 7, 8, 158, 180).withJump(BREAK, "outer")
+                        jSsBlock(BLOCK, 5, 6, 129, 146).withControlBreak(RETURN),
+                        jSsBlock(BLOCK, 7, 8, 158, 180).withControlBreak(BREAK, "outer")
                     )
                 )
             )

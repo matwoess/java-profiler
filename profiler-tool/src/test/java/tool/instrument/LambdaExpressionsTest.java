@@ -44,7 +44,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 6, 61, 204,
-                jBlock(LAMBDA, 3, 3, 114, 131).withJump(RETURN)
+                jBlock(LAMBDA, 3, 3, 114, 131).withControlBreak(RETURN)
             )
         )
     );
@@ -66,7 +66,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("Main",
             jMethod("main", 2, 7, 61, 175,
-                jBlock(LAMBDA, 3, 5, 101, 130).withJump(RETURN)
+                jBlock(LAMBDA, 3, 5, 101, 130).withControlBreak(RETURN)
             )
         )
     );
@@ -190,7 +190,7 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("LambdaMembers",
             jBlock(LAMBDA, 2, 4, 67, 106),
-            jBlock(LAMBDA, 5, 7, 162, 187).withJump(RETURN),
+            jBlock(LAMBDA, 5, 7, 162, 187).withControlBreak(RETURN),
             jBlock(LAMBDA, 8, 10, 236, 268),
             jMethod("main", 11, 14, 311, 400)
         )
