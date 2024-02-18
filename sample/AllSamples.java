@@ -18,7 +18,7 @@ public class AllSamples {
     LocalClasses.main(args);
     Records.main(args);
     Strings.main(args);
-    JumpStatements.main(args);
+    ControlBreaks.main(args);
     ParallelSum.main(new String[]{String.valueOf(100), "1"});
   }
 }

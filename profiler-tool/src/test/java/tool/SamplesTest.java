@@ -191,13 +191,13 @@ public class SamplesTest {
 
 
   @Test
-  public void testJumpStatementsSample() {
-    TestUtils.instrumentAndProfile(samplesFolder.resolve("JumpStatements.java"));
+  public void testControlBreaksSample() {
+    TestUtils.instrumentAndProfile(samplesFolder.resolve("ControlBreaks.java"));
   }
 
   @Test
-  public void testJumpStatementsSample_Folder() {
-    TestUtils.instrumentFolderAndProfile(samplesFolder, "JumpStatements.java");
+  public void testControlBreaksSample_Folder() {
+    TestUtils.instrumentFolderAndProfile(samplesFolder, "ControlBreaks.java");
   }
 
   @Test

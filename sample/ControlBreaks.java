@@ -1,7 +1,7 @@
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class JumpStatements {
+public class ControlBreaks {
   public static void main(String[] args) {
     loopWithLabels();
     if (singleStmtIfsInLoop()) return;

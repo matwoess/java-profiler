@@ -123,9 +123,9 @@ Statement =
     | "do" BlockOrSingleStatement<LOOP> "while" ParExpr ";"
     | "for" ParExpr BlockOrSingleStatement<LOOP>
     | "try" [ParExpr] Block<TRY> {"catch" ParExpr Block<BLOCK>} ["finally" Block<BLOCK>]
-    | ("break" | "continue") (. state.registerJumpStatement(); .) [ident] ";"
-    | ("return" | "yield") (. state.registerJumpStatement(); .) (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
-    | "throw" (. state.registerJumpStatement(); .) {ANY} ";"
+    | ("break" | "continue") (. state.registerControlBreak(); .) [ident] ";"
+    | ("return" | "yield") (. state.registerControlBreak(); .) (SwitchStatement | {ANY | ParExpr | BraceExpr}) ";"
+    | "throw" (. state.registerControlBreak(); .) {ANY} ";"
     | IF(state.isLabel()) (. state.registerLabel(); .) ident ":"
     | Annotation
     | "super" (ParExpr ";" (. state.markEndOfSuperCall(); .) | "." {ANY} ";")
@@ -181,7 +181,7 @@ SSArrowBody<BlockType blockType> =          (. state.enterSSBlock(blockType); .)
     (   string | char
         | ParExpr
         | ident
-        | "throw"                           (. state.registerJumpStatement(); .)
+        | "throw"                           (. state.registerControlBreak(); .)
         | ANY
     )                                       // exclude closing ")" or ";" after lambda blocks without consuming ";"
     {ANY | ParExpr}                         (. if (!inSwitch) { state.leaveBlock(blockType); return; } .)
