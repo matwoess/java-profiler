@@ -14,7 +14,7 @@ public class AllSamples {
     Lambdas.main(args);
     AnonymousClasses.main(args);
     NestedBlockTypes.main(args);
-    Fibonacci.main(new String[]{"10"});
+    Algorithms.main(new String[]{"10"});
     LocalClasses.main(args);
     Records.main(args);
     Strings.main(args);

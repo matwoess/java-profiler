@@ -17,7 +17,7 @@ public class MainTest {
   final Path samplesFolder = Path.of("..", "sample");
   final Path simpleExampleFile = samplesFolder.resolve("Simple.java");
   final Path lambdaExampleFile = samplesFolder.resolve("Lambdas.java");
-  final Path fibonacciExampleFile = samplesFolder.resolve("Fibonacci.java");
+  final Path algorithmsExampleFile = samplesFolder.resolve("Algorithms.java");
 
   @Test
   public void testShowUsage_NoError() {
@@ -42,12 +42,12 @@ public class MainTest {
 
   @Test
   public void testInstrumentAndProfileWithArgument() {
-    Main.main(new String[]{fibonacciExampleFile.toString(), "10"});
+    Main.main(new String[]{algorithmsExampleFile.toString(), "10"});
   }
 
   @Test
   public void testInstrumentFolderAndProfileWithArgument() {
-    Main.main(new String[]{"-d", samplesFolder.toString(), fibonacciExampleFile.toString(), "20"});
+    Main.main(new String[]{"-d", samplesFolder.toString(), algorithmsExampleFile.toString(), "20"});
   }
 
   @Test
