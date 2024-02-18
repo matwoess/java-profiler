@@ -131,6 +131,8 @@ public class Main {
     try (Stream<Path> walk = Files.walk(sourcesFolder)) {
       return walk
           .filter(path -> Files.isRegularFile(path) && !path.equals(exceptFor) && isJavaFile(path))
+          .filter(path -> !path.getFileName().toString().equals("package-info.java"))
+          .filter(path -> !path.getFileName().toString().equals("module-info.java"))
           .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
           .toArray(JavaFile[]::new);
     } catch (IOException e) {
