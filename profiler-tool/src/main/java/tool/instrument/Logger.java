@@ -95,7 +95,7 @@ public class Logger {
           block.blockType,
           block.isSingleStatement ? ", SS" : "",
           leave ? block.end.pos() : block.beg.pos(),
-          block.jumpStatement == null ? "" : " (" + block.jumpStatement + ")"
+          block.controlBreak == null ? "" : " (" + block.controlBreak + ")"
       );
     }
     if (comp instanceof CodeRegion region) {

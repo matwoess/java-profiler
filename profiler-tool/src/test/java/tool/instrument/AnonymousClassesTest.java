@@ -9,7 +9,7 @@ import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.BLOCK;
 import static tool.model.ClassType.ANONYMOUS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tool.model.JumpStatement.Kind.RETURN;
+import static tool.model.ControlBreak.Kind.RETURN;
 
 public class AnonymousClassesTest {
   @Test

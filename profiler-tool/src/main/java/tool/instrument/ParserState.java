@@ -101,37 +101,37 @@ public class ParserState {
   }
 
   /**
-   * Registers the imminent jump statement in the current block and propagates it to the outer blocks
-   * of the current scope as an inner jump block using {@link #registerJumpInOuterBlocks}.
+   * Registers the imminent control break in the current block and propagates it to the outer blocks
+   * of the current scope as an inner control break using {@link #registerJumpInOuterBlocks}.
    */
   void registerJumpStatement() {
-    JumpStatement jumpStatement;
+    ControlBreak controlBreak;
     if ((parser.t.val.equals("break") || parser.t.val.equals("continue")) && parser.la.kind == Parser._ident) {
-      jumpStatement = JumpStatement.fromTokenWithLabel(parser.t.val, parser.la.val);
+      controlBreak = ControlBreak.fromTokenWithLabel(parser.t.val, parser.la.val);
     } else {
-      jumpStatement = JumpStatement.fromToken(parser.t.val);
+      controlBreak = ControlBreak.fromToken(parser.t.val);
     }
-    curBlock.jumpStatement = jumpStatement;
-    logger.log("> found jump statement: %s", jumpStatement);
-    registerJumpInOuterBlocks(jumpStatement);
+    curBlock.controlBreak = controlBreak;
+    logger.log("> found control break: %s", controlBreak);
+    registerJumpInOuterBlocks(controlBreak);
   }
 
   /**
-   * Registers the given jump statement in the parent blocks of the current block as inner jump blocks.
+   * Registers the given control flow break in the parent blocks as inner control break block.
    * <p>
-   * If the current block "catches" the jump statement, it will not be propagated further.
+   * If the current block "catches" the control break, it will not be propagated further.
    * <p>
-   * To determine when the propagation should stop {@link JumpStatement#stopPropagationAt)} is used.
+   * To determine when the propagation should stop {@link ControlBreak#stopPropagationAt)} is used.
    *
-   * @param jumpStatement the jump statement to register
+   * @param controlBreak the control break to register
    */
-  private void registerJumpInOuterBlocks(JumpStatement jumpStatement) {
-    if (jumpStatement.stopPropagationAt(curBlock)) {
+  private void registerJumpInOuterBlocks(ControlBreak controlBreak) {
+    if (controlBreak.stopPropagationAt(curBlock)) {
       return; // do not propagate at all if the `curBlock` is catching the jump immediately (e.g. switch case with break)
     }
     for (Block block = curBlock.parentBlock; block != null; block = block.parentBlock) {
       block.registerInnerJumpBlock(curBlock);
-      if (jumpStatement.stopPropagationAt(block)) {
+      if (controlBreak.stopPropagationAt(block)) {
         break;
       }
     }

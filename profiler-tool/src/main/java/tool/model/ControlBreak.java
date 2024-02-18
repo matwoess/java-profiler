@@ -3,14 +3,14 @@ package tool.model;
 import java.io.Serializable;
 
 import static tool.model.BlockType.*;
-import static tool.model.JumpStatement.Kind.*;
+import static tool.model.ControlBreak.Kind.*;
 
 /**
- * This class is used to represent a jump statement.
- * @param kind the kind of jump statement (one of {@link Kind})
- * @param label the target label of the jump statement, if any
+ * This class is used to represent a control flow break.
+ * @param kind the kind of control break (one of {@link Kind})
+ * @param label the target label of the control break, if any
  */
-public record JumpStatement(Kind kind, String label) implements Serializable {
+public record ControlBreak(Kind kind, String label) implements Serializable {
 
   /**
    * The kind of jump statement.
@@ -34,11 +34,11 @@ public record JumpStatement(Kind kind, String label) implements Serializable {
   }
 
   /**
-   * Create a new jump statement from a keyword token value.
-   * @param tokenValue the keyword of the jump statement
-   * @return a new jump statement
+   * Create a new control flow break from a keyword token value.
+   * @param tokenValue the keyword string of the control break
+   * @return a new control break instance with a kind matching the token string
    */
-  public static JumpStatement fromToken(String tokenValue) {
+  public static ControlBreak fromToken(String tokenValue) {
     Kind type = switch (tokenValue) {
       case "break" -> BREAK;
       case "continue" -> CONTINUE;
@@ -47,23 +47,23 @@ public record JumpStatement(Kind kind, String label) implements Serializable {
       case "throw" -> THROW;
       default -> throw new RuntimeException("unknown jump statement '" + tokenValue + "'");
     };
-    return new JumpStatement(type, null);
+    return new ControlBreak(type, null);
   }
 
   /**
-   * Create a new jump statement from a keyword token value and a label.
-   * @param tokenValue the keyword of the jump statement
-   * @param label the target label of the jump statement
-   * @return a new jump statement with the given label
+   * Create a new control flow break from a keyword token value and a label.
+   * @param tokenValue the keyword of the control break
+   * @param label the target label of the control break
+   * @return a new control break instance with the given label
    */
-  public static JumpStatement fromTokenWithLabel(String tokenValue, String label) {
+  public static ControlBreak fromTokenWithLabel(String tokenValue, String label) {
     assert tokenValue.equals("break") || tokenValue.equals("continue");
     Kind type = switch (tokenValue) {
       case "break" -> BREAK;
       case "continue" -> CONTINUE;
-      default -> throw new RuntimeException("unknown jump statement '" + tokenValue + "'");
+      default -> throw new RuntimeException("unknown control break '" + tokenValue + "'");
     };
-    return new JumpStatement(type, label);
+    return new ControlBreak(type, label);
   }
 
   @Override

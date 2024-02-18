@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.model.BlockType.*;
-import static tool.model.JumpStatement.Kind.RETURN;
-import static tool.model.JumpStatement.Kind.THROW;
+import static tool.model.ControlBreak.Kind.RETURN;
+import static tool.model.ControlBreak.Kind.THROW;
 
 public class RecordsTest {
   @Test

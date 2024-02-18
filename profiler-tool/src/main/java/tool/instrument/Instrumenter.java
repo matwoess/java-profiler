@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static tool.model.JumpStatement.Kind.THROW;
+import static tool.model.ControlBreak.Kind.THROW;
 
 /**
  * This class is used to instrument the source files of a Java project.
@@ -143,7 +143,7 @@ public class Instrumenter {
       } else {
         inserts.add(new CodeInsert(block.getIncInsertPos(), String.format("__Counter.inc%s(%d);", incRefAdd, blockCounter++)));
       }
-      if (block.isSingleStatement && block.isSwitchExpressionCase() && (block.jumpStatement == null || block.jumpStatement.kind() != THROW)) {
+      if (block.isSingleStatement && block.isSwitchExpressionCase() && (block.controlBreak == null || block.controlBreak.kind() != THROW)) {
         inserts.add(new CodeInsert(block.getIncInsertPos(), "yield "));
       }
       if (block.isSingleStatement && block.blockType != BlockType.LAMBDA) {

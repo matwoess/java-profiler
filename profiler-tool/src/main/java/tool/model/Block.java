@@ -25,9 +25,9 @@ public class Block implements Serializable, Component {
   public final List<Block> innerBlocks = new ArrayList<>();
 
   /**
-   * The jump statement of this block. Null if this block is not ending with one.
+   * The control flow break of this block. Null if this block is not ending with one.
    */
-  public JumpStatement jumpStatement = null;
+  public ControlBreak controlBreak = null;
   /**
    * The labels associated with this block. Empty by default.
    */
@@ -200,7 +200,7 @@ public class Block implements Serializable, Component {
         blockType.toString(),
         isSingleStatement ? ", SS" : "",
         method == null ? " [class-level]" : "",
-        jumpStatement != null ? " [" + jumpStatement + "]" : "",
+        controlBreak != null ? " [" + controlBreak + "]" : "",
         parentBlock == null ? "" : " (in " + parentBlock + ")"
     );
   }
@@ -215,7 +215,7 @@ public class Block implements Serializable, Component {
     if (incInsertOffset != block.incInsertOffset) return false;
     if (!clazz.equals(block.clazz)) return false;
     if (!Objects.equals(method, block.method)) return false;
-    if (!Objects.equals(jumpStatement, block.jumpStatement)) return false;
+    if (!Objects.equals(controlBreak, block.controlBreak)) return false;
     if (!Objects.equals(parentBlock, block.parentBlock)) return false;
     return blockType == block.blockType;
   }
@@ -228,7 +228,7 @@ public class Block implements Serializable, Component {
     result = 31 * result + end.hashCode();
     result = 31 * result + blockType.hashCode();
     result = 31 * result + incInsertOffset;
-    result = 31 * result + (jumpStatement != null ? jumpStatement.hashCode() : 0);
+    result = 31 * result + (controlBreak != null ? controlBreak.hashCode() : 0);
     result = 31 * result + (parentBlock != null ? parentBlock.hashCode() : 0);
     return result;
   }

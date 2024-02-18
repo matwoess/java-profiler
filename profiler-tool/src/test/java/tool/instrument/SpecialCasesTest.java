@@ -12,8 +12,8 @@ import static tool.model.BlockType.*;
 import static tool.model.ClassType.ANONYMOUS;
 import static tool.model.ClassType.LOCAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static tool.model.JumpStatement.Kind.RETURN;
-import static tool.model.JumpStatement.Kind.YIELD;
+import static tool.model.ControlBreak.Kind.RETURN;
+import static tool.model.ControlBreak.Kind.YIELD;
 
 public class SpecialCasesTest {
   @Test

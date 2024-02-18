@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static tool.instrument.TestProgramBuilder.*;
 import static tool.instrument.TestInstrumentUtils.parseJavaFile;
 import static tool.model.BlockType.*;
-import static tool.model.JumpStatement.Kind.*;
+import static tool.model.ControlBreak.Kind.*;
 
 public class MissingBracesTest {
   @Test
