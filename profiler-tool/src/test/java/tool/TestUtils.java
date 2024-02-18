@@ -44,7 +44,7 @@ public class TestUtils {
     try (DataOutputStream dis = new DataOutputStream(new FileOutputStream(IO.getCountsPath().toFile()))) {
       dis.writeInt(nBlocks);
       for (int i = 0; i < nBlocks; i++) {
-        dis.writeInt(1);
+        dis.writeLong(1);
       }
     } catch (IOException | NumberFormatException e) {
       throw new RuntimeException(e);
