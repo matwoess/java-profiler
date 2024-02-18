@@ -66,7 +66,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     List<JClass> sortedClasses = Arrays.stream(allJavaFiles)
         .flatMap(f -> f.topLevelClasses.stream())
         .filter(c -> c.getMethodsRecursive().stream().anyMatch(m -> !m.isAbstract()))
-        .sorted(Comparator.comparingInt(JClass::getAggregatedMethodBlockCounts).reversed())
+        .sorted(Comparator.comparingLong(JClass::getAggregatedMethodBlockCounts).reversed())
         .toList();
     content.append("<table>\n")
         .append("<tr>\n")

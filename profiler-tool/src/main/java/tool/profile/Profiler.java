@@ -127,17 +127,17 @@ public class Profiler {
    * @param allJavaFiles the list of all java files contained in the project
    */
   private static void addHitCountToJavaFileBlocks(JavaFile[] allJavaFiles) {
-    int[] counts;
+    long[] counts;
     try (DataInputStream dis = new DataInputStream(new FileInputStream(IO.getCountsPath().toString()))) {
       int nCounts = dis.readInt();
-      counts = new int[nCounts];
+      counts = new long[nCounts];
       for (int i = 0; i < nCounts; i++) {
-        counts[i] = dis.readInt();
+        counts[i] = dis.readLong();
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    PrimitiveIterator.OfInt allBlockCounts = Arrays.stream(counts).iterator();
+    PrimitiveIterator.OfLong allBlockCounts = Arrays.stream(counts).iterator();
     for (JavaFile jFile : allJavaFiles) {
       for (Block block : jFile.foundBlocks) {
         if (block.blockType.hasNoCounter()) {

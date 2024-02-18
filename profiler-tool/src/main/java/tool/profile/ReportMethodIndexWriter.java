@@ -64,7 +64,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
   public void sortedMethodTable() {
     List<Method> sortedMethods = clazz.getMethodsRecursive().stream()
         .filter(method -> !method.isAbstract())
-        .sorted(Comparator.comparingInt((Method m) -> m.getMethodBlock().hits).reversed())
+        .sorted(Comparator.comparingLong((Method m) -> m.getMethodBlock().hits).reversed())
         .toList();
     content.append("<table>\n")
         .append("<tr>\n")

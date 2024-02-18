@@ -105,11 +105,11 @@ public class JClass implements Serializable, Component {
    * Returns the sum of hits for all method blocks in this class and all inner classes recursively.
    * @return the total number of hits for any method is this top-level class
    */
-  public int getAggregatedMethodBlockCounts() {
+  public long getAggregatedMethodBlockCounts() {
     return getMethodsRecursive().stream()
         .filter(m -> !m.isAbstract())
         .map(Method::getMethodBlock)
-        .mapToInt(b -> b.hits)
+        .mapToLong(b -> b.hits)
         .sum();
   }
 

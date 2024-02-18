@@ -211,7 +211,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     StringBuilder builder = new StringBuilder();
     List<CodeRegion> activeRegions = getActiveCodeRegionsForLine(lineNr);
     for (CodeRegion region : activeRegions) {
-      int hitCount = region.getHitCount();
+      long hitCount = region.getHitCount();
       String coverageStatus = hitCount > 0 ? "c" : "nc";
       String regionClass = "r" + region.block.id + "_" + region.id;
       builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, regionClass, hitCount));
@@ -258,7 +258,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
    * @return the HTML span element
    */
   private String codeSpan(List<Block> activeBlocks, Block block, CodeRegion region) {
-    int hits = (region != null) ? region.getHitCount() : block.hits;
+    long hits = (region != null) ? region.getHitCount() : block.hits;
     String coverageClass = hits > 0 ? "c" : "nc";
     title = hits + " hit" + (hits == 1 ? "" : "s");
     String classes = activeBlocks.stream().map(b -> "b" + b.id).collect(Collectors.joining(" "));

@@ -33,8 +33,8 @@ public class CodeRegion implements Serializable, Component {
    * Gets the effective hit-count of this region.
    * @return the parent blocks hits minus the sum of hits form all dependent jump blocks
    */
-  public int getHitCount() {
-    return block.hits - dependantJumps.stream().mapToInt(b -> b.hits).sum();
+  public long getHitCount() {
+    return block.hits - dependantJumps.stream().mapToLong(b -> b.hits).sum();
   }
 
   /**

@@ -47,7 +47,7 @@ public class Block implements Serializable, Component {
    * <p>
    * This information is added from the counts.dat file before report generation.
    */
-  transient public int hits;
+  transient public long hits;
   /**
    * The list of inner blocks that contain a jump statement.
    * <p>
