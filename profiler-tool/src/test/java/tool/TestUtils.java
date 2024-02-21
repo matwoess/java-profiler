@@ -1,6 +1,7 @@
 package tool;
 
 import common.IO;
+import tool.cli.Main;
 
 import java.io.*;
 import java.net.HttpURLConnection;

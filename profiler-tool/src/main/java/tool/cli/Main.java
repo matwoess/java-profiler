@@ -1,7 +1,6 @@
-package tool;
+package tool.cli;
 
 import common.Util;
-import tool.cli.Arguments;
 import tool.instrument.Instrumenter;
 import tool.model.JavaFile;
 import tool.profile.Profiler;

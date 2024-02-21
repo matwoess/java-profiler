@@ -78,13 +78,13 @@ public class SystemUtils {
    * @return the string representation of the java command
    */
   public static String getJavaRunCommand(String[] toolArguments) {
-    String toolJar = tool.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    String toolJar = tool.cli.Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String commonJar = common.Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     String classPath = toolJar;
     if (!commonJar.equals(toolJar)) {
       classPath += OS.getOS().pathSeparator() + commonJar;
     }
-    String[] toolMainCmd = {"java", "-cp", '"' + classPath + '"', "tool.Main"};
+    String[] toolMainCmd = {"java", "-cp", '"' + classPath + '"', "tool.cli.Main"};
     String[] fullCmd = Util.prependToArray(toolArguments, toolMainCmd);
     return String.join(" ", fullCmd);
   }

@@ -1,10 +1,11 @@
-package tool;
+package cli;
 
 import common.IO;
 import common.JavaCommandBuilder;
 import common.JCompilerCommandBuilder;
 import common.Util;
 import org.junit.jupiter.api.Test;
+import tool.cli.Main;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
