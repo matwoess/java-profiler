@@ -26,8 +26,8 @@ public class Main {
    */
   public static void main(String[] args) {
     Arguments arguments = Arguments.fromArguments(args);
+    if (arguments == null) return;
     switch (arguments.runMode()) {
-      case HELP -> printUsage();
       case REPORT_ONLY -> generateReportOnly();
       case INSTRUMENT_ONLY -> instrumentOnly(arguments);
       case DEFAULT -> instrumentCompileAndRun(arguments);
@@ -84,25 +84,5 @@ public class Main {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public static void printUsage() {
-    System.out.println("""
-        Usage: profiler [options] <main file> [program args]
-        Or   : profiler [options] <run mode>
-        Options:
-          -h, --help                        display this message and quit
-          -s, --synchronized                instrument using synchronized counter increments
-          -v, --verbose                     output verbose info about instrumentation of files
-          -d, --sources-directory <dir>     directory with additional Java files to instrument
-        Run mode (exclusive):
-          -i, --instrument-only <file|dir>  only instrument a single file or directory and exit
-          -r, --generate-report             only generate the report from metadata and counts
-        Main file:
-          The path to the main Java file. It will be compiled and and executed after instrumentation.
-          (Must not be specified for the generate-report run mode)
-        Program args:
-          Will be passed to the main method if given
-        """);
   }
 }

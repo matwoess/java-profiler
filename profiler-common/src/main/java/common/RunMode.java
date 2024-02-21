@@ -4,7 +4,7 @@ package common;
  * The possible run modes of the tool.
  */
 public enum RunMode {
-  DEFAULT, INSTRUMENT_ONLY, REPORT_ONLY, HELP;
+  DEFAULT, INSTRUMENT_ONLY, REPORT_ONLY;
 
   /**
    * {@return a description for the run mode}
@@ -15,7 +15,6 @@ public enum RunMode {
       case DEFAULT -> "Instrument, compile, run, report";
       case INSTRUMENT_ONLY -> "Instrument only";
       case REPORT_ONLY -> "Generate report only";
-      case HELP -> "Print command line usage information";
     };
   }
 }

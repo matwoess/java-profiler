@@ -29,7 +29,8 @@ public record Arguments(
       }
       switch (args[i]) {
         case "-h", "--help" -> {
-          return new Arguments(RunMode.HELP, null, null, false, false, null);
+          printUsage();
+          return null;
         }
         case "-s", "--synchronized" -> syncCounters = true;
         case "-v", "--verbose" -> verboseOutput = true;
@@ -76,5 +77,25 @@ public record Arguments(
 
   public static void invalidArguments() throws IllegalArgumentException {
     throw new IllegalArgumentException("invalid arguments. Use -h for help.");
+  }
+
+  public static void printUsage() {
+    System.out.println("""
+        Usage: profiler [options] <main file> [program args]
+        Or   : profiler [options] <run mode>
+        Options:
+          -h, --help                        display this message and quit
+          -s, --synchronized                instrument using synchronized counter increments
+          -v, --verbose                     output verbose info about instrumentation of files
+          -d, --sources-directory <dir>     directory with additional Java files to instrument
+        Run mode (exclusive):
+          -i, --instrument-only <file|dir>  only instrument a single file or directory and exit
+          -r, --generate-report             only generate the report from metadata and counts
+        Main file:
+          The path to the main Java file. It will be compiled and and executed after instrumentation.
+          (Must not be specified for the generate-report run mode)
+        Program args:
+          Will be passed to the main method if given
+        """);
   }
 }
