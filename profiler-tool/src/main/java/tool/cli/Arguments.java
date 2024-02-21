@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 import static common.Util.assertJavaSourceFile;
-import static tool.Main.printUsage;
 
 public record Arguments(
     RunMode runMode,
@@ -30,8 +29,7 @@ public record Arguments(
       }
       switch (args[i]) {
         case "-h", "--help" -> {
-          printUsage();
-          return null;
+          return new Arguments(RunMode.HELP, null, null, false, false, null);
         }
         case "-s", "--synchronized" -> syncCounters = true;
         case "-v", "--verbose" -> verboseOutput = true;

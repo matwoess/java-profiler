@@ -26,8 +26,8 @@ public class Main {
    */
   public static void main(String[] args) {
     Arguments arguments = Arguments.fromArguments(args);
-    if (arguments == null) return;
     switch (arguments.runMode()) {
+      case HELP -> printUsage();
       case REPORT_ONLY -> generateReportOnly();
       case INSTRUMENT_ONLY -> instrumentOnly(arguments);
       case DEFAULT -> instrumentCompileAndRun(arguments);
