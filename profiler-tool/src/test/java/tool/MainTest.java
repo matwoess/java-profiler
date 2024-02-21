@@ -6,11 +6,14 @@ import common.JCompilerCommandBuilder;
 import common.Util;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MainTest {
@@ -26,8 +29,14 @@ public class MainTest {
   }
 
   @Test
-  public void testNoArguments() {
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[0]));
+  public void testNoArguments() throws Exception {
+    PrintStream originalOut = System.out;
+    final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    int statusCode = catchSystemExit(() -> Main.main(new String[0]));
+    assertEquals(1, statusCode);
+    assertEquals("No arguments specified.\nUse -h for help.\n", outContent.toString());
+    System.setOut(originalOut);
   }
 
   @Test
@@ -51,43 +60,43 @@ public class MainTest {
   }
 
   @Test
-  public void testInstrumentOnly_MissingArgument() {
+  public void testInstrumentOnly_MissingArgument() throws Exception {
     String[] args1 = new String[]{"-i"};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
     String[] args2 = new String[]{"--instrument-only"};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
   }
 
   @Test
-  public void testInstrumentOnly_TooManyArguments() {
+  public void testInstrumentOnly_TooManyArguments() throws Exception {
     String[] args1 = new String[]{"-i", "filePathString", "additionalArg"};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
     String[] args2 = new String[]{"--instrument-only", "filePathString", "additionalArg"};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
   }
 
   @Test
-  public void testInstrumentFolderAndProfile_MissingMainArgument() {
+  public void testInstrumentFolderAndProfile_MissingMainArgument() throws Exception {
     String[] args1 = new String[]{"-d", samplesFolder.toString()};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
     String[] args2 = new String[]{"--sources-directory", samplesFolder.toString()};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
   }
 
   @Test
-  public void testCreateReportOnly_UnexpectedArgument() {
+  public void testCreateReportOnly_UnexpectedArgument() throws Exception {
     String[] args1 = new String[]{"-r", samplesFolder.toString()};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
     String[] args2 = new String[]{"--generate-report", samplesFolder.toString()};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
   }
 
   @Test
-  public void testInstrumentOnlyAndReportOnly_BothExclusiveModes() {
+  public void testInstrumentOnlyAndReportOnly_BothExclusiveModes() throws Exception {
     String[] args1 = new String[]{"-r", "-i", samplesFolder.toString()};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args1));
+    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
     String[] args2 = new String[]{"-v", "-s", "--generate-report", "--instrument-only", simpleExampleFile.toString()};
-    assertThrows(IllegalArgumentException.class, () -> Main.main(args2));
+    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
   }
 
   @Test
@@ -146,9 +155,9 @@ public class MainTest {
   }
 
   @Test
-  public void testSynchronizedOption_NoMoreArguments() {
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"-s"}));
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"--synchronized"}));
+  public void testSynchronizedOption_NoMoreArguments() throws Exception {
+    assertEquals(1, catchSystemExit(() -> Main.main(new String[]{"-s"})));
+    assertEquals(1, catchSystemExit(() -> Main.main(new String[]{"--synchronized"})));
   }
 
   @Test
@@ -172,9 +181,9 @@ public class MainTest {
   }
 
   @Test
-  public void testVerbose_MissingArguments() {
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"-v"}));
-    assertThrows(IllegalArgumentException.class, () -> Main.main(new String[]{"--verbose"}));
+  public void testVerbose_MissingArguments() throws Exception {
+    assertEquals(1, catchSystemExit(() -> Main.main(new String[]{"-v"})));
+    assertEquals(1, catchSystemExit(() -> Main.main(new String[]{"--verbose"})));
   }
 
   @Test
