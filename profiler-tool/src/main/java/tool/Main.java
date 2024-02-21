@@ -25,7 +25,14 @@ public class Main {
    * @param args the command line arguments specifying options and the main file to profile
    */
   public static void main(String[] args) {
-    Arguments arguments = Arguments.fromArguments(args);
+    Arguments arguments = null;
+    try {
+      arguments = Arguments.parse(args);
+    } catch (IllegalArgumentException e) {
+      System.out.println(e.getMessage());
+      System.out.println("Use -h for help.");
+      System.exit(1);
+    }
     if (arguments == null) return;
     switch (arguments.runMode()) {
       case REPORT_ONLY -> generateReportOnly();

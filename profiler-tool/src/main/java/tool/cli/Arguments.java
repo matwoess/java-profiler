@@ -1,11 +1,10 @@
 package tool.cli;
 
 import common.RunMode;
+import common.Util;
 
 import java.nio.file.Path;
 import java.util.Arrays;
-
-import static common.Util.assertJavaSourceFile;
 
 public record Arguments(
     RunMode runMode,
@@ -15,12 +14,13 @@ public record Arguments(
     boolean verboseOutput,
     String[] programArgs) {
 
-  public static Arguments fromArguments(String[] args) throws IllegalArgumentException {
+  public static Arguments parse(String[] args) throws IllegalArgumentException {
     if (args.length == 0) {
-      invalidArguments();
+      throw new IllegalArgumentException("No arguments specified.");
     }
     RunMode runMode = RunMode.DEFAULT;
-    boolean syncCounters = false, verboseOutput = false;
+    boolean syncCounters = false;
+    boolean verboseOutput = false;
     Path sourcesDir = null;
     int i = 0;
     for (; i < args.length; i++) {
@@ -35,48 +35,58 @@ public record Arguments(
         case "-s", "--synchronized" -> syncCounters = true;
         case "-v", "--verbose" -> verboseOutput = true;
         case "-i", "--instrument-only" -> {
-          if (runMode != RunMode.DEFAULT) invalidArguments();
+          if (runMode != RunMode.DEFAULT) {
+            throw new IllegalArgumentException("Multiple run modes specified.");
+          }
           runMode = RunMode.INSTRUMENT_ONLY;
         }
         case "-r", "--generate-report" -> {
-          if (runMode != RunMode.DEFAULT) invalidArguments();
+          if (runMode != RunMode.DEFAULT) {
+            throw new IllegalArgumentException("Multiple run modes specified.");
+          }
           runMode = RunMode.REPORT_ONLY;
         }
         case "-d", "--sources-directory" -> {
-          if (i + 1 >= args.length) invalidArguments();
+          if (args.length < i + 1) { // no additional argument
+            throw new IllegalArgumentException("No sources directory specified.");
+          }
           sourcesDir = Path.of(args[++i]);
-          assert sourcesDir.toFile().isDirectory() : "not a directory: " + sourcesDir;
+          if (!sourcesDir.toFile().isDirectory()) {
+            throw new IllegalArgumentException("Not a directory: " + sourcesDir.toAbsolutePath());
+          }
         }
-        default -> {
-          System.out.println("unknown option: " + args[i]);
-          invalidArguments();
-        }
+        default -> throw new IllegalArgumentException("Unknown option: " + args[i]);
       }
     }
-    args = Arrays.copyOfRange(args, i, args.length);
+    String[] remainingArgs = Arrays.copyOfRange(args, i, args.length);
     Path targetPath = null;
     String[] programArgs = null;
-    if (args.length > 0) {
-      targetPath = Path.of(args[0]);
+    if (remainingArgs.length > 0) {
+      targetPath = Path.of(remainingArgs[0]);
     }
+    // additional validations
     switch (runMode) {
       case REPORT_ONLY -> {
-        if (args.length > 0) invalidArguments();
+        if (remainingArgs.length > 0) {
+          throw new IllegalArgumentException("No arguments allowed for the report-only run mode.");
+        }
       }
       case INSTRUMENT_ONLY -> {
-        if (args.length != 1) invalidArguments();
+        if (remainingArgs.length != 1) {
+          throw new IllegalArgumentException("Exactly one argument required for the instrument-only run mode.");
+        }
       }
       case DEFAULT -> {
-        if (args.length == 0) invalidArguments();
-        assertJavaSourceFile(targetPath);
-        programArgs = Arrays.copyOfRange(args, 1, args.length);
+        if (remainingArgs.length == 0) {
+          throw new IllegalArgumentException("No main file specified.");
+        }
+        if (!Util.isJavaFile(targetPath)) {
+          throw new IllegalArgumentException("Not a Java source file: " + targetPath.toAbsolutePath());
+        }
+        programArgs = Arrays.copyOfRange(remainingArgs, 1, remainingArgs.length);
       }
     }
     return new Arguments(runMode, targetPath, sourcesDir, syncCounters, verboseOutput, programArgs);
-  }
-
-  public static void invalidArguments() throws IllegalArgumentException {
-    throw new IllegalArgumentException("invalid arguments. Use -h for help.");
   }
 
   public static void printUsage() {

@@ -42,17 +42,6 @@ public class Util {
   }
 
   /**
-   * Throws a <code>RuntimeException</code> if the given path is not a valid java file.
-   *
-   * @param filePath the path to be checked
-   */
-  public static void assertJavaSourceFile(Path filePath) {
-    if (!Util.isJavaFile(filePath)) {
-      throw new RuntimeException(String.format("'%s' is not a java source file!", filePath));
-    }
-  }
-
-  /**
    * Run a generic command using the system command line.
    * <p>
    * The {@link ProcessBuilder} class will be used to execute it.
