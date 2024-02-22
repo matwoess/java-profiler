@@ -43,7 +43,9 @@ public class JavaCommandBuilder {
    * @return the builder object itself for method chaining
    */
   public JavaCommandBuilder addArgs(String... args) {
-    this.args.addAll(List.of(args));
+    if (args != null) {
+      this.args.addAll(List.of(args));
+    }
     return this;
   }
 
