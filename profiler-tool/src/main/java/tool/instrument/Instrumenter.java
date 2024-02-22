@@ -1,6 +1,7 @@
 package tool.instrument;
 
 import common.IO;
+import tool.cli.Arguments;
 import tool.model.*;
 
 import java.io.IOException;
@@ -32,14 +33,13 @@ public class Instrumenter {
   /**
    * Creates a new Instrumenter with the given source files.
    *
-   * @param syncCounters  whether the counters should be incremented in a synchronized way
-   * @param verboseOutput whether the parser should print verbose output
-   * @param javaFiles     the source files to instrument
+   * @param javaFiles the source files to instrument
+   * @param toolArgs the tool command line arguments record
    */
-  public Instrumenter(boolean syncCounters, boolean verboseOutput, JavaFile... javaFiles) {
+  public Instrumenter(JavaFile[] javaFiles, Arguments toolArgs) {
     assert javaFiles.length > 0;
-    this.verboseOutput = verboseOutput;
-    incRefAdd = (syncCounters) ? "Sync" : "";
+    this.verboseOutput = toolArgs.verboseOutput();
+    incRefAdd = (toolArgs.syncCounters()) ? "Sync" : "";
     this.javaFiles = javaFiles;
   }
 

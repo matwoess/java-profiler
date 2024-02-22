@@ -3,6 +3,7 @@ package common;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public class Util {
    * @return whether the specified path is a regular file and has a ".java" extension
    */
   public static boolean isJavaFile(Path path) {
-    return path.toString().endsWith(".java") && path.toFile().isFile();
+    return path.toString().endsWith(".java") && Files.isRegularFile(path);
   }
 
   /**

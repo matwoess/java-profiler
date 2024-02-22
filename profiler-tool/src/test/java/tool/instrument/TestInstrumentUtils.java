@@ -1,6 +1,8 @@
 package tool.instrument;
 
 import common.OS;
+import common.RunMode;
+import tool.cli.Arguments;
 import tool.model.JavaFile;
 
 import java.io.IOException;
@@ -28,7 +30,8 @@ public class TestInstrumentUtils {
   public static Instrumenter analyzeStringContent(String content) {
     Path file = createTempFileWithContent(content);
     JavaFile javaFile = new JavaFile(file, file.getParent());
-    Instrumenter instrumenter = new Instrumenter(false, true, javaFile);
+    Arguments args = new Arguments(RunMode.DEFAULT, null, null, false, true, null);
+    Instrumenter instrumenter = new Instrumenter(new JavaFile[]{javaFile}, args);
     instrumenter.analyzeFiles();
     return instrumenter;
   }

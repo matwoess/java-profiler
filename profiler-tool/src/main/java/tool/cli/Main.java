@@ -53,7 +53,7 @@ public class Main {
     } else {
       javaFiles = getJavaFilesInFolder(arguments.targetPath(), null);
     }
-    Instrumenter instrumenter = new Instrumenter(arguments.syncCounters(), arguments.verboseOutput(), javaFiles);
+    Instrumenter instrumenter = new Instrumenter(javaFiles, arguments);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
@@ -68,7 +68,8 @@ public class Main {
     } else {
       mainJavaFile = new JavaFile(arguments.targetPath());
     }
-    Instrumenter instrumenter = new Instrumenter(arguments.syncCounters(), arguments.verboseOutput(), Util.prependToArray(additionalJavaFiles, mainJavaFile));
+    JavaFile[] allJavaFiles = Util.prependToArray(additionalJavaFiles, mainJavaFile);
+    Instrumenter instrumenter = new Instrumenter(allJavaFiles, arguments);
     instrumenter.analyzeFiles();
     instrumenter.instrumentFiles();
     instrumenter.exportMetadata();
@@ -82,7 +83,7 @@ public class Main {
   private static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path exceptFor) {
     try (Stream<Path> walk = Files.walk(sourcesFolder)) {
       return walk
-          .filter(path -> Files.isRegularFile(path) && !path.equals(exceptFor) && isJavaFile(path))
+          .filter(path -> !path.equals(exceptFor) && isJavaFile(path))
           .filter(path -> !path.getFileName().toString().equals("package-info.java"))
           .filter(path -> !path.getFileName().toString().equals("module-info.java"))
           .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
