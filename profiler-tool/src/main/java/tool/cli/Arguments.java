@@ -5,6 +5,7 @@ import common.Util;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Objects;
 
 public record Arguments(
     RunMode runMode,
@@ -83,14 +84,20 @@ public record Arguments(
         if (!Util.isJavaFile(targetPath)) {
           throw new IllegalArgumentException("Not a Java source file: " + targetPath.toAbsolutePath());
         }
-        programArgs = Arrays.copyOfRange(remainingArgs, 1, remainingArgs.length);
+        if (remainingArgs.length > 1) {
+          programArgs = Arrays.copyOfRange(remainingArgs, 1, remainingArgs.length);
+        }
       }
     }
     return new Arguments(runMode, targetPath, sourcesDir, syncCounters, verboseOutput, programArgs);
   }
 
   public static void printUsage() {
-    System.out.println("""
+    System.out.println(getUsage());
+  }
+
+  public static String getUsage() {
+    return """
         Usage: profiler [options] <main file> [program args]
         Or   : profiler [options] <run mode>
         Options:
@@ -106,6 +113,32 @@ public record Arguments(
           (Must not be specified for the generate-report run mode)
         Program args:
           Will be passed to the main method if given
-        """);
+        """;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Arguments arguments = (Arguments) o;
+
+    if (syncCounters != arguments.syncCounters) return false;
+    if (verboseOutput != arguments.verboseOutput) return false;
+    if (runMode != arguments.runMode) return false;
+    if (!Objects.equals(targetPath, arguments.targetPath)) return false;
+    if (!Objects.equals(sourcesDir, arguments.sourcesDir)) return false;
+    return Arrays.equals(programArgs, arguments.programArgs);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = runMode.hashCode();
+    result = 31 * result + (targetPath != null ? targetPath.hashCode() : 0);
+    result = 31 * result + (sourcesDir != null ? sourcesDir.hashCode() : 0);
+    result = 31 * result + (syncCounters ? 1 : 0);
+    result = 31 * result + (verboseOutput ? 1 : 0);
+    result = 31 * result + Arrays.hashCode(programArgs);
+    return result;
   }
 }
