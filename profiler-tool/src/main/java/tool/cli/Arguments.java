@@ -48,10 +48,11 @@ public record Arguments(
           runMode = RunMode.REPORT_ONLY;
         }
         case "-d", "--sources-directory" -> {
-          if (args.length < i + 1) { // no additional argument
+          i++;
+          if (i == args.length) { // no additional argument
             throw new IllegalArgumentException("No sources directory specified.");
           }
-          sourcesDir = Path.of(args[++i]);
+          sourcesDir = Path.of(args[i]);
           if (!sourcesDir.toFile().isDirectory()) {
             throw new IllegalArgumentException("Not a directory: " + sourcesDir.toAbsolutePath());
           }
