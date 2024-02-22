@@ -20,7 +20,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-val mainClass = "tool.Main"
+val mainClass = "tool.cli.Main"
 
 tasks {
     register("fatJar", Jar::class.java) {
