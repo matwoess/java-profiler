@@ -24,13 +24,13 @@ public class MainTest {
   final Path algorithmsExampleFile = samplesFolder.resolve("Algorithms.java");
 
   @Test
-  public void testShowUsage_NoError() {
+  public void testShowUsage_noError() {
     Main.main(new String[]{"-h"});
     Main.main(new String[]{"--help"});
   }
 
   @Test
-  public void testNoArguments() throws Exception {
+  public void testNoArguments_errorAndHint() throws Exception {
     PrintStream originalOut = System.out;
     final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
@@ -41,85 +41,39 @@ public class MainTest {
   }
 
   @Test
-  public void testInstrumentAndProfileOneFile() {
+  public void testDefaultMode() {
     Main.main(new String[]{simpleExampleFile.toString()});
   }
 
   @Test
-  public void testInstrumentFolderAndProfileOneFile() {
+  public void testDefaultMode_withFolder() {
     Main.main(new String[]{"-d", samplesFolder.toString(), simpleExampleFile.toString()});
   }
 
   @Test
-  public void testInstrumentAndProfileWithArgument() {
+  public void testDefaultMode_withArgument() {
     Main.main(new String[]{algorithmsExampleFile.toString(), "10"});
   }
 
   @Test
-  public void testInstrumentFolderAndProfileWithArgument() {
+  public void testDefaultMode_withFolder_withArgument() {
     Main.main(new String[]{"-d", samplesFolder.toString(), algorithmsExampleFile.toString(), "20"});
   }
 
   @Test
-  public void testInstrumentOnly_MissingArgument() throws Exception {
-    String[] args1 = new String[]{"-i"};
-    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
-    String[] args2 = new String[]{"--instrument-only"};
-    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
-  }
-
-  @Test
-  public void testInstrumentOnly_TooManyArguments() throws Exception {
-    String[] args1 = new String[]{"-i", "filePathString", "additionalArg"};
-    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
-    String[] args2 = new String[]{"--instrument-only", "filePathString", "additionalArg"};
-    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
-  }
-
-  @Test
-  public void testInstrumentFolderAndProfile_MissingMainArgument() throws Exception {
-    String[] args1 = new String[]{"-d", samplesFolder.toString()};
-    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
-    String[] args2 = new String[]{"--sources-directory", samplesFolder.toString()};
-    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
-  }
-
-  @Test
-  public void testCreateReportOnly_UnexpectedArgument() throws Exception {
-    String[] args1 = new String[]{"-r", samplesFolder.toString()};
-    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
-    String[] args2 = new String[]{"--generate-report", samplesFolder.toString()};
-    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
-  }
-
-  @Test
-  public void testInstrumentOnlyAndReportOnly_BothExclusiveModes() throws Exception {
-    String[] args1 = new String[]{"-r", "-i", samplesFolder.toString()};
-    assertEquals(1, catchSystemExit(() -> Main.main(args1)));
-    String[] args2 = new String[]{"-v", "-s", "--generate-report", "--instrument-only", simpleExampleFile.toString()};
-    assertEquals(1, catchSystemExit(() -> Main.main(args2)));
-  }
-
-  @Test
-  public void testInstrumentOneFile() {
+  public void testInstrumentOnly() {
     Main.main(new String[]{"-i", simpleExampleFile.toString()});
     Main.main(new String[]{"--instrument-only", simpleExampleFile.toString()});
   }
 
   @Test
-  public void testInstrumentAFolder() {
+  public void testInstrumentOnly_withFolder() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
     Main.main(new String[]{"--instrument-only", samplesFolder.toString()});
   }
 
   @Test
-  public void testInstrumentFolderAndProfileAFile() {
-    Main.main(new String[]{"-d", samplesFolder.toString(), simpleExampleFile.toString()});
-    Main.main(new String[]{"--sources-directory", samplesFolder.toString(), simpleExampleFile.toString()});
-  }
-
-  @Test
-  public void testInstrumentManualCompileThenCreateReportOnly() {
+  public void testInstrumentOnly_manualCompile_thenReportOnly() {
     Main.main(new String[]{"-i", samplesFolder.toString()});
     String filename = simpleExampleFile.getFileName().toString();
     Path instrDir = IO.getInstrumentDir();
@@ -139,7 +93,7 @@ public class MainTest {
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
-  public void testReportOnly_MissingMetadataOrCounts() {
+  public void testReportOnly_missingMetadataOrCounts() {
     File metadataFile = IO.getMetadataPath().toFile();
     if (metadataFile.exists()) {
       metadataFile.delete();
@@ -156,13 +110,19 @@ public class MainTest {
   }
 
   @Test
-  public void testSynchronizedOption_NoMoreArguments() throws Exception {
-    assertEquals(1, catchSystemExit(() -> Main.main(new String[]{"-s"})));
-    assertEquals(1, catchSystemExit(() -> Main.main(new String[]{"--synchronized"})));
+  public void testDefaultMode_synchronized() {
+    Main.main(new String[]{"-s", lambdaExampleFile.toString()});
+    Main.main(new String[]{"-s", "-d", samplesFolder.toString(), lambdaExampleFile.toString()});
   }
 
   @Test
-  public void testSynchronizedOption_Instrument() throws IOException {
+  public void testDefaultMode_verbose() {
+    Main.main(new String[]{"-v", lambdaExampleFile.toString()});
+    Main.main(new String[]{"-v", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
+  }
+
+  @Test
+  public void testInstrumentOnly_synchronized() throws IOException {
     Main.main(new String[]{"-s", "-i", simpleExampleFile.toString()});
     String instrumentedContent = Files.readString(IO.getInstrumentDir().resolve(simpleExampleFile.getFileName()));
     assertTrue(instrumentedContent.contains("incSync("));
@@ -173,24 +133,6 @@ public class MainTest {
     assertTrue(instrumentedContent.contains("incLambdaSync("));
     assertFalse(instrumentedContent.contains("inc("));
     assertFalse(instrumentedContent.contains("incLambda("));
-  }
-
-  @Test
-  public void testSynchronizedCompileAndExecute() {
-    Main.main(new String[]{"-s", lambdaExampleFile.toString()});
-    Main.main(new String[]{"-s", "-d", samplesFolder.toString(), lambdaExampleFile.toString()});
-  }
-
-  @Test
-  public void testVerbose_MissingArguments() throws Exception {
-    assertEquals(1, catchSystemExit(() -> Main.main(new String[]{"-v"})));
-    assertEquals(1, catchSystemExit(() -> Main.main(new String[]{"--verbose"})));
-  }
-
-  @Test
-  public void testVerbose_CompileAndExecute() {
-    Main.main(new String[]{"-v", lambdaExampleFile.toString()});
-    Main.main(new String[]{"-v", "-d", samplesFolder.toString(), simpleExampleFile.toString()});
   }
 
 }

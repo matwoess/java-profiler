@@ -19,7 +19,7 @@ public class ArgumentsTest {
   final Path algorithmsExampleFile = samplesFolder.resolve("Algorithms.java");
 
   @Test
-  public void testShowUsage_NoError() {
+  public void testShowUsage_noError() {
     PrintStream originalOut = System.out;
     ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
@@ -54,28 +54,28 @@ public class ArgumentsTest {
   }
 
   @Test
-  public void testDefaultMode_WithFolder() {
+  public void testDefaultMode_withFolder() {
     Arguments args = Arguments.parse(new String[]{"-d", samplesFolder.toString(), simpleExampleFile.toString()});
     Arguments expected = new Arguments(RunMode.DEFAULT, simpleExampleFile, samplesFolder, false, false, null);
     assertEquals(expected, args);
   }
 
   @Test
-  public void testDefaultMode_WithArgument() {
+  public void testDefaultMode_withArgument() {
     Arguments args = Arguments.parse(new String[]{algorithmsExampleFile.toString(), "10"});
     Arguments expected = new Arguments(RunMode.DEFAULT, algorithmsExampleFile, null, false, false, new String[]{"10"});
     assertEquals(expected, args);
   }
 
   @Test
-  public void testDefaultMode_WithFolder_WithArgument() {
+  public void testDefaultMode_withFolder_withArgument() {
     Arguments args = Arguments.parse(new String[]{"-d", samplesFolder.toString(), algorithmsExampleFile.toString(), "20"});
     Arguments expected = new Arguments(RunMode.DEFAULT, algorithmsExampleFile, samplesFolder, false, false, new String[]{"20"});
     assertEquals(expected, args);
   }
 
   @Test
-  public void testDefaultMode_WithFolder_NotADirectory() {
+  public void testDefaultMode_withFolder_notADirectory() {
     String[] args = new String[]{"-d", simpleExampleFile.toString()};
     assertThrows(IllegalArgumentException.class,
         () -> Arguments.parse(args),
@@ -84,7 +84,7 @@ public class ArgumentsTest {
   }
 
   @Test
-  public void testDefaultMode_NotAJavaFile() {
+  public void testDefaultMode_notAJavaFile() {
     assertThrows(IllegalArgumentException.class,
         () -> Arguments.parse(new String[]{"-d", samplesFolder.toString(), "notAJavaFile.txt"}),
         "Not a Java source file: " + samplesFolder.resolve("notAJavaFile.java").toAbsolutePath()
@@ -96,7 +96,7 @@ public class ArgumentsTest {
   }
 
   @Test
-  public void testInstrumentOnly_MissingArgument() {
+  public void testInstrumentOnly_missingArgument() {
     String[] args1 = new String[]{"-i"};
     assertThrows(
         IllegalArgumentException.class,
@@ -112,7 +112,7 @@ public class ArgumentsTest {
   }
 
   @Test
-  public void testInstrumentOnly_TooManyArguments() {
+  public void testInstrumentOnly_tooManyArguments() {
     String[] args1 = new String[]{"-i", "filePathString", "additionalArg"};
     assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args1), "Too many arguments.");
     String[] args2 = new String[]{"--instrument-only", "filePathString", "additionalArg"};
@@ -120,13 +120,13 @@ public class ArgumentsTest {
   }
 
   @Test
-  public void testDefaultMode_WithFolder_MissingMainArgument() {
+  public void testDefaultMode_withFolder_missingMainArgument() {
     String[] args1 = new String[]{"-d", samplesFolder.toString()};
     assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args1), "No target file or directory specified.");
   }
 
   @Test
-  public void testDefaultMode_WithFolder_MissingDirectoryArgument() {
+  public void testDefaultMode_withFolder_missingDirectoryArgument() {
     String[] args2 = new String[]{"--sources-directory"};
     assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args2), "No sources directory specified.");
   }
@@ -138,7 +138,7 @@ public class ArgumentsTest {
   }
 
   @Test
-  public void testReportOnly_UnexpectedArgument() {
+  public void testReportOnly_unexpectedArgument() {
     String[] args2 = new String[]{"--generate-report", samplesFolder.toString()};
     assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args2), "Unexpected argument: " + samplesFolder);
   }
@@ -151,7 +151,7 @@ public class ArgumentsTest {
   }
 
   @Test
-  public void testInstrumentOnly_Folder() {
+  public void testInstrumentOnly_folder() {
     Arguments expected = new Arguments(RunMode.INSTRUMENT_ONLY, samplesFolder, null, false, false, null);
     assertEquals(expected, Arguments.parse(new String[]{"-i", samplesFolder.toString()}));
     assertEquals(expected, Arguments.parse(new String[]{"--instrument-only", samplesFolder.toString()}));
