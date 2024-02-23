@@ -32,12 +32,18 @@ public class MainTest {
   @Test
   public void testNoArguments_errorAndHint() throws Exception {
     PrintStream originalOut = System.out;
+    PrintStream originalErr = System.err;
     final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(outContent));
-    int statusCode = catchSystemExit(() -> Main.main(new String[0]));
-    assertEquals(1, statusCode);
-    assertEquals("No arguments specified.\nUse -h for help.\n", outContent.toString());
-    System.setOut(originalOut);
+    try {
+      System.setOut(new PrintStream(outContent));
+      System.setErr(new PrintStream(outContent));
+      int statusCode = catchSystemExit(() -> Main.main(new String[0]));
+      assertEquals(1, statusCode);
+      assertEquals("No arguments specified.\nUse -h for help.\n", outContent.toString());
+    } finally {
+      System.setOut(originalOut);
+      System.setErr(originalErr);
+    }
   }
 
   @Test
