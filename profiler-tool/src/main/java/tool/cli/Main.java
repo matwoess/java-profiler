@@ -28,7 +28,7 @@ public class Main {
     try {
       arguments = Arguments.parse(args);
     } catch (IllegalArgumentException e) {
-      System.out.println(e.getMessage());
+      System.err.println(e.getMessage());
       System.out.println("Use -h for help.");
       System.exit(1);
     }

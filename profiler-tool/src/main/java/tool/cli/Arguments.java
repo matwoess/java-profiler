@@ -69,7 +69,7 @@ public record Arguments(
           }
           sourcesDir = Path.of(args[i]);
           if (!sourcesDir.toFile().isDirectory()) {
-            throw new IllegalArgumentException("Not a directory: " + sourcesDir.toAbsolutePath());
+            throw new IllegalArgumentException("Not a directory: " + sourcesDir.toAbsolutePath().normalize());
           }
         }
         default -> throw new IllegalArgumentException("Unknown option: " + args[i]);
@@ -98,7 +98,7 @@ public record Arguments(
           throw new IllegalArgumentException("No main file specified.");
         }
         if (!Util.isJavaFile(targetPath)) {
-          throw new IllegalArgumentException("Not a Java source file: " + targetPath.toAbsolutePath());
+          throw new IllegalArgumentException("Not a Java source file: " + targetPath.toAbsolutePath().normalize());
         }
         if (sourcesDir != null && !Util.isDescendant(targetPath, sourcesDir)) {
           throw new IllegalArgumentException("Main file must be a descendant of the sources directory.");

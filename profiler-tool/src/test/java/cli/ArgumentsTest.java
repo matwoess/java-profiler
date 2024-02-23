@@ -19,6 +19,7 @@ public class ArgumentsTest {
   final Path simpleExampleFile = samplesFolder.resolve("Simple.java");
   final Path lambdaExampleFile = samplesFolder.resolve("Lambdas.java");
   final Path algorithmsExampleFile = samplesFolder.resolve("Algorithms.java");
+  final Path shoppingListFile = samplesFolder.resolve("files").resolve("shopping-list.xml");
   final Path foreignJavaFile;
 
   {
@@ -84,9 +85,12 @@ public class ArgumentsTest {
 
   @Test
   public void testDefaultMode_withFolder_notADirectory() {
-    String[] args = new String[]{"-d", simpleExampleFile.toString()};
-    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args));
-    assertEquals("Not a directory: " + simpleExampleFile.toAbsolutePath(), exception.getMessage());
+    String[] args1 = new String[]{"--sources-directory", simpleExampleFile.toString()};
+    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args1));
+    assertEquals("Not a directory: " + simpleExampleFile.toAbsolutePath().normalize(), exception.getMessage());
+    String[] args2 = new String[]{"-s", "-d", simpleExampleFile.toAbsolutePath().toString(), simpleExampleFile.toString()};
+    exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args2));
+    assertEquals("Not a directory: " + simpleExampleFile.toAbsolutePath().normalize(), exception.getMessage());
   }
 
   @Test
@@ -98,47 +102,48 @@ public class ArgumentsTest {
 
   @Test
   public void testDefaultMode_notAJavaFile() {
-    var exception = assertThrows(IllegalArgumentException.class,
-        () -> Arguments.parse(new String[]{"-d", samplesFolder.toAbsolutePath().toString(), "notAJavaFile.txt"})
-    );
-    assertEquals("Not a Java source file: " + samplesFolder.resolve("notAJavaFile.txt").toAbsolutePath(), exception.getMessage());
-    exception = assertThrows(IllegalArgumentException.class,
-        () -> Arguments.parse(new String[]{"-d", samplesFolder.toString(), samplesFolder.toString()})
-    );
-    assertEquals("Not a Java source file: " + samplesFolder.resolve("notAJavaFile.txt").toAbsolutePath(), exception.getMessage());
+    String[] args1 = new String[]{"-d", samplesFolder.toAbsolutePath().toString(), samplesFolder.resolve("notAJavaFile.txt").toString()};
+    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args1));
+    assertEquals("Not a Java source file: " + samplesFolder.resolve("notAJavaFile.txt").toAbsolutePath().normalize(), exception.getMessage());
+    String[] args2 = new String[]{"-d", samplesFolder.toString(), samplesFolder.toString()};
+    exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args2));
+    assertEquals("Not a Java source file: " + samplesFolder.toAbsolutePath().normalize(), exception.getMessage());
+    String[] args3 = new String[]{"-s", "-v", samplesFolder.toAbsolutePath().resolve("./../sample/files/shopping-list.xml").toString()};
+    exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args3));
+    assertEquals("Not a Java source file: " + shoppingListFile.toAbsolutePath().normalize(), exception.getMessage());
   }
 
   @Test
   public void testInstrumentOnly_missingArgument() {
     String[] args1 = new String[]{"-i"};
     var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args1));
-    assertEquals("No target file or directory specified.", exception.getMessage());
+    assertEquals("Exactly one argument required for the instrument-only run mode.", exception.getMessage());
     String[] args2 = new String[]{"--instrument-only"};
     exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args2));
-    assertEquals("No target file or directory specified.", exception.getMessage());
+    assertEquals("Exactly one argument required for the instrument-only run mode.", exception.getMessage());
   }
 
   @Test
   public void testInstrumentOnly_tooManyArguments() {
     String[] args1 = new String[]{"-i", "filePathString", "additionalArg"};
     var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args1));
-    assertEquals("Too many arguments.", exception.getMessage());
+    assertEquals("Exactly one argument required for the instrument-only run mode.", exception.getMessage());
     String[] args2 = new String[]{"--instrument-only", "filePathString", "additionalArg"};
     exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args2));
-    assertEquals("Too many arguments.", exception.getMessage());
+    assertEquals("Exactly one argument required for the instrument-only run mode.", exception.getMessage());
   }
 
   @Test
   public void testDefaultMode_withFolder_missingMainArgument() {
-    String[] args1 = new String[]{"-d", samplesFolder.toString()};
-    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args1));
-    assertEquals("No target file or directory specified.", exception.getMessage());
+    String[] args = new String[]{"-d", samplesFolder.toString()};
+    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args));
+    assertEquals("No main file specified.", exception.getMessage());
   }
 
   @Test
   public void testDefaultMode_withFolder_missingDirectoryArgument() {
-    String[] args2 = new String[]{"--sources-directory"};
-    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args2));
+    String[] args = new String[]{"--sources-directory"};
+    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args));
     assertEquals("No sources directory specified.", exception.getMessage());
   }
 
@@ -150,8 +155,8 @@ public class ArgumentsTest {
 
   @Test
   public void testReportOnly_unexpectedArgument() {
-    String[] args2 = new String[]{"--generate-report", samplesFolder.toString()};
-    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args2));
+    String[] args = new String[]{"--generate-report", samplesFolder.toString()};
+    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args));
     assertEquals("No arguments allowed for the report-only run mode.", exception.getMessage());
   }
 
@@ -172,11 +177,9 @@ public class ArgumentsTest {
   @Test
   public void testFullArguments() {
     Arguments args = Arguments.parse(new String[]{
-        "-v", "-s", "-d", samplesFolder.toString(), lambdaExampleFile.toString(), "arg1", "arg2", "arg3"
-    });
+        "-v", "-s", "-d", samplesFolder.toString(), lambdaExampleFile.toString(), "arg1", "arg2", "arg3"});
     Arguments expected = new Arguments(
-        RunMode.DEFAULT, lambdaExampleFile, samplesFolder, true, true, new String[]{"arg1", "arg2", "arg3"}
-    );
+        RunMode.DEFAULT, lambdaExampleFile, samplesFolder, true, true, new String[]{"arg1", "arg2", "arg3"});
     assertEquals(expected, args);
   }
 
@@ -195,22 +198,20 @@ public class ArgumentsTest {
   @Test
   public void testOnlyOptions() {
     var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(new String[]{"-s"}));
-    assertEquals("No target file or directory specified.", exception.getMessage());
+    assertEquals("No main file specified.", exception.getMessage());
     assertThrows(IllegalArgumentException.class, () -> Arguments.parse(new String[]{"--v"}));
-    assertEquals("No target file or directory specified.", exception.getMessage());
+    assertEquals("No main file specified.", exception.getMessage());
     assertThrows(IllegalArgumentException.class, () -> Arguments.parse(new String[]{"--verbose", "--synchronized"}));
-    assertEquals("No target file or directory specified.", exception.getMessage());
+    assertEquals("No main file specified.", exception.getMessage());
   }
 
   @Test
   public void testUnknownOption() {
-    var exception = assertThrows(IllegalArgumentException.class,
-        () -> Arguments.parse(new String[]{"-x", "argument"})
-    );
+    String[] args1 = new String[]{"-x", "argument"};
+    var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args1));
     assertEquals("Unknown option: -x", exception.getMessage());
-    exception = assertThrows(IllegalArgumentException.class,
-        () -> Arguments.parse(new String[]{"-s", "-v", "--unknown"})
-    );
+    String[] arg2 = new String[]{"-s", "-v", "--unknown"};
+    exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(arg2));
     assertEquals("Unknown option: --unknown", exception.getMessage());
   }
 
