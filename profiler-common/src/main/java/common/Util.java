@@ -43,6 +43,17 @@ public class Util {
   }
 
   /**
+   * Checks whether a path is a descendant of another path.
+   * @param child  the path to check if it is a descendant
+   * @param ofParent the ancestor path to check against
+   * @return whether the child path is located somewhere inside the parent path
+   */
+  public static boolean isDescendant(Path child, Path ofParent) {
+    return child.toAbsolutePath().startsWith(ofParent.toAbsolutePath());
+  }
+
+
+  /**
    * Run a generic command using the system command line.
    * <p>
    * The {@link ProcessBuilder} class will be used to execute it.
