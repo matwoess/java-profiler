@@ -1,5 +1,6 @@
 package cli;
 
+import common.OS;
 import common.RunMode;
 import org.junit.jupiter.api.Test;
 import tool.cli.Arguments;
@@ -36,16 +37,17 @@ public class ArgumentsTest {
     ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
     Arguments.parse(new String[]{"-h"});
-    assertEquals(getUsage() + "\n", outContent.toString());
+    String newline = OS.getOS().lineSeparator();
+    assertEquals(getUsage() + newline, outContent.toString());
     outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
     Arguments.parse(new String[]{"--help"});
-    assertEquals(getUsage() + "\n", outContent.toString());
+    assertEquals(getUsage() + newline, outContent.toString());
     // not as first argument
     outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
     Arguments.parse(new String[]{"-s", "-v", "-d", samplesFolder.toString(), "--help"});
-    assertEquals(getUsage() + "\n", outContent.toString());
+    assertEquals(getUsage() + newline, outContent.toString());
     System.setOut(originalOut);
   }
 

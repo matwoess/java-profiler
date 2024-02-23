@@ -1,9 +1,6 @@
 package cli;
 
-import common.IO;
-import common.JCompilerCommandBuilder;
-import common.JavaCommandBuilder;
-import common.Util;
+import common.*;
 import org.junit.jupiter.api.Test;
 import tool.cli.Main;
 
@@ -39,7 +36,8 @@ public class MainTest {
       System.setErr(new PrintStream(outContent));
       int statusCode = catchSystemExit(() -> Main.main(new String[0]));
       assertEquals(1, statusCode);
-      assertEquals("No arguments specified.\nUse -h for help.\n", outContent.toString());
+      String newline = OS.getOS().lineSeparator();
+      assertEquals("No arguments specified." + newline + "Use -h for help." + newline, outContent.toString());
     } finally {
       System.setOut(originalOut);
       System.setErr(originalErr);
