@@ -21,6 +21,7 @@ The tool can parse Java **17** language syntax and also should be executed with 
 
 This project was created as part of my master's thesis at the Institute for System Software ([SSW](https://ssw.jku.at/)) 
 of the Johannes Kepler University ([JKU](https://www.jku.at/)), located in Linz, Austria.
+Also see the [thesis paper](A_Profiler_for_Java_Programs.pdf) for further details.
 
 The profiler instruments source code directly (as opposed to commonly used bytecode instrumentation) 
 by inserting counter-statements at the beginning of every executable code block.
