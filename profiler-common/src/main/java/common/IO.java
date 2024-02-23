@@ -256,7 +256,7 @@ public class IO {
       }
       Files.createSymbolicLink(link, target);
     } catch (FileSystemException e) {
-      System.out.println(e.getMessage());
+      System.err.println(e.getMessage());
       System.out.println("Unable to create report symlink. Not supported or allowed by file system.");
     } catch (IOException e) {
       throw new RuntimeException(e);
