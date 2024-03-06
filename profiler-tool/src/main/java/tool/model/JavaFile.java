@@ -29,15 +29,17 @@ public class JavaFile implements Serializable {
    * @param sourcesRoot the top-level sources root directory
    */
   public JavaFile(Path sourceFile, Path sourcesRoot) {
-    this.sourceFile = sourceFile;
-    this.relativePath = sourcesRoot.relativize(sourceFile);
+    Path absoluteFilePath = sourceFile.toAbsolutePath().normalize();
+    Path absoluteSourcesRootPath = sourcesRoot.toAbsolutePath().normalize();
+    this.sourceFile = Path.of(".").toAbsolutePath().relativize(absoluteFilePath);
+    this.relativePath = absoluteSourcesRootPath.relativize(absoluteFilePath);
   }
 
   /**
    * Like {@link JavaFile#JavaFile(Path, Path)} but relative to the current working directory.
    */
   public JavaFile(Path sourceFile) {
-    this.sourceFile = sourceFile;
+    this.sourceFile = Path.of(".").toAbsolutePath().relativize(sourceFile.toAbsolutePath().normalize());
     this.relativePath = sourceFile.getFileName();
   }
 
