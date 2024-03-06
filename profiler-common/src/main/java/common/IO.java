@@ -2,7 +2,6 @@ package common;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -167,6 +166,7 @@ public class IO {
 
   /**
    * Returns where the configured FxUI parameters are persisted to inside the output directory.
+   *
    * @return <code>parameters.dat</code> relative to the {@link #outputDir}
    */
   public static Path getUIParametersPath() {
@@ -176,6 +176,7 @@ public class IO {
   /**
    * Returns the path of the file for storing the previously opened project directory.
    * This is read when re-starting the FxUI application and pre-filled as the project to open.
+   *
    * @return <code>lastProjectRootDirectory.txt</code> relative to the current directory
    */
   public static Path lastProjectPath() {
@@ -249,17 +250,19 @@ public class IO {
    * @param link   the location of the linking file shortcut
    * @param target what the link should point to
    */
-  public static void createSymbolicLink(Path link, Path target) {
+  public static void createLink(Path link, Path target) {
     try {
       if (Files.exists(link) && Files.isSymbolicLink(link)) {
         Files.delete(link);
       }
-      Files.createSymbolicLink(link, target);
-    } catch (FileSystemException e) {
+      if (OS.getOS() == OS.WINDOWS) {
+        // create a shortcut on Windows using the 'mklink' command
+        Util.runCommand("mklink", link.toString(), target.toString());
+      } else {
+        Files.createSymbolicLink(link, target);
+      }
+    } catch (IOException | RuntimeException e) {
       System.err.println(e.getMessage());
-      System.out.println("Unable to create report symlink. Not supported or allowed by file system.");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     }
   }
 }
