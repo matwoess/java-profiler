@@ -1,6 +1,7 @@
 package common;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -43,13 +44,34 @@ public class Util {
   }
 
   /**
-   * Checks whether a path is a descendant of another path.
-   * @param child  the path to check if it is a descendant
-   * @param ofParent the ancestor path to check against
+   * Checks whether a child path starts with a given directory path.
+   * Also returns <code>true</code> if the child is a file directly located in the <code>ancestorDir</code>.
+   * Will return <code>false</code> if both paths are directories and match exactly.
+   *
+   * @param ancestorDir the ancestor path to check against
+   * @param childPath   the path to check whether it is a descendant
    * @return whether the child path is located somewhere inside the parent path
    */
-  public static boolean isDescendant(Path child, Path ofParent) {
-    return child.toAbsolutePath().startsWith(ofParent.toAbsolutePath());
+  public static boolean isAncestorOf(Path ancestorDir, Path childPath) {
+    File parentFile = ancestorDir.toFile();
+    if (!parentFile.isDirectory()) {
+      return false; // a file path cannot contain lower level files or directories
+    }
+    final String canonicalParentPath;
+    final String canonicalChildPath;
+    try {
+      canonicalParentPath = parentFile.getCanonicalPath();
+    } catch (IOException e) {
+      System.err.println("Could not get canonical path for " + ancestorDir);
+      return false;
+    }
+    try {
+      canonicalChildPath = childPath.toFile().getCanonicalPath();
+    } catch (IOException e) {
+      System.err.println("Could not get canonical path for " + childPath);
+      return false;
+    }
+    return !canonicalChildPath.equals(canonicalParentPath) && canonicalChildPath.startsWith(canonicalParentPath);
   }
 
 
@@ -91,7 +113,8 @@ public class Util {
 
   /**
    * Run a command line in a specified directory and get the string output as a return value.
-   * @param cwd the current working directory that will be passed to the <code>ProcessBuilder</code>
+   *
+   * @param cwd     the current working directory that will be passed to the <code>ProcessBuilder</code>
    * @param command the array of strings forming the command
    * @return an array of strings representing the output of the executed command
    */

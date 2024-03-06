@@ -100,8 +100,8 @@ public record Arguments(
         if (!Util.isJavaFile(targetPath)) {
           throw new IllegalArgumentException("Not a Java source file: " + targetPath.toAbsolutePath().normalize());
         }
-        if (sourcesDir != null && !Util.isDescendant(targetPath, sourcesDir)) {
-          throw new IllegalArgumentException("Main file must be a descendant of the sources directory.");
+        if (sourcesDir != null && !Util.isAncestorOf(sourcesDir, targetPath)) {
+          throw new IllegalArgumentException("Main file must be located inside the sources directory or in any child directory.");
         }
         if (remainingArgs.length > 1) {
           programArgs = Arrays.copyOfRange(remainingArgs, 1, remainingArgs.length);
