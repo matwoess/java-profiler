@@ -125,8 +125,10 @@ public class IO {
 
   /**
    * Returns the target path for the symlink pointing to the main report index file.
+   * On Windows, we create a shortcut instead of a symlink.
+   * Therefore, the file extension <code>".lnk"</code> is added.
    *
-   * @return <code>report.html</code> relative to the current directory
+   * @return the pre-defined link path relative to the current directory
    */
   public static Path getReportIndexSymLinkPath() {
     if (OS.getOS() == OS.WINDOWS) {
@@ -249,7 +251,9 @@ public class IO {
 
   /**
    * Creates a symbolic link at a given path pointing to another file path.
-   * Will work on Linux and macOS but might fail on Windows due to group policies.
+   * On Linux and macOS this is a soft link, on Windows it is a shortcut.
+   * To create the Windows shortcut {@link #createWindowsShortcut(Path, Path)} is used.
+   * The link extension must be ".lnk" in this case.
    *
    * @param link   the location of the linking file shortcut
    * @param target what the link should point to
@@ -270,12 +274,23 @@ public class IO {
     }
   }
 
+  /**
+   * Creates a Windows shortcut at a given path pointing to another file.
+   * The link file path extension must be ".lnk".
+   *
+   * @param link   the location of the linking file shortcut
+   * @param target what the link should point to
+   */
   private static void createWindowsShortcut(Path link, Path target) {
+    if (!link.endsWith(".lnk")) {
+      System.err.println("Unable to create shortcut. The path does not end with '.lnk': " + link);
+      return;
+    }
     String targetCanonical;
     try {
       targetCanonical = target.toFile().getCanonicalPath();
     } catch (IOException e) {
-      System.err.println("Could not get canonical path for " + target);
+      System.err.println("Could not get canonical path for: " + target);
       return;
     }
     String[] command = new String[]{
