@@ -2,7 +2,6 @@ package common;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -126,11 +125,17 @@ public class IO {
 
   /**
    * Returns the target path for the symlink pointing to the main report index file.
+   * On Windows, we create a shortcut instead of a symlink.
+   * Therefore, the file extension <code>".lnk"</code> is added.
    *
-   * @return <code>report.html</code> relative to the current directory
+   * @return the pre-defined link path relative to the current directory
    */
   public static Path getReportIndexSymLinkPath() {
-    return Path.of(".", "report.html");
+    if (OS.getOS() == OS.WINDOWS) {
+      return Path.of(".", "report.html.lnk");
+    } else {
+      return Path.of(".", "report.html");
+    }
   }
 
   /**
@@ -167,6 +172,7 @@ public class IO {
 
   /**
    * Returns where the configured FxUI parameters are persisted to inside the output directory.
+   *
    * @return <code>parameters.dat</code> relative to the {@link #outputDir}
    */
   public static Path getUIParametersPath() {
@@ -176,6 +182,7 @@ public class IO {
   /**
    * Returns the path of the file for storing the previously opened project directory.
    * This is read when re-starting the FxUI application and pre-filled as the project to open.
+   *
    * @return <code>lastProjectRootDirectory.txt</code> relative to the current directory
    */
   public static Path lastProjectPath() {
@@ -244,22 +251,57 @@ public class IO {
 
   /**
    * Creates a symbolic link at a given path pointing to another file path.
-   * Will work on Linux and macOS but might fail on Windows due to group policies.
+   * On Linux and macOS this is a soft link, on Windows it is a shortcut.
+   * To create the Windows shortcut {@link #createWindowsShortcut(Path, Path)} is used.
+   * The link extension must be ".lnk" in this case.
    *
    * @param link   the location of the linking file shortcut
    * @param target what the link should point to
    */
-  public static void createSymbolicLink(Path link, Path target) {
+  public static void createLink(Path link, Path target) {
     try {
       if (Files.exists(link) && Files.isSymbolicLink(link)) {
         Files.delete(link);
       }
-      Files.createSymbolicLink(link, target);
-    } catch (FileSystemException e) {
+      if (OS.getOS() == OS.WINDOWS) {
+        // create a shortcut on Windows using a PowerShell command
+        createWindowsShortcut(link, target);
+      } else {
+        Files.createSymbolicLink(link, target);
+      }
+    } catch (IOException | RuntimeException e) {
       System.err.println(e.getMessage());
-      System.out.println("Unable to create report symlink. Not supported or allowed by file system.");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     }
+  }
+
+  /**
+   * Creates a Windows shortcut at a given path pointing to another file.
+   * The link file path extension must be ".lnk".
+   *
+   * @param link   the location of the linking file shortcut
+   * @param target what the link should point to
+   */
+  private static void createWindowsShortcut(Path link, Path target) {
+    if (!link.endsWith(".lnk")) {
+      System.err.println("Unable to create shortcut. The path does not end with '.lnk': " + link);
+      return;
+    }
+    String targetCanonical;
+    try {
+      targetCanonical = target.toFile().getCanonicalPath();
+    } catch (IOException e) {
+      System.err.println("Could not get canonical path for: " + target);
+      return;
+    }
+    String[] command = new String[]{
+        "powershell.exe",
+        "-Command",
+        "$WScriptShell = New-Object -ComObject WScript.Shell; "
+            + "$Shortcut = $WScriptShell.CreateShortcut('" + link.toString() + "');"
+            + "$Shortcut.TargetPath = '" + targetCanonical + "';"
+            + "$Shortcut.Save();"
+    };
+    Util.runCommand(command);
+    System.out.println("Report shortcut created at: " + link);
   }
 }

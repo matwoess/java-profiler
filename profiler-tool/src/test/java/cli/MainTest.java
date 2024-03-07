@@ -65,6 +65,17 @@ public class MainTest {
   }
 
   @Test
+  public void testDefaultMode_withFolder_withArgument_absolutePaths() {
+    Main.main(new String[]{"-d", samplesFolder.toAbsolutePath().toString(), algorithmsExampleFile.toAbsolutePath().toString(), "20"});
+  }
+
+  @Test
+  public void testDefaultMode_withFolder_mismatchingPathTypes() {
+    Main.main(new String[]{"-d", samplesFolder.toAbsolutePath().toString(), algorithmsExampleFile.toString(), "20"});
+    Main.main(new String[]{"-d", samplesFolder.toString(), lambdaExampleFile.toAbsolutePath().toString()});
+  }
+
+  @Test
   public void testInstrumentOnly() {
     Main.main(new String[]{"-i", simpleExampleFile.toString()});
     Main.main(new String[]{"--instrument-only", simpleExampleFile.toString()});
@@ -93,6 +104,7 @@ public class MainTest {
         .build());
     assertEquals(0, exitCode);
     Main.main(new String[]{"-r"});
+    assertTrue(IO.getReportIndexSymLinkPath().toFile().exists());
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored")

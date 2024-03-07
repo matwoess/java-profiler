@@ -43,7 +43,7 @@ public class Main {
   private static void generateReportOnly() {
     Profiler profiler = new Profiler(null);
     profiler.generateReport();
-    profiler.createSymLinkForReport();
+    profiler.createLinkForReport();
   }
 
   private static void instrumentOnly(Arguments arguments) {
@@ -77,7 +77,7 @@ public class Main {
     profiler.compileInstrumented();
     profiler.profile(arguments.programArgs());
     profiler.generateReport();
-    profiler.createSymLinkForReport();
+    profiler.createLinkForReport();
   }
 
   private static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path exceptFor) {

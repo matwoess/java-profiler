@@ -166,7 +166,7 @@ public class Profiler {
    * Creates a symbolic link to the main report index file in the current directory.
    * Should work on Linux and macOS but might not work on Windows, depending on group policy rules.
    */
-  public void createSymLinkForReport() {
-    IO.createSymbolicLink(IO.getReportIndexSymLinkPath(), IO.getReportIndexPath());
+  public void createLinkForReport() {
+    IO.createLink(IO.getReportIndexSymLinkPath(), IO.getReportIndexPath());
   }
 }

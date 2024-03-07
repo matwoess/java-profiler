@@ -99,7 +99,7 @@ public class ArgumentsTest {
   public void testDefaultMode_withFolder_mainNotADescendent() {
     String[] args = new String[]{"-d", samplesFolder.toString(), foreignJavaFile.toString()};
     var exception = assertThrows(IllegalArgumentException.class, () -> Arguments.parse(args));
-    assertEquals("Main file must be a descendant of the sources directory.", exception.getMessage());
+    assertEquals("Main file must be located inside the sources directory or in any child directory.", exception.getMessage());
   }
 
   @Test
