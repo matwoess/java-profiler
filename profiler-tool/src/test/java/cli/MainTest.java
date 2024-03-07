@@ -104,6 +104,7 @@ public class MainTest {
         .build());
     assertEquals(0, exitCode);
     Main.main(new String[]{"-r"});
+    assertTrue(IO.getReportIndexSymLinkPath().toFile().exists());
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
