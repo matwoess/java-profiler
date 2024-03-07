@@ -129,7 +129,11 @@ public class IO {
    * @return <code>report.html</code> relative to the current directory
    */
   public static Path getReportIndexSymLinkPath() {
-    return Path.of(".", "report.html");
+    if (OS.getOS() == OS.WINDOWS) {
+      return Path.of(".", "report.html.lnk");
+    } else {
+      return Path.of(".", "report.html");
+    }
   }
 
   /**
@@ -256,13 +260,33 @@ public class IO {
         Files.delete(link);
       }
       if (OS.getOS() == OS.WINDOWS) {
-        // create a shortcut on Windows using the 'mklink' command
-        Util.runCommand("mklink", link.toString(), target.toString());
+        // create a shortcut on Windows using a PowerShell command
+        createWindowsShortcut(link, target);
       } else {
         Files.createSymbolicLink(link, target);
       }
     } catch (IOException | RuntimeException e) {
       System.err.println(e.getMessage());
     }
+  }
+
+  private static void createWindowsShortcut(Path link, Path target) {
+    String targetCanonical;
+    try {
+      targetCanonical = target.toFile().getCanonicalPath();
+    } catch (IOException e) {
+      System.err.println("Could not get canonical path for " + target);
+      return;
+    }
+    String[] command = new String[]{
+        "powershell.exe",
+        "-Command",
+        "$WScriptShell = New-Object -ComObject WScript.Shell; "
+            + "$Shortcut = $WScriptShell.CreateShortcut('" + link.toString() + "');"
+            + "$Shortcut.TargetPath = '" + targetCanonical + "';"
+            + "$Shortcut.Save();"
+    };
+    Util.runCommand(command);
+    System.out.println("Report shortcut created at: " + link);
   }
 }
