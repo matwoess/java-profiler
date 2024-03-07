@@ -5,6 +5,12 @@ plugins {
 group = property("group") ?: ""
 version = property("commonVersion") ?: "unknown"
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 repositories {
     mavenCentral()
 }
