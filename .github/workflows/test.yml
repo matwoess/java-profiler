@@ -36,6 +36,7 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
       continue-on-error: true
       with:
+        gradle-version: 8.5
         arguments: test
 
     - name: Upload test report
