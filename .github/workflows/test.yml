@@ -33,7 +33,7 @@ jobs:
         ./scripts/generate-parser.sh
 
     - name: Setup and execute Gradle 'test' task
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/actions/setup-gradle@v3
       continue-on-error: true
       with:
         arguments: test
