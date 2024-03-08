@@ -29,7 +29,7 @@ public class TestInstrumentUtils {
 
   public static Instrumenter analyzeStringContent(String content) {
     Path file = createTempFileWithContent(content);
-    JavaFile javaFile = new JavaFile(file, file.getParent());
+    JavaFile javaFile = new JavaFile(file);
     Arguments args = new Arguments(RunMode.DEFAULT, null, null, false, true, null);
     Instrumenter instrumenter = new Instrumenter(new JavaFile[]{javaFile}, args);
     instrumenter.analyzeFiles();
