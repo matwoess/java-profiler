@@ -59,6 +59,12 @@ public class ProjectsTest {
 
   /**
    * Instrumenting Coco/R using Coco/R, then calling Coco/R on Coco/R.
+   * <p/>
+   * The sources are first compiled without instrumentation to re-generate
+   * the <code>Scanner.java</code> and <code>Parser.java</code> files.
+   * <p/>
+   * This is necessary because the copyright is removed in the process,
+   * effectively changing the source file. The initial metadata would then not match anymore.
    */
   @Test
   @GithubRepoSource(repositoryName = "SSW-CocoR/CocoR-Java", destinationFolder = "CocoR")
@@ -68,17 +74,30 @@ public class ProjectsTest {
     // re-generate Parser and Scanner once before instrumentation
     // Coco removes the copyright notice when (re-)creating its own Parser and Scanner
     // leading to suddenly 27 lines less and mismatching metadata
-    int genScannerParserResult = Util.runCommand(new JavaCommandBuilder()
-        .setClassPath(Path.of("..", "lib", "Coco.jar")) // should be present, use script 'generate-parser.sh' if not
+    int firstCompileResult = Util.runCommand(new JCompilerCommandBuilder()
+        .setDirectory(sourcesRoot)
+        .addCompileArg("-source", "8")
+        .addCompileArg("-target", "8")
+        .addSourceFile(sourcesRoot.resolve("Trace.java"))
+        .addSourceFile(sourcesRoot.resolve("Scanner.java"))
+        .addSourceFile(sourcesRoot.resolve("Tab.java"))
+        .addSourceFile(sourcesRoot.resolve("DFA.java"))
+        .addSourceFile(sourcesRoot.resolve("ParserGen.java"))
+        .addSourceFile(sourcesRoot.resolve("Parser.java"))
+        .addSourceFile(sourcesRoot.resolve("Coco.java"))
+        .build());
+    assertEquals(0, firstCompileResult);
+    int runWithoutInstrumentationResult = Util.runCommand(new JavaCommandBuilder()
+        .setClassPath(sourcesRoot)
         .setMainClass("Coco/Coco")
         .addArgs(cocoAtg.toString())
         .build());
-    assertEquals(0, genScannerParserResult);
-    // only instrument
+    assertEquals(0, runWithoutInstrumentationResult);
+    // now we instrument the new version without copyright notices
     TestUtils.instrumentFolder(sourcesRoot);
     // manually compile, because we need the legacy "-source" and "-target" parameters with the Java 21 compiler
     Path instrDir = IO.getInstrumentDir();
-    int compileResult = Util.runCommand(new JCompilerCommandBuilder()
+    int compileInstrumentedResult = Util.runCommand(new JCompilerCommandBuilder()
         .setDirectory(instrDir)
         .setClassPath(instrDir)
         .addCompileArg("-source", "8")
@@ -91,14 +110,14 @@ public class ProjectsTest {
         .addSourceFile(instrDir.resolve("Parser.java"))
         .addSourceFile(instrDir.resolve("Coco.java"))
         .build());
-    assertEquals(0, compileResult);
+    assertEquals(0, compileInstrumentedResult);
     // run Coco on Coco with the Coco ATG
-    int runResult = Util.runCommand(new JavaCommandBuilder()
+    int runInstrumentedResult = Util.runCommand(new JavaCommandBuilder()
         .setClassPath(IO.getInstrumentDir())
         .setMainClass("Coco/Coco")
         .addArgs(cocoAtg.toString())
         .build());
-    assertEquals(0, runResult);
+    assertEquals(0, runInstrumentedResult);
     // manually generate report
     TestUtils.generateReport();
   }
