@@ -5,12 +5,7 @@ import tool.instrument.Instrumenter;
 import tool.model.JavaFile;
 import tool.profile.Profiler;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
-
-import static common.Util.isJavaFile;
 
 /**
  * Main class of the profiler tool.
@@ -81,15 +76,13 @@ public class Main {
   }
 
   private static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path exceptFor) {
-    try (Stream<Path> walk = Files.walk(sourcesFolder)) {
-      return walk
-          .filter(path -> !path.equals(exceptFor) && isJavaFile(path))
-          .filter(path -> !path.getFileName().toString().equals("package-info.java"))
-          .filter(path -> !path.getFileName().toString().equals("module-info.java"))
-          .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
-          .toArray(JavaFile[]::new);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return new FileCollector(sourcesFolder, ".java", true)
+        .excludeFileName("package-info.java")
+        .excludeFileName("module-info.java")
+        .excludePath(exceptFor)
+        .collect()
+        .stream()
+        .map(sourceFile -> new JavaFile(sourceFile, sourcesFolder))
+        .toArray(JavaFile[]::new);
   }
 }
