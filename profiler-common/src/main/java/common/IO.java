@@ -282,7 +282,7 @@ public class IO {
    * @param target what the link should point to
    */
   private static void createWindowsShortcut(Path link, Path target) {
-    if (!link.endsWith(".lnk")) {
+    if (!link.getFileName().toString().endsWith(".lnk")) {
       System.err.println("Unable to create shortcut. The path does not end with '.lnk': " + link);
       return;
     }

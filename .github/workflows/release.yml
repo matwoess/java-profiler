@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'adopt'
+          distribution: 'temurin'
 
       - name: Generate Scanner and Parser files
         shell: bash
@@ -27,14 +27,16 @@ jobs:
           echo "Current Project version is: ${{ env.COMMON_VERSION }}"
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5
 
       - name: Build with Gradle
         run: |
-          gradle :profiler-tool:fatJar
-          gradle :profiler-fxui:distZip -Pos=win
-          gradle :profiler-fxui:distZip -Pos=linux
-          gradle :profiler-fxui:distZip -Pos=mac
+          ./gradlew :profiler-tool:fatJar
+          ./gradlew :profiler-fxui:distZip -Pos=win
+          ./gradlew :profiler-fxui:distZip -Pos=linux
+          ./gradlew :profiler-fxui:distZip -Pos=mac
           echo "created tool libraries":
           ls -l ./profiler-tool/build/libs/
           echo "created FxUI distributions:"

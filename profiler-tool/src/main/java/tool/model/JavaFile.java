@@ -22,29 +22,35 @@ public class JavaFile implements Serializable {
   public transient Path relativePath;
 
   /**
-   * Creates a new JavaFile with the given source file and sources root.
+   * Creates a new JavaFile object based on a source file path and its parent root directory path.
    * <p>
-   * The relative path is calculated based on the sources root.
-   * @param sourceFile the source file
-   * @param sourcesRoot the top-level sources root directory
+   * The given source file will be stored as-is while the directory will be used
+   * to determine a relative path between the directory and this source file.
+   * This relative path is important to mirror the original project structure
+   * in the instrumented directory and for the report file hierarchy.
+   *
+   * @param sourceFile the source file path
+   * @param sourcesDir the top-level sources root directory
    */
-  public JavaFile(Path sourceFile, Path sourcesRoot) {
-    Path absoluteFilePath = sourceFile.toAbsolutePath().normalize();
-    Path absoluteSourcesRootPath = sourcesRoot.toAbsolutePath().normalize();
-    this.sourceFile = Path.of(".").toAbsolutePath().relativize(absoluteFilePath);
-    this.relativePath = absoluteSourcesRootPath.relativize(absoluteFilePath);
+  public JavaFile(Path sourceFile, Path sourcesDir) {
+    this.sourceFile = sourceFile;
+    Path fileAbsolute = sourceFile.toAbsolutePath().normalize();
+    Path dirAbsolute = sourcesDir.toAbsolutePath().normalize();
+    this.relativePath = dirAbsolute.relativize(fileAbsolute);
   }
 
   /**
    * Like {@link JavaFile#JavaFile(Path, Path)} but relative to the current working directory.
+   * The relative path will be set to the file name itself.
    */
   public JavaFile(Path sourceFile) {
-    this.sourceFile = Path.of(".").toAbsolutePath().relativize(sourceFile.toAbsolutePath().normalize());
+    this.sourceFile = sourceFile;
     this.relativePath = sourceFile.getFileName();
   }
 
   /**
    * Returns a list of all classes in this file, including inner classes recursively.
+   *
    * @return the list of all classes in this file
    */
   public List<JClass> getClassesRecursive() {
@@ -57,6 +63,7 @@ public class JavaFile implements Serializable {
 
   /**
    * Custom serialization method, storing paths as strings.
+   *
    * @param oos the output stream
    * @throws IOException if any IO error occurs
    */
@@ -69,8 +76,9 @@ public class JavaFile implements Serializable {
 
   /**
    * Custom deserialization method, reading paths from strings.
+   *
    * @param ois the input stream
-   * @throws IOException if any IO error occurs
+   * @throws IOException            if any IO error occurs
    * @throws ClassNotFoundException if any class cannot be found
    */
   @Serial
