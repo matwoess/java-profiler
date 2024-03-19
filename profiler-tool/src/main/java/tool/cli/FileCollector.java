@@ -13,11 +13,11 @@ import java.util.List;
  * Whether to include hidden directories can be specified.
  */
 public class FileCollector {
-  Path baseDirectory;
-  String fileExtension;
-  boolean excludeHiddenDirs;
-  List<String> nameExclusions = new ArrayList<>();
-  List<Path> pathExclusions = new ArrayList<>();
+  final Path baseDirectory;
+  final String fileExtension;
+  final boolean excludeHiddenDirs;
+  final List<String> nameExclusions = new ArrayList<>();
+  final List<Path> pathExclusions = new ArrayList<>();
 
   /**
    * Creates a new FileCollector for the given base directory and file extension.
