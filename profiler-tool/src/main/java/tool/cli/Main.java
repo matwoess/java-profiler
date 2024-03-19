@@ -76,7 +76,7 @@ public class Main {
   }
 
   private static JavaFile[] getJavaFilesInFolder(Path sourcesFolder, Path exceptFor) {
-    return new FileCollector(sourcesFolder, ".java", true)
+    return new FileCollector(sourcesFolder, "java", true)
         .excludeFileName("package-info.java")
         .excludeFileName("module-info.java")
         .excludePath(exceptFor)
