@@ -16,9 +16,7 @@ class Algorithms {
     }
     { // Prime number
       System.out.println(isPrime(7));
-      System.out.println(isPrime(11));
-      System.out.println(isPrime(155574));
-      System.out.println(isPrime(79));
+      System.out.println(isPrime(533044717));
     }
   }
 
