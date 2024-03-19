@@ -70,7 +70,7 @@ public class FileCollector {
       Files.walkFileTree(baseDirectory, new SimpleFileVisitor<>() {
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-          if (excludeHiddenDirs && dir.toFile().isHidden()) {
+          if (excludeHiddenDirs && dir.getFileName().startsWith(".")) {
             return FileVisitResult.SKIP_SUBTREE;
           }
           return FileVisitResult.CONTINUE;
