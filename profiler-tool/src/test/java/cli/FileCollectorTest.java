@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class FileCollectorTest {
-  static Path baseDir;
+  static Path baseDir, subDir;
   static Path mainJavaFile, subDirJavaFile, hiddenJavaFile, textFile, subDirXmlFile, moduleInfo, subDirPackageInfo;
 
   @BeforeAll
@@ -22,7 +22,7 @@ public class FileCollectorTest {
     mainJavaFile = Files.createTempFile(baseDir, "main", ".java");
     textFile = Files.createTempFile(baseDir, "textFile", ".txt");
     moduleInfo = Files.createTempFile(baseDir, "module-info", ".java");
-    Path subDir = Files.createTempDirectory(baseDir, "subDir");
+    subDir = Files.createTempDirectory(baseDir, "subDir");
     subDirJavaFile = Files.createTempFile(subDir, "javaFile2", ".JAVA");
     subDirXmlFile = Files.createTempFile(subDir, "xmlFile", ".xml");
     subDirPackageInfo = Files.createTempFile(subDir, "package-info", ".java");
@@ -42,8 +42,8 @@ public class FileCollectorTest {
   }
 
   @Test
-  public void testXmlFiles_uppercase() {
-    List<Path> foundItems = new FileCollector(baseDir, "XML", false).collect();
+  public void testXmlFiles_uppercase_excludeNull() {
+    List<Path> foundItems = new FileCollector(baseDir, "XML", false).excludePath(null).collect();
     List<Path> expectedItems = List.of(subDirXmlFile);
     assertSameFilesFound(expectedItems, foundItems);
   }
@@ -73,6 +73,17 @@ public class FileCollectorTest {
         .excludeFileName(moduleInfo.getFileName().toString())
         .excludeFileName(subDirPackageInfo.getFileName().toString())
         .excludePath(mainJavaFile)
+        .collect();
+    List<Path> expectedItems = List.of(subDirJavaFile);
+    assertSameFilesFound(expectedItems, foundItems);
+  }
+
+  @Test
+  public void testJavaFiles_relativePaths_noHiddenDir() {
+    List<Path> foundItems = new FileCollector(subDir.resolve(".."), "java", true)
+        .excludeFileName(moduleInfo.getFileName().toString())
+        .excludePath(subDirPackageInfo)
+        .excludePath(mainJavaFile.resolve("..").resolve(mainJavaFile.getFileName()))
         .collect();
     List<Path> expectedItems = List.of(subDirJavaFile);
     assertSameFilesFound(expectedItems, foundItems);

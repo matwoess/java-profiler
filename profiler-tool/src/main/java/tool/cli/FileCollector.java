@@ -29,7 +29,7 @@ public class FileCollector {
    * @param excludeHiddenDirs whether to exclude hidden directories from the search
    */
   public FileCollector(Path baseDir, String fileExtension, boolean excludeHiddenDirs) {
-    this.baseDirectory = baseDir;
+    this.baseDirectory = baseDir.normalize();
     this.fileExtension = "." + fileExtension.toLowerCase();
     this.excludeHiddenDirs = excludeHiddenDirs;
   }
@@ -52,7 +52,9 @@ public class FileCollector {
    * @return this FileCollector instance
    */
   public FileCollector excludePath(Path exclusion) {
-    pathExclusions.add(exclusion);
+    if (exclusion != null) {
+      pathExclusions.add(exclusion.toAbsolutePath().normalize());
+    }
     return this;
   }
 
@@ -70,8 +72,11 @@ public class FileCollector {
       Files.walkFileTree(baseDirectory, new SimpleFileVisitor<>() {
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-          if (excludeHiddenDirs && dir.getFileName().startsWith(".")) {
-            return FileVisitResult.SKIP_SUBTREE;
+          if (excludeHiddenDirs) {
+            String dirName = dir.getFileName().toString();
+            if (dirName.startsWith(".") && !dirName.startsWith("..")) {
+              return FileVisitResult.SKIP_SUBTREE;
+            }
           }
           return FileVisitResult.CONTINUE;
         }
@@ -81,7 +86,7 @@ public class FileCollector {
           String fileName = file.getFileName().toString();
           if (fileName.toLowerCase().endsWith(fileExtension)
               && !nameExclusions.contains(fileName)
-              && !pathExclusions.contains(file)) {
+              && !pathExclusions.contains(file.toAbsolutePath().normalize())) {
             files.add(file);
           }
           return FileVisitResult.CONTINUE;
