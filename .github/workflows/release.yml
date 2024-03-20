@@ -1,37 +1,39 @@
-name: Build artifacts and draft a new release
+name: "Build Artifacts & Draft Release"
 
 on:
   workflow_dispatch:
 
 jobs:
   build_and_draft_release:
+    name: "Build artifacts and draft release"
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: "Checkout code"
+        uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: "Set up JDK"
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Generate Scanner and Parser files
+      - name: "Generate scanner and parser files"
         shell: bash
         run: |
           ./scripts/generate-parser.sh
 
-      - name: Extract project version from properties
+      - name: "Extract project version from Gradle properties"
         run: |
           echo "COMMON_VERSION=$(grep -Po 'commonVersion=\K.*' gradle.properties)" >> $GITHUB_ENV
           echo "Current Project version is: ${{ env.COMMON_VERSION }}"
 
-      - name: Setup Gradle
+      - name: "Setup Gradle"
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.5
 
-      - name: Build with Gradle
+      - name: "Build with Gradle"
         run: |
           ./gradlew :profiler-tool:fatJar
           ./gradlew :profiler-fxui:distZip -Pos=win
@@ -42,7 +44,7 @@ jobs:
           echo "created FxUI distributions:"
           ls -l ./profiler-fxui/build/distributions/
 
-      - name: Create release draft
+      - name: "Create release draft"
         id: create_release_draft
         uses: actions/create-release@v1
         env:
@@ -54,7 +56,7 @@ jobs:
           draft: true
           prerelease: true
 
-      - name: Upload tol jar to release
+      - name: "Add command-line JAR artifact"
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -64,7 +66,7 @@ jobs:
           asset_name: profiler-${{ env.COMMON_VERSION }}.jar
           asset_content_type: application/zip
 
-      - name: Upload Linux FxUI artifact to release
+      - name: "Add Linux JavaFX artifact"
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -74,7 +76,7 @@ jobs:
           asset_name: profiler-fxui-${{ env.COMMON_VERSION }}-linux.zip
           asset_content_type: application/zip
 
-      - name: Upload Windows FxUI artifact to release
+      - name: "Add Windows JavaFX artifact"
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -84,7 +86,7 @@ jobs:
           asset_name: profiler-fxui-${{ env.COMMON_VERSION }}-win.zip
           asset_content_type: application/zip
 
-      - name: Upload MacOS FxUI artifact to release
+      - name: "Add macOS JavaFX artifact"
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

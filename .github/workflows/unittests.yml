@@ -1,0 +1,70 @@
+name: "Run Tests & Upload Report"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  unittests:
+    name: "Run unit tests (${{ matrix.os }})"
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        include:
+          - os: ubuntu-latest
+            osname: "linux"
+          - os: macos-latest
+            osname: "macos"
+          - os: windows-latest
+            osname: "windows"
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Set up JDK"
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: "Generate scanner and parser files"
+        shell: bash
+        run: |
+          ./scripts/generate-parser.sh
+
+      - name: "Setup Gradle and execute 'test'"
+        uses: gradle/actions/setup-gradle@v3
+        continue-on-error: true
+        with:
+          gradle-version: 8.5
+          arguments: test
+
+      - name: "Upload Gradle report - tool"
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-tool-${{ matrix.osname }}
+          path: profiler-tool/build/reports/tests/
+
+      - name: "Upload Gradle report - common"
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-common-${{ matrix.osname }}
+          path: profiler-common/build/reports/tests/
+
+      - name: "Upload JUnit results - tool"
+        uses: dorny/test-reporter@v1
+        with:
+          name: "JUnit results - tool (${{ matrix.osname }})"
+          path: profiler-tool/build/test-results/test/TEST-*.xml
+          reporter: java-junit
+          fail-on-error: false
+
+      - name: "Upload JUnit results - common"
+        uses: dorny/test-reporter@v1
+        with:
+          name: "JUnit results - common (${{ matrix.osname }})"
+          path: profiler-common/build/test-results/test/TEST-*.xml
+          reporter: java-junit
+          fail-on-error: false
