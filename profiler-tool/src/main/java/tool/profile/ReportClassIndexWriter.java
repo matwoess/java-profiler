@@ -3,8 +3,10 @@ package tool.profile;
 import common.IO;
 import tool.model.JClass;
 import tool.model.JavaFile;
+import tool.model.Method;
 
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -36,6 +38,9 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
           padding: 8px;
         }
         td.hits {
+          text-align: right;
+        }
+        td.meth-coverage {
           text-align: right;
         }
         a {
@@ -70,8 +75,9 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         .toList();
     content.append("<table>\n")
         .append("<tr>\n")
-        .append("<th>Method invocations</th>\n")
         .append("<th>Class</th>\n")
+        .append("<th>Method invocations</th>\n")
+        .append("<th>Method coverage</th>\n")
         .append("<th>Source file</th>\n")
         .append("</tr>\n");
     for (JClass clazz : sortedClasses) {
@@ -79,17 +85,33 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       Path methIdxHref = IO.getReportMethodIndexPath(clazz.name).getFileName();
       Path sourceFileHref = IO.getReportDir().relativize(IO.getReportSourceFilePath(javaFile.relativePath));
       content.append("<tr>\n")
-          .append("<td class=\"hits\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.getName()))
+          .append("<td class=\"hits\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
+          .append("<td class=\"meth-coverage\">").append(getMethodCoverage(clazz)).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", sourceFileHref, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
     }
     content.append("</table>\n");
   }
 
+  private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
+
+  /**
+   * Returns the method coverage of a class as a percentage string.
+   * The coverage is calculated as the number of covered methods divided by the total number of methods.
+   *
+   * @param clazz the class to calculate the coverage for
+   * @return the method coverage as a percentage string in the format "#.#% (covered/total)"
+   */
+  private String getMethodCoverage(JClass clazz) {
+    List<Method> methods = clazz.getMethodsRecursive().stream().filter(m -> !m.isAbstract()).toList();
+    int coveredMethods = (int) methods.stream().filter(m -> m.getMethodBlock().hits > 0).count();
+    float coverage = (float) coveredMethods / methods.size() * 100;
+    return String.format("%s%% (%d/%d)", DECIMAL_FORMAT.format(coverage), coveredMethods, methods.size());
+  }
+
   /**
    * Defines the output path for the generated HTML document as {@link IO#getReportIndexPath}.
-   * @return
    */
   @Override
   public Path getFileOutputPath() {
