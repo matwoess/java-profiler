@@ -96,7 +96,7 @@ public class Profiler {
    *   <li>the source files</li>
    *   <li>the method index files for each class in the source files</li>
    * </ul>
-   * Finally, the highlighting JavaScript file is copied to the report directory using {@link #copyJavaScriptFiles}.
+   * Finally, the highlighting JavaScript file is copied to the report directory using {@link #copyReportResources}.
    */
   public void generateReport() {
     JavaFile[] allJavaFiles;
@@ -117,7 +117,7 @@ public class Profiler {
         new ReportMethodIndexWriter(clazz, jFile).write();
       }
     }
-    copyJavaScriptFiles();
+    copyReportResources();
   }
 
   /**
@@ -156,10 +156,13 @@ public class Profiler {
   }
 
   /**
-   * Copies the <code>highlighter.js</code> JavaScript file to the report directory.
+   * Copies all necessary report JavaScript and CCS files to the report directory.
    */
-  private static void copyJavaScriptFiles() {
-    IO.copyResource(Profiler.class, "highlighter.js", IO.getReportHighlighterPath());
+  private static void copyReportResources() {
+    String[] reportResources = {"js/highlighter.js", "css/index.css", "css/source.css"};
+    for (String resource : reportResources) {
+      IO.copyResource(Profiler.class, resource, IO.getReportResourcePath(resource));
+    }
   }
 
   /**

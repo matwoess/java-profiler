@@ -115,12 +115,12 @@ public class IO {
   }
 
   /**
-   * Returns the path of the jQuery helper script to visualize blocks and regions in the report.
+   * Returns the path of a JavaScript or CSS report file relative to the report directory.
    *
-   * @return <code>highlighter.js</code> relative to the report directory
+   * @return the relative path of a source file in the report directory
    */
-  public static Path getReportHighlighterPath() {
-    return getReportDir().resolve("highlighter.js");
+  public static Path getReportResourcePath(String reportResource) {
+    return getReportDir().resolve(reportResource);
   }
 
   /**

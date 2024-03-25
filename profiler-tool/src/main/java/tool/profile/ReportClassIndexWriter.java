@@ -24,30 +24,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
   public ReportClassIndexWriter(JavaFile[] allJavaFiles) {
     this.allJavaFiles = allJavaFiles;
     title = "Classes";
-    cssStyle = """
-        body {
-          font-family: Helvetica Neue, Verdana, sans-serif;
-        }
-        table {
-          border-collapse: collapse;
-        }
-        table, th, td {
-          border: 1px solid #ddd;
-        }
-        th, td {
-          padding: 8px;
-        }
-        td.hits {
-          text-align: right;
-        }
-        td.meth-coverage {
-          text-align: right;
-        }
-        a {
-          color: MediumBlue;
-          text-decoration: none;
-        }
-        """;
+    cssFile = "css/index.css";
   }
 
   /**

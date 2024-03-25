@@ -33,33 +33,8 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     includeScripts = new String[]{
         "https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"
     };
-    cssStyle = """
-        body {
-          font-family: Helvetica Neue, Verdana, sans-serif;
-        }
-        table {
-          border-collapse: collapse;
-        }
-        td {
-          padding: 0;
-        }
-        td.lNr {
-          text-align: right;
-          background-color: #dedede;
-        }
-        :target td.lNr {
-          background-color: Gold;
-        }
-        td.hits {
-          background-color: #eee;
-        }
-        pre {
-          tab-size: 2;
-        }
-        """;
-    bodyScripts = new String[]{
-        IO.getReportSourceFilePath(javaFile.relativePath).getParent().relativize(IO.getReportHighlighterPath()).toString()
-    };
+    cssFile = "css/source.css";
+    bodyScripts = new String[]{"js/highlighter.js"};
   }
 
   /**
@@ -279,6 +254,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
 
   /**
    * Returns the classes for all the dependent control breaks of the given code region.
+   *
    * @param region the code region
    * @return the classes for all the dependent control breaks
    */
@@ -288,6 +264,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
 
   /**
    * Returns a list of all active blocks at the given character position.
+   *
    * @param chPos the character position
    * @return the list of all active blocks
    */
@@ -299,6 +276,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
 
   /**
    * Returns a list of all active code regions at the given line number.
+   *
    * @param lineNr the line number
    * @return the list of all active code regions
    */
@@ -314,6 +292,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   /**
    * Returns the file output path to write the file to.
    * The path is determined by calling {@link IO#getReportSourceFilePath} with the relative java file path.
+   *
    * @return the file output path
    */
   @Override

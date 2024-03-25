@@ -27,27 +27,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
     this.clazz = clazz;
     this.reportSourceFile = IO.getReportSourceFilePath(javaFile.relativePath);
     title = "Methods in " + clazz.getFullName();
-    cssStyle = """
-        body {
-          font-family: Helvetica Neue, Verdana, sans-serif;
-        }
-        table {
-          border-collapse: collapse;
-        }
-        table, th, td {
-          border: 1px solid #ddd;
-        }
-        th, td {
-          padding: 8px;
-        }
-        td.hits {
-          text-align: right;
-        }
-        a {
-          color: MediumBlue;
-          text-decoration: none;
-        }
-        """;
+    cssFile = "css/index.css";
   }
 
   /**

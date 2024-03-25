@@ -13,7 +13,7 @@ import java.nio.file.Path;
  * <p>
  * Subclasses should implement the {@link #body()} method to generate the main content of the HTML document.
  * <p>
- * The fields {@link #title}, {@link #includeScripts}, {@link #bodyScripts} and {@link #cssStyle} can be used to
+ * The fields {@link #title}, {@link #includeScripts}, {@link #bodyScripts} and {@link #cssFile} can be used to
  * customize the HTML document.
  * <p>
  * The {@link #getFileOutputPath()} method should be overridden
@@ -24,7 +24,7 @@ public abstract class AbstractHtmlWriter {
   public String title;
   public String[] includeScripts;
   public String[] bodyScripts;
-  public String cssStyle;
+  public String cssFile;
 
   /**
    * Appends the HTML header to the internal <code>content</code> StringBuilder.
@@ -41,8 +41,10 @@ public abstract class AbstractHtmlWriter {
         content.append(String.format("<script src=\"%s\"></script>\n", scriptSrc));
       }
     }
-    if (cssStyle != null) {
-      content.append("<style>\n").append(cssStyle).append("</style>\n");
+    if (cssFile != null) {
+      Path cssResource = IO.getReportResourcePath(cssFile);
+      Path relativeCssPath = getFileOutputPath().getParent().relativize(cssResource);
+      content.append("<style>@import \"").append(relativeCssPath).append("\"</style>\n");
     }
     content.append("</head>\n");
   }
@@ -56,7 +58,8 @@ public abstract class AbstractHtmlWriter {
 
   /**
    * Writes the custom heading to the internal <code>content</code> StringBuilder.
-   * @param heading
+   *
+   * @param heading the page title string
    */
   public void heading(String heading) {
     content.append("<h1>").append(heading).append("</h1>\n");
@@ -73,7 +76,9 @@ public abstract class AbstractHtmlWriter {
   public void bodyEnd() {
     if (bodyScripts != null) {
       for (String bodyScript : bodyScripts) {
-        content.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", bodyScript));
+        Path scriptResource = IO.getReportResourcePath(bodyScript);
+        Path relativeScriptResource = getFileOutputPath().getParent().relativize(scriptResource);
+        content.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", relativeScriptResource));
       }
     }
     content.append("</body>\n");
@@ -109,6 +114,7 @@ public abstract class AbstractHtmlWriter {
 
   /**
    * Returns the path to where the output file should be written to. Should be overridden by subclasses.
+   *
    * @return the destination path of the output file
    */
   public abstract Path getFileOutputPath();

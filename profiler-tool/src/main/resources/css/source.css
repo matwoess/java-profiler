@@ -1,0 +1,28 @@
+body {
+  font-family: Helvetica Neue, Verdana, sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 0;
+}
+
+td.lNr {
+  text-align: right;
+  background-color: #dedede;
+}
+
+:target td.lNr {
+  background-color: Gold;
+}
+
+td.hits {
+  background-color: #eee;
+}
+
+pre {
+  tab-size: 2;
+}
