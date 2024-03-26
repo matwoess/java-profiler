@@ -1,24 +1,24 @@
 body {
   font-family: Helvetica Neue, Verdana, sans-serif;
+  font-size: 11pt;
 }
 
 table {
   border-collapse: collapse;
+  border: none;
 }
 
 table, th, td {
   border: 1px solid #ddd;
+  padding: 4px;
 }
 
-th, td {
-  padding: 8px;
+th {
+  background-color: #ddd;
+  text-align: left;
 }
 
-td.hits {
-  text-align: right;
-}
-
-td.meth-coverage {
+td.hits, td.meth-coverage {
   text-align: right;
 }
 
