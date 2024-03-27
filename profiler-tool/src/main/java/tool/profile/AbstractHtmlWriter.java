@@ -57,6 +57,23 @@ public abstract class AbstractHtmlWriter {
   }
 
   /**
+   * Adds a breadcrumb bar at the top of the page to navigate back to the main index file.
+   * <p/>
+   * The main index itself does not have a breadcrumb bar.
+   */
+  private void breadcrumbBar() {
+    if (getFileOutputPath().equals(IO.getReportIndexPath())) {
+      return; // no breadcrumbs for the main index file itself
+    }
+    content.append("<div class=\"breadcrumbs\">");
+    String backlinkButton = String.format("<input type=\"button\" onclick=\"location.href='%s';\" value=\"%s\"/>",
+        getFileOutputPath().getParent().relativize(IO.getReportIndexPath()),
+        "Back to class overview");
+    content.append(backlinkButton);
+    content.append("</div>");
+  }
+
+  /**
    * Writes the custom heading to the internal <code>content</code> StringBuilder.
    *
    * @param heading the page title string
@@ -91,6 +108,7 @@ public abstract class AbstractHtmlWriter {
   public void generate() {
     header();
     bodyStart();
+    breadcrumbBar();
     heading(title);
     body();
     bodyEnd();
