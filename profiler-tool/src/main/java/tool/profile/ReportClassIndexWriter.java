@@ -64,14 +64,12 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.getName()))
           .append("<td class=\"hits\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
-          .append("<td class=\"meth-coverage\">").append(getMethodCoverage(clazz)).append("</td>\n")
+          .append("<td class=\"coverage\">").append(getMethodCoverage(clazz)).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", sourceFileHref, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
     }
     content.append("</table>\n");
   }
-
-  private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
 
   /**
    * Returns the method coverage of a class as a percentage string.

@@ -5,6 +5,7 @@ import common.IO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 
 /**
  * The abstract superclass for all HTML writers.
@@ -25,6 +26,11 @@ public abstract class AbstractHtmlWriter {
   public String[] includeScripts;
   public String[] bodyScripts;
   public String cssFile;
+
+  /**
+   * Formatter for index percentage values with zero or one decimal places.
+   */
+  protected final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
 
   /**
    * Appends the HTML header to the internal <code>content</code> StringBuilder.

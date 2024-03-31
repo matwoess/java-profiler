@@ -48,8 +48,9 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .toList();
     content.append("<table>\n")
         .append("<tr>\n")
-        .append("<th>Invocations</th>\n")
         .append("<th>Method</th>\n")
+        .append("<th>Invocations</th>\n")
+        .append("<th>Code block coverage</th>\n")
         .append("</tr>\n");
     Path sourceFileHref = IO.getReportDir().relativize(reportSourceFile);
     for (Method meth : sortedMethods) {
@@ -59,11 +60,26 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
           ? methBlock.clazz.getName() + "::" + meth.name
           : meth.name;
       content.append("<tr>\n")
-          .append("<td class=\"hits\">").append(meth.getMethodBlock().hits).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, methName))
+          .append("<td class=\"hits\">").append(meth.getMethodBlock().hits).append("</td>\n")
+          .append("<td class=\"coverage\">").append(getBlockCoverage(meth)).append("</td>\n")
           .append("</tr>\n");
     }
     content.append("</table>\n");
+  }
+
+  /**
+   * Returns the block coverage of a method as a percentage string.
+   * The coverage is calculated as the number of covered blocks divided by the total number of blocks.
+   *
+   * @param method the method to calculate the coverage for
+   * @return the block coverage as a percentage string in the format "#.#% (covered/total)"
+   */
+  private String getBlockCoverage(Method method) {
+    List<Block> blocks = method.getBlocksRecursive().stream().toList();
+    int coveredBlocks = (int) blocks.stream().filter(b -> b.hits > 0).count();
+    float coverage = (float) coveredBlocks / blocks.size() * 100;
+    return String.format("%s%% (%d/%d)", DECIMAL_FORMAT.format(coverage), coveredBlocks, blocks.size());
   }
 
   /**

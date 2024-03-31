@@ -18,7 +18,7 @@ th {
   text-align: left;
 }
 
-td.hits, td.meth-coverage {
+td.hits, td.coverage {
   text-align: right;
 }
 
