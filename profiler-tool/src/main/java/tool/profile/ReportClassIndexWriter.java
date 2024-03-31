@@ -52,8 +52,8 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     content.append("<table>\n")
         .append("<tr>\n")
         .append("<th>Class</th>\n")
-        .append("<th>Method Invocations</th>\n")
-        .append("<th>Max Block Count</th>\n")
+        .append("<th>Agg. Method Calls</th>\n")
+        .append("<th>Block Hit Max</th>\n")
         .append("<th>Method Coverage</th>\n")
         .append("<th>Source File</th>\n")
         .append("</tr>\n");

@@ -50,7 +50,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .append("<tr>\n")
         .append("<th>Method</th>\n")
         .append("<th>Invocations</th>\n")
-        .append("<th>Most Frequent Block</th>\n")
+        .append("<th>Block Hit Max</th>\n")
         .append("<th>Code Block Coverage</th>\n")
         .append("</tr>\n");
     Path sourceFileHref = IO.getReportDir().relativize(reportSourceFile);
