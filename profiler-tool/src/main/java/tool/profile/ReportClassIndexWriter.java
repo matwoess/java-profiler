@@ -23,7 +23,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
    */
   public ReportClassIndexWriter(JavaFile[] allJavaFiles) {
     this.allJavaFiles = allJavaFiles;
-    title = "Classes";
+    title = "Class Overview";
     cssFile = "css/index.css";
   }
 
@@ -53,9 +53,9 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     content.append("<table>\n")
         .append("<tr>\n")
         .append("<th>Class</th>\n")
-        .append("<th>Method invocations</th>\n")
-        .append("<th>Method coverage</th>\n")
-        .append("<th>Source file</th>\n")
+        .append("<th>Method Invocations</th>\n")
+        .append("<th>Method Coverage</th>\n")
+        .append("<th>Source File</th>\n")
         .append("</tr>\n");
     for (JClass clazz : sortedClasses) {
       JavaFile javaFile = fileByClass.get(clazz);

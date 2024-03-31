@@ -74,7 +74,7 @@ public abstract class AbstractHtmlWriter {
     content.append("<div class=\"breadcrumbs\">");
     String backlinkButton = String.format("<input type=\"button\" onclick=\"location.href='%s';\" value=\"%s\"/>",
         getFileOutputPath().getParent().relativize(IO.getReportIndexPath()),
-        "Back to class overview");
+        "Back to Class Overview");
     content.append(backlinkButton);
     content.append("</div>");
   }
@@ -85,7 +85,7 @@ public abstract class AbstractHtmlWriter {
    * @param heading the page title string
    */
   public void heading(String heading) {
-    content.append("<h1>").append(heading).append("</h1>\n");
+    content.append("<h2>").append(heading).append("</h2>\n");
   }
 
   /**

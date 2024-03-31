@@ -16,6 +16,7 @@ table, th, td {
 th {
   background-color: #ddd;
   text-align: left;
+  font-size: 10pt;
 }
 
 td.hits, td.hit-max, td.coverage {
