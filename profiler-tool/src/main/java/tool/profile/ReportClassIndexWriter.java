@@ -6,7 +6,6 @@ import tool.model.JavaFile;
 import tool.model.Method;
 
 import java.nio.file.Path;
-import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -54,6 +53,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         .append("<tr>\n")
         .append("<th>Class</th>\n")
         .append("<th>Method Invocations</th>\n")
+        .append("<th>Max Block Count</th>\n")
         .append("<th>Method Coverage</th>\n")
         .append("<th>Source File</th>\n")
         .append("</tr>\n");
@@ -64,6 +64,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.getName()))
           .append("<td class=\"hits\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
+          .append("<td class=\"hit-max\">").append(getBlockHitMax(clazz)).append("</td>\n")
           .append("<td class=\"coverage\">").append(getMethodCoverage(clazz)).append("</td>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", sourceFileHref, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
@@ -83,6 +84,20 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     int coveredMethods = (int) methods.stream().filter(m -> m.getMethodBlock().hits > 0).count();
     float coverage = (float) coveredMethods / methods.size() * 100;
     return String.format("%s%% (%d/%d)", DECIMAL_FORMAT.format(coverage), coveredMethods, methods.size());
+  }
+
+  /**
+   * Returns the hit-count of the most frequent executed inner block inside a class and its methods.
+   *
+   * @param clazz the class to calculate the maximum for
+   * @return the hit-count of the most often executed inner block inside a class and its methods
+   */
+  private int getBlockHitMax(JClass clazz) {
+    return clazz.getBlocksRecursive().stream()
+        .map(b -> b.hits)
+        .max(Long::compareTo)
+        .orElse(0L)
+        .intValue();
   }
 
   /**
