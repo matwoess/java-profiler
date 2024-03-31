@@ -50,6 +50,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .append("<tr>\n")
         .append("<th>Method</th>\n")
         .append("<th>Invocations</th>\n")
+        .append("<th>Most frequent block</th>\n")
         .append("<th>Code block coverage</th>\n")
         .append("</tr>\n");
     Path sourceFileHref = IO.getReportDir().relativize(reportSourceFile);
@@ -62,6 +63,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, methName))
           .append("<td class=\"hits\">").append(meth.getMethodBlock().hits).append("</td>\n")
+          .append("<td class=\"hit-max\">").append(getBlockHitMax(meth)).append("</td>\n")
           .append("<td class=\"coverage\">").append(getBlockCoverage(meth)).append("</td>\n")
           .append("</tr>\n");
     }
@@ -80,6 +82,20 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
     int coveredBlocks = (int) blocks.stream().filter(b -> b.hits > 0).count();
     float coverage = (float) coveredBlocks / blocks.size() * 100;
     return String.format("%s%% (%d/%d)", DECIMAL_FORMAT.format(coverage), coveredBlocks, blocks.size());
+  }
+
+  /**
+   * Returns the hit-count of the most frequent executed inner block inside a method.
+   *
+   * @param method the method to calculate the maximum for
+   * @return the hit-count of the most often executed inner block
+   */
+  private int getBlockHitMax(Method method) {
+    return method.getBlocksRecursive().stream()
+        .map(b -> b.hits)
+        .max(Long::compareTo)
+        .orElse(0L)
+        .intValue();
   }
 
   /**
