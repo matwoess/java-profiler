@@ -39,6 +39,7 @@ public abstract class AbstractHtmlWriter {
    */
   public void header() {
     content.append("<!DOCTYPE html>\n").append("<html>\n").append("<head>\n");
+    content.append("<meta charset=\"UTF-8\">\n");
     if (title != null) {
       content.append("<title>").append(title).append("</title>\n");
     }

@@ -49,10 +49,10 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
         .filter(c -> c.getMethodsRecursive().stream().anyMatch(m -> !m.isAbstract()))
         .sorted(Comparator.comparingLong(JClass::getAggregatedMethodBlockCounts).reversed())
         .toList();
-    content.append("<table>\n")
+    content.append("<table class=\"sortable\">\n")
         .append("<tr>\n")
         .append("<th>Class</th>\n")
-        .append("<th>Agg. Method Calls</th>\n")
+        .append("<th class=\"desc\">Total Method Calls</th>\n")
         .append("<th>Block Hit Max</th>\n")
         .append("<th>Method Coverage</th>\n")
         .append("<th>Source File</th>\n")

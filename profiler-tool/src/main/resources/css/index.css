@@ -6,6 +6,7 @@ body {
 table {
   border-collapse: collapse;
   border: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
 table, th, td {
@@ -26,4 +27,12 @@ td.hits, td.hit-max, td.coverage {
 a {
   color: MediumBlue;
   text-decoration: none;
+}
+
+.sortable th.asc::after {
+  content: " ▲";
+}
+
+.sortable th.desc::after {
+  content: " ▼";
 }
