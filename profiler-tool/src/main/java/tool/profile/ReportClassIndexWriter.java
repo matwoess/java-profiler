@@ -24,6 +24,8 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     this.allJavaFiles = allJavaFiles;
     title = "Class Overview";
     cssFile = "css/index.css";
+    includeScripts = new String[]{"https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"};
+    bodyScripts = new String[]{"js/sorter.js"};
   }
 
   /**
@@ -52,9 +54,9 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
     content.append("<table class=\"sortable\">\n")
         .append("<tr>\n")
         .append("<th>Class</th>\n")
-        .append("<th class=\"desc\">Total Method Calls</th>\n")
-        .append("<th>Block Hit Max</th>\n")
-        .append("<th>Method Coverage</th>\n")
+        .append("<th class=\"metric desc\">Total Method Calls</th>\n")
+        .append("<th class=\"metric\">Block Hit Max</th>\n")
+        .append("<th class=\"metric\">Method Coverage</th>\n")
         .append("<th>Source File</th>\n")
         .append("</tr>\n");
     for (JClass clazz : sortedClasses) {
