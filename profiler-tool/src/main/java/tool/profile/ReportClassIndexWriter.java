@@ -66,9 +66,9 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       ComponentCoverage methodCoverage = getMethodCoverage(clazz);
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.getName()))
-          .append("<td class=\"hits\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
-          .append("<td class=\"hit-max\">").append(getBlockHitMax(clazz)).append("</td>\n")
-          .append(String.format("<td class=\"coverage\" value=\"%s\">%s</td>\n", methodCoverage.percentage(), methodCoverage))
+          .append("<td class=\"metric\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
+          .append("<td class=\"metric\">").append(getBlockHitMax(clazz)).append("</td>\n")
+          .append(String.format("<td class=\"metric\" value=\"%s\">%s</td>\n", methodCoverage.percentage(), methodCoverage))
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", sourceFileHref, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
     }

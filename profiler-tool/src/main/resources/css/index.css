@@ -20,7 +20,7 @@ th {
   font-size: 10pt;
 }
 
-td.hits, td.hit-max, td.coverage {
+td.metric {
   text-align: right;
 }
 
