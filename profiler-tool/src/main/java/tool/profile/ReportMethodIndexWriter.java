@@ -28,6 +28,8 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
     this.reportSourceFile = IO.getReportSourceFilePath(javaFile.relativePath);
     title = "Methods in " + clazz.getFullName();
     cssFile = "css/index.css";
+    includeScripts = new String[]{"https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"};
+    bodyScripts = new String[]{"js/sorter.js"};
   }
 
   /**
@@ -46,12 +48,12 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
         .filter(method -> !method.isAbstract())
         .sorted(Comparator.comparingLong((Method m) -> m.getMethodBlock().hits).reversed())
         .toList();
-    content.append("<table>\n")
+    content.append("<table class=\"sortable\">\n")
         .append("<tr>\n")
         .append("<th>Method</th>\n")
-        .append("<th>Invocations</th>\n")
-        .append("<th>Block Hit Max</th>\n")
-        .append("<th>Code Block Coverage</th>\n")
+        .append("<th class=\"metric desc\">Invocations</th>\n")
+        .append("<th class=\"metric\">Block Hit Max</th>\n")
+        .append("<th class=\"metric\">Code Block Coverage</th>\n")
         .append("</tr>\n");
     Path sourceFileHref = IO.getReportDir().relativize(reportSourceFile);
     for (Method meth : sortedMethods) {
@@ -63,9 +65,9 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
       ComponentCoverage blockCoverage = getBlockCoverage(meth);
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, methName))
-          .append("<td class=\"hits\">").append(meth.getMethodBlock().hits).append("</td>\n")
-          .append("<td class=\"hit-max\">").append(getBlockHitMax(meth)).append("</td>\n")
-          .append(String.format("<td class=\"coverage\" value=\"%s\">%s</td>\n", blockCoverage.percentage(), blockCoverage))
+          .append("<td class=\"metric\">").append(meth.getMethodBlock().hits).append("</td>\n")
+          .append("<td class=\"metric\">").append(getBlockHitMax(meth)).append("</td>\n")
+          .append(String.format("<td class=\"metric\" value=\"%s\">%s</td>\n", blockCoverage.percentage(), blockCoverage))
           .append("</tr>\n");
     }
     content.append("</table>\n");
