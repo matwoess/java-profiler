@@ -65,5 +65,7 @@ function newRowComparator(index) {
  * @returns {*|jQuery} the value of the cell
  */
 function getCellValue(row, index) {
-  return $(row).children('td').eq(index).text();
+  const cell = $(row).children('td').eq(index);
+  const value = cell.attr('value');
+  return value !== undefined ? value : cell.text();
 }

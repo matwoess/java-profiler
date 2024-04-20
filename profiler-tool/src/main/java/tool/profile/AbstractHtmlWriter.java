@@ -28,11 +28,6 @@ public abstract class AbstractHtmlWriter {
   public String cssFile;
 
   /**
-   * Formatter for index percentage values with zero or one decimal places.
-   */
-  protected final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
-
-  /**
    * Appends the HTML header to the internal <code>content</code> StringBuilder.
    * <p>
    * Includes the doctype, the html and head tags, the title, the included scripts and the css style.

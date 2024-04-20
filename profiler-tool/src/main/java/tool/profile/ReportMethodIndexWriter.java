@@ -60,28 +60,28 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
       String methName = (methBlock.clazz != clazz)
           ? methBlock.clazz.getName() + "::" + meth.name
           : meth.name;
+      ComponentCoverage blockCoverage = getBlockCoverage(meth);
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, methName))
           .append("<td class=\"hits\">").append(meth.getMethodBlock().hits).append("</td>\n")
           .append("<td class=\"hit-max\">").append(getBlockHitMax(meth)).append("</td>\n")
-          .append("<td class=\"coverage\">").append(getBlockCoverage(meth)).append("</td>\n")
+          .append(String.format("<td class=\"coverage\" value=\"%s\">%s</td>\n", blockCoverage.percentage(), blockCoverage))
           .append("</tr>\n");
     }
     content.append("</table>\n");
   }
 
   /**
-   * Returns the block coverage of a method as a percentage string.
-   * The coverage is calculated as the number of covered blocks divided by the total number of blocks.
+   * Returns the block coverage of a method as a {@link ComponentCoverage} object.
+   * Covered blocks are those with at least one hit.
    *
    * @param method the method to calculate the coverage for
-   * @return the block coverage as a percentage string in the format "#.#% (covered/total)"
+   * @return the block coverage object
    */
-  private String getBlockCoverage(Method method) {
+  private ComponentCoverage getBlockCoverage(Method method) {
     List<Block> blocks = method.getBlocksRecursive().stream().toList();
     int coveredBlocks = (int) blocks.stream().filter(b -> b.hits > 0).count();
-    float coverage = (float) coveredBlocks / blocks.size() * 100;
-    return String.format("%s%% (%d/%d)", DECIMAL_FORMAT.format(coverage), coveredBlocks, blocks.size());
+    return new ComponentCoverage(coveredBlocks, blocks.size());
   }
 
   /**

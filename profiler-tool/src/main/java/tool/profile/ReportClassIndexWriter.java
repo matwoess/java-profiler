@@ -63,11 +63,12 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       JavaFile javaFile = fileByClass.get(clazz);
       Path methIdxHref = IO.getReportMethodIndexPath(clazz.name).getFileName();
       Path sourceFileHref = IO.getReportDir().relativize(IO.getReportSourceFilePath(javaFile.relativePath));
+      ComponentCoverage methodCoverage = getMethodCoverage(clazz);
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", methIdxHref, clazz.getName()))
           .append("<td class=\"hits\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
           .append("<td class=\"hit-max\">").append(getBlockHitMax(clazz)).append("</td>\n")
-          .append("<td class=\"coverage\">").append(getMethodCoverage(clazz)).append("</td>\n")
+          .append(String.format("<td class=\"coverage\" value=\"%s\">%s</td>\n", methodCoverage.percentage(), methodCoverage))
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", sourceFileHref, javaFile.sourceFile.toFile().getName()))
           .append("</tr>\n");
     }
@@ -75,17 +76,17 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
   }
 
   /**
-   * Returns the method coverage of a class as a percentage string.
-   * The coverage is calculated as the number of covered methods divided by the total number of methods.
+   * Returns the method coverage of a class as a {@link ComponentCoverage} object.
+   * Covered methods are those with at least one hit.
+   * Abstract methods are excluded from the calculation.
    *
    * @param clazz the class to calculate the coverage for
-   * @return the method coverage as a percentage string in the format "#.#% (covered/total)"
+   * @return the method coverage object
    */
-  private String getMethodCoverage(JClass clazz) {
+  private ComponentCoverage getMethodCoverage(JClass clazz) {
     List<Method> methods = clazz.getMethodsRecursive().stream().filter(m -> !m.isAbstract()).toList();
     int coveredMethods = (int) methods.stream().filter(m -> m.getMethodBlock().hits > 0).count();
-    float coverage = (float) coveredMethods / methods.size() * 100;
-    return String.format("%s%% (%d/%d)", DECIMAL_FORMAT.format(coverage), coveredMethods, methods.size());
+    return new ComponentCoverage(coveredMethods, methods.size());
   }
 
   /**
