@@ -40,3 +40,8 @@ table tr:hover {
 .sortable th.desc::after {
   content: " ▼";
 }
+
+.sortable th:hover {
+  cursor: pointer;
+  background-color: #eee;
+}
