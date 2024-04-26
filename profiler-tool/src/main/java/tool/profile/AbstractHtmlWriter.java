@@ -5,7 +5,8 @@ import common.IO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * The abstract superclass for all HTML writers.
@@ -104,6 +105,13 @@ public abstract class AbstractHtmlWriter {
     content.append("</html>\n");
   }
 
+  private void footer() {
+    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    content.append("<footer>\n")
+        .append("<p>Generated on ").append(dateFormat.format(new Date())).append("</p>\n")
+        .append("</footer>\n");
+  }
+
   /**
    * Generates the full HTML document out of all helper methods.
    */
@@ -114,6 +122,7 @@ public abstract class AbstractHtmlWriter {
     heading(title);
     body();
     bodyEnd();
+    footer();
   }
 
   /**
