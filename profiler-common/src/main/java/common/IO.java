@@ -304,4 +304,14 @@ public class IO {
     Util.runCommand(command);
     System.out.println("Report shortcut created at: " + link);
   }
+
+  /**
+   * Converts a <code>Path</code> object to a string with all forward slashes as a separator.
+   * Heavily used during report generation.
+   * @param path the path to normalize
+   * @return the string representation of a path with all "\" replaced by "/"
+   */
+  public static String normalize(Path path) {
+    return path.toString().replace('\\', '/');
+  }
 }

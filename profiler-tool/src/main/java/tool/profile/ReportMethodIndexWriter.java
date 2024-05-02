@@ -58,7 +58,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
     Path sourceFileHref = IO.getReportDir().relativize(reportSourceFile);
     for (Method meth : sortedMethods) {
       Block methBlock = meth.getMethodBlock();
-      String lineNrRef = sourceFileHref + "#" + methBlock.beg.line();
+      String lineNrRef = IO.normalize(sourceFileHref) + "#" + methBlock.beg.line();
       String methName = (methBlock.clazz != clazz)
           ? methBlock.clazz.getName() + "::" + meth.name
           : meth.name;

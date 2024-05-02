@@ -47,7 +47,7 @@ public abstract class AbstractHtmlWriter {
     if (cssFile != null) {
       Path cssResource = IO.getReportResourcePath(cssFile);
       Path relativeCssPath = getFileOutputPath().getParent().relativize(cssResource);
-      content.append("<style>@import \"").append(relativeCssPath).append("\"</style>\n");
+      content.append("<style>@import url(").append(IO.normalize(relativeCssPath)).append(");</style>\n");
     }
     content.append("</head>\n");
   }
@@ -70,7 +70,7 @@ public abstract class AbstractHtmlWriter {
     }
     content.append("<div class=\"breadcrumbs\">");
     String backlinkButton = String.format("<input type=\"button\" onclick=\"location.href='%s';\" value=\"%s\"/>",
-        getFileOutputPath().getParent().relativize(IO.getReportIndexPath()),
+        IO.normalize(getFileOutputPath().getParent().relativize(IO.getReportIndexPath())),
         "Back to Class Overview");
     content.append(backlinkButton);
     content.append("</div>");
@@ -98,7 +98,7 @@ public abstract class AbstractHtmlWriter {
       for (String bodyScript : bodyScripts) {
         Path scriptResource = IO.getReportResourcePath(bodyScript);
         Path relativeScriptResource = getFileOutputPath().getParent().relativize(scriptResource);
-        content.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", relativeScriptResource));
+        content.append(String.format("<script type=\"text/javascript\" src=\"%s\"></script>\n", IO.normalize(relativeScriptResource)));
       }
     }
     content.append("</body>\n");
