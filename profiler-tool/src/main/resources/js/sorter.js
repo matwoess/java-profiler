@@ -47,25 +47,31 @@ function getCurrentSortOrder(col) {
 /**
  * Returns a comparator function for sorting table rows by the values in the given column (in ascending order).
  * If the values in the column are numeric, they are sorted numerically, otherwise lexicographically.
+ *
+ * In the case of a coverage metric, the <code>percentage</code> attribute is extracted and used.
+ * To resolve equal percentages, the <code>total</code> attribute is compared.
+ * The <code>total</code> attribute corresponds to the maximum possible number of entries to cover.
+ *
  * @param index the index of the column to sort by
  * @returns {function(*, *): number|number} a comparator function that compares two rows
  */
 function newRowComparator(index) {
   return function (a, b) {
-    const valA = getCellValue(a, index);
-    const valB = getCellValue(b, index);
+    const cellA = $(a).children('td').eq(index);
+    const cellB = $(b).children('td').eq(index);
+    if (cellA.hasClass('coverage') && cellB.hasClass('coverage')) {
+      const percentageA = parseFloat(cellA.attr('percentage'));
+      const percentageB = parseFloat(cellB.attr('percentage'));
+      if (percentageA !== percentageB) {
+        return percentageA - percentageB;
+      } else {
+        const totalA = parseInt(cellA.attr('total'));
+        const totalB = parseInt(cellB.attr('total'));
+        return totalA - totalB;
+      }
+    }
+    const valA = cellA.text();
+    const valB = cellB.text();
     return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
   };
-}
-
-/**
- * Returns the value of the cell in the given row at the given index.
- * @param row the row to get the value from
- * @param index the index of the column to get the value from
- * @returns {*|jQuery} the value of the cell
- */
-function getCellValue(row, index) {
-  const cell = $(row).children('td').eq(index);
-  const value = cell.attr('value');
-  return value !== undefined ? value : cell.text();
 }

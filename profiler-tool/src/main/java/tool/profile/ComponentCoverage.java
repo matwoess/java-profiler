@@ -13,7 +13,7 @@ record ComponentCoverage(int covered, int total) {
   /**
    * Formatter for index percentage values with zero or one decimal places.
    */
-  private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
+  private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#");
 
   /**
    * Calculates the percentage of covered items.
@@ -26,6 +26,6 @@ record ComponentCoverage(int covered, int total) {
 
   @Override
   public String toString() {
-    return String.format("%s%% (%d/%d)", DECIMAL_FORMAT.format(percentage()), covered, total);
+    return String.format("(%d/%d) %s%%", covered, total, DECIMAL_FORMAT.format(percentage()));
   }
 }
