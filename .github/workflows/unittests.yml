@@ -34,12 +34,15 @@ jobs:
         run: |
           ./scripts/generate-parser.sh
 
-      - name: "Setup Gradle and execute 'test'"
+      - name: "Setup Gradle"
         uses: gradle/actions/setup-gradle@v3
-        continue-on-error: true
         with:
           gradle-version: 8.5
-          arguments: test
+
+      - name: "Execute Gradle 'test' task"
+        continue-on-error: true
+        run: |
+          ./gradlew test
 
       - name: "Upload Gradle report - tool"
         uses: actions/upload-artifact@v4
