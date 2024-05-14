@@ -19,6 +19,7 @@ public class AllSamples {
     Records.main(args);
     Strings.main(args);
     ControlBreaks.main(args);
+    SwitchPatternMatching.main(args);
     ParallelSum.main(new String[]{String.valueOf(100), "1"});
   }
 }

@@ -210,6 +210,16 @@ public class SamplesTest {
   }
 
   @Test
+  public void testSwitchPatternMatchingSample() {
+    TestUtils.instrumentAndProfile(samplesFolder.resolve("SwitchPatternMatching.java"));
+  }
+
+  @Test
+  public void testSwitchPatternMatchingSample_Folder() {
+    TestUtils.instrumentFolderAndProfile(samplesFolder, "SwitchPatternMatching.java");
+  }
+
+  @Test
   public void testParallelSumSample() {
     Path mainFile = samplesFolder.resolve("ParallelSum.java");
     TestUtils.instrumentAndProfileWithArgs(mainFile.toString(), String.valueOf(5_000_000), "4");
