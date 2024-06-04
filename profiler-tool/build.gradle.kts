@@ -7,8 +7,11 @@ version = property("commonVersion") ?: "unknown"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
+}
+tasks.compileJava {
+    options.release = 17
 }
 
 repositories {
@@ -24,6 +27,8 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    // TODO: remove as soon as replacement API https://bugs.openjdk.org/browse/JDK-8199704 is available
+    jvmArgs("-Djava.security.manager=allow")
 }
 
 val mainClass = "tool.cli.Main"

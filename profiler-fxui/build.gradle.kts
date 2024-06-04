@@ -9,8 +9,11 @@ version = property("commonVersion") ?: "unknown"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
+}
+tasks.compileJava {
+    options.release = 17
 }
 
 repositories {
