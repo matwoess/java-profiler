@@ -518,7 +518,7 @@ after every block containing a control flow break statement to correctly show li
 We took a different approach by introducing "code regions" to group statements with the same hit count.
 A code block is split into two regions when encountering an inner block.
 If the inner block contains a control flow break, we subtract the hit count of the inner blocks 
-from the first region's hits to calculate how much the second region was executed.
+from the first region's hits to calculate how frequently the second region was executed.
 
 ```java
 275     | static int fib(int n) {
@@ -545,7 +545,7 @@ programs compared to their un-instrumented version:
 Most benchmarks show only a relatively small slowdown to less than 200% run time.
 The h2 program does not show any significant impact as most of its work in performed 
 in its derby database library, which is not instrumented.
-The sunflow benchmark (CPU ray-tracing) is the opposite extreme, 
+The sunflow benchmark (multi-threaded CPU ray-tracing) is the opposite extreme, 
 showing a significant 10-fold run time impact when using synchronized counters.
 
 For further analysis and details, see the thesis paper.
