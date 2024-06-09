@@ -36,12 +36,12 @@ The five main stages of the profiler are:
 
 ![The five main steps of the profiler](/screenshots/profiler-steps.png)
 
-In the default mode, this tool will parse and instrument source files automatically, compiles them, 
+In the default mode, this tool will parse and instrument source files automatically, compile them, 
 run the program (with arguments), and generate an HTML report.
 
 The report provides a structured and sorted overview over the most frequently invoked methods 
 and other useful metrics for each class.
-It further allows detailed exploration of source files and shows coverage (with counts) of (grouped) statements regions.
+It further allows detailed exploration of source files and shows coverage (with counts) of grouped statements regions.
 
 The profiler was designed to be a command line tool that can easily be used in scripts, CI/CD pipelines, and automation.
 
@@ -84,8 +84,8 @@ The Java binaries `java` and `javac` should be included in the system environmen
 All output is stored in the hidden `.profiler` subdirectory of the current working directory.
 
 For being able to use local project resources and relative paths (as arguments or inside the program)
-the tool never changes its directory and makes use of classpath arguments instead.
-It is therefore recommended to run the command line tool in the projects root directory.
+the tool never changes its directory during execution and makes use of classpath arguments instead.
+It is therefore recommended to run the command line tool in the project's root directory.
 
 If the Main file references other source files the `-d`/`--sources-directory` parameter is **required**!
 
@@ -97,7 +97,7 @@ In the simplest case, the tool can be used as following:
 profiler Main.java arg1 arg2 ...
 ```
 This will parse the given file and create an instrumented copy in the `.profiler/instrumented/` folder. 
-The first argument for the tool specifies the class containing the main entry point.
+The first argument to the tool specifies the class containing the main entry point.
 <br/>
 Additionally the `.profiler/metadata.dat` file will be created, containing information about 
 every found code block like its begin/end position, its parent method/class and other relevant data to create a report.
@@ -111,12 +111,12 @@ into (instrumented) `.class` files.<br/>
 The compiled classes can be found in the `.profiler/classes/` directory.
 
 Next, the `java` binary will be used to execute the specified class by name (without the `.java` extension) 
-with the specified arguments:
+with the given arguments:
 ```
 java -cp .profiler/classes Main arg1 arg2 ...
 ```
 Executing the instrumented files, automatically stores the hit-counter values in `.profiler/counts.dat` 
-as soon as the program ends (if at least one counter was inserted).
+as soon as the program ends.
 
 Finally, the metadata and counts will be used to create the report inside `.profiler/report/`.
 
@@ -156,9 +156,7 @@ For this case, two additional run modes are available:
 By specifying the `-i <file|dir>` or `--instrument-only <file|dir>` mode the target file (or directory 
 with all its Java files) will be instrumented and written to the `.profiler/instrumented/` directory. 
 Also, the `metadata.dat` file is generated.
-
-The instrumented code can then be compiled by custom commands and run manually
-(automatic copying of `pom.xml` or gradle files is currently not done).
+The instrumented code can then be compiled by custom commands and run manually.
 
 #### generate-report-only
 
@@ -200,9 +198,9 @@ Assigning a file or directory to a parameter can be done with the <kbd>Return</k
 on a tree item.
 
 The tree highlights important items in color:
-- blue - selected sources directory,
-- green - selected main file.
-- brown - output directory
+- <span style="color: blue;">blue</span> - selected sources directory,
+- <span style="color: green;">green</span> - selected main file.
+- <span style="color: brown;">brown</span> - output directory
 
 The menu bar allows rebuilding the file tree, and saving or restoring currently set parameters (will be saved in the 
 output directory as `parameters.dat`).
@@ -222,7 +220,7 @@ The UI uses the `PrimerDark` theme from [AtlantaFX](https://github.com/mkpaz/atl
 ## Report
 
 In the default run mode (or by using the `-r` mode) an HTML report will be generated inside the output directory.
-
+<br/>
 It is stored in the `.profiler/report/` folder. The `index.html` file can be opened in a browser to view it.
 
 ### Classes (index.html)
@@ -233,7 +231,7 @@ The main index lists all classes found during parsing.
 ![Report classes overview](/screenshots/report-class-overview.png)
 
 By default, the list is sorted by the aggregated invocation count of all methods in each listed class.
-This enables us to quickly identify hotspots in the program its last run.<br/>
+This enables us to quickly identify hotspots in the program for its last run.<br/>
 At the bottom of the list we find rarely or never used classes.
 
 Two additional metrics are available:
@@ -258,7 +256,7 @@ The heading displays the fully qualified name of the class.
 
 Methods of inner classes are shown with the java class-file syntax: `Outer$Inner::Method`.
 <br/>
-Anonymous and Local classes get a numbered name `Outer$3::Method`, just like in the compiled class files.
+Anonymous and local classes get a numbered name `Outer$3::Method`, just like in the compiled class files.
 
 Clicking on a method name will jump into the source detail report, to the line number of the method's declaration.
 
@@ -266,7 +264,7 @@ Browser-back or the top button can be used to return to the class overview.
 
 ### Source file detail report (JavaFileName.html)
 
-For each Java file, an annotated source code file is generated.
+For each Java file, an annotated source code file is generated inside `.profiler/report/source/`.
 It can be used to explore each class and its method in detail.
 
 A small [jQuery](https://jquery.com/) script [file](profiler-tool/src/main/resources/highlighter.js) initializes 
@@ -300,20 +298,20 @@ This section gives some more information on how the profiler works in detail.
 
 ### Grammar/Parser
 The Grammar consists of a reduced set of non-terminal symbols (NTS) that covers the most important aspects 
-of the Java 21 syntax tailored for this use-case (finding the begin and end position of blocks).
+of the Java 21 syntax tailored for the profiler's use-case (finding the begin and end position of blocks).
 
 Using Coco's `ANY` keyword, we over-read non-relevant tokens like:
 - access modifiers (`public`, `private`, ... )
 - interfaces that a class `implements` (or superclasses)
 - class level constants and member variables
 - generic type definitions with angle brackets `<Type1<Type2,...>, ...>`
-  - array initializer blocks (starting with `{`), but we do not insert counters here
+- array initializer blocks (starting with `{`), but we do not insert counters here
 - a method’s argument list (within the parentheses)
 - remaining tokens in a `GenericStatement` up to the semicolon
 - the switch-case label(s), constant(s) and guard clause(s) before the colon or arrow
 
 To build an index of classes and their methods, we have to keep track of class names 
-and method names in each file and assign them to the blocks of the model.
+and method names in each file and assign them to the blocks in the model.
 <br/>
 Also, package declarations at the beginning of a file will be inherited by each class 
 in this file for knowing its fully qualified name.
@@ -352,9 +350,9 @@ class Fibonacci {
     }
     return fib(n - 1) + fib(n - 2);
   }
-  public static void main(String[] args) {'__Counter.inc(3);'
+  public static void main(String[] args) {'__Counter.inc(2);'
     int N = Integer.parseInt(args[0]);
-    for (int i = 1; i < N; i++) {'__Counter.inc(4);'
+    for (int i = 1; i < N; i++) {'__Counter.inc(3);'
       System.out.print(fib(i) + " ");
     }
   }
@@ -379,7 +377,7 @@ The counters are then kept in an `AtomicLongArray` to ensure exact results for m
 
 ### Special handling of language features
 
-Some language syntax requires non-trivial special handling.
+Some language syntax required non-trivial special handling.
 
 #### Single-statements
 
@@ -437,7 +435,7 @@ class SmallDog extends Dog {
 
 #### Anonymous and local classes
 As these full-fledged classes can appear anywhere inside a code block,
-we need need to restore the previous state after parsing and exiting these.
+we need need to restore the previous state after parsing and exiting these inner classes.
 For this, the `ParserState` class contains a Stack of methods, onto which we push
 the current one when encountering class declarations inside methods.
 
@@ -456,8 +454,8 @@ integers.stream()
 
 We need a clever way to observe how often each lambda statement was executed.
 
-The `__Counter` class contains a special `incLambda` method that wraps these lambdas 
-in a generic anonymous `Runnable` or `Supplier<T>` class.
+The `__Counter` class contains a special `incLambda` method that wraps these lambdas
+as an argument into either a generic anonymous `Runnable` or `Supplier<T>`.
 
 The instrumented version will look like this:
 
@@ -479,9 +477,9 @@ The switch block itself is not executable, case blocks are not enclosed in brace
 Switch *expression* (since Java 14) have the `yield` statement to return a value.
 <br/>
 We also can use arrow-cases (`->` like lambdas) to omit the `break`, in which case 
-there's either a block or a single statement.
+there's either a curly-brace block or a single statement.
 
-For the case of single-statement arrow-cases expressions we need to wrap 
+For the case of *single-statement* arrow-case expressions we need to wrap 
 the block in braces and add a `yield` keyword after. 
 <br/>
 In case a branch throws an exception, `yield` must **not** be added.
@@ -529,6 +527,28 @@ from the first region's hits to calculate how much the second region was execute
 275     |   return fib(n - 1) + fib(n - 2); // 275-142 = 133
         | }
 ```
+
+## Runtime impact
+To evaluate how much the inserted counter statements impact the run-time performance of a program,
+we ran a few benchmarks of the [DaCapo Benchmark Suite](https://dacapobench.sourceforge.net/) 
+in three different configurations:
+
+- "orig" — The original unmodified benchmark project without instrumentation
+- "instr" — A version with counter-increment statements added to every code block
+- "sync" — The benchmark with synchronized counters, using the `AtomicLongArray`
+
+The following figure shows the average relative run-time overhead of seven benchmarks 
+programs compared to their un-instrumented version:
+
+![Relative runtime overhead in the DaCapo benchmarks](/screenshots/runtime-impact.png)
+
+Most benchmarks show only a relatively small slowdown to less than 200% run time.
+The h2 program does not show any significant impact as most of its work in performed 
+in its derby database library, which is not instrumented.
+The sunflow benchmark (CPU ray-tracing) is the opposite extreme, 
+showing a significant 10-fold run time impact when using synchronized counters.
+
+For further analysis and details, see the thesis paper.
 
 ## Limitations
 
