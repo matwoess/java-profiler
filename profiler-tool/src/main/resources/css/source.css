@@ -4,6 +4,8 @@ body {
 
 table {
   border-collapse: collapse;
+  width: 100%;
+  counter-reset: line-number;
 }
 
 td {
@@ -15,14 +17,37 @@ td.lNr {
   background-color: #dedede;
 }
 
-:target td.lNr {
-  background-color: Gold;
+tr:target {
+  background-color: #ffd54f33;
+  outline: 1px solid #ffa726;
 }
 
 td.hits {
-  background-color: #eee;
+  border-right: 1px solid #ccc;
 }
 
 pre {
   tab-size: 2;
+}
+
+tbody tr {
+  counter-increment: line-number;
+}
+
+tbody tr td:first-child::before {
+  border-right: 1px solid #ccc;
+  content: counter(line-number) ". ";
+  display: inline-block;
+  width: 6ch; /* Line number column width */
+  text-align: right;
+  margin-right: 0.5em;
+}
+
+tbody tr td.hits {
+  margin-right: 0.5em;
+  width: 0em; /* minimum width */
+}
+
+tbody td.code {
+  padding-left: 0.5em;
 }
