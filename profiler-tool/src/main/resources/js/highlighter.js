@@ -1,53 +1,6 @@
-const coveredBlockColor = `rgba(144, 238, 144, 0.2)`;
-const coveredRegionColor = `rgba(144, 255, 144, 0.4)`;
-const notCoveredBlockColor = `rgba(255, 182, 193, 0.2)`;
-const notCoveredRegionColor = `rgba(255, 162, 173, 0.4)`;
-const hoverBlockColor = `rgba(245, 222, 109, 0.4)`;
-const hoverRegionColor = `rgba(245, 222, 110, 1)`;
-const minusBlockColor = `rgba(215, 192, 149, 0.5)`;
-const isCovered = 'c';
-const isNotCovered = 'nc';
-const blockPrefix = 'b';
-const regionPrefix = 'r';
-const minusPrefix = 'm';
-
-function setCoverageBackground(span) {
-  let backgroundColor = null;
-  if (span.hasClass(isCovered)) {
-    backgroundColor = coveredBlockColor;
-  } else if (span.hasClass(isNotCovered)) {
-    backgroundColor = notCoveredBlockColor;
-  }
-  if (span.attr('class').indexOf(regionPrefix) !== -1) {
-    if (span.hasClass(isCovered)) {
-      backgroundColor = coveredRegionColor;
-    } else if (span.hasClass(isNotCovered)) {
-      backgroundColor = notCoveredRegionColor;
-    }
-  }
-  setColor(span, backgroundColor)
-  setFontWeight(span, null)
-}
-
-function setColor(elems, color) {
-  if (color == null) {
-    elems.css({'background-color': ''});
-  } else {
-    elems.css({'background-color': color});
-  }
-}
-
-function setFontWeight(elems, weight) {
-  if (weight == null) {
-    elems.css({'font-weight': ''});
-  } else {
-    elems.css({'font-weight': weight});
-  }
-}
-
-function resetColors() {
-  $('span.c,span.nc').each(function () {
-    setCoverageBackground($(this));
+function removeHighlighting() {
+  $('span[data-hl]').each(function () {
+    $(this).removeAttr('data-hl');
   });
 }
 
@@ -60,27 +13,23 @@ function highlightSelection() {
   if (lastClass == null || preLastClass == null) {
     return;
   }
-  if (lastClass.startsWith(regionPrefix)) {
-    if (preLastClass.startsWith(blockPrefix)) {
-      setColor($('span.' + preLastClass), hoverBlockColor);
+  if (lastClass.startsWith('r')) {
+    if (preLastClass.startsWith('b')) {
+      $('span.' + preLastClass).attr('data-hl', 'block');
     }
-    const hoverRegionSpans = $('span.' + lastClass);
-    setColor(hoverRegionSpans, hoverRegionColor);
-    setFontWeight(hoverRegionSpans, 'bold');
-  } else if (lastClass.startsWith(blockPrefix)) {
-    setColor($('span.' + lastClass), hoverBlockColor);
+    $('span.' + lastClass).attr('data-hl', 'region');
+  }
+  else if (lastClass.startsWith('b')) {
+    $('span.' + lastClass).attr('data-hl', 'block');
   }
   classList.forEach(function (cls) {
-    if (cls.startsWith(minusPrefix)) {
-      const blockClass = cls.replace(minusPrefix, blockPrefix);
-      const minusBlockSpans = $('span.' + blockClass);
-      setColor(minusBlockSpans, minusBlockColor);
-      setFontWeight(minusBlockSpans, 'bold');
+    if (cls.startsWith('d')) {
+      const blockClass = cls.replace('d', 'b');
+      $('span.' + blockClass).attr('data-hl', 'dependent');
     }
-  })
+  });
 }
 
-resetColors();
 $('span')
   .mouseenter(highlightSelection)
-  .mouseleave(resetColors);
+  .mouseleave(removeHighlighting);

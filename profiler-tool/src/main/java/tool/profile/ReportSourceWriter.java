@@ -188,7 +188,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       long hitCount = region.getHitCount();
       String coverageStatus = hitCount > 0 ? "c" : "nc";
       String regionClass = "r" + region.block.id + "_" + region.id;
-      builder.append(String.format("<span class=\"%s %s\">%s</span>", coverageStatus, regionClass, hitCount));
+      builder.append(String.format("<span class=\"r %s %s\">%s</span>", coverageStatus, regionClass, hitCount));
       builder.append(" ");
     }
     return builder.toString();
@@ -235,7 +235,8 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     long hits = (region != null) ? region.getHitCount() : block.hits;
     String coverageClass = hits > 0 ? "c" : "nc";
     title = hits + " hit" + (hits == 1 ? "" : "s");
-    String classes = activeBlocks.stream().map(b -> "b" + b.id).collect(Collectors.joining(" "));
+    String classes = "b " + (region != null ? "r " : "");
+    classes += activeBlocks.stream().map(b -> "b" + b.id).collect(Collectors.joining(" "));
     if (region != null) {
       classes += " r" + activeBlocks.get(activeBlocks.size() - 1).id + "_" + region.id;
       if (!region.dependentBlocks.isEmpty()) {
@@ -258,7 +259,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
    * @return the classes for all the dependent control breaks
    */
   private static String getDependentBlockClasses(CodeRegion region) {
-    return region.dependentBlocks.stream().distinct().map(b -> "m" + b.id).collect(Collectors.joining(" "));
+    return region.dependentBlocks.stream().distinct().map(b -> "d" + b.id).collect(Collectors.joining(" "));
   }
 
   /**
