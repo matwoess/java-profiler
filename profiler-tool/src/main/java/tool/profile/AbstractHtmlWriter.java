@@ -15,7 +15,7 @@ import java.util.Date;
  * <p>
  * Subclasses should implement the {@link #body()} method to generate the main content of the HTML document.
  * <p>
- * The fields {@link #title}, {@link #includeScripts}, {@link #bodyScripts} and {@link #cssFile} can be used to
+ * The fields {@link #title}, {@link #includeScripts}, {@link #bodyScripts} and {@link #cssFiles} can be used to
  * customize the HTML document.
  * <p>
  * The {@link #getFileOutputPath()} method should be overridden
@@ -26,7 +26,7 @@ public abstract class AbstractHtmlWriter {
   public String title;
   public String[] includeScripts;
   public String[] bodyScripts;
-  public String cssFile;
+  public String[] cssFiles;
 
   /**
    * Appends the HTML header to the internal <code>content</code> StringBuilder.
@@ -39,12 +39,10 @@ public abstract class AbstractHtmlWriter {
     if (title != null) {
       content.append("<title>").append(title).append("</title>\n");
     }
-    if (includeScripts != null) {
-      for (String scriptSrc : includeScripts) {
-        content.append(String.format("<script src=\"%s\"></script>\n", scriptSrc));
-      }
+    for (String scriptSrc : includeScripts) {
+      content.append(String.format("<script src=\"%s\"></script>\n", scriptSrc));
     }
-    if (cssFile != null) {
+    for (String cssFile : cssFiles) {
       Path cssResource = IO.getReportResourcePath(cssFile);
       Path relativeCssPath = getFileOutputPath().getParent().relativize(cssResource);
       content.append("<style>@import url(").append(IO.normalize(relativeCssPath)).append(");</style>\n");

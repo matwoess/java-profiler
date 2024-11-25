@@ -20,14 +20,15 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
 
   /**
    * Creates a new {@link ReportMethodIndexWriter} object.
-   * @param clazz the java class to write the method index for
+   *
+   * @param clazz    the java class to write the method index for
    * @param javaFile the java file containing the class
    */
   public ReportMethodIndexWriter(JClass clazz, JavaFile javaFile) {
     this.clazz = clazz;
     this.reportSourceFile = IO.getReportSourceFilePath(javaFile.relativePath);
     title = "Methods in " + clazz.getFullName();
-    cssFile = "css/index.css";
+    cssFiles = new String[]{"css/index.css"};
     includeScripts = new String[]{"https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"};
     bodyScripts = new String[]{"js/sorter.js"};
   }
@@ -103,6 +104,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
   /**
    * Returns the path to the HTML file
    * to write to by calling {@link IO#getReportMethodIndexPath(String)} for the current class name.
+   *
    * @return the path to the HTML file to write the method index to
    */
   @Override
