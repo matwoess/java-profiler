@@ -31,7 +31,7 @@ pre {
 }
 
 
-/* Line numbers */
+/* Line Numbers */
 tbody tr {
   counter-increment: line-number;
 }
@@ -54,7 +54,7 @@ tbody td.code {
   padding-left: 0.5em;
 }
 
-/* Highlighting */
+/* Coverage Highlighting */
 pre code span.c.b {
   background-color: rgba(144, 238, 144, 0.2);
 }
@@ -62,11 +62,13 @@ pre code span.c.r {
   background-color: rgba(144, 255, 144, 0.4);
 }
 pre code span.nc.b {
-  background-color: rgba(144, 238, 144, 0.2);
+  background-color: rgba(255, 182, 193, 0.2);
 }
 pre code span.nc.r {
   background-color: rgba(255, 162, 173, 0.4);
 }
+
+/* Hover Highlighting */
 pre code span.b[data-hl="block"] {
   background-color: rgba(245, 222, 109, 0.4);
 }
