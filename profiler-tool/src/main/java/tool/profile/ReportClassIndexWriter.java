@@ -23,7 +23,7 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
   public ReportClassIndexWriter(JavaFile[] allJavaFiles) {
     this.allJavaFiles = allJavaFiles;
     title = "Class Overview";
-    cssFile = "css/index.css";
+    cssFiles = new String[]{"css/index.css"};
     includeScripts = new String[]{"https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"};
     bodyScripts = new String[]{"js/sorter.js"};
   }
