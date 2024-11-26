@@ -31,6 +31,6 @@ function highlightSelection() {
 }
 
 window.onload = () => {
-  $('pre code table td.code span.r, pre code table td.code span.b')
+  $('pre code span.r, pre code span.b')
     .hover(highlightSelection, removeHighlighting);
 }
