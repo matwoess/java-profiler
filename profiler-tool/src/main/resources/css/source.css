@@ -12,11 +12,6 @@ td {
   padding: 0;
 }
 
-td.lNr {
-  text-align: right;
-  background-color: #dedede;
-}
-
 tr:target {
   background-color: #ffd54f33;
   outline: 1px solid #ffa726;
@@ -42,6 +37,8 @@ tbody tr td:first-child::before {
   display: inline-block;
   width: 6ch; /* Line number column width */
   text-align: right;
+  color: #666;
+  background-color: #f5f5f5;
   margin-right: 0.5em;
 }
 
