@@ -21,7 +21,7 @@ var mergeHtmlPlugin = (function () {
   /* plugin itself */
 
   /** @type {HLJSPlugin} */
-  const mergeHTMLPlugin = {
+  const mergeHtmlPlugin = {
     // preserve the original HTML token stream
     "before:highlightElement": ({ el }) => {
       originalStream = nodeStream(el);
