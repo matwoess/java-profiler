@@ -32,10 +32,13 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     this.title = javaFile.sourceFile.getFileName().toString();
     includeScripts = new String[]{
         "https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js",
-        "https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"
+        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js",
     };
-    cssFiles = new String[]{"css/source.css", "css/prettify.css"};
-    bodyScripts = new String[]{"js/highlighter.js"};
+    cssFiles = new String[]{
+        "css/source.css",
+        "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/googlecode.min.css" // highlight.js theme
+    };
+    bodyScripts = new String[]{"js/syntax.js", "js/highlighter.js"};
   }
 
   /**
@@ -55,8 +58,8 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
    * Finally, the annotated code is converted to a table with line numbers and hit counts.
    */
   private void codeDiv() {
-    content.append("<pre class=\"prettyprint lang-java\">\n");
-    content.append("<code>\n");
+    content.append("<pre>\n");
+    content.append("<code class=\"language-java\">\n");
     try {
       String sourceCode = Files.readString(javaFile.sourceFile, StandardCharsets.ISO_8859_1);
       StringBuilder builder = new StringBuilder();
@@ -104,7 +107,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       builder.append(String.format("<tr id=\"%s\">", lineNr));
       builder.append("<td class=\"hits\">").append(getHitsForLine(lineNr)).append("</td>");
       builder.append("<td class=\"code\">").append(line).append("</td>");
-      builder.append("\n</tr>"); // close tag in new line for prettify.js - to avoid additional empty lines
+      builder.append("</tr>\n");
       lineNr++;
     }
     builder.append("</table>\n");

@@ -159,7 +159,7 @@ public class Profiler {
    * Copies all necessary report JavaScript and CCS files to the report directory.
    */
   private static void copyReportResources() {
-    String[] reportResources = {"js/highlighter.js", "js/sorter.js", "css/index.css", "css/source.css", "css/prettify.css"};
+    String[] reportResources = {"js/highlighter.js", "js/sorter.js", "js/syntax.js", "css/index.css", "css/source.css"};
     for (String resource : reportResources) {
       IO.copyResource(Profiler.class, resource, IO.getReportResourcePath(resource));
     }

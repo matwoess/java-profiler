@@ -30,6 +30,7 @@ function highlightSelection() {
   });
 }
 
-$('span')
-  .mouseenter(highlightSelection)
-  .mouseleave(removeHighlighting);
+window.onload = () => {
+  $('pre code table td.code span.r, pre code table td.code span.b')
+    .hover(highlightSelection, removeHighlighting);
+}

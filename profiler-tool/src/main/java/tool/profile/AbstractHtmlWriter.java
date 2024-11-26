@@ -43,9 +43,14 @@ public abstract class AbstractHtmlWriter {
       content.append(String.format("<script src=\"%s\"></script>\n", scriptSrc));
     }
     for (String cssFile : cssFiles) {
-      Path cssResource = IO.getReportResourcePath(cssFile);
-      Path relativeCssPath = getFileOutputPath().getParent().relativize(cssResource);
-      content.append("<style>@import url(").append(IO.normalize(relativeCssPath)).append(");</style>\n");
+      if (cssFile.startsWith("http")) {
+        content.append("<link rel=\"stylesheet\" href=\"").append(cssFile).append("\">\n");
+      }
+      else {
+        Path cssResource = IO.getReportResourcePath(cssFile);
+        Path relativeCssPath = getFileOutputPath().getParent().relativize(cssResource);
+        content.append("<style>@import url(").append(IO.normalize(relativeCssPath)).append(");</style>\n");
+      }
     }
     content.append("</head>\n");
   }
