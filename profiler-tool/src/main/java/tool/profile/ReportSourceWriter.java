@@ -38,15 +38,15 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
         "css/source.css",
         "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/googlecode.min.css" // highlight.js theme
     };
-    bodyScripts = new String[]{"js/syntax.js", "js/highlighter.js"};
+    bodyScripts = new String[]{"js/syntax.js", "js/hits.js", "js/highlighter.js"};
   }
 
   /**
-   * Generates the main content of the HTML document by calling {@link #codeDiv}.
+   * Generates the main content of the HTML document by calling {@link #preCodeElement}.
    */
   @Override
   public void body() {
-    codeDiv();
+    preCodeElement();
   }
 
   /**
@@ -57,7 +57,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
    * It is then post-processed to remove empty spans and spans with only whitespace.
    * Finally, the annotated code is converted to a table with line numbers and hit counts.
    */
-  private void codeDiv() {
+  private void preCodeElement() {
     content.append("<pre>\n");
     content.append("<code class=\"language-java\">\n");
     try {
@@ -105,7 +105,6 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     String[] splitLines = annotatedCode.split("\n");
     for (String line : splitLines) {
       builder.append(String.format("<tr id=\"%s\">", lineNr));
-      builder.append("<td class=\"hits\">").append(getHitsForLine(lineNr)).append("</td>");
       builder.append("<td class=\"code\">").append(line).append("</td>");
       builder.append("</tr>\n");
       lineNr++;
@@ -177,25 +176,6 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     inserts.add(new CodeInsert(sourceCode.length(), "</span>"));
     inserts.sort(Comparator.comparing(CodeInsert::chPos));
     return inserts;
-  }
-
-  /**
-   * Determine the hit count for each code region in the given line.
-   *
-   * @param lineNr the line number
-   * @return a string of spans with the hit counts
-   */
-  private String getHitsForLine(int lineNr) {
-    StringBuilder builder = new StringBuilder();
-    List<CodeRegion> activeRegions = getActiveCodeRegionsForLine(lineNr);
-    for (CodeRegion region : activeRegions) {
-      long hitCount = region.getHitCount();
-      String coverageStatus = hitCount > 0 ? "c" : "nc";
-      String regionClass = "r" + region.block.id + "_" + region.id;
-      builder.append(String.format("<span class=\"r %s %s\">%s</span>", coverageStatus, regionClass, hitCount));
-      builder.append(" ");
-    }
-    return builder.toString();
   }
 
   /**
@@ -275,21 +255,6 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
   private List<Block> getActiveBlocksAtCharPosition(int chPos) {
     return javaFile.foundBlocks.stream()
         .filter(b -> b.beg.pos() <= chPos && chPos < b.end.pos() && !b.blockType.hasNoCounter())
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Returns a list of all active code regions at the given line number.
-   *
-   * @param lineNr the line number
-   * @return the list of all active code regions
-   */
-  private List<CodeRegion> getActiveCodeRegionsForLine(int lineNr) {
-    return javaFile.foundBlocks.stream()
-        .filter(b -> b.isActiveInLine(lineNr))
-        .flatMap(b -> b.codeRegions.stream())
-        .filter(cr -> cr.isActiveInLine(lineNr))
-        .sorted(Comparator.comparing(cr -> cr.beg))
         .collect(Collectors.toList());
   }
 

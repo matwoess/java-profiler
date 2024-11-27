@@ -178,15 +178,6 @@ public class Block implements Serializable, Component {
     return beg.pos() + incInsertOffset;
   }
 
-  /**
-   * Returns whether this block is active in the given file line number.
-   * @param lineNr the file line number
-   * @return whether this block is active in this line
-   */
-  public boolean isActiveInLine(int lineNr) {
-    return beg.line() <= lineNr && end.line() >= lineNr;
-  }
-
   public String toString() {
     return String.format("%s%s%s: {%d[%s%s]-%s[%s]} (%s%s)%s%s%s",
         labels.isEmpty() ? "" : String.join(": ", labels) + ": ",

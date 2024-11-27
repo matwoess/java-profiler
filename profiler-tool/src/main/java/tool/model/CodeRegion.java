@@ -39,16 +39,6 @@ public class CodeRegion implements Serializable, Component {
     return block.hits - dependentBlocks.stream().mapToLong(b -> b.hits).sum();
   }
 
-  /**
-   * Checks whether this region is active in a given line.
-   *
-   * @param lineNr the line number to check
-   * @return true if the given line is between the start and end line of this region
-   */
-  public boolean isActiveInLine(int lineNr) {
-    return beg.line() <= lineNr && end.line() >= lineNr;
-  }
-
   @Override
   public String toString() {
     return String.format(
