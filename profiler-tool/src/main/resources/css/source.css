@@ -5,7 +5,6 @@ body {
 table {
   border-collapse: collapse;
   width: 100%;
-  counter-reset: line-number;
 }
 
 td {
@@ -27,6 +26,9 @@ pre {
 
 
 /* Line Numbers */
+table {
+  counter-reset: line-number;
+}
 tbody tr {
   counter-increment: line-number;
 }
@@ -43,12 +45,16 @@ tbody tr td:first-child::before {
 }
 
 tbody tr td.hits {
-  margin-right: 0.5em;
   width: 0em; /* minimum width */
 }
 
-tbody td.code {
+tbody td {
   padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+tbody td.hits span + span { /* every span after first one */
+  margin-left: 0.5em;
 }
 
 /* Coverage Highlighting */
