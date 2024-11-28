@@ -30,7 +30,7 @@ function highlightSelection() {
   });
 }
 
-window.onload = () => {
+window.addEventListener('load', function() {
   $('pre code span.r, pre code span.b')
     .hover(highlightSelection, removeHighlighting);
-}
+});

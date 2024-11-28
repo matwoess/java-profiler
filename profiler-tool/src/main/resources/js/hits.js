@@ -10,8 +10,8 @@ function addLineHits() {
     spans.forEach(span => {
       const hitCount = span.title.match(/(\d+) hit/);
       if (hitCount) {
-        const newSpan = span.cloneNode(true);
-        newSpan.removeAttribute('title');
+        const newSpan = document.createElement('span');
+        newSpan.classList.add(...span.classList);
         newSpan.textContent = hitCount[1];
         hitsCell.appendChild(newSpan);
       }
@@ -19,6 +19,8 @@ function addLineHits() {
     // add as column before the code-cell
     row.insertBefore(hitsCell, codeCell);
   });
-}
+};
 
-document.addEventListener("DOMContentLoaded", addLineHits);
+window.addEventListener('load', function() {
+  addLineHits();
+});
