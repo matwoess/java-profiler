@@ -574,13 +574,13 @@ For further analysis and details, see the thesis paper.
 - [jQuery](https://jquery.com/)
 - [JavaFX](https://openjfx.io/)
 - [AtlantaFX](https://github.com/mkpaz/atlantafx)
+- [Highlight.js](https://highlightjs.org/)
 
 ## Future work and ideas
 
 - VSCode plugin (TypeScript)
 - IntelliJ IDEA plugin (Java)
 - Gradle task plugin (Java)
-- Report syntax highlighting for Java keyword
 - Be compatible with build tools like Ant / Gradle / Maven
 - JavaFX GUI improvements: theme / usability
 - ...
