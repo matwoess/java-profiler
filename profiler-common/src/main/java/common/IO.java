@@ -2,8 +2,13 @@ package common;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
@@ -209,6 +214,53 @@ public class IO {
   }
 
   /**
+   * Recursively extract a copy of a whole resource folder from the project directory or the .jar file.
+   * Uses a temporary file system to access the contents of the JAR file if needed.
+   *
+   * @param resourceClass  the anchor class used to locate the resource
+   * @param resourceFolder the name of the resource folder to be extracted
+   * @param destination    folder path where the resource is copied to
+   * @param <T>            the type of the resource class
+   */
+  public static <T> void copyResourceFolder(Class<T> resourceClass, String resourceFolder, Path destination) {
+    try {
+      var resourceUrl = resourceClass.getClassLoader().getResource(resourceFolder);
+      if (resourceUrl == null) {
+        throw new RuntimeException("Unable to locate resource folder: <" + resourceFolder + ">");
+      }
+      URI uri = resourceUrl.toURI();
+      // The fileSystem variable is kept open to access the JAR contents
+      try (FileSystem fs = (uri.getScheme().equals("jar")) ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null) {
+        Path resourcePath = Path.of(uri);
+        if (Files.isDirectory(resourcePath)) {
+          // Recursively copy the directory
+          try (var paths = Files.walk(resourcePath)) {
+            paths.forEach(sourcePath -> {
+              var targetPath = destination.resolve(resourcePath.relativize(sourcePath).toString());
+              try {
+                if (Files.isDirectory(sourcePath)) {
+                  Files.createDirectories(targetPath);
+                } else {
+                  Files.copy(sourcePath, targetPath, REPLACE_EXISTING);
+                }
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+            });
+          }
+        }
+        else {
+          // Copy the file
+          var targetPath = destination.resolve(resourcePath.getFileName().toString());
+          Files.copy(resourcePath, targetPath, REPLACE_EXISTING);
+        }
+      }
+    } catch (IOException | URISyntaxException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
    * Deletes all files inside a directory.
    * Used to clean up output files before the next execution.
    * The root directory itself won't be removed to avoid locking errors.
@@ -308,6 +360,7 @@ public class IO {
   /**
    * Converts a <code>Path</code> object to a string with all forward slashes as a separator.
    * Heavily used during report generation.
+   *
    * @param path the path to normalize
    * @return the string representation of a path with all "\" replaced by "/"
    */
