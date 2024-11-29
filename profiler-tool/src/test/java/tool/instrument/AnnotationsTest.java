@@ -82,12 +82,33 @@ public class AnnotationsTest {
   }
 
   @Test
+  public void testMultipleEnumConstantAnnotations() {
+    String fileContent = """
+        import java.lang.annotation.Native;
+        
+        enum Status {
+          ACTIVE,
+          @Deprecated // Deprecated annotation
+          @Native
+          @SuppressWarnings({"unused"})
+          HYBRID,
+          @Native
+          INACTIVE
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("Status")
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
   public void testSimpleOuterAnnotationType() {
     String fileContent = """
         @interface VersionID {
           long id();
         }
-                
+        
         @SuppressWarnings({"unused"})
         @VersionID(id = 5123L)
         public class Annotations {
@@ -109,9 +130,9 @@ public class AnnotationsTest {
         package complexAnnotations;
         import java.lang.annotation.Retention;
         import java.lang.annotation.RetentionPolicy;
-                
+        
         public class Annotations {
-          
+        
           private static class RuntimeRetentionPolicy {
             @Documented
             @Retention(RetentionPolicy.RUNTIME)

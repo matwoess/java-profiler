@@ -1,6 +1,4 @@
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.*;
 import java.util.*;
 
 
@@ -70,5 +68,15 @@ public class Annotations {
   )
   static void printData(String data) {
     System.out.println(data);
+  }
+
+  enum Status {
+    ACTIVE,
+    @Deprecated // Deprecated annotation
+    @Native
+    @SuppressWarnings({"unused"})
+    HYBRID,
+    @Native
+    INACTIVE
   }
 }

@@ -86,7 +86,7 @@ Enum<ClassType classType> =
     "enum" ident                        (. String className = t.val; .)
     {ANY}                               (. state.enterClass(classType, className); .)
     "{"
-    {   [Annotation] ident [ParExpr]    // enum constants with optional parameters
+    {   {Annotation} ident [ParExpr]    // enum constants with optional parameters
         ["{" ClassBody]                 // optional enum constant class body
         [","]                           // separates constants; trailing comma is valid
     }
