@@ -230,7 +230,7 @@ public class IO {
       }
       URI uri = resourceUrl.toURI();
       // The fileSystem variable is kept open to access the JAR contents
-      try (FileSystem fs = (uri.getScheme().equals("jar")) ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null) {
+      try (FileSystem ignored = (uri.getScheme().equals("jar")) ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null) {
         Path resourcePath = Path.of(uri);
         if (!Files.isDirectory(resourcePath)) {
           throw new RuntimeException("Resource path is not a folder: <" + resourcePath + ">");
@@ -345,7 +345,7 @@ public class IO {
         "powershell.exe",
         "-Command",
         "$WScriptShell = New-Object -ComObject WScript.Shell; "
-            + "$Shortcut = $WScriptShell.CreateShortcut('" + link.toString() + "');"
+            + "$Shortcut = $WScriptShell.CreateShortcut('" + link + "');"
             + "$Shortcut.TargetPath = '" + targetCanonical + "';"
             + "$Shortcut.Save();"
     };
