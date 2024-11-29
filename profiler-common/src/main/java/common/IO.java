@@ -232,27 +232,23 @@ public class IO {
       // The fileSystem variable is kept open to access the JAR contents
       try (FileSystem fs = (uri.getScheme().equals("jar")) ? FileSystems.newFileSystem(uri, Collections.emptyMap()) : null) {
         Path resourcePath = Path.of(uri);
-        if (Files.isDirectory(resourcePath)) {
-          // Recursively copy the directory
-          try (var paths = Files.walk(resourcePath)) {
-            paths.forEach(sourcePath -> {
-              var targetPath = destination.resolve(resourcePath.relativize(sourcePath).toString());
-              try {
-                if (Files.isDirectory(sourcePath)) {
-                  Files.createDirectories(targetPath);
-                } else {
-                  Files.copy(sourcePath, targetPath, REPLACE_EXISTING);
-                }
-              } catch (IOException e) {
-                throw new RuntimeException(e);
-              }
-            });
-          }
+        if (!Files.isDirectory(resourcePath)) {
+          throw new RuntimeException("Resource path is not a folder: <" + resourcePath + ">");
         }
-        else {
-          // Copy the file
-          var targetPath = destination.resolve(resourcePath.getFileName().toString());
-          Files.copy(resourcePath, targetPath, REPLACE_EXISTING);
+        // Recursively copy the directory
+        try (var paths = Files.walk(resourcePath)) {
+          paths.forEach(sourcePath -> {
+            var targetPath = destination.resolve(resourcePath.relativize(sourcePath).toString());
+            try {
+              if (Files.isDirectory(sourcePath)) {
+                Files.createDirectories(targetPath);
+              } else {
+                Files.copy(sourcePath, targetPath, REPLACE_EXISTING);
+              }
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          });
         }
       }
     } catch (IOException | URISyntaxException e) {
