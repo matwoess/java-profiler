@@ -9,6 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create .m2 directory
+        run: mkdir -p ~/.m2
+
       - name: Set up GitHub Packages
         run: echo "//maven.pkg.github.com/${{ github.repository }}:username=${{ secrets.GITHUB_ACTOR }}:password=${{ secrets.GITHUB_TOKEN }}" > ~/.m2/settings.xml
 
