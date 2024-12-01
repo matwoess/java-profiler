@@ -1,6 +1,8 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     java
-    `maven-publish`
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 group = property("group") ?: ""
@@ -50,27 +52,42 @@ tasks {
 }
 
 publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-        }
-    }
     repositories {
         maven {
-            name = "OSSRH"
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("MAVEN_USERNAME")
-                password = System.getenv("MAVEN_PASSWORD")
+            name = "githubPackages"
+            url = uri("https://maven.pkg.github.com/matwoess/java-profiler")
+            credentials(PasswordCredentials::class)
+        }
+    }
+}
+
+mavenPublishing {
+    signAllPublications()
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    pom {
+        name.set("java-profiler-tool")
+        description.set("A command-line profiler for Java programs that generates HTML reports.")
+        inceptionYear.set("2023")
+        url.set("https://github.com/matwoess/java-profiler/")
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("https://opensource.org/licenses/MIT")
+                distribution.set("https://opensource.org/licenses/MIT")
             }
         }
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/matwoess/java-profiler")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+        developers {
+            developer {
+                id.set("matwoess")
+                name.set("Mathias Wöß")
+                url.set("https://github.com/matwoess/")
             }
+        }
+        scm {
+            url.set("https://github.com/matwoess/java-profiler/")
+            connection.set("scm:git:git://github.com/matwoess/java-profiler.git")
+            developerConnection.set("scm:git:ssh://git@github.com/matwoess/java-profiler.git")
         }
     }
 }
