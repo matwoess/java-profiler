@@ -65,13 +65,13 @@ be generated using the [Coco/R library](https://ssw.jku.at/Research/Projects/Coc
 This can be done by running the provided `generate-parser.sh`  bash script, 
 or the `generate-parser.ps1` PowerShell script in the [scripts/](scripts) folder. 
 
-Both should automatically download the library and execute it on the project's [ATG file](profiler-tool/src/main/java/tool/instrument/JavaFile.atg).
+Both should automatically download the library and execute it on the project's [ATG file](java-profiler-tool/src/main/java/tool/instrument/JavaFile.atg).
 
 This can also be done manually by downloading Coco/R and executing the following command in the 
 project root directory, to re-generate the parser files at any time:
 
 ```shell
-java -jar lib/Coco.jar -package tool.instrument profiler-tool/src/main/java/tool/instrument/JavaFile.atg 
+java -jar lib/Coco.jar -package tool.instrument java-profiler-tool/src/main/java/tool/instrument/JavaFile.atg 
 ```
 
 ## Usage
@@ -267,7 +267,7 @@ Browser-back or the top button can be used to return to the class overview.
 For each Java file, an annotated source code file is generated inside `.profiler/report/source/`.
 It can be used to explore each class and its method in detail.
 
-A small [jQuery](https://jquery.com/) script [file](profiler-tool/src/main/resources/highlighter.js) initializes 
+A small [jQuery](https://jquery.com/) script [file](java-profiler-tool/src/main/resources/highlighter.js) initializes 
 colors for relevant sections and dynamically updates them on mouse hover.
 
 ![Report source file](/screenshots/report-source-view.png)

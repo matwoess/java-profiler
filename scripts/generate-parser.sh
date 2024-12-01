@@ -6,4 +6,4 @@ mkdir -p ./lib
 if [[ ! -f ./lib/Coco.jar ]]; then
     curl --output lib/Coco.jar $coco_jar_url
 fi
-java -jar lib/Coco.jar -package tool.instrument profiler-tool/src/main/java/tool/instrument/JavaFile.atg
+java -jar lib/Coco.jar -package tool.instrument java-profiler-tool/src/main/java/tool/instrument/JavaFile.atg

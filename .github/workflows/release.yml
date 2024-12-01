@@ -35,14 +35,14 @@ jobs:
 
       - name: "Build with Gradle"
         run: |
-          ./gradlew :profiler-tool:fatJar
-          ./gradlew :profiler-fxui:distZip -Pos=win
-          ./gradlew :profiler-fxui:distZip -Pos=linux
-          ./gradlew :profiler-fxui:distZip -Pos=mac
+          ./gradlew :java-profiler-tool:fatJar
+          ./gradlew :java-profiler-fxui:distZip -Pos=win
+          ./gradlew :java-profiler-fxui:distZip -Pos=linux
+          ./gradlew :java-profiler-fxui:distZip -Pos=mac
           echo "created tool libraries":
-          ls -l ./profiler-tool/build/libs/
+          ls -l ./java-profiler-tool/build/libs/
           echo "created FxUI distributions:"
-          ls -l ./profiler-fxui/build/distributions/
+          ls -l ./java-profiler-fxui/build/distributions/
 
       - name: "Create release draft with assets"
         uses: softprops/action-gh-release@v2
@@ -52,7 +52,7 @@ jobs:
           body: "Whats new: ..."
           draft: true
           files: |
-            ./profiler-tool/build/libs/profiler-${{ env.COMMON_VERSION }}.jar
-            ./profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-linux.zip
-            ./profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-win.zip
-            ./profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-mac.zip
+            ./java-profiler-tool/build/libs/profiler-${{ env.COMMON_VERSION }}.jar
+            ./java-profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-linux.zip
+            ./java-profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-win.zip
+            ./java-profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-mac.zip
