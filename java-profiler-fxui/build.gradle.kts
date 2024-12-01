@@ -22,8 +22,8 @@ repositories {
 
 dependencies {
     implementation("io.github.mkpaz:atlantafx-base:2.0.1")
-    implementation(project(mapOf("path" to ":profiler-tool")))
-    implementation(project(mapOf("path" to ":profiler-common")))
+    implementation(project(mapOf("path" to ":java-profiler-tool")))
+    implementation(project(mapOf("path" to ":java-profiler-common")))
 }
 
 javafx {
