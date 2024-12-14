@@ -66,8 +66,8 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       ComponentCoverage methodCoverage = getMethodCoverage(clazz);
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", IO.normalize(methIdxHref), clazz.getName()))
-          .append("<td class=\"metric\">").append(clazz.getAggregatedMethodBlockCounts()).append("</td>\n")
-          .append("<td class=\"metric\">").append(getBlockHitMax(clazz)).append("</td>\n")
+          .append("<td class=\"metric\">").append(ReportUtil.formatHitCount(clazz.getAggregatedMethodBlockCounts())).append("</td>\n")
+          .append("<td class=\"metric\">").append(ReportUtil.formatHitCount(getBlockHitMax(clazz))).append("</td>\n")
           .append(String.format("<td class=\"metric coverage\" percentage=\"%s\" total=\"%s\">%s</td>\n",
               methodCoverage.percentage(), methodCoverage.total(), methodCoverage))
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n",
@@ -97,12 +97,11 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
    * @param clazz the class to calculate the maximum for
    * @return the hit-count of the most often executed inner block inside a class and its methods
    */
-  private int getBlockHitMax(JClass clazz) {
+  private long getBlockHitMax(JClass clazz) {
     return clazz.getBlocksRecursive().stream()
         .map(b -> b.hits)
         .max(Long::compareTo)
-        .orElse(0L)
-        .intValue();
+        .orElse(0L);
   }
 
   /**

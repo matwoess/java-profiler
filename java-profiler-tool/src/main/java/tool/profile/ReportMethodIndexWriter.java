@@ -66,8 +66,8 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
       ComponentCoverage blockCoverage = getBlockCoverage(meth);
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, methName))
-          .append("<td class=\"metric\">").append(meth.getMethodBlock().hits).append("</td>\n")
-          .append("<td class=\"metric\">").append(getBlockHitMax(meth)).append("</td>\n")
+          .append("<td class=\"metric\">").append(ReportUtil.formatHitCount(meth.getMethodBlock().hits)).append("</td>\n")
+          .append("<td class=\"metric\">").append(ReportUtil.formatHitCount(getBlockHitMax(meth))).append("</td>\n")
           .append(String.format("<td class=\"metric\" value=\"%s\">%s</td>\n", blockCoverage.percentage(), blockCoverage))
           .append("</tr>\n");
     }
@@ -93,12 +93,11 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
    * @param method the method to calculate the maximum for
    * @return the hit-count of the most often executed inner block
    */
-  private int getBlockHitMax(Method method) {
+  private long getBlockHitMax(Method method) {
     return method.getBlocksRecursive().stream()
         .map(b -> b.hits)
         .max(Long::compareTo)
-        .orElse(0L)
-        .intValue();
+        .orElse(0L);
   }
 
   /**

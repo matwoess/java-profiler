@@ -8,7 +8,7 @@ function addLineHits() {
     // insert hits-span for each region-span in the code-cell
     const spans = codeCell.querySelectorAll('span.r');
     spans.forEach(span => {
-      const hitCount = span.title.match(/(\d+) hit/);
+      const hitCount = span.title.match(/([,\d]+) hit/);
       if (hitCount) {
         const newSpan = document.createElement('span');
         newSpan.classList.add(...span.classList);

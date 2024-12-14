@@ -55,7 +55,7 @@ tbody td {
 }
 
 tbody td.hits span + span { /* every span after first one */
-  margin-left: 0.5em;
+  margin-left: 0.75em;
 }
 
 /* Coverage Highlighting */
