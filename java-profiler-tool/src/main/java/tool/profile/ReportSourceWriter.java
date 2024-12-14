@@ -66,7 +66,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
       int prevIdx = 0;
       List<CodeInsert> tagInserts = getTagInserts(sourceCode);
       for (CodeInsert tagInsert : tagInserts) {
-        builder.append(escapeHtmlTagCharacters(sourceCode.substring(prevIdx, tagInsert.chPos())));
+        builder.append(ReportUtil.escapeHtmlTagCharacters(sourceCode.substring(prevIdx, tagInsert.chPos())));
         prevIdx = tagInsert.chPos();
         builder.append(tagInsert.code());
       }
@@ -80,16 +80,6 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
     }
     content.append("</code>\n");
     content.append("</pre>\n");
-  }
-
-  /**
-   * Escapes the HTML tag characters <code>&lt;</code> and <code>&gt;</code> in the given code.
-   *
-   * @param code the code to escape
-   * @return the escaped code
-   */
-  private static String escapeHtmlTagCharacters(String code) {
-    return code.replace("<", "&lt;").replace(">", "&gt;");
   }
 
   /**
