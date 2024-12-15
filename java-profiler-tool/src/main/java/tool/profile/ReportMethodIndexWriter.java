@@ -64,11 +64,16 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
           ? methBlock.clazz.getName() + "::" + meth.name
           : meth.name;
       ComponentCoverage blockCoverage = getBlockCoverage(meth);
+      long methodHitCount = methBlock.hits;
+      long blockHitMax = getBlockHitMax(meth);
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", lineNrRef, methName))
-          .append("<td class=\"metric\">").append(ReportUtil.formatHitCount(meth.getMethodBlock().hits)).append("</td>\n")
-          .append("<td class=\"metric\">").append(ReportUtil.formatHitCount(getBlockHitMax(meth))).append("</td>\n")
-          .append(String.format("<td class=\"metric\" value=\"%s\">%s</td>\n", blockCoverage.percentage(), blockCoverage))
+          .append(String.format("<td class=\"metric\" data-total=\"%s\">%s</td>\n",
+              methodHitCount, ReportUtil.formatHitCount(methodHitCount)))
+          .append(String.format("<td class=\"metric\" data-total=\"%s\">%s</td>\n",
+              blockHitMax, ReportUtil.formatHitCount(blockHitMax)))
+          .append(String.format("<td class=\"metric coverage\" data-percentage=\"%s\" data-total=\"%s\">%s</td>\n",
+              blockCoverage.percentage(), blockCoverage.total(), blockCoverage))
           .append("</tr>\n");
     }
     content.append("</table>\n");

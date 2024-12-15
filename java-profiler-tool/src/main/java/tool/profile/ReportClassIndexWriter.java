@@ -64,11 +64,15 @@ public class ReportClassIndexWriter extends AbstractHtmlWriter {
       Path methIdxHref = IO.getReportMethodIndexPath(clazz.name).getFileName();
       Path sourceFileHref = IO.getReportDir().relativize(IO.getReportSourceFilePath(javaFile.relativePath));
       ComponentCoverage methodCoverage = getMethodCoverage(clazz);
+      long aggregatedMethodHitCounts = clazz.getAggregatedMethodBlockCounts();
+      long blockHitMax = getBlockHitMax(clazz);
       content.append("<tr>\n")
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n", IO.normalize(methIdxHref), clazz.getName()))
-          .append("<td class=\"metric\">").append(ReportUtil.formatHitCount(clazz.getAggregatedMethodBlockCounts())).append("</td>\n")
-          .append("<td class=\"metric\">").append(ReportUtil.formatHitCount(getBlockHitMax(clazz))).append("</td>\n")
-          .append(String.format("<td class=\"metric coverage\" percentage=\"%s\" total=\"%s\">%s</td>\n",
+          .append(String.format("<td class=\"metric\" data-total=\"%s\">%s</td>\n",
+              aggregatedMethodHitCounts, ReportUtil.formatHitCount(aggregatedMethodHitCounts)))
+          .append(String.format("<td class=\"metric\" data-total=\"%s\">%s</td>\n",
+              blockHitMax, ReportUtil.formatHitCount(blockHitMax)))
+          .append(String.format("<td class=\"metric coverage\" data-percentage=\"%s\" data-total=\"%s\">%s</td>\n",
               methodCoverage.percentage(), methodCoverage.total(), methodCoverage))
           .append(String.format("<td><a href=\"%s\">%s</a></td>\n",
               IO.normalize(sourceFileHref), javaFile.sourceFile.toFile().getName()))
