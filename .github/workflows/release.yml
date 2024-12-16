@@ -53,6 +53,6 @@ jobs:
           draft: true
           files: |
             ./java-profiler-tool/build/libs/profiler-${{ env.COMMON_VERSION }}.jar
-            ./java-profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-linux.zip
-            ./java-profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-win.zip
-            ./java-profiler-fxui/build/distributions/profiler-fxui-${{ env.COMMON_VERSION }}-mac.zip
+            ./java-profiler-fxui/build/distributions/java-profiler-fxui-${{ env.COMMON_VERSION }}-linux.zip
+            ./java-profiler-fxui/build/distributions/java-profiler-fxui-${{ env.COMMON_VERSION }}-win.zip
+            ./java-profiler-fxui/build/distributions/java-profiler-fxui-${{ env.COMMON_VERSION }}-mac.zip
