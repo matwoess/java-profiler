@@ -141,7 +141,7 @@ public class Profiler {
     PrimitiveIterator.OfLong allBlockCounts = Arrays.stream(counts).iterator();
     for (JavaFile jFile : allJavaFiles) {
       for (Block block : jFile.foundBlocks) {
-        if (block.blockType.hasNoCounter()) {
+        if (!block.blockType.hasCounter()) {
           continue;
         }
         if (!allBlockCounts.hasNext()) {

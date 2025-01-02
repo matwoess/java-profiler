@@ -244,7 +244,7 @@ public class ReportSourceWriter extends AbstractHtmlWriter {
    */
   private List<Block> getActiveBlocksAtCharPosition(int chPos) {
     return javaFile.foundBlocks.stream()
-        .filter(b -> b.beg.pos() <= chPos && chPos < b.end.pos() && !b.blockType.hasNoCounter())
+        .filter(b -> b.beg.pos() <= chPos && chPos < b.end.pos() && b.blockType.hasCounter())
         .collect(Collectors.toList());
   }
 

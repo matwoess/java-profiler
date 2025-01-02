@@ -33,7 +33,7 @@ public class Block implements Serializable, Component {
    */
   public final List<String> labels = new ArrayList<>();
   /**
-   * The code regions of this block. Should never be empty as long as {@link BlockType#hasNoCounter} is false.
+   * The code regions of this block. Should never be empty as long as {@link BlockType#hasCounter} is true.
    */
   public final List<CodeRegion> codeRegions = new ArrayList<>();
 

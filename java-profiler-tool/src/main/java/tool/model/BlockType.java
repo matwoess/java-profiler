@@ -26,11 +26,11 @@ public enum BlockType {
   }
 
   /**
-   * Returns whether this block is a switch statement or expression.
+   * Returns whether this block is a switch statement or switch expression body.
    *
    * @return true if the type is SWITCH_STMT or SWITCH_EXPR
    */
-  public boolean isSwitch() {
+  public boolean isSwitchBody() {
     return this == SWITCH_STMT || this == SWITCH_EXPR;
   }
 
@@ -53,12 +53,12 @@ public enum BlockType {
   }
 
   /**
-   * Returns whether this block has a counter.
+   * Returns whether this block will be instrumented with a counter.
    *
-   * @return true if it is not a switch statement or expression
+   * @return true if it is not a switch statement/expression body
    */
-  public boolean hasNoCounter() {
-    return isSwitch();
+  public boolean hasCounter() {
+    return !isSwitchBody();
   }
 
   /**

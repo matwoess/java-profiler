@@ -87,7 +87,7 @@ public class ReportMethodIndexWriter extends AbstractHtmlWriter {
    * @return the block coverage object
    */
   private ComponentCoverage getBlockCoverage(Method method) {
-    List<Block> blocks = method.getBlocksRecursive().stream().toList();
+    List<Block> blocks = method.getBlocksRecursive().stream().filter(b -> b.blockType.hasCounter()).toList();
     int coveredBlocks = (int) blocks.stream().filter(b -> b.hits > 0).count();
     return new ComponentCoverage(coveredBlocks, blocks.size());
   }

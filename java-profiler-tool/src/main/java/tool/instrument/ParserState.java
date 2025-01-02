@@ -254,7 +254,7 @@ public class ParserState {
    * and <code>true</code> for missing braces.
    */
   void enterSwitchColonCase() {
-    assert curBlock != null && curBlock.blockType.isSwitch();
+    assert curBlock != null && curBlock.blockType.isSwitchBody();
     enterBlock(BlockType.COLON_CASE, true);
   }
 
@@ -343,7 +343,7 @@ public class ParserState {
    * @return whether the given token is a valid code region start token
    */
   private boolean validCodeRegionStartToken(Token nextToken) {
-    if (curBlock.blockType.hasNoCounter()) return false;
+    if (!curBlock.blockType.hasCounter()) return false;
     return !nextToken.val.equals("else") && !nextToken.val.equals("catch") && !nextToken.val.equals("finally");
   }
 
