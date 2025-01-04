@@ -1,10 +1,10 @@
-module fxui {
+module javaprofiler.fxui {
   requires javafx.controls;
   requires javafx.fxml;
   requires atlantafx.base;
   requires java.desktop;
-  requires common;
-  requires tool;
+  requires javaprofiler.common;
+  requires javaprofiler.tool;
 
 
   opens javaprofiler.fxui to javafx.fxml;

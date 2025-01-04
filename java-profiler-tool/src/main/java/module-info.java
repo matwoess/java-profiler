@@ -1,5 +1,5 @@
-module tool {
+module javaprofiler.tool {
   exports javaprofiler.tool.model;
   exports javaprofiler.tool.cli;
-  requires common;
+  requires javaprofiler.common;
 }
