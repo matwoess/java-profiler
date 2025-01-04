@@ -5,4 +5,4 @@ New-Item -ItemType Directory -Force -Path ".\lib"
 if (-Not (Test-Path ".\lib\Coco.jar")) {
     Invoke-WebRequest -Uri $cocoJarUrl -OutFile ".\lib\Coco.jar"
 }
-java -jar lib/Coco.jar -package tool.instrument java-profiler-tool/src/main/java/tool/instrument/JavaFile.atg
+java -jar lib/Coco.jar -package tool.instrument java-profiler-tool/src/main/java/javaprofiler/tool/instrument/JavaFile.atg

@@ -1,4 +1,4 @@
-package cli;
+package javaprofiler.cli;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

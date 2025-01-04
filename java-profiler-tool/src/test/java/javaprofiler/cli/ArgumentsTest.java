@@ -1,4 +1,4 @@
-package cli;
+package javaprofiler.cli;
 
 import javaprofiler.common.OS;
 import javaprofiler.common.RunMode;

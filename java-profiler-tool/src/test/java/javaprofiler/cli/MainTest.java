@@ -1,4 +1,4 @@
-package cli;
+package javaprofiler.cli;
 
 import javaprofiler.common.*;
 import org.junit.jupiter.api.Test;
