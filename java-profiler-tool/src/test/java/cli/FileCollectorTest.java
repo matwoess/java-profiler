@@ -2,7 +2,7 @@ package cli;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import tool.cli.FileCollector;
+import javaprofiler.tool.cli.FileCollector;
 
 import java.io.IOException;
 import java.nio.file.Files;

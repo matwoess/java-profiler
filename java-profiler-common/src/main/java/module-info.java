@@ -1,3 +1,3 @@
 module common {
-  exports common;
+  exports javaprofiler.common;
 }

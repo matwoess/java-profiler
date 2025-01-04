@@ -1,9 +1,9 @@
 package cli;
 
-import common.OS;
-import common.RunMode;
+import javaprofiler.common.OS;
+import javaprofiler.common.RunMode;
 import org.junit.jupiter.api.Test;
-import tool.cli.Arguments;
+import javaprofiler.tool.cli.Arguments;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static tool.cli.Arguments.getUsage;
+import static javaprofiler.tool.cli.Arguments.getUsage;
 
 public class ArgumentsTest {
   final Path samplesFolder = Path.of("..", "sample");

@@ -7,9 +7,9 @@ module fxui {
   requires tool;
 
 
-  opens fxui to javafx.fxml;
-  exports fxui;
-  exports fxui.tree;
-  exports fxui.model;
-  opens fxui.tree to javafx.fxml;
+  opens javaprofiler.fxui to javafx.fxml;
+  exports javaprofiler.fxui;
+  exports javaprofiler.fxui.tree;
+  exports javaprofiler.fxui.model;
+  opens javaprofiler.fxui.tree to javafx.fxml;
 }

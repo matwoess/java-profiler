@@ -1,8 +1,8 @@
 package cli;
 
-import common.*;
+import javaprofiler.common.*;
 import org.junit.jupiter.api.Test;
-import tool.cli.Main;
+import javaprofiler.tool.cli.Main;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
