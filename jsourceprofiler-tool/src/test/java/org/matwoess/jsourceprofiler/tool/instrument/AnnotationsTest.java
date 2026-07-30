@@ -46,7 +46,7 @@ public class AnnotationsTest {
   }
 
   @Test
-  public void testArgumentAnnotations() {
+  public void testParameterAnnotations() {
     String fileContent = """
         public class Annotations {
           public static void main(@SuppressWarnings("null") String[] args) {
@@ -76,6 +76,25 @@ public class AnnotationsTest {
     JavaFile expected = jFile(
         jClass("Annotations",
             jMethod("main", 2, 7, 68, 206)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testArgumentAnnotations() {
+    String fileContent = """
+        public class Annotations {
+          private static final String nullValue = (String) getFirst(new @Nullable Object[] { null });
+        
+          private static Object getFirst(@Nullable Object[] objects) {
+            return objects[0];
+          }
+        }
+        """;
+    JavaFile expected = jFile(null, 0,
+        jClass("Annotations",
+            jMethod("getFirst", 4, 6, 183, 211).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

@@ -2,8 +2,13 @@ import java.lang.annotation.*;
 import java.util.*;
 
 
+@Target(ElementType.TYPE_USE)
 @interface VersionID {
   int id();
+}
+
+@Target(ElementType.TYPE_USE)
+@interface Nullable {
 }
 
 @SuppressWarnings({"unchecked"})
@@ -37,6 +42,13 @@ public class Annotations {
       }
     });
     printData("data");
+    printData(new @VersionID(id = 5) String[] { nullValue }[0]);
+  }
+
+  private static final String nullValue = (String) getFirst(new @Nullable @VersionID(id = 1) Object[] { null });
+
+  private static Object getFirst(@Nullable Object[] objects) {
+    return objects[0];
   }
 
   @Override
