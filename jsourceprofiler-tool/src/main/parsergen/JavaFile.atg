@@ -183,9 +183,9 @@ SSArrowBody<BlockType blockType> =          (. state.enterSSBlock(blockType); .)
         | ident
         | "throw"                           (. state.registerControlBreak(); .)
         | ANY
-    )                                       // exclude closing ")" or ";" after lambda blocks without consuming ";"
+    )                                       // exclude closing ")" or ";" or "," after lambda without consuming ";"
     {ANY | ParExpr}                         (. if (!inSwitch) { state.leaveBlock(blockType); return; } .)
-    (")" | ";")                             (. state.leaveBlock(blockType); .)
+    (")" | ";" | ",")                       (. state.leaveBlock(blockType); .)
 .
 Instantiation = "new" {Annotation} QualIdent [AngleBracketExpr] (ArrayInitRest | ClassInitRest).
 ArrayInitRest = BracketExpr [BraceExpr].

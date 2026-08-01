@@ -208,7 +208,7 @@ public class LambdaExpressionsTest {
             System.out.println(d);
           static Function<Integer, Integer> addTwo = x -> x + 2;
           static int[] ints = Arrays.stream(new int[]{5, 4}).map(x -> x * 2).filter(x -> x < 10).toArray();
-          
+
           public static void main(String[] args) {
             printHello.run();
             Stream.of(3, 6, 9).map.(addTwo).map(divideByTwo).forEach(printDouble);
@@ -240,6 +240,34 @@ public class LambdaExpressionsTest {
     JavaFile expected = jFile(
         jClass("A",
             jSsBlock(LAMBDA, 2, 3, 73, 143)
+        )
+    );
+    TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));
+  }
+
+  @Test
+  public void testSingleStatementLambdaTerminatedByComma() {
+    String fileContent = """
+        class Main {
+          public static void main(String[] args) {
+            process(() -> getVal(), x -> {
+              return x;
+            });
+          }
+          private static void process(Supplier<String> s, Function<String, String> f) {
+            f.apply(s.get());
+          }
+          private static String getVal() { return "val"; }
+        }
+        """;
+    JavaFile expected = jFile(
+        jClass("Main",
+            jMethod("main", 2, 6, 54, 118,
+                jSsBlock(LAMBDA, 3, 3, 73, 82),
+                jBlock(LAMBDA, 3, 5, 89, 112).withControlBreak(RETURN)
+            ),
+            jMethod("process", 7, 9, 197, 224),
+            jMethod("getVal", 10, 10, 258, 275).withControlBreak(RETURN)
         )
     );
     TestInstrumentUtils.assertResultEquals(expected, parseJavaFile(fileContent));

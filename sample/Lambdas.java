@@ -56,5 +56,13 @@ public class Lambdas {
 
     Consumer<List<Integer>> listSumPrinter = (List<Integer> l) -> l.stream().reduce(Integer::sum).
         ifPresent(System.out::println);;
+
+    process(() -> "", x -> {
+      return x;
+    });
+  }
+
+  private static void process(Supplier<String> s, Function<String, String> f) {
+    f.apply(s.get());
   }
 }
